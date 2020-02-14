@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: gitea
+spec:
+  selector:
+    matchLabels:
+      app: gitea 
+  serviceName: gitea
+  replicas: 1
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: gitea
+    spec:
+      containers:
+      - name: gitea
+        image: asia.gcr.io/portal-261602/gitea
+        ports:
+        - containerPort: 3000
+          name: gitea
+        volumeMounts:
+        - name: gitea
+          mountPath: /data
+  volumeClaimTemplates:
+  - metadata:
+      name: gitea
+    spec:
+      accessModes: [ "ReadWriteOnce" ]
+      resources:
+        requests:
+          storage: 10Gi

@@ -1,0 +1,40 @@
+#!/bin/bash
+echo Stopping PM2 Processes
+pm2 reset all
+pm2 stop all
+echo Stopping all existing Docker containers
+docker kill $(docker ps -aq)
+cd ..
+cd docker
+echo Are you using Linux  l or a Non-Linux OS n
+read os
+if [ $os = "l" ] 
+then
+  echo Good choice!
+  docker-compose -f dev.yml -f overide.devlinux.yml up -d 
+elif [ $os = "n" ]
+then
+  echo Mac or Windows users may experience small bugs
+  docker-compose -f dev.yml -f overide.nonlinux.yml up -d 
+else
+  echo You have entered an incorrect command. Docker is not running...
+fi
+echo Would you like to run Ontoserver y or no
+read os
+if [ $os = "y" ] 
+then
+  echo Good choice!
+  docker-compose -f onto.yml up -d 
+else
+  echo You have entered an incorrect command. Docker is not running...
+fi
+cd ..
+cd ..
+cd server/hermes
+npm install
+pm2 start hermes-pm2.json
+cd ..
+cd skelm
+npm install
+npm run prisma-deploy:dev
+pm2 start skelm-pm2.json

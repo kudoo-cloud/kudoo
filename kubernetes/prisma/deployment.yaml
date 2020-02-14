@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prisma
+  labels:
+    app: prisma
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prisma
+  template:
+    metadata:
+      labels:
+        app: prisma
+    spec:
+      containers:
+        - image: asia.gcr.io/portal-261602/prisma
+          name: prisma
+          ports:
+            - containerPort: 4466
+              name: prisma

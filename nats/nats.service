@@ -1,0 +1,17 @@
+[Unit]
+Description=NATS
+After=syslog.target
+After=network.target
+
+[Service]
+RestartSec=2s
+Type=simple
+User=nats
+Group=nats
+WorkingDirectory=/var/lib/nats/
+ExecStart=/usr/local/bin/nats-server --http_port 8222
+Restart=always
+Environment=USER=nats HOME=/home/nats 
+
+[Install]
+WantedBy=multi-user.target

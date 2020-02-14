@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: metabase
+  labels:
+    app: metabase
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: metabase
+  template:
+    metadata:
+      labels:
+        app: metabase
+    spec:
+      containers:
+        - image: asia.gcr.io/portal-261602/metabase
+          name: metabase
+          ports:
+            - containerPort: 3000
+              name: metabase
+          volumeMounts:
+            - name: metabase-persistent-storage
+              mountPath: /metabase
+      volumes:
+        - name: metabase-persistent-storage
+          persistentVolumeClaim:
+            claimName: metabase-volumeclaim
