@@ -1,0 +1,59 @@
+.verify-email-page {
+  background-color: #f7f7fc;
+  padding: 45px;
+  font-family: 'montserrat', sans-serif;
+  height: calc(100vh - 270px);
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  $content-max-width: 400px;
+
+  .title {
+    color: #2598d2;
+    margin: 10px 0px;
+    font-family: Roboto, sans-serif;
+    font-size: 32px;
+    font-weight: 500;
+  }
+
+  .middle-container {
+    max-width: $content-max-width;
+    margin: 0px auto;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    .mail-sent-icon {
+      width: 100px;
+      height: 100px;
+      margin: 30px 0px 25px 0px;
+    }
+
+    .message-wrapper {
+      line-height: 24px;
+      .message-title {
+        text-align: center;
+        color: #2598d2;
+        font-weight: 500;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      .message-desc {
+        text-align: center;
+        color: #a8a8a8;
+        margin-bottom: 20px;
+        font-size: 15px;
+      }
+    }
+
+    .resend-btn {
+      margin-bottom: 15px;
+    }
+
+    .signin-btn {
+      padding: 15px 0px;
+    }
+  }
+}

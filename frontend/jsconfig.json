@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["src/*"],
+      "@kudoo/graphql/*": ["@kudoo/graphql/build/*"]
+    },
+    "strictNullChecks": false
+  },
+  "exclude": ["node_modules"],
+  "path-intellisense.autoSlashAfterDirectory": true
+}

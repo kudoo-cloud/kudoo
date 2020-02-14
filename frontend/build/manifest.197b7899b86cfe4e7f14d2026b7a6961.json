@@ -1,0 +1,42 @@
+{
+  "icons": [
+    {
+      "src": "/icon_192x192.383701bdf0a6ec064c07b7bd4db95f2f.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon_144x144.f61643c1f5206d5f636c9b60f8c83efe.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon_96x96.3ff8f495080b3b88359755195c797ec0.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon_72x72.e7cc4e38585ffaa9bf88783170010133.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon_48x48.8c049c90ddc119f67e1853910cec7953.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon_36x36.56a4407c12473ba50f674bf2e5f7be23.png",
+      "sizes": "36x36",
+      "type": "image/png"
+    }
+  ],
+  "name": "Kudoo | Where big ideas grow",
+  "short_name": "Kudoo",
+  "orientation": "portrait",
+  "display": "standalone",
+  "start_url": ".",
+  "description": "Kudoo Cloud is an open source ERP system built to democratize enterprise business systems and bring them to everybody.",
+  "background_color": "#ffffff",
+  "theme_color": "#2bc88f"
+}

@@ -1,0 +1,71 @@
+.new-password-page {
+  background-color: #f7f7fc;
+  padding: 45px;
+  font-family: "montserrat", sans-serif;
+  $content-max-width: 400px;
+
+  .title {
+    color: #2598d2;
+    margin: 10px 0px;
+    font-family: Roboto, sans-serif;
+    font-size: 32px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .green-text-color {
+    color: #2bc88f;
+  }
+
+  .middle-container {
+    max-width: $content-max-width;
+    margin: 0px auto;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    .form {
+      width: 100%;
+    }
+
+    .input-wrapper {
+      margin-bottom: 10px;
+    }
+
+    .form-error-text {
+      color: red;
+      margin: 10px 0px 20px 0px;
+      text-align: center;
+      font-size: 15px;
+      font-family: "montserrat", sans-serif;
+    }
+
+    .mail-sent-icon {
+      width: 100px;
+      height: 100px;
+      margin: 30px 0px 25px 0px;
+    }
+
+    .message-wrapper {
+      line-height: 24px;
+      .message-title {
+        text-align: center;
+        color: #ef9121;
+        font-weight: 500;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      .message-desc {
+        text-align: center;
+        color: #a8a8a8;
+        margin-bottom: 20px;
+        font-size: 15px;
+      }
+    }
+
+    .signin-btn-text {
+      color: #222;
+    }
+  }
+}

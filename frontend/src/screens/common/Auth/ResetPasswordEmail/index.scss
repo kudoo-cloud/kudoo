@@ -1,0 +1,58 @@
+$blue-color: #2598d2;
+.reset-password-email-page {
+  background-color: #f7f7fc;
+  padding: 45px;
+  font-family: "montserrat", sans-serif;
+  $content-max-width: 400px;
+
+  .title {
+    color: $blue-color;
+    margin: 10px 0px;
+    font-family: Roboto, sans-serif;
+    font-size: 32px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .middle-container {
+    max-width: $content-max-width;
+    margin: 0px auto;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+
+    .mail-sent-icon {
+      width: 100px;
+      height: 100px;
+      margin: 30px 0px 25px 0px;
+    }
+
+    .message-wrapper {
+      line-height: 24px;
+      .message-title {
+        text-align: center;
+        color: $blue-color;
+        font-weight: 500;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      .message-desc {
+        text-align: center;
+        color: #a8a8a8;
+        margin-bottom: 20px;
+        font-size: 15px;
+      }
+    }
+
+    .resend-btn {
+      border: 2px solid $blue-color;
+      color: $blue-color;
+      margin-bottom: 15px;
+    }
+
+    .resend-btn-text {
+      color: $blue-color;
+    }
+  }
+}

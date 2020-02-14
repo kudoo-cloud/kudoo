@@ -1,0 +1,192 @@
+[apps]
+    [apps.projects]
+    enabled = true
+        [apps.projects.menus]
+            [apps.projects.menus.dashboard]
+            name = "Dashboard"
+            # We can leave our order as we'll infer it from the TOML order
+            availability.securityrole = ["ADMIN", "OWNER"]
+            availability.country = "AU"
+            availability.businessType = "HEALTH"
+            icon = "icon icon-dashboard"
+            url = "DASHBOARD"
+            # isActive doesn't need to appear in the TOML
+            [apps.projects.menus.projects]
+            name = "Projects"
+            availability.securityRole = ["ADMIN", "OWNER"]
+            icon = "icon icon-dashboard"
+            url =  "PROJECTS"
+            [apps.projects.menus.invoices]
+            name = 'Invoices'
+            availability.securityRole = ["ADMIN", "OWNER"]
+            url = "INVOICES"
+            [apps.projects.menus.timesheets]
+            name = 'Timesheets'
+            availability.securitRole = ["ADMIN", "OWNER"]
+            icon = 'icon icon-projects'
+            url = "TIMESHEETS"
+            [apps.projects.menus.customers]
+            name = 'Customers'
+            availability.securityRole = ["ADMIN", "OWNER"]
+            icon = 'icon icon-projects'
+            url = "CUSTOMERS"
+            [apps.projects.menus.services]
+            name = 'Services',
+            availability.securityRole = ["ADMIN", "OWNER"]
+            icon = 'icon icon-projects'
+            url = "SERVICES"
+    [apps.finance]
+    enabled = true
+        [apps.finance.menus]
+            [apps.finance.menus.dashboard]
+            name = "Dashboard"
+            # We can leave our order as we'll infer it from the TOML order
+            availability.securityrole = ["ADMIN", "OWNER"]
+            availability.country = "AU"
+            availability.businessType = "HEALTH"
+            icon = "icon icon-dashboard"
+            url = "DASHBOARD"
+            # isActive doesn't need to appear in the TOML
+            [apps.finance.menus.projects]
+            name = "Projects"
+            availability.securityRole = ["ADMIN", "OWNER"]
+            icon = "icon icon-dashboard"
+            url =  "finance"
+            [apps.finance.menus.invoices]
+            name = 'Invoices'
+            availability.securityRole = ["ADMIN", "OWNER"]
+            url = "INVOICES"
+            [apps.finance.menus.timesheets]
+            name = 'Timesheets'
+            availability.securitRole = ["ADMIN", "OWNER"]
+            icon = 'icon icon-finance'
+            url = "TIMESHEETS"
+            [apps.finance.menus.customers]
+            name = 'Customers'
+            availability.securityRole = ["ADMIN", "OWNER"]
+            icon = 'icon icon-finance'
+            url = "CUSTOMERS"
+            [apps.finance.menus.services]
+            name = 'Services',
+            availability.securityRole = ["ADMIN", "OWNER"]
+            icon = 'icon icon-projects'
+            url = "SERVICES"
+    [apps.inventory]
+    enabled = true
+        [apps.inventory.menus]
+            [apps.inventory.menus.dashboard]
+            name = "Dashboard"
+            # We can leave our order as we'll infer it from the TOML order
+            availability.securityrole = ["ADMIN", "OWNER"]
+            availability.country = "AU"
+            availability.businessType = "HEALTH"
+            icon = "icon icon-dashboard"
+            url = "DASHBOARD"
+            # isActive doesn't need to appear in the TOML
+            [apps.inventory.menus.projects]
+            name = "Projects"
+            availability.securityRole = ["ADMIN", "OWNER"]
+            icon = "icon icon-dashboard"
+            url =  "finance"
+            [apps.inventory.menus.invoices]
+            name = 'Invoices'
+            availability.securityRole = ["ADMIN", "OWNER"]
+            url = "INVOICES"
+            [apps.inventory.menus.timesheets]
+            name = 'Timesheets'
+            availability.securitRole = ["ADMIN", "OWNER"]
+            icon = 'icon icon-finance'
+            url = "TIMESHEETS"
+            [apps.inventory.menus.customers]
+            name = 'Customers'
+            availability.securityRole = ["ADMIN", "OWNER"]
+            icon = 'icon icon-finance'
+            url = "CUSTOMERS"
+            [apps.inventory.menus.services]
+            name = 'Services',
+            availability.securityRole = ["ADMIN", "OWNER"]
+            icon = 'icon icon-projects'
+            url = "SERVICES"
+    [apps.health]
+    enabled = true
+        [apps.health.menus]
+            [apps.health.menus.dashboard]
+            name = "Dashboard"
+            # We can leave our order as we'll infer it from the TOML order
+            availability.securityrole = ["ADMIN", "OWNER"]
+            availability.country = "AU"
+            availability.businessType = "HEALTH"
+            icon = "icon icon-dashboard"
+            url = "DASHBOARD"
+            # isActive doesn't need to appear in the TOML
+            [apps.health.menus.projects]
+            name = "Projects"
+            availability.securityRole = ["ADMIN", "OWNER"]
+            icon = "icon icon-dashboard"
+            url =  "finance"
+            [apps.health.menus.invoices]
+            name = 'Invoices'
+            availability.securityRole = ["ADMIN", "OWNER"]
+            url = "INVOICES"
+            [apps.health.menus.timesheets]
+            name = 'Timesheets'
+            availability.securitRole = ["ADMIN", "OWNER"]
+            icon = 'icon icon-finance'
+            url = "TIMESHEETS"
+            [apps.health.menus.customers]
+            name = 'Customers'
+            availability.securityRole = ["ADMIN", "OWNER"]
+            icon = 'icon icon-finance'
+            url = "CUSTOMERS"
+            [apps.health.menus.services]
+            name = 'Services',
+            availability.securityRole = ["ADMIN", "OWNER"]
+            icon = 'icon icon-projects'
+            url = "SERVICES"
+    [apps.manufacturing]
+    enabled = true
+        [apps.manufacturing.menus]
+            [apps.manufacturing.menus.dashboard]
+            name = "Dashboard"
+            # We can leave our order as we'll infer it from the TOML order
+            availability.securityrole = ["ADMIN", "OWNER"]
+            availability.country = "AU"
+            availability.businessType = "HEALTH"
+            icon = "icon icon-dashboard"
+            url = "DASHBOARD"
+            # isActive doesn't need to appear in the TOML
+            [apps.manufacturing.menus.bom]
+            name = "Bill of Materials"
+            availability.securityRole = ["ADMIN", "OWNER"]
+            icon = "icon icon-dashboard"
+            url =  "PROJECTS"
+            [apps.manufacturing.menus.formulas]
+            name = 'Formulas'
+            availability.securityRole = ["ADMIN", "OWNER"]
+            url = "Production Orders"
+            [apps.manufacturing.menus.prodorders]
+            name = 'Production Orders'
+            availability.securitRole = ["ADMIN", "OWNER"]
+            icon = 'icon icon-projects'
+            url = "TIMESHEETS"
+            [apps.manufacturing.menus.routes]
+            name = 'Routes'
+            availability.securityRole = ["ADMIN", "OWNER"]
+            icon = 'icon icon-projects'
+            url = "CUSTOMERS"
+[licensing]  
+    [licensing.plan1]
+    name=""
+    description=""
+    monthly-amount=0.00
+    yearly-amount=0.00
+    [licensing.plan2]
+    name=""
+    description=""
+    monthly-amount=0.00
+    yearly-amount=0.00
+    [licensing.plan3]
+    name=""
+    description=""
+    monthly-amount=0.00
+    yearly-amount=0.00

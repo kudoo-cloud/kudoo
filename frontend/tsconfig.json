@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "incremental": false,
+    "module": "esnext",
+    "target": "es5",
+    "outDir": "dist",
+    "jsx": "react",
+    "strict": false,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strictNullChecks": false,
+    "esModuleInterop": false,
+    "noImplicitAny": false,
+    "lib": ["es2015", "dom", "esnext"],
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "baseUrl": ".",
+    "paths": {
+      "@client/helpers/*": ["src/helpers/*"],
+      "@client/store/*": ["src/store/*"],
+      "@client/common_screens/*": ["src/screens/common/*"],
+      "@client/Widget/*": ["src/widgets/*"],
+      "@client/security/*": ["src/security/*"],
+      "@client/screens/*": ["src/screens/*"],
+      "src/*": ["src/*"]
+    }
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "global.d.ts"]
+}
