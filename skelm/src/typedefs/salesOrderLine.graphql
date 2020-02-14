@@ -1,0 +1,24 @@
+# import { SalesOrderLineConnection } from '../../prisma/generated/schema.graphql'
+# import { WhereUniqueInput, kSalesOrderLineCreateInput, kSalesOrderLineUpdateInput } from './input.graphql'
+
+type Query {
+    salesOrderLine(where: WhereUniqueInput!): SalesOrderLine
+    salesOrderLines(
+        where: SalesOrderLineWhereInput
+        orderBy: SalesOrderLineOrderByInput
+        skip: Int
+        after: String
+        before: String
+        first: Int
+        last: Int
+    ): SalesOrderLineConnection!
+}
+
+type Mutation {
+    createSalesOrderLine(data: kSalesOrderLineCreateInput!): SalesOrderLine!
+    updateSalesOrderLine(
+        data: kSalesOrderLineUpdateInput!
+        where: WhereUniqueInput!
+    ): SalesOrderLine!
+    deleteSalesOrderLine(where: WhereUniqueInput!): SalesOrderLine!
+}

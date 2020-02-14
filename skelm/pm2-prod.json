@@ -1,0 +1,14 @@
+{
+  "apps": [
+    {
+      "name": "SKELM-PROD",
+      "script": "npm",
+      "args" : "serve"
+    },
+        {
+      "name": "SKELM-BETA",
+      "script": "npm",
+      "args" : "start"
+    }
+  ]
+}

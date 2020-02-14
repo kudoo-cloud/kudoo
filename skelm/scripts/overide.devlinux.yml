@@ -1,0 +1,19 @@
+version: "3.2"
+
+services:
+  prisma:
+    environment:
+      PRISMA_CONFIG: |
+        port: 4466
+        databases:
+          default:
+            connector: postgres
+            host: 127.0.0.1
+            port: 5432
+            database: kudoo_dev
+            # schema: public
+            user: postgres
+            password: postgres
+            migrations: true
+            ssl: false
+    network_mode: "host"

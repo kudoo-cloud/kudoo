@@ -1,0 +1,27 @@
+# import AuthDirective from './directives/auth.graphql';
+# import { PbsOrganisation } from '../../prisma/generated/schema.graphql'
+# import { kPbsOrganisationCreateInput } from './input.graphql';
+
+type Query {
+  pbsOrganisation(where: WhereUniqueInput): PbsOrganisation
+  pbsOrganisations(
+    where: kPbsOrganisationWhereInput
+    orderBy: PbsOrganisationOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PbsOrganisationConnection!
+}
+
+type Mutation {
+  createPbsOrganisation(data: kPbsOrganisationCreateInput!): PbsOrganisation
+    @requiresAuth
+  updatePbsOrganisation(
+    data: kPbsOrganisationUpdateInput!
+    where: WhereUniqueInput!
+  ): PbsOrganisation @hasRoles(roles: [OWNER, ADMIN])
+  deletePbsOrganisation(id: ID!): PbsOrganisation
+    @hasRoles(roles: [OWNER, ADMIN])
+}

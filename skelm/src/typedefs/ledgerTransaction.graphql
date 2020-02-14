@@ -1,0 +1,27 @@
+# import AuthDirective from './directives/auth.graphql';
+# import { LedgerTransaction } from '../../prisma/generated/schema.graphql'
+# import { kLedgerTransactionCreateInput } from './input.graphql';
+
+type Query {
+  ledgerTransaction(where: WhereUniqueInput): LedgerTransaction @requiresAuth
+  ledgerTransactions(
+    where: LedgerTransactionWhereInput
+    orderBy: LedgerTransactionOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): LedgerTransactionConnection! @requiresAuth
+}
+
+type Mutation {
+  createLedgerTransaction(
+    data: kLedgerTransactionCreateInput!
+  ): LedgerTransaction @requiresAuth
+  updateLedgerTransaction(
+    data: kLedgerTransactionUpdateInput!
+    where: WhereUniqueInput!
+  ): LedgerTransaction @hasRoles(roles: [OWNER])
+  deleteLedgerTransaction(id: ID!): LedgerTransaction @hasRoles(roles: [OWNER])
+}
