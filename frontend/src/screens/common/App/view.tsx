@@ -11,8 +11,7 @@ import {
   IMenuItem,
   Product,
   ProductType,
-} from '@client/security/types';
-import AppSecurity, { products } from '@client/security/index';
+} from '@client/store/types/security';
 import {
   HeaderBar,
   Drawer,
@@ -22,7 +21,8 @@ import {
 } from '@kudoo/components';
 import URL from '@client/helpers/urls';
 import idx from 'idx';
-import { isFeatureAvailable } from '@client/security/helper';
+import { isFeatureAvailable } from '@client/helpers/security';
+import Configuration from '../../../../kudoo.toml';
 import { toastStyle } from './styles';
 
 export interface IProps {
@@ -88,24 +88,40 @@ class App extends React.Component<IProps, IState> {
       profile: { selectedCompany = {} },
     } = this.props;
     const totalCompanies = get(companies, 'data', []).length;
-    const businessType = get(selectedCompany, 'businessType');
-    const country = get(selectedCompany, 'country');
     const menuConfig: ISecurityConfig =
-      AppSecurity[app.kudoo_product || Product.inventory];
+      Configuration.apps[
+        (app.kudoo_product || Product.inventory || '').toLowerCase()
+      ];
+    const products: {
+      key: string;
+      value: string;
+      isAvailable: boolean;
+    }[] = Object.values(Configuration.apps);
     const filteredProducts = products
       .filter(product => product.isAvailable)
       .map(product => ({ key: product.key, value: product.value }));
-    const menuItems = menuConfig.menu || [];
-    const filteredItems = menuItems.filter(menuItem =>
+    const menuItems = Object.values(menuConfig.menu || {});
+    let filteredItems: any = menuItems.filter(menuItem =>
       isFeatureAvailable(profile.selectedCompany, menuItem.availability)
     );
+    filteredItems = filteredItems.map(item => {
+      return {
+        ...item,
+        isActive: () => false,
+        icon: () => <i className={item.icon as any} />,
+      };
+    });
     let initialSelectedProductIndex = 0;
-    if (app.kudoo_product === Product.finance) {
+    if (app.kudoo_product === Product.projects) {
       initialSelectedProductIndex = 0;
-    } else if (app.kudoo_product === Product.health) {
+    } else if (app.kudoo_product === Product.finance) {
       initialSelectedProductIndex = 1;
     } else if (app.kudoo_product === Product.inventory) {
       initialSelectedProductIndex = 2;
+    } else if (app.kudoo_product === Product.health) {
+      initialSelectedProductIndex = 3;
+    } else if (app.kudoo_product === Product.manufacturing) {
+      initialSelectedProductIndex = 4;
     }
     return (
       <div className={classes.loggedInWrapper}>

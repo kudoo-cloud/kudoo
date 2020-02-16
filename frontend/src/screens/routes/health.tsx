@@ -1,7 +1,7 @@
 import URL from '@client/helpers/urls';
-import { IRoute } from '../types';
-import * as Tabs from '../tab';
-import * as Components from '../../screens/LoadableComponents';
+import { IRoute } from '@client/store/types/security';
+import * as Tabs from './tab';
+import * as Components from '../LoadableComponents';
 
 const paramsOptions = { path: true };
 

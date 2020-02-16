@@ -8,7 +8,7 @@ import unset from 'lodash/unset';
 import { compose, lifecycle, withHandlers } from 'recompose';
 import { withRouter, matchPath } from 'react-router';
 import { LogRocket } from '@client/helpers/apollo';
-import { SecurityRole, Product } from '@client/security/types';
+import { SecurityRole } from '@client/store/types/security';
 import { ProfileActions, AppActions } from '@client/store/actions';
 import { withStyles } from '@kudoo/components';
 import URL from '@client/helpers/urls';

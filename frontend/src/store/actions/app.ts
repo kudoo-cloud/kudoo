@@ -1,5 +1,5 @@
 import { createAction } from 'redux-actions';
-import { Product } from '@client/security/types';
+import { Product } from '@client/store/types/security';
 import Types from '../types/app';
 
 const setKudooProduct = createAction(

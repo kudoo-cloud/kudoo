@@ -1,6 +1,6 @@
 import URL from '@client/helpers/urls';
-import { IRoute } from '../types';
-import * as Components from '../../screens/LoadableComponents';
+import { IRoute } from '@client/store/types/security';
+import * as Components from '../LoadableComponents';
 import {
   pbsTabs,
   purchaseOrderTabs,
@@ -8,7 +8,7 @@ import {
   inventoryTabs,
   warehouseTabs,
   salesTabs,
-} from '../tab';
+} from './tab';
 
 const paramsOptions = { path: true };
 

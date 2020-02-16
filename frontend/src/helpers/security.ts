@@ -1,5 +1,5 @@
 import idx from 'idx';
-import { IAvailability, LicensePlan } from './types';
+import { IAvailability, LicensePlan } from '@client/store/types/security';
 
 export const isFeatureAvailable = (
   company,

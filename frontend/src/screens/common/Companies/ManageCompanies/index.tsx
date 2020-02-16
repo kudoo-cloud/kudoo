@@ -18,7 +18,7 @@ import {
 import URL from '@client/helpers/urls';
 import Collapse from '@material-ui/core/Collapse';
 import { withCompanies, withUpdateCompany } from '@kudoo/graphql';
-import { SecurityRole } from '@client/security/types';
+import { SecurityRole } from '@client/store/types/security';
 import { showToast } from '@client/helpers/toast';
 import JoinModal from './JoinModal';
 import styles from './styles';
