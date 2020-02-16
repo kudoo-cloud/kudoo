@@ -1,0 +1,7 @@
+# import { ROLE } from '../common.graphql';
+
+# user need to pass token in request
+directive @requiresAuth on FIELD_DEFINITION
+
+# user should have given roles to access queries/mutation that rely on this directive
+directive @hasRoles(roles: [ROLE]) on FIELD_DEFINITION

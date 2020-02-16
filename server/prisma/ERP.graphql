@@ -1,0 +1,543 @@
+type User {
+  id: ID! @id
+  contactNumber: Json
+  email: String
+  firstName: String
+  isActive: Boolean @default(value: false)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  isRoot: Boolean @default(value: false)
+  jobTitle: String
+  lastName: String
+  password: String
+  secondAuthEnabled: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Address {
+  id: ID! @id
+  street: String
+  city: String
+  state: String
+  country: String
+  postCode: String
+  latitude: String
+  longitude: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Contact {
+  id: ID! @id
+  name: String
+  surname: String
+  email: String
+  mobileCode: String
+  mobileNumber: String
+  landlineCode: String
+  landlineNumber: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Company {
+  id: ID! @id
+  bankAccount: Json
+  businessType: BusinessType
+  country: Country! @default(value: AU)
+  govNumber: String
+  currency: Currency!
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  HPIO: String
+  legalName: String!
+  logo: Attachment @relation(link: INLINE)
+  name: String!
+  salesTax: Boolean @default(value: false)
+  timeSheetSettings: Json
+  websiteURL: String
+  addresses: [Address]
+  contacts: [Contact]
+  companyMembers: [CompanyMember]
+  activePlan: Plan @relation(link: INLINE)
+  stripeCustomerId: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type CompanyMember {
+  id: ID! @id
+  company: Company! @relation(link: INLINE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  role: CompanyMemberRole
+  status: CompanyMemberStatus
+  user: User @relation(link: INLINE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Customer {
+  id: ID! @id
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  description: String
+  govNumber: String
+  salesTax: Boolean @default(value: true)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  name: String
+  billingFrequency: SupplierTermsOfPayment
+  meansTestedFee: MeansTestedFee @relation(link: INLINE)
+  basicDailyFee: BasicDailyFee @relation(link: INLINE)
+  contacts: [Contact]
+  addresses: [Address]
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Integration {
+  id: ID! @id
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  data: Json
+  type: IntegrationType
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Service {
+  id: ID! @id
+  billingType: ServiceBillingType!
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  includeConsTax: Boolean!
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  isTemplate: Boolean @default(value: true)
+  name: String!
+  timeBasedType: TimeBasedType
+  totalAmount: Float!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Project {
+  id: ID! @id
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  customer: Customer @relation(link: INLINE)
+  description: String
+  endsAt: DateTime
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  name: String
+  projectService: [ProjectService]
+  startsAt: DateTime
+  status: ProjectStatus
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type ProjectService {
+  id: ID! @id
+  amount: Float
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  project: Project @relation(link: INLINE)
+  rules: [ProjectServiceRule]
+  service: Service @relation(link: INLINE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type ProjectServiceRule {
+  id: ID! @id
+  projectService: ProjectService @relation(link: INLINE)
+  amount: Float
+  percent: Float
+  type: ProjectServiceRuleType
+  isPercent: Boolean
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Plan {
+  id: ID! @id
+  company: Company!
+  isActive: Boolean @default(value: false)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  price: Float
+  type: PlanType
+  currency: Currency!
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Session {
+  id: ID! @id
+  expires_at: DateTime
+  is_active: Boolean @default(value: true)
+  is_archived: Boolean @default(value: false)
+  is_deleted: Boolean @default(value: false)
+  signed_at: DateTime
+  user: User @relation(link: INLINE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type TimeSheet {
+  id: ID! @id
+  attachments: [Attachment] @relation(name: "TimesheetAttachments")
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  endsAt: DateTime
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  number: Int
+  preview: Attachment @relation(link: INLINE, name: "TimesheetPreview")
+  startsAt: DateTime
+  status: TimeSheetStatus
+  timeSheetEntries: [TimeSheetEntry]
+  user: User @relation(link: INLINE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Attachment {
+  id: ID! @id
+  description: String
+  fileName: String
+  label: String
+  url: String
+  s3Bucket: String
+  s3Key: String
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type TimeSheetEntry {
+  id: ID! @id
+  customer: Customer @relation(link: INLINE)
+  date: DateTime
+  duration: Float
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  isInvoiced: Boolean @default(value: false)
+  project: Project @relation(link: INLINE)
+  service: Service @relation(link: INLINE)
+  timeSheet: TimeSheet @relation(link: INLINE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type InvoiceItemEntry {
+  id: ID! @id
+  order: Int
+  description: String
+  name: String
+  price: Float
+  quantity: Float
+  tax: Float
+  invoice: Invoice @relation(link: INLINE)
+  project: Project @relation(link: INLINE)
+  service: Service @relation(link: INLINE)
+  timeSheetEntry: TimeSheetEntry @relation(link: INLINE)
+  timeSheet: TimeSheet @relation(link: INLINE)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Invoice {
+  id: ID! @id
+  title: String
+  attachments: [Attachment] @relation(name: "InvoiceAttachments")
+  buyer: Customer @relation(link: INLINE)
+  number: Int
+  description: String
+  invoiceDate: DateTime
+  dueDate: DateTime
+  preview: Attachment @relation(link: INLINE, name: "InvoicePreview")
+  items: [InvoiceItemEntry]
+  seller: Company! @relation(link: INLINE, onDelete: CASCADE)
+  status: InvoiceStatus
+  type: InvoiceType
+  total: Float
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type MainAccount {
+  id: ID! @id
+  code: String!
+  name: String!
+  description: String
+  type: MainAccountType!
+  ConsTaxFree: Boolean! @default(value: true)
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type LedgerJournal {
+  id: ID! @id
+  total: Float
+  description: String
+  currency: Currency!
+  includeConsTax: Boolean!
+  posted: Boolean!
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type LedgerTransaction {
+  id: ID! @id
+  mainAccount: MainAccount! @relation(link: INLINE)
+  ledgerJournal: LedgerJournal! @relation(link: INLINE)
+  drcr: DrCr!
+  amount: Float!
+  currency: Currency!
+  date: DateTime!
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type LedgerPosting {
+  id: ID! @id
+  postingType: PostingType
+  mainAccount: MainAccount @relation(link: INLINE)
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Bank {
+  id: ID! @id
+  name: String
+  institution: String
+  bsb: String
+  accountNumber: String
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type BankTransaction {
+  id: ID! @id
+  transactionDate: DateTime!
+  amount: Float!
+  description: String
+  posted: Boolean! @default(value: false)
+  ledgerJournal: LedgerJournal @relation(link: INLINE)
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type WareHouse {
+  id: ID! @id
+  name: String
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Inventory {
+  id: ID! @id
+  name: String
+  inventoryModel: InventoryModel
+  uom: UOM
+  price: Float
+  SellingPrice: Float
+  Barcode: String
+  Taxable: Boolean
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Supplier {
+  id: ID! @id
+  name: String
+  address: [Address]
+  termsOfPayment: SupplierTermsOfPayment
+  bankAccount: Json
+  emailAddressForRemittance: String
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type AssetGroup {
+  id: ID! @id
+  name: String
+  depreciationType: AssetGroupDepreciationType
+  usefulLife: Int
+  deprMainAccount: MainAccount @relation(link: INLINE)
+  #accumDeprMainAccount: MainAccount @relation(link: INLINE)
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type Asset {
+  id: ID! @id
+  name: String
+  assetGroup: AssetGroup @relation(link: INLINE)
+  dateOfAquisition: DateTime
+  aquisitionPrice: Float
+  netBookValue: Float
+  depreciation: Float
+  salvageValue: Float
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type PurchaseOrder {
+  id: ID! @id
+  pbsOrganisation: String
+  date: DateTime
+  orderer: User @relation(link: INLINE)
+  status: PoStatus
+  supplier: Supplier @relation(link: INLINE)
+  isPbsPO: Boolean
+  poNumber: Int!
+  preview: Attachment @relation(link: INLINE)
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type PoReceipt {
+  id: ID! @id
+  receiptNumber: String
+  purchaseOrder: PurchaseOrder @relation(link: INLINE)
+  receiptDate: DateTime
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type InventoryOnHand {
+  id: ID! @id
+  date: DateTime
+  item: Inventory @relation(link: INLINE)
+  pbsDrug: String
+  onHandQty: Int
+  purchaseOrder: PurchaseOrder @relation(link: INLINE)
+  warehouse: WareHouse @relation(link: INLINE)
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type PurchaseOrderLine {
+  id: ID! @id
+  item: Inventory @relation(link: INLINE)
+  pbsDrug: String
+  qty: Int
+  unit: UOM
+  unitPrice: Float
+  site: WareHouse @relation(link: INLINE)
+  purchaseOrder: PurchaseOrder @relation(link: INLINE)
+  poReceipt: PoReceipt @relation(link: INLINE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type ApInvoice {
+  id: ID! @id
+  status: ApInvoiceStatus
+  invoiceNumber: String
+  purchaseOrder: PurchaseOrder @relation(link: INLINE)
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type SalesOrder {
+  id: ID! @id
+  customer: Customer @relation(link: INLINE)
+  transactionDate: DateTime
+  currency: Currency
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type SalesOrderLine {
+  id: ID! @id
+  salesOrder: SalesOrder @relation(link: INLINE)
+  inventory: Inventory @relation(link: INLINE)
+  qty: Int
+  price: Float
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type PredictedSalesValueByCompany {
+  id: ID! @id
+  datePredictionRun: DateTime
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  predictedSalesValue: Float
+  predictedDate: DateTime
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type PredictedSalesQuantityOfItemsByCompany {
+  id: ID! @id
+  datePredictionRun: DateTime
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  inventory: Inventory @relation(link: INLINE)
+  predictedSalesValue: Float
+  predictedDate: DateTime
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+
+type MedicareService {
+  id: ID! @id
+  MBSScheduleFee: Float
+  description: String
+  isActive: Boolean
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}

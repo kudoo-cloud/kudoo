@@ -1,0 +1,25 @@
+# import AuthDirective from './directives/auth.graphql';
+# import { PbsTPP } from '../../prisma/generated/schema.graphql'
+# import { kPbsTPPCreateInput } from './input.graphql';
+
+type Query {
+  # for now removing @requiresAuth directive
+  pbsTPP(where: WhereUniqueInput): PbsTPP
+  # for now removing @requiresAuth directive
+  pbsTPPs(
+    where: kPbsTPPWhereInput
+    orderBy: PbsTPPOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PbsTPPConnection!
+}
+
+type Mutation {
+  createPbsTPP(data: kPbsTPPCreateInput!): PbsTPP @requiresAuth
+  updatePbsTPP(data: kPbsTPPUpdateInput!, where: WhereUniqueInput!): PbsTPP
+    @hasRoles(roles: [OWNER, ADMIN])
+  deletePbsTPP(id: ID!): PbsTPP @hasRoles(roles: [OWNER, ADMIN])
+}

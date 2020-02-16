@@ -1,0 +1,27 @@
+# import AuthDirective from './directives/auth.graphql';
+# import { Patient } from '../../prisma/generated/schema.graphql'
+# import { kPatientCreateInput } from './input.graphql';
+
+type Query {
+  patient(where: WhereUniqueInput!): Patient @requiresAuth
+  patients(
+    where: PatientWhereInput
+    orderBy: PatientOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PatientConnection! @requiresAuth
+}
+
+type Mutation {
+  createPatient(data: kPatientCreateInput!): Patient!
+    @hasRoles(roles: [ADMIN, OWNER])
+  updatePatient(data: kPatientUpdateInput!, where: WhereUniqueInput!): Patient
+    @hasRoles(roles: [ADMIN, OWNER])
+  deletePatient(where: WhereUniqueInput!): Patient
+    @hasRoles(roles: [ADMIN, OWNER])
+  uploadBulkPatients(data: [kBulkPatientUploadData!]!): ShortResponse
+    @hasRoles(roles: [ADMIN, OWNER])
+}

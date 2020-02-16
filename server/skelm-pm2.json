@@ -1,0 +1,9 @@
+{
+  "apps": [
+    {
+      "name": "SKELM",
+      "script": "npm",
+      "args" : "start"
+    }
+  ]
+}

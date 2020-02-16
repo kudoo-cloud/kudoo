@@ -1,0 +1,24 @@
+# import AuthDirective from './directives/auth.graphql';
+# import { BankTransaction } from '../../prisma/generated/schema.graphql'
+# import { kBankTransactionCreateInput } from './input.graphql';
+
+type Query {
+    bankTransaction(where: WhereUniqueInput): BankTransaction @requiresAuth
+    bankTransactions(
+        where: BankTransactionWhereInput
+        orderBy: BankTransactionOrderByInput
+        skip: Int
+        after: String
+        before: String
+        first: Int
+        last: Int
+    ): BankTransactionConnection! @requiresAuth
+}
+
+type Mutation {
+    createBankTransaction(data: kBankTransactionCreateInput!): BankTransaction @requiresAuth
+    updateBankTransaction(data: kBankTransactionUpdateInput!, where: WhereUniqueInput!): BankTransaction
+    @hasRoles(roles: [OWNER])
+    deleteBankTransaction(id: ID!): BankTransaction
+    @hasRoles(roles: [OWNER])
+}

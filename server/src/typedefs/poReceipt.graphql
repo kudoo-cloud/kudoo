@@ -1,0 +1,24 @@
+# import { InventoryConnection } from '../../prisma/generated/schema.graphql'
+# import { WhereUniqueInput, kPoReceiptCreateInput, kPoReceiptUpdateInput } from './input.graphql'
+
+type Query {
+  poReceipt(where: WhereUniqueInput!): PoReceipt
+  poReceipts(
+    where: PoReceiptWhereInput
+    orderBy: PoReceiptOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): PoReceiptConnection!
+}
+
+type Mutation {
+  createPoReceipt(data: kPoReceiptCreateInput!): PoReceipt!
+  updatePoReceipt(
+    data: kPoReceiptUpdateInput!
+    where: WhereUniqueInput!
+  ): PoReceipt!
+  deletePoReceipt(where: WhereUniqueInput!): PoReceipt!
+}

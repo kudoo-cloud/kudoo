@@ -1,0 +1,1002 @@
+# import { S3_ATTACHMENT_TYPE, GroupEvery } from './common.graphql'
+
+input UploadAttachmentInput {
+  """
+  `id` will be the id of type which is going to be uploaded
+  for e.g. if we are uploading `timesheet attachment` then id will be `timesheet_id`, if we are uploading `invoice attachment` then id will be `invoice_id`
+  """
+  id: String!
+  type: S3_ATTACHMENT_TYPE!
+  file: Upload!
+}
+
+input InvoiceNotifyInput {
+  bcc: [String]
+  cc: [String]
+  invoiceId: ID!
+  to: [String!]!
+  opts: Json
+}
+
+######################
+#### Common Input ####
+######################
+
+input WhereUniqueInput {
+  id: ID
+}
+
+input ConnectOneInput {
+  connect: WhereUniqueInput
+}
+
+########################
+#### Address Inputs ####
+########################
+
+input kAddressCreateInput {
+  street: String!
+  city: String!
+  state: String!
+  country: String!
+  postCode: String!
+  latitude: String
+  longitude: String
+}
+
+input kAddressUpdateInput {
+  street: String
+  city: String
+  state: String
+  country: String
+  postCode: String
+  latitude: String
+  longitude: String
+}
+
+input kAddressUpdateWithWhereUniqueInput {
+  where: WhereUniqueInput
+  data: kAddressUpdateInput
+}
+
+input kAddressCreateManyInput {
+  create: [kAddressCreateInput!]
+}
+
+input kAddressCreateOneInput {
+  create: kAddressCreateInput!
+}
+
+input kAddressDeleteWithWhereUniqueInput {
+  id: ID!
+}
+
+input kAddressUpdateManyInput {
+  create: [kAddressCreateInput!]
+  update: [kAddressUpdateWithWhereUniqueInput!]
+  delete: [kAddressDeleteWithWhereUniqueInput!]
+}
+
+########################
+#### Contact Inputs ####
+########################
+
+input kContactCreateInput {
+  name: String!
+  surname: String
+  email: String!
+  mobileCode: String
+  mobileNumber: String
+  landlineCode: String
+  landlineNumber: String
+}
+
+input kContactUpdateInput {
+  name: String
+  surname: String
+  email: String
+  mobileCode: String
+  mobileNumber: String
+  landlineCode: String
+  landlineNumber: String
+}
+
+input kContactUpdateWithWhereUniqueInput {
+  where: WhereUniqueInput
+  data: kContactUpdateInput
+}
+
+input kContactDeleteWithWhereUniqueInput {
+  id: ID!
+}
+
+input kContactCreateManyInput {
+  create: [kContactCreateInput!]
+}
+
+input kContactUpdateManyInput {
+  create: [kContactCreateInput!]
+  update: [kContactUpdateWithWhereUniqueInput!]
+  delete: [kContactDeleteWithWhereUniqueInput!]
+}
+
+########################
+#### Plan Input ########
+########################
+
+input kPlanCreateWithoutCompanyInput {
+  price: Float!
+  type: PlanType!
+  currency: Currency!
+}
+
+input kPlanUpdateWithoutCompanyDataInput {
+  price: Float
+  type: PlanType
+  currency: Currency
+  isActive: Boolean
+  isArchived: Boolean
+}
+
+input kPlanCreateOneWithoutCompanyInput {
+  create: kPlanCreateWithoutCompanyInput
+}
+
+input kPlanUpdateOneWithoutCompanyInput {
+  update: kPlanUpdateWithoutCompanyDataInput
+}
+
+########################
+#### Company Inputs ####
+########################
+
+input kCompanyCreateInput {
+  bankAccount: BankAccountInput
+  businessType: BusinessType
+  country: Country
+  currency: Currency!
+  govNumber: String!
+  isArchived: Boolean
+  legalName: String!
+  name: String!
+  salesTax: Boolean
+  timeSheetSettings: TimeSheetSettingsInput
+  websiteURL: String
+  logo: Upload
+  addresses: kAddressCreateManyInput
+  contacts: kContactCreateManyInput
+  activePlan: kPlanCreateOneWithoutCompanyInput
+  HPIO: String
+}
+
+input kCompanyUpdateInput {
+  bankAccount: BankAccountInput
+  businessType: BusinessType
+  country: Country
+  currency: Currency
+  govNumber: String
+  isArchived: Boolean
+  legalName: String
+  name: String
+  salesTax: Boolean
+  timeSheetSettings: TimeSheetSettingsInput
+  websiteURL: String
+  logo: Upload
+  addresses: kAddressUpdateManyInput
+  contacts: kContactUpdateManyInput
+  activePlan: kPlanUpdateOneWithoutCompanyInput
+  HPIO: String
+}
+
+input BankAccountInput {
+  name: String
+  code: String
+  accountNumber: String
+  description: String
+}
+
+input TimeSheetSettingsInput {
+  autoSendInvoices: Boolean
+  groupEvery: GroupEvery
+  workingHours: Int
+  approvalsEnabled: Boolean
+}
+
+################################
+#### Company Members Inputs ####
+################################
+
+input kCompanyMemberCreateWithoutCompanyInput {
+  isArchived: Boolean
+  role: CompanyMemberRole!
+  status: CompanyMemberStatus!
+  user: ID!
+}
+
+input kCompanyMemberUpdateInput {
+  isArchived: Boolean
+  role: CompanyMemberRole
+  status: CompanyMemberStatus
+}
+
+########################
+#### Service Inputs ####
+########################
+
+input kServiceCreateInput {
+  billingType: ServiceBillingType!
+  includeConsTax: Boolean!
+  isArchived: Boolean
+  isTemplate: Boolean
+  name: String!
+  timeBasedType: TimeBasedType
+  totalAmount: Float!
+}
+
+input kServiceUpdateInput {
+  billingType: ServiceBillingType
+  includeConsTax: Boolean
+  isArchived: Boolean
+  isTemplate: Boolean
+  name: String
+  timeBasedType: TimeBasedType
+  totalAmount: Float
+}
+
+input kServiceCreateOneInput {
+  create: kServiceCreateInput
+  connect: WhereUniqueInput
+}
+
+#########################
+#### Customer Inputs ####
+#########################
+
+input kCustomerCreateInput {
+  description: String
+  govNumber: String
+  isArchived: Boolean
+  name: String!
+  contacts: kContactCreateManyInput
+  addresses: kAddressCreateManyInput
+}
+
+input kCustomerUpdateInput {
+  description: String
+  govNumber: String
+  isArchived: Boolean
+  name: String
+  contacts: kContactUpdateManyInput
+  addresses: kAddressUpdateManyInput
+}
+
+input kCustomerCreateOneInput {
+  create: kCustomerCreateInput
+  connect: WhereUniqueInput
+}
+
+#########################
+#### Project Inputs #####
+#########################
+
+input kProjectCreateInput {
+  description: String
+  endsAt: DateTime
+  isArchived: Boolean
+  name: String!
+  startsAt: DateTime!
+  status: ProjectStatus!
+  customer: kCustomerCreateOneInput!
+  projectService: kProjectServiceCreateManyInput!
+}
+
+input kProjectUpdateInput {
+  description: String
+  endsAt: DateTime
+  isArchived: Boolean
+  name: String
+  startsAt: DateTime
+  status: ProjectStatus
+  projectService: kProjectServiceUpdateManyInput
+}
+
+input kProjectServiceCreateManyInput {
+  create: [kProjectServiceCreateInput!]
+}
+
+input kProjectServiceUpdateManyInput {
+  create: [kProjectServiceCreateInput!]
+  update: [kProjectServiceUpdateInput!]
+}
+
+input kProjectServiceCreateInput {
+  amount: Float
+  isArchived: Boolean
+  rules: kProjectServiceRuleCreateManyInput
+  service: kServiceCreateOneInput
+}
+
+input kProjectServiceUpdateInput {
+  where: WhereUniqueInput
+  data: kProjectServiceUpdateDataInput
+}
+
+input kProjectServiceUpdateDataInput {
+  amount: Float
+  isArchived: Boolean
+  rules: kProjectServiceRuleUpdateManyInput
+}
+
+input kProjectServiceRuleCreateManyInput {
+  create: [kProjectServiceRuleCreateInput!]
+}
+
+input kProjectServiceRuleUpdateManyInput {
+  create: [kProjectServiceRuleCreateInput!]
+  update: [kProjectServiceRuleUpdateInput!]
+}
+
+input kProjectServiceRuleCreateInput {
+  amount: Float
+  percent: Float
+  type: ProjectServiceRuleType
+  isPercent: Boolean
+}
+
+input kProjectServiceRuleUpdateInput {
+  where: WhereUniqueInput
+  data: kProjectServiceRuleUpdateDataInput
+}
+
+input kProjectServiceRuleUpdateDataInput {
+  amount: Float
+  percent: Float
+  type: ProjectServiceRuleType
+  isPercent: Boolean
+}
+
+##########################
+#### Timesheet Inputs ####
+##########################
+
+input kTimeSheetCreateInput {
+  endsAt: DateTime!
+  isArchived: Boolean
+  startsAt: DateTime!
+  status: TimeSheetStatus!
+  attachments: [Upload!]
+  preview: Upload
+  timeSheetEntries: kTimeSheetEntryCreateMany
+}
+
+input kTimeSheetEntryCreateMany {
+  create: [kTimeSheetEntryCreateInput!]!
+}
+
+input kTimeSheetEntryCreateInput {
+  customer: ConnectOneInput
+  project: ConnectOneInput
+  service: ConnectOneInput
+  date: DateTime!
+  duration: Float!
+  isArchived: Boolean
+  isInvoiced: Boolean
+}
+
+input kTimeSheetUpdateInput {
+  endsAt: DateTime
+  isArchived: Boolean
+  startsAt: DateTime
+  status: TimeSheetStatus
+  attachments: [Upload!]
+  preview: Upload
+  timeSheetEntries: kTimeSheetEntryUpdateMany
+}
+
+input kTimeSheetEntryUpdateMany {
+  create: [kTimeSheetEntryCreateInput!]
+  update: [kTimeSheetEntryUpdateWithWhereInput!]
+  delete: [WhereUniqueInput!]
+}
+
+input kTimeSheetEntryUpdateWithWhereInput {
+  data: kTimeSheetEntryUpdateInput
+  where: WhereUniqueInput
+}
+
+input kTimeSheetEntryUpdateInput {
+  customer: ConnectOneInput
+  project: ConnectOneInput
+  service: ConnectOneInput
+  date: DateTime
+  duration: Float
+  isArchived: Boolean
+  isInvoiced: Boolean
+}
+
+########################
+#### Invoice Inputs ####
+########################
+
+input kInvoiceCreateInput {
+  title: String
+  description: String
+  invoiceDate: DateTime!
+  dueDate: DateTime!
+  status: InvoiceStatus!
+  type: InvoiceType!
+  attachments: [Upload!]
+  buyer: ConnectOneInput!
+  preview: Upload
+  items: kInvoiceItemEntryCreateManyInput!
+}
+
+input kInvoiceItemEntryCreateManyInput {
+  create: [kInvoiceItemEntryCreateInput!]
+}
+
+input kInvoiceItemEntryCreateInput {
+  order: Int
+  description: String
+  name: String
+  price: Float
+  quantity: Float
+  tax: Float
+  project: ConnectOneInput
+  service: ConnectOneInput
+  timeSheetEntry: ConnectOneInput
+  timeSheet: ConnectOneInput
+}
+
+############################
+#### MainAccount Inputs ####
+############################
+
+input kMainAccountCreateInput {
+  code: String
+  name: String
+  type: MainAccountType
+}
+
+input kMainAccountUpdateInput {
+  code: String
+  name: String
+  type: MainAccountType
+  isArchived: Boolean
+}
+
+############################
+#### LedgerJournal Inputs ##
+############################
+
+input kLedgerJournalCreateInput {
+  total: Float!
+  currency: Currency!
+  includeConsTax: Boolean!
+  posted: Boolean!
+  description: String!
+}
+
+input kLedgerJournalUpdateInput {
+  total: Float
+  currency: Currency
+  includeConsTax: Boolean
+  posted: Boolean
+  isArchived: Boolean
+  description: String
+}
+
+##################################
+#### LedgerTransaction Inputs ####
+##################################
+
+input kLedgerTransactionCreateInput {
+  mainAccount: ConnectOneInput
+  ledgerJournal: ConnectOneInput
+  drcr: DrCr
+  amount: Float
+  currency: Currency
+  date: DateTime
+}
+
+input kLedgerTransactionUpdateInput {
+  mainAccount: ConnectOneInput
+  ledgerJournal: ConnectOneInput
+  drcr: DrCr
+  amount: Float
+  currency: Currency
+  date: DateTime
+  isArchived: Boolean
+}
+
+###############################
+#### LedgerPosting Inputs ####
+###############################
+
+input kLedgerPostingCreateInput {
+  mainAccount: ConnectOneInput
+  postingType: PostingType
+}
+
+input kLedgerPostingUpdateInput {
+  mainAccount: ConnectOneInput
+  postingType: PostingType
+  isArchived: Boolean
+}
+
+################################
+#### BankTransaction Inputs ####
+################################
+
+input kBankTransactionCreateInput {
+  transactionDate: DateTime
+  amount: Float
+  description: String
+}
+
+input kBankTransactionUpdateInput {
+  transactionDate: DateTime
+  amount: Float
+  description: String
+  isArchived: Boolean
+}
+
+###############################
+#### Inventory Inputs ####
+###############################
+
+input kInventoryCreateInput {
+  name: String!
+  inventoryModel: InventoryModel
+  uom: UOM
+}
+
+input kInventoryUpdateInput {
+  name: String
+  inventoryModel: InventoryModel
+  uom: UOM
+  isArchived: Boolean
+}
+
+###############################
+#### WareHouse Inputs ####
+###############################
+
+input kWareHouseCreateInput {
+  name: String!
+}
+
+input kWareHouseUpdateInput {
+  name: String
+  isArchived: Boolean
+}
+
+###############################
+#### PurchaseOrder Inputs ####
+###############################
+
+input kPurchaseOrderCreateInput {
+  pbsOrganisation: String
+  date: DateTime
+  status: PoStatus!
+  orderer: ConnectOneInput
+  supplier: ConnectOneInput
+  isPbsPO: Boolean
+  poNumber: Int
+  preview: Upload
+}
+
+input kPurchaseOrderUpdateInput {
+  pbsOrganisation: String
+  date: DateTime
+  status: PoStatus
+  isArchived: Boolean
+  orderer: ConnectOneInput
+  supplier: ConnectOneInput
+  isPbsPO: Boolean
+  preview: Upload
+}
+
+input PurchaseOrderMailInput {
+  bcc: [String]
+  cc: [String]
+  to: [String!]!
+  opts: Json
+  poNumber: Int
+  name: String
+  companyName: String
+  preview: Upload
+}
+
+###############################
+#### PoReceipt Inputs ####
+###############################
+
+input kPoReceiptCreateInput {
+  receiptNumber: String!
+  receiptDate: DateTime!
+  purchaseOrder: ConnectOneInput!
+}
+
+input kPoReceiptUpdateInput {
+  receiptNumber: String
+  receiptDate: DateTime
+  purchaseOrder: ConnectOneInput
+  isArchived: Boolean
+}
+
+###############################
+#### InventoryOnHand Inputs ###
+###############################
+
+input kInventoryOnHandCreateInput {
+  date: DateTime
+  purchaseOrder: ConnectOneInput
+  pbsDrug: String
+  onHandQty: Float!
+  item: ConnectOneInput
+  warehouse: ConnectOneInput!
+}
+
+input kInventoryOnHandUpdateInput {
+  date: DateTime
+  purchaseOrder: ConnectOneInput
+  onHandQty: Float
+  item: ConnectOneInput
+  pbsDrug: String
+  warehouse: ConnectOneInput
+  isArchived: Boolean
+}
+
+#################################
+#### PurchaseOrderLine Inputs ###
+#################################
+
+input kPurchaseOrderLineCreateInput {
+  qty: Int!
+  unit: UOM
+  unitPrice: Float
+  item: ConnectOneInput
+  site: ConnectOneInput!
+  pbsDrug: String
+  purchaseOrder: ConnectOneInput!
+  poReceipt: ConnectOneInput
+}
+
+input kPurchaseOrderLineUpdateInput {
+  qty: Int!
+  unit: UOM
+  unitPrice: Float
+  item: ConnectOneInput
+  pbsDrug: String
+  site: ConnectOneInput!
+  purchaseOrder: ConnectOneInput!
+  poReceipt: ConnectOneInput
+  isArchived: Boolean
+}
+
+########################
+#### Supplier Inputs ###
+########################
+
+input kSupplierCreateInput {
+  name: String!
+  termsOfPayment: SupplierTermsOfPayment!
+  bankAccount: Json
+  emailAddressForRemittance: String!
+  address: kAddressCreateManyInput
+}
+
+input kSupplierUpdateInput {
+  name: String
+  termsOfPayment: SupplierTermsOfPayment
+  bankAccount: Json
+  emailAddressForRemittance: String
+  address: kAddressUpdateManyInput
+  isArchived: Boolean
+}
+
+##########################
+#### AssetGroup Inputs ###
+##########################
+
+input kAssetGroupCreateInput {
+  name: String!
+  depreciationType: AssetGroupDepreciationType!
+  usefulLife: Int!
+}
+
+input kAssetGroupUpdateInput {
+  name: String
+  depreciationType: AssetGroupDepreciationType
+  usefulLife: Int
+  isArchived: Boolean
+}
+
+##########################
+#### Asset Inputs ###
+##########################
+
+input kAssetCreateInput {
+  name: String!
+  dateOfAquisition: DateTime
+  aquisitionPrice: Float
+  netBookValue: Float
+  depreciation: Float
+  salvageValue: Float
+  assetGroup: ConnectOneInput
+}
+
+input kAssetUpdateInput {
+  name: String
+  dateOfAquisition: DateTime
+  aquisitionPrice: Float
+  netBookValue: Float
+  depreciation: Float
+  salvageValue: Float
+  assetGroup: ConnectOneInput
+  isArchived: Boolean
+}
+
+##########################
+#### PBS Organisation ####
+##########################
+
+input kPbsOrganisationWhereInput {
+  title: String
+}
+
+input kPbsOrganisationCreateInput {
+  code: String
+  title: String
+  street: String
+  city: String
+  stateAddress: String
+  postcode: String
+  phone: String
+  effectiveFrom: DateTime
+  effectiveTo: DateTime
+}
+
+input kPbsOrganisationUpdateInput {
+  code: String
+  title: String
+  street: String
+  city: String
+  stateAddress: String
+  postcode: String
+  phone: String
+  effectiveFrom: DateTime
+  effectiveTo: DateTime
+  isArchived: Boolean
+}
+
+##########################
+######## PBS TPP #########
+##########################
+
+input kPbsTPPWhereInput {
+  brandName: String
+  organisation_id: String
+}
+
+input kPbsTPPCreateInput {
+  snomedCode: String
+  clinicalPreferredTerm: String
+  packSize: Int
+  brandName: String
+  exManufacturerPrice: Float
+  pricingModel: PBSPricingModel
+  mpp_id: String
+  organisation_id: ConnectOneInput
+  effectiveFrom: DateTime
+  effectiveTo: DateTime
+}
+
+input kPbsTPPUpdateInput {
+  snomedCode: String
+  clinicalPreferredTerm: String
+  packSize: Int
+  brandName: String
+  exManufacturerPrice: Float
+  pricingModel: PBSPricingModel
+  mpp_id: String
+  organisation_id: ConnectOneInput
+  effectiveFrom: DateTime
+  effectiveTo: DateTime
+  isArchived: Boolean
+}
+
+##########################
+######## Ap Invoice #########
+##########################
+
+input kApInvoiceCreateInput {
+  status: ApInvoiceStatus
+  company: ConnectOneInput
+  purchaseOrder: ConnectOneInput
+  invoiceNumber: String
+}
+
+input kApInvoiceUpdateInput {
+  status: ApInvoiceStatus
+  company: ConnectOneInput
+  purchaseOrder: ConnectOneInput
+  invoiceNumber: String
+  isArchived: Boolean
+}
+
+##############################
+######## Sales Order #########
+##############################
+
+input kSalesOrderCreateInput {
+  customer: ConnectOneInput
+  transactionDate: DateTime
+  currency: Currency
+  company: ConnectOneInput
+}
+
+input kSalesOrderUpdateInput {
+  customer: ConnectOneInput
+  transactionDate: DateTime
+  currency: Currency
+  company: ConnectOneInput
+  isArchived: Boolean
+}
+
+###################################
+######## Sales Order Line #########
+###################################
+
+input kSalesOrderLineCreateInput {
+  salesOrder: ConnectOneInput
+  inventory: ConnectOneInput
+  qty: Int
+  unitPrice: Float
+}
+
+input kSalesOrderLineUpdateInput {
+  salesOrder: ConnectOneInput
+  inventory: ConnectOneInput
+  qty: Int
+  unitPrice: Float
+  isArchived: Boolean
+}
+
+###################################
+######## Medicare Service #########
+###################################
+
+input kMedicareServiceCreateInput {
+  MBSScheduleFee: Float!
+  description: String!
+}
+
+input kMedicareServiceUpdateInput {
+  isArchived: Boolean
+  MBSScheduleFee: Float
+  description: String
+}
+
+###################################
+######## Names Input ##############
+###################################
+
+input kNameCreateInput {
+  name: String!
+  isPrimary: Boolean
+}
+
+input kNameUpdateDataInput {
+  name: String
+  isPrimary: Boolean
+  isDeleted: Boolean
+}
+
+input kNameUpdateWithWhereUniqueNestedInput {
+  where: WhereUniqueInput!
+  data: kNameUpdateDataInput!
+}
+
+input kNameCreateManyInput {
+  create: [kNameCreateInput!]
+}
+
+input kNameUpdateManyInput {
+  create: [kNameCreateInput!]
+  update: [kNameUpdateWithWhereUniqueNestedInput!]
+}
+
+###################################
+############ Patient ##############
+###################################
+input kPatientCreateInput {
+  title: String
+  firstName: String
+  lastName: String
+  dateOfBirth: DateTime
+  gender: Gender
+  dvaCardType: DVACardType
+  aboriginalStatus: AboriginalStatus
+  pensionerConcession: String
+  commonwealthSeniors: String
+  healthcareConcession: String
+  safetyNetConcession: Float
+  medicareNumber: String
+  DVA: String
+  potentialDuplicate: Boolean
+  oneName: Boolean
+  ihi: String
+  ihiValidatedDate: DateTime
+  noOfBirths: Int
+  deceasedDate: DateTime
+  address: kAddressCreateOneInput
+  birthAddress: kAddressCreateOneInput
+  names: kNameCreateManyInput
+}
+
+input kPatientUpdateInput {
+  title: String
+  firstName: String
+  lastName: String
+  dateOfBirth: DateTime
+  gender: Gender
+  dvaCardType: DVACardType
+  aboriginalStatus: AboriginalStatus
+  pensionerConcession: String
+  commonwealthSeniors: String
+  healthcareConcession: String
+  safetyNetConcession: Float
+  medicareNumber: String
+  DVA: String
+  potentialDuplicate: Boolean
+  oneName: Boolean
+  ihi: String
+  ihiValidatedDate: DateTime
+  noOfBirths: Int
+  deceasedDate: DateTime
+  address: kAddressCreateOneInput
+  birthAddress: kAddressCreateOneInput
+  isArchived: Boolean
+  names: kNameUpdateManyInput
+}
+
+input kBulkPatientUploadData {
+  givenName: String
+  familyName: String
+  DVA: String
+  medicareNumber: String
+  ihi: String
+}
+
+###################################
+######## HealthCare Provider ######
+###################################
+
+input kHealthcareProviderCreateInput {
+  occupation: String
+  hpii: String
+  firstName: String
+  lastName: String
+  dateOfBirth: DateTime
+  emailAddress: String
+  gender: Gender
+  ahpraNumber: String
+  address: kAddressCreateOneInput
+  company: ConnectOneInput
+}
+
+input kHealthcareProviderUpdateInput {
+  occupation: String
+  hpii: String
+  firstName: String
+  lastName: String
+  dateOfBirth: DateTime
+  emailAddress: String
+  gender: Gender
+  ahpraNumber: String
+  address: AddressUpdateOneInput
+  company: ConnectOneInput
+  isArchived: Boolean
+}

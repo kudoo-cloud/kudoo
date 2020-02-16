@@ -1,0 +1,55 @@
+# import AuthDirective from './directives/auth.graphql';
+# import ShortResponse from './common.graphql'
+# import { kCompanyCreateInput } from './input.graphql'
+# import { CompanyWhereUniqueInput, CompanyWhereInput, CompanyOrderByInput, Company, CompanyConnection, CompanyUpdateInput, CompanyMemberRole  } from '../../prisma/generated/schema.graphql'
+
+type Query {
+  company(where: WhereUniqueInput): Company
+    @hasRoles(roles: [ADMIN, OWNER, USER])
+  companies(
+    """
+    Whether want to include joined companies in response
+    """
+    joined: Boolean
+    """
+    Whether want to include created companies in response
+    """
+    created: Boolean
+  ): [Company] @requiresAuth
+}
+
+type Mutation {
+  createCompany(data: kCompanyCreateInput!): Company @requiresAuth
+  updateCompany(data: kCompanyUpdateInput!, where: WhereUniqueInput!): Company
+    @hasRoles(roles: [OWNER])
+  deleteCompany(id: ID!): Company @hasRoles(roles: [OWNER])
+  undeleteCompany(id: ID!): Company @hasRoles(roles: [OWNER])
+  """
+  Invite User
+  """
+  invite(
+    email: String!
+    role: CompanyMemberRole!
+    baseURL: String!
+  ): ShortResponse @hasRoles(roles: [ADMIN, OWNER])
+  """
+  Resend Invite
+  """
+  resendInvite(
+    email: String!
+    role: CompanyMemberRole!
+    companyMemberId: ID!
+    baseURL: String!
+  ): ShortResponse @hasRoles(roles: [ADMIN, OWNER])
+  updateCompanyMember(
+    data: kCompanyMemberUpdateInput!
+    where: WhereUniqueInput!
+  ): CompanyMember @hasRoles(roles: [ADMIN, OWNER])
+  deleteCompanyMember(id: ID!): ShortResponse @hasRoles(roles: [ADMIN, OWNER])
+  changeSubscriptionPlan(
+    sourceToken: String
+    toPlan: String
+    quantity: Float
+    type: STRIPE_CHANGE_PLAN_TYPE!
+  ): ShortResponse @hasRoles(roles: [ADMIN, OWNER])
+}

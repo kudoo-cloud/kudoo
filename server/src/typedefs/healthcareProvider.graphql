@@ -1,0 +1,28 @@
+# import AuthDirective from './directives/auth.graphql';
+# import { HealthcareProvider } from '../../prisma/generated/schema.graphql'
+# import { kBankTransactionCreateInput } from './input.graphql';
+
+type Query {
+  healthcareProvider(where: WhereUniqueInput!): HealthcareProvider @requiresAuth
+  healthcareProviders(
+    where: HealthcareProviderWhereInput
+    orderBy: HealthcareProviderOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): HealthcareProviderConnection! @requiresAuth
+}
+
+type Mutation {
+  createHealthcareProvider(
+    data: kHealthcareProviderCreateInput!
+  ): HealthcareProvider! @hasRoles(roles: [OWNER, ADMIN])
+  updateHealthcareProvider(
+    data: kHealthcareProviderUpdateInput!
+    where: WhereUniqueInput!
+  ): HealthcareProvider @hasRoles(roles: [OWNER, ADMIN])
+  deleteHealthcareProvider(where: WhereUniqueInput!): HealthcareProvider
+    @hasRoles(roles: [OWNER, ADMIN])
+}

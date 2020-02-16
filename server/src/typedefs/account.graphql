@@ -1,0 +1,44 @@
+# import UserWithToken from "./user.graphql"
+# import ShortResponse from './common.graphql'
+# import AuthDirective from './directives/auth.graphql'
+
+type Mutation {
+  """
+  Register new user
+  """
+  register(
+    email: String!
+    firstName: String!
+    lastName: String!
+    password: String!
+    passwordRepeat: String!
+    baseURL: String!
+  ): ShortResponse
+  """
+  Login to account
+  """
+  login(email: String!, password: String!): UserWithToken
+  """
+  Start reset password process
+  """
+  remember(email: String!, baseURL: String!): ShortResponse
+  """
+  Reset password incase of forgot it
+  """
+  resetPassword(password: String!, passwordRepeat: String!): ShortResponse
+    @requiresAuth
+
+  """
+  Update User
+  """
+  updateUser(
+    firstName: String
+    lastName: String
+    jobTitle: String
+    contactNumber: Json
+    secondAuthEnabled: Boolean
+    oldPassword: String
+    password: String
+    passwordRepeat: String
+  ): UserWithToken @requiresAuth
+}

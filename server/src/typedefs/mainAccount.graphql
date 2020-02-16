@@ -1,0 +1,24 @@
+# import AuthDirective from './directives/auth.graphql';
+# import { MainAccount } from '../../prisma/generated/schema.graphql'
+# import { kMainAccountCreateInput } from './input.graphql';
+
+type Query {
+    mainAccount(where: MainAccountWhereInput): MainAccount @requiresAuth
+    mainAccounts(
+        where: MainAccountWhereInput
+        orderBy: MainAccountOrderByInput
+        skip: Int
+        after: String
+        before: String
+        first: Int
+        last: Int
+    ): MainAccountConnection! @requiresAuth
+}
+
+type Mutation {
+    createMainAccount(data: kMainAccountCreateInput!): MainAccount @requiresAuth
+    updateMainAccount(data: kMainAccountUpdateInput!, where: WhereUniqueInput!): MainAccount
+        @hasRoles(roles: [OWNER])
+    deleteMainAccount(id: ID!): MainAccount
+        @hasRoles(roles: [OWNER])
+}

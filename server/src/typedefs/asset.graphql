@@ -1,0 +1,21 @@
+# import { AssetGroupConnection } from '../../prisma/generated/schema.graphql'
+# import { WhereUniqueInput, kAssetCreateInput, kAssetUpdateInput } from './input.graphql'
+
+type Query {
+  asset(where: WhereUniqueInput!): Asset
+  assets(
+    where: AssetWhereInput
+    orderBy: AssetOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): AssetConnection!
+}
+
+type Mutation {
+  createAsset(data: kAssetCreateInput!): Asset!
+  updateAsset(data: kAssetUpdateInput!, where: WhereUniqueInput!): Asset!
+  deleteAsset(where: WhereUniqueInput!): Asset!
+}

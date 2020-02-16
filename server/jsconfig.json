@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["./src/*"],
+      "@kudoo/email/*": ["@kudoo/email/build/*"]
+    }
+  },
+  "exclude": ["node_modules"],
+  "path-intellisense.autoSlashAfterDirectory": true
+}

@@ -1,0 +1,24 @@
+# import { InventoryConnection } from '../../prisma/generated/schema.graphql'
+# import { WhereUniqueInput, kInventoryCreateInput, kInventoryUpdateInput } from './input.graphql'
+
+type Query {
+  inventory(where: WhereUniqueInput!): Inventory
+  inventories(
+    where: InventoryWhereInput
+    orderBy: InventoryOrderByInput
+    skip: Int
+    after: String
+    before: String
+    first: Int
+    last: Int
+  ): InventoryConnection!
+}
+
+type Mutation {
+  createInventory(data: kInventoryCreateInput!): Inventory!
+  updateInventory(
+    data: kInventoryUpdateInput!
+    where: WhereUniqueInput!
+  ): Inventory!
+  deleteInventory(where: WhereUniqueInput!): Inventory!
+}
