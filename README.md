@@ -7,6 +7,7 @@
     ╚═╝  ╚═╝ ╚═════╝ ╚═════╝  ╚═════╝  ╚═════╝     
 
   - [Prerequisites](#prerequisites)
+  - [Running a local dev environment](#running-a-local-dev-environment)
 
 # Prerequisites
 You'll need to have the following running on your local machine
@@ -20,9 +21,12 @@ Under the frontend folder copy the `env.sample` file to two new files:
 * .env
 * .env.development
 
-To get a local running environment we need to ensure that the following are running:
+## NPM packages
+You'll need to have the following global packages installed
+`npm install -g pm2`
 
-* [Prisma](https://www.prisma.io/)
-* Skelm
+# Running a local dev environment
+If you are on Linux or MacOS you can simply run the following command
+`bash ./run.sh`
 
-Once those are up we can then run our static front end.
+If you're on Windows, you'll have to wait awhile until we get a Powershell script working.
