@@ -1,6 +1,6 @@
 {
   "name": "kudoo",
-  "version": "2.5.71",
+  "version": "2.5.72",
   "description": "Kudoo Web App",
   "main": "index.js",
   "engines": {
@@ -22,11 +22,6 @@
     "postversion": "git --git-dir .git --work-tree ./ add package.json package-lock.json",
     "pre-commit-hook": "npm --no-git-tag-version version patch",
     "run-all-pre-commit": "npm run pre-commit-hook"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run pre-commit-hook && npm run run-all-pre-commit"
-    }
   },
   "dependencies": {
     "@babel/runtime": "7.3.1",
