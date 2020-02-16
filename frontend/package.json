@@ -1,6 +1,6 @@
 {
   "name": "kudoo",
-  "version": "2.5.71",
+  "version": "2.5.72",
   "description": "Kudoo Web App",
   "main": "index.js",
   "engines": {
@@ -23,14 +23,8 @@
     "pre-commit-hook": "npm --no-git-tag-version version patch",
     "run-all-pre-commit": "npm run pre-commit-hook"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run pre-commit-hook && npm run run-all-pre-commit"
-    }
-  },
   "dependencies": {
     "@babel/runtime": "7.3.1",
-    "@kudoo/common": "git+https://git.kudoo.io/kudoo-cloud/common.git#develop",
     "@kudoo/components": "2.2.2",
     "@kudoo/graphql": "3.0.9",
     "@lcdev/toml-loader": "^1.0.3",
@@ -65,7 +59,6 @@
     "imports-loader": "^0.8.0",
     "jquery": "^3.4.1",
     "jspdf": "1.5.3",
-    "logrocket": "^0.6.19",
     "moment": "^2.22.2",
     "normalize.css": "^7.0.0",
     "np": "^5.2.1",

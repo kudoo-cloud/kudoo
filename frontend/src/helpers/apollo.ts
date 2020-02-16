@@ -1,7 +1,6 @@
 import ApolloClient, { FetchPolicy, ErrorPolicy } from 'apollo-client';
 import idx from 'idx';
 import { onError } from 'apollo-link-error';
-import LogRocket from 'logrocket';
 import { createUploadLink } from 'apollo-upload-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { CachePersistor } from 'apollo-cache-persist';
@@ -35,12 +34,6 @@ const middlewareLink = new ApolloLink((operation, forward) => {
 
 const responseMiddleware = new ApolloLink((operation, forward) => {
   return forward(operation).map(response => {
-    if (process.env.NODE_ENV === 'production') {
-      LogRocket.info(`[GraphQL log]: ${operation.operationName}`, {
-        response,
-        variables: operation.variables,
-      });
-    }
     return response;
   });
 });
@@ -56,20 +49,6 @@ const onErrorLink = onError(({ graphQLErrors, networkError, operation }) => {
       store.dispatch(profileActions.logoutUser());
     }
 
-    if (process.env.NODE_ENV === 'production') {
-      LogRocket.error(
-        `[GraphQL error]: ${operation.operationName}`,
-        graphQLErrors
-      );
-    }
-  }
-  if (networkError) {
-    if (process.env.NODE_ENV === 'production') {
-      LogRocket.error(
-        `[GraphQL error]: ${operation.operationName}`,
-        networkError
-      );
-    }
   }
 });
 
@@ -116,4 +95,4 @@ const clearStore = () => {
   persistor.resume();
 };
 
-export { client, persistor, clearStore, LogRocket };
+export { client, persistor, clearStore };

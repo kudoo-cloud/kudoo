@@ -33,7 +33,6 @@ export interface IProps {
   actions: any;
   history: any;
   location: any;
-  logRocketIdentify: (props) => void;
   checkActiveLanguage: (props) => void;
   isPreviewRoute: () => boolean;
   shouldRedirectToManageCompany: () => boolean;
