@@ -11,4 +11,5 @@ cache:
     - node_modules
 
 script:
+  - cd frontend
   - npm run test
