@@ -32,8 +32,8 @@ import {
   DraftTimesheetsTab,
   PatientsList,
   HealthcareProvidersList,
-} from '../screens/LoadableComponents';
-import { ITab, SecurityRole, LicensePlan } from './types';
+} from '../LoadableComponents';
+import { ITab, SecurityRole, LicensePlan } from '@client/store/types/security';
 
 /**
  * Inventory Tabs

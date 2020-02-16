@@ -4,11 +4,11 @@ import { compose } from 'recompose';
 import { connect } from 'react-redux';
 import { withStyles, Tabs, helpers as utils } from '@kudoo/components';
 import UpgradeComponent from '@client/common_screens/UpgradeComponent';
-import { ITab } from '@client/security/types';
+import { ITab } from '@client/store/types/security';
 import {
   isFeatureAvailable,
   needsLicenseUpgrade,
-} from '@client/security/helper';
+} from '@client/helpers/security';
 import styles from './styles';
 
 interface IProps {

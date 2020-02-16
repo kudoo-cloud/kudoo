@@ -1,5 +1,5 @@
 import { handleActions } from 'redux-actions';
-import { Product } from '@client/security/types';
+import { Product } from '@client/store/types/security';
 import idx from 'idx';
 import Types from '../types/app';
 import ProfileTypes from '../types/profile';

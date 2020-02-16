@@ -90,11 +90,11 @@ class CompanySettings extends Component<Props, State> {
   render() {
     const { classes, actions, match } = this.props;
     const activeTab = this._findActiveSecondaryTab();
-    const companyId = idx(match, _ => _.params.companyId);
+    const companyId = idx(match, _ => _.params.companyId) || '';
     return (
       <div className={classes.page}>
         <SelectedCompany
-          onChange={id => {
+          onChange={({ id }) => {
             if (id) {
               this.props.history.push(URL.COMPANY_SETTINGS({ companyId: id }));
             }

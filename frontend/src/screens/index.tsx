@@ -6,13 +6,17 @@ import { Route, Switch, Redirect, withRouter } from 'react-router';
 import get from 'lodash/get';
 import { ProfileActions, AppActions } from '@client/store/actions';
 import URL from '@client/helpers/urls';
-import Security, { CommonRoutes } from '@client/security/index';
-import { Product, IAvailability, LicensePlan } from '@client/security/types';
+import Routes from '@client/screens/routes';
+import {
+  Product,
+  IAvailability,
+  LicensePlan,
+} from '@client/store/types/security';
 import idx from 'idx';
 import {
   isFeatureAvailable,
   needsLicenseUpgrade,
-} from '@client/security/helper';
+} from '@client/helpers/security';
 import * as SceneComponents from './LoadableComponents';
 import UpgradeComponent from './common/UpgradeComponent';
 
@@ -24,13 +28,13 @@ class Screens extends Component<any> {
     const isLoggedIn = get(this.props, 'profile.isLoggedIn');
     const pathname = this.props.location.pathname;
 
+    const CommonRoutes = idx(Routes, x => x['common']) || [];
     const ManufacturingRoutes =
-      idx(Security, x => x[Product.manufacturing].routes) || [];
-    const ProjectRoutes = idx(Security, x => x[Product.projects].routes) || [];
-    const HealthRoutes = idx(Security, x => x[Product.health].routes) || [];
-    const FinanceRoutes = idx(Security, x => x[Product.finance].routes) || [];
-    const InventoryRoutes =
-      idx(Security, x => x[Product.inventory].routes) || [];
+      idx(Routes, x => x[Product.manufacturing]) || [];
+    const ProjectRoutes = idx(Routes, x => x[Product.projects]) || [];
+    const HealthRoutes = idx(Routes, x => x[Product.health]) || [];
+    const FinanceRoutes = idx(Routes, x => x[Product.finance]) || [];
+    const InventoryRoutes = idx(Routes, x => x[Product.inventory]) || [];
     const routes = [
       ...CommonRoutes,
       ...ManufacturingRoutes,

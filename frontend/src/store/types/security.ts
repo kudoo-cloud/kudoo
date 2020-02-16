@@ -16,12 +16,12 @@ export interface ISecurityConfig {
  * The products that Kudoo currently offers.
  */
 export enum Product {
-  projects = 'PROJECTS',
-  manufacturing = 'MANUFACTURING',
-  mobile = 'MOBILE',
-  finance = 'FINANCE',
-  health = 'HEALTH',
-  inventory = 'INVENTORY',
+  projects = 'projects',
+  manufacturing = 'manufacturing',
+  mobile = 'mobile',
+  finance = 'finance',
+  health = 'health',
+  inventory = 'inventory',
 }
 
 export type ProductType = {
