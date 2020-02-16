@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.com/kudoo-cloud/kudoo.svg?branch=master)](https://travis-ci.com/kudoo-cloud/kudoo)
 
   - [Prerequisites](#prerequisites)
   - [Credentials](#credentials)
