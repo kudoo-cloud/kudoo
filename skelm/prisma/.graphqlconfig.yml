@@ -1,5 +1,0 @@
-projects:
-  prisma:
-    schemaPath: ./generated/schema.graphql
-    extensions:
-      prisma: ./prisma.yml

@@ -35,7 +35,6 @@ import {
   SUPPORTED_COUNTRIES_COMPANY,
   DEFAULT_LOCALE,
 } from '@client/helpers/locale';
-import { CURRENCY } from '@kudoo/common';
 import { showToast } from '@client/helpers/toast';
 import { any } from 'prop-types';
 import styles from './styles';
@@ -423,7 +422,7 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
                 <div className={classes.fieldRow}>
                   <Dropdown
                     label='Currency'
-                    items={CURRENCY}
+                    items='AUD'
                     value={values.currency}
                     onChange={item => {
                       setFieldValue('currency', item.value);

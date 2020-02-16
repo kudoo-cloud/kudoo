@@ -149,15 +149,15 @@ const UserDetails: React.FC<IProps> = props => {
               {...props}
               tiersPricing={[
                 {
-                  pricing: process.env.FREE_PLAN_PRICING || 0,
+                  pricing: 0,
                   currency: 'AUD',
                 },
                 {
-                  pricing: process.env.PRO_PLAN_PRICING || 0,
+                  pricing: 0,
                   currency: 'AUD',
                 },
                 {
-                  pricing: process.env.ENTERPRISE_PLAN_PRICING || 0,
+                  pricing: 0,
                   currency: 'AUD',
                 },
               ]}

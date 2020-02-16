@@ -24,7 +24,6 @@ import {
   withUpdateLedgerJournal,
 } from '@kudoo/graphql';
 import { showToast } from '@client/helpers/toast';
-import { CURRENCY } from '@kudoo/common';
 import styles from './styles';
 
 interface IProps {
@@ -164,7 +163,7 @@ class CreateLedgerJournal extends Component<IProps, IState> {
                 placeholder={'Select Currency'}
                 name={'currency'}
                 id={'currency'}
-                items={CURRENCY}
+                items={'AUD'}
                 value={values.currency}
                 onChange={e => setFieldValue('currency', e.value)}
                 onClose={() => setFieldTouched('currency')}
