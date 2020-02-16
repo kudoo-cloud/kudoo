@@ -7,7 +7,6 @@ import isEmpty from 'lodash/isEmpty';
 import unset from 'lodash/unset';
 import { compose, lifecycle, withHandlers } from 'recompose';
 import { withRouter, matchPath } from 'react-router';
-import { LogRocket } from '@client/helpers/apollo';
 import { SecurityRole, Product } from '@client/security/types';
 import { ProfileActions, AppActions } from '@client/store/actions';
 import { withStyles } from '@kudoo/components';
@@ -77,29 +76,6 @@ export default withRouter(
       }
     ),
     withHandlers<any, any>({
-      logRocketIdentify: () => props => {
-        if (
-          process.env.NODE_ENV === 'production' &&
-          process.env.LOGROCKET_PROJECT_ID != null
-        ) {
-          LogRocket.init(process.env.LOGROCKET_PROJECT_ID);
-          const { profile } = props;
-          if (profile.isLoggedIn) {
-            console.log('send logrocket identify', profile.email);
-            LogRocket.identify(profile.email, {
-              email: profile.email,
-              firstName: profile.firstName,
-              lastName: profile.lastName,
-              token: profile.token,
-              id: profile.id,
-              expiresAt: profile.expiresAt,
-              signedAt: profile.signedAt,
-              userId: profile.userId,
-              company: profile.selectedCompany,
-            });
-          }
-        }
-      },
       checkActiveLanguage: ({ actions }) => props => {
         const { profile, app } = props;
         if (!profile.selectedCompany && app.activeLanguage !== DEFAULT_LOCALE) {
@@ -147,7 +123,6 @@ export default withRouter(
     }),
     lifecycle<IProps, {}>({
       componentDidMount() {
-        this.props.logRocketIdentify(this.props);
         this.props.checkActiveLanguage(this.props);
       },
       componentDidUpdate(prevProps: IProps) {
@@ -156,7 +131,6 @@ export default withRouter(
         const prevPropsProfile = prevProps.profile || {};
         if (prevPropsLoggedIn && profile.isLoggedIn !== prevPropsLoggedIn) {
           // profile isLoggedIn status changes
-          this.props.logRocketIdentify(this.props);
         }
         this.props.checkActiveLanguage(this.props);
 
