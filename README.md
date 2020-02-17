@@ -1,4 +1,5 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![kudoo-cloud](https://circleci.com/gh/kudoo-cloud>/kudoo.svg?style=svg)]()
 
 # [Kudoo](https://kudoo.io)
  
