@@ -19,7 +19,7 @@ jobs:
     steps:
       - checkout
       - run: 
-          npm install
+          cd frontend && npm install
       # run tests!
       - run: 
-          npm run test
+          cd frontend && npm run test
