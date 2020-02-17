@@ -1,25 +1,21 @@
-# JavaScript Node CircleCI 2.0 configuration file
-#
-# Check https://circleci.com/docs/2.0/language-javascript/ for more details
-#
-version: 2
+version: 2.1
+
 jobs:
   build:
     docker:
-      # specify the version you desire here
       - image: circleci/node:12.16
-
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/mongo:3.4.4
-
-    working_directory: ~/frontend
-
     steps:
       - checkout
-      - run: 
-          cd frontend && npm install
-      # run tests!
-      - run: 
-          cd frontend && npm run test
+      - run:
+          name: Install dependencies and build project
+          command: cd frontend && npm install
+      - sonarcloud/scan
+
+orbs:
+  sonarcloud: sonarsource/sonarcloud@1.0.1
+
+workflows:
+  main:
+    jobs:
+      - build:
+          context: SonarCloud
