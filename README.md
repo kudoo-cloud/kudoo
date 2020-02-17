@@ -1,7 +1,7 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # [Kudoo](https://kudoo.io)
-
+ 
   - [Prerequisites](#prerequisites)
   - [Credentials](#credentials)
   - [Running a local dev environment](#running-a-local-dev-environment)
