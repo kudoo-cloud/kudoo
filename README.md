@@ -1,4 +1,3 @@
-[![Build Status](https://travis-ci.com/kudoo-cloud/kudoo.svg?branch=master)](https://travis-ci.com/kudoo-cloud/kudoo)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 # [Kudoo](https://kudoo.io)
