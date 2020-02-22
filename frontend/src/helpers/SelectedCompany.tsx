@@ -15,7 +15,9 @@ const SelectedCompany: React.FC<Props> = props => {
   const { selectedCompany, onChange, children } = props;
 
   useDeepCompareEffect(() => {
-    onChange(selectedCompany);
+    if (onChange) {
+      onChange(selectedCompany);
+    }
   }, [selectedCompany]);
 
   return <React.Fragment>{children}</React.Fragment>;
