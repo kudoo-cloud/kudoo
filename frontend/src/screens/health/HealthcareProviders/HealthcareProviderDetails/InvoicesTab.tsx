@@ -61,7 +61,7 @@ class InvoicesTab extends React.Component<Props, any> {
         date_sent: moment(invoice.invoiceDate).format('DD MMM YYYY'),
         status: invoice.status === 'FULLY_PAID' ? 'Paid' : 'Unpaid',
         due_date: moment(invoice.dueDate).format('DD MMM YYYY'),
-        total_amount: i18n._('currency-symbol')`` + `${invoice.total}`,
+        total_amount: i18n._('currency-symbol') + `${invoice.total}`,
       };
     });
 

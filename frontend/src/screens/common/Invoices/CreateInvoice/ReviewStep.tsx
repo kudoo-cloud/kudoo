@@ -41,24 +41,24 @@ import SendInvoiceModal from './SendInvoiceModal';
 import styles, { reviewStyles } from './styles';
 
 type Props = {
-  actions: Record<string, any>;
-  makeStepActive: Function;
-  markedVisited: Function;
-  unmarkedVisited: Function;
+  actions?: Record<string, any>;
+  makeStepActive?: Function;
+  markedVisited?: Function;
+  unmarkedVisited?: Function;
   createType: 'timesheet' | 'project' | 'text';
-  newInvoice: Record<string, any>;
-  createInvoice: Function;
-  profile: Record<string, any>;
-  createCustomer: Function;
-  resetInvoiceData: Function;
-  invoiceNotify: Function;
-  company: Record<string, any>;
-  i18n: any;
-  updateProject: Function;
-  updateTimeSheet: Function;
-  classes: any;
-  history: any;
-  theme: any;
+  newInvoice?: Record<string, any>;
+  createInvoice?: Function;
+  profile?: Record<string, any>;
+  createCustomer?: Function;
+  resetInvoiceData?: Function;
+  invoiceNotify?: Function;
+  company?: Record<string, any>;
+  i18n?: any;
+  updateProject?: Function;
+  updateTimeSheet?: Function;
+  classes?: any;
+  history?: any;
+  theme?: any;
 };
 type State = {
   showInvoiceModal: boolean;
@@ -1188,7 +1188,7 @@ class ReviewStep extends Component<Props, State> {
   }
 }
 
-export default compose(
+export default compose<Props, Props>(
   withI18n(),
   withStyles(composeStyles(styles, reviewStyles)),
   connect(

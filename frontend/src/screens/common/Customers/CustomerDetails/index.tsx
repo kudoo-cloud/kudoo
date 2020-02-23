@@ -221,6 +221,7 @@ const CustomerDetails: React.FC<Props> = props => {
     const { name, contact, govNumber } = getCustomerDetails();
     const totalAmountMade = getTotalAmountMade();
     const totalOwed = getTotalOwed();
+
     return (
       <div className={classes.detailsCardsWrapper}>
         <Grid container spacing={8}>

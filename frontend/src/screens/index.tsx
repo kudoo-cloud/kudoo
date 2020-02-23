@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { bindActionCreators } from 'redux';
-import { Route, Switch, Redirect, withRouter } from 'react-router';
+import { Route, Switch, Redirect } from 'react-router-dom';
 import get from 'lodash/get';
 import { ProfileActions, AppActions } from '@client/store/actions';
 import URL from '@client/helpers/urls';
@@ -26,7 +26,7 @@ class Screens extends Component<any> {
   public _renderPrivateRoutes() {
     const { actions, profile } = this.props;
     const isLoggedIn = get(this.props, 'profile.isLoggedIn');
-    const pathname = this.props.location.pathname;
+    const pathname = window.location.pathname;
 
     const CommonRoutes = idx(Routes, x => x['common']) || [];
     const ManufacturingRoutes =
@@ -165,21 +165,19 @@ class Screens extends Component<any> {
   }
 }
 
-export default withRouter<any, any>(
-  compose(
-    connect(
-      (state: any) => ({
-        profile: state.profile,
-      }),
-      dispatch => ({
-        actions: bindActionCreators(
-          {
-            ...ProfileActions,
-            ...AppActions,
-          },
-          dispatch
-        ),
-      })
-    )
-  )(Screens)
-);
+export default compose(
+  connect(
+    (state: any) => ({
+      profile: state.profile,
+    }),
+    dispatch => ({
+      actions: bindActionCreators(
+        {
+          ...ProfileActions,
+          ...AppActions,
+        },
+        dispatch
+      ),
+    })
+  )
+)(Screens);

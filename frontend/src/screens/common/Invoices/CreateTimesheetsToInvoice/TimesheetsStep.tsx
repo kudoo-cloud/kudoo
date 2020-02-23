@@ -207,7 +207,7 @@ class TimesheetsStep extends Component<Props, State> {
           const entry = entries[index];
           let amount_str = '-';
           let rate_str = '-';
-          let gst_str = i18n._('currency-symbol')`` + '0';
+          let gst_str = i18n._('currency-symbol') + '0';
           let amount = 0;
           let rate = 0;
           let gst = 0;

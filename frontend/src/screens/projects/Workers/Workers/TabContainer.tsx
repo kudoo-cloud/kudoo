@@ -131,8 +131,8 @@ class TabContainer extends Component<Props, State> {
       id: worker.id,
       name: `${worker.firstName} ${worker.lastName}`,
       email: worker.email,
-      money_made: i18n._('currency-symbol')`` + '0',
-      money_owed: i18n._('currency-symbol')`` + '0',
+      money_made: i18n._('currency-symbol') + '0',
+      money_owed: i18n._('currency-symbol') + '0',
       role: worker.role,
     }));
     return (
