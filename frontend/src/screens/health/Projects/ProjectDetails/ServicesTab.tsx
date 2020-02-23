@@ -80,7 +80,7 @@ class ServicesTab extends Component<Props, State> {
             type={type}
             key={index}
             name={name}
-            price={i18n._('currency-symbol')`` + `${amount}`}
+            price={i18n._('currency-symbol') + `${amount}`}
             id={idx(service, _ => _.id)}
             includeConsTax={includeConsTax}
             onEditClick={id => {
@@ -94,7 +94,7 @@ class ServicesTab extends Component<Props, State> {
                       date: moment(startsAt).format('DD/MM/YYYY'),
                       status: 'Invoiced',
                       type: `${startPercent}%`,
-                      amount: i18n._('currency-symbol')`` + `${startAmount}`,
+                      amount: i18n._('currency-symbol') + `${startAmount}`,
                     },
                     {
                       agreement: 'Project Ends',
@@ -103,7 +103,7 @@ class ServicesTab extends Component<Props, State> {
                         : 'Undefined',
                       status: 'In Progress',
                       type: `${endPercent}%`,
-                      amount: i18n._('currency-symbol')`` + `${endAmount}`,
+                      amount: i18n._('currency-symbol') + `${endAmount}`,
                     },
                   ]
                 : undefined

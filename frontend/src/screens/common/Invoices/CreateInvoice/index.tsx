@@ -77,6 +77,38 @@ class CreateInvoice extends Component<Props, State> {
                   'A free text invoice is an invoice which has no predefined information.This type of invoice allows you to create an invoice from scratch or using templates provided.'
                 )}
               </div>
+              <div
+                className={classes.invoiceWayWrapper}
+                data-test='project-invoice'>
+                <Link
+                  className={classes.invoiceWay}
+                  to={URL.CREATE_PROJECT_TO_INVOICES()}>
+                  <i className={cx('icon icon-invoicing', classes.wayIcon)} />
+                  <div className={classes.wayTitle}>
+                    Project <br /> invoice
+                  </div>
+                </Link>
+                {this._renderTooltipIcon(
+                  0,
+                  'A project invoice is an invoice which can be created using project'
+                )}
+              </div>
+              <div
+                className={classes.invoiceWayWrapper}
+                data-test='project-invoice'>
+                <Link
+                  className={classes.invoiceWay}
+                  to={URL.CREATE_TIMESHEETS_TO_INVOICES()}>
+                  <i className={cx('icon icon-invoicing', classes.wayIcon)} />
+                  <div className={classes.wayTitle}>
+                    Convert timesheet to <br /> invoice
+                  </div>
+                </Link>
+                {this._renderTooltipIcon(
+                  0,
+                  'You can convert timesheet into invoices.'
+                )}
+              </div>
             </div>
           </div>
         </div>

@@ -273,7 +273,7 @@ class PatientDetails extends Component<Props, State> {
                 Total money made
               </div>
               <div className={cx(classes.detailCardContent, 'h1')}>
-                {i18n._('currency-symbol')``}
+                {i18n._('currency-symbol')}
                 {totalAmountMade}
               </div>
             </div>
@@ -284,7 +284,7 @@ class PatientDetails extends Component<Props, State> {
                 Owed
               </div>
               <div className={cx(classes.detailCardContent, 'h1')}>
-                {i18n._('currency-symbol')``}
+                {i18n._('currency-symbol')}
                 {totalOwed}
               </div>
             </div>

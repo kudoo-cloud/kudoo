@@ -11,15 +11,23 @@ type Props = {
   selectedCompany?: ICompanyEntity;
 };
 
-const SelectedCompany: React.FC<Props> = props => {
-  const { selectedCompany, onChange, children } = props;
+class SelectedCompany extends React.Component<Props> {
+  static defaultProps = {
+    onChange: () => {},
+  };
 
-  useDeepCompareEffect(() => {
-    onChange(selectedCompany);
-  }, [selectedCompany]);
+  componentDidUpdate(prevProps) {
+    const nextSelectedCompany = idx(this.props, x => x.selectedCompany.id);
+    const prevSelectedCompany = idx(prevProps, x => x.selectedCompany.id);
+    if (nextSelectedCompany !== prevSelectedCompany) {
+      this.props.onChange(nextSelectedCompany);
+    }
+  }
 
-  return <React.Fragment>{children}</React.Fragment>;
-};
+  render() {
+    return this.props.children;
+  }
+}
 
 export default compose<Props, Props>(
   connect((state: IReduxState) => ({
