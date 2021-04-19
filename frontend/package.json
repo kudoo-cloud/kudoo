@@ -58,7 +58,7 @@
     "idx": "^2.2.0",
     "imports-loader": "^0.8.0",
     "jquery": "^3.4.1",
-    "jspdf": "1.5.3",
+    "jspdf": "2.3.1",
     "moment": "^2.22.2",
     "normalize.css": "^7.0.0",
     "np": "^5.2.1",
