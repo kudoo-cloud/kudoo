@@ -10,9 +10,7 @@
 ## Prerequisites
 You'll need to have the following running on your local machine
 * [Node](https://nodejs.org/en/)
-* [Docker](https://www.docker.com/)
-* [Docker compose](https://docs.docker.com/compose/)
-* [Postgres](https://www.postgresql.org/) or [MySQL](https://www.mysql.com/)
+* [Postgres](https://www.postgresql.org/) 
 
 For Node we'd suggest install [NVM](https://github.com/nvm-sh/nvm). If you're using Windows then please use [NVM-Windows](https://github.com/coreybutler/nvm-windows)
 
@@ -42,9 +40,9 @@ SKELM_BASE_URL=http://localhost:3000
 ```
 
 ## Running a local dev environment
-### Non Windows based OS
-If you are on Linux or MacOS you can simply run the following command
-`bash ./run.sh`
 
-### Windows
-We are currently working on getting a Powershell script working.
+cd frontend
+
+make sure you have a `.env.development` file with values populated 
+
+npm run start

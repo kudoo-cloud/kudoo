@@ -30,7 +30,6 @@
     "@kudoo/email": "2.0.8",
     "@types/stripe": "^6.32.5",
     "apollo-server-errors": "^2.2.0",
-    "aws-sdk": "^2.360.0",
     "bcrypt": "^5.0.0",
     "body-parser": "^1.18.3",
     "copyfiles": "^2.1.1",
