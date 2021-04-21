@@ -1,0 +1,15 @@
+/*
+type LedgerJournal {
+  id: ID! @id
+  total: Float
+  description: String
+  currency: Currency!
+  includeConsTax: Boolean!
+  posted: Boolean!
+  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  createdAt: DateTime! @createdAt
+  updatedAt: DateTime! @updatedAt
+}
+*/
