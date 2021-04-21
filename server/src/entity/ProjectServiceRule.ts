@@ -1,6 +1,13 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class ProjectServiceRule {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-type ProjectServiceRule {
-  id: ID! @id
   projectService: ProjectService @relation(link: INLINE)
   amount: Float
   percent: Float

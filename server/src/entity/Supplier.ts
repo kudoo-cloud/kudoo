@@ -1,8 +1,13 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class Supplier {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-
-
-type Supplier {
-  id: ID! @id
   name: String
   address: [Address]
   termsOfPayment: SupplierTermsOfPayment

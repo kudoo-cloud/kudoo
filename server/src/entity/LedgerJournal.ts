@@ -1,6 +1,13 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class LedgerJournal {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-type LedgerJournal {
-  id: ID! @id
   total: Float
   description: String
   currency: Currency!

@@ -1,7 +1,14 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class InventoryOnHand {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
 
-type InventoryOnHand {
-  id: ID! @id
   date: DateTime
   item: Inventory @relation(link: INLINE)
   pbsDrug: String

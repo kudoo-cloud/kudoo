@@ -1,7 +1,13 @@
-/*
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
 
-type Session {
-  id: ID! @id
+@Entity()
+export class Session {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
+/*
   expires_at: DateTime
   is_active: Boolean @default(value: true)
   is_archived: Boolean @default(value: false)

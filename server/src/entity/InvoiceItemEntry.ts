@@ -1,6 +1,14 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class InvoiceItemEntry {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-type InvoiceItemEntry {
-  id: ID! @id
+
   order: Int
   description: String
   name: String

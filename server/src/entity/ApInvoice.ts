@@ -1,12 +1,25 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class ApInvoice {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
+    status: string; //Add ApInvoiceStatus enum here
+
+    @Column()
+    invoiceNumber: string;
+
+    @Column()
+    purchaseOrder: string; //TODO: Add relationship
+
+    @Column()
+    company: string; //TODO: Add relationship
+
+}
 /*
-
-
-type ApInvoice {
-  id: ID! @id
-  status: ApInvoiceStatus
-  invoiceNumber: String
-  purchaseOrder: PurchaseOrder @relation(link: INLINE)
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt

@@ -1,8 +1,14 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class Inventory {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
 
-
-type Inventory {
-  id: ID! @id
   name: String
   inventoryModel: InventoryModel
   uom: UOM

@@ -1,6 +1,13 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class CompanyMember {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-type CompanyMember {
-  id: ID! @id
   company: Company! @relation(link: INLINE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)

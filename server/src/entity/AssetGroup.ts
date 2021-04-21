@@ -1,10 +1,25 @@
-/*
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
 
-type AssetGroup {
-  id: ID! @id
-  name: String
-  depreciationType: AssetGroupDepreciationType
-  usefulLife: Int
+@Entity()
+export class AssetGroup {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
+    name: string;
+
+    @Column()
+    depreciationType: string; //Add AssetGroupDepreciationType enum here
+
+    @Column()
+    usefulLife: number;
+
+    @Column()
+    postCode: string;
+
+}
+/*
   deprMainAccount: MainAccount @relation(link: INLINE)
   #accumDeprMainAccount: MainAccount @relation(link: INLINE)
   company: Company! @relation(link: INLINE, onDelete: CASCADE)

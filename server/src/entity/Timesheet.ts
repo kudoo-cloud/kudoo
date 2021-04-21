@@ -1,6 +1,13 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class Timesheet {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-type TimeSheet {
-  id: ID! @id
   attachments: [Attachment] @relation(name: "TimesheetAttachments")
   company: Company! @relation(link: INLINE, onDelete: CASCADE)
   endsAt: DateTime

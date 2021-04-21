@@ -1,6 +1,13 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class LedgerTransaction {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-type LedgerTransaction {
-  id: ID! @id
   mainAccount: MainAccount! @relation(link: INLINE)
   ledgerJournal: LedgerJournal! @relation(link: INLINE)
   drcr: DrCr!

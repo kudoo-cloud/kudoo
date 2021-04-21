@@ -1,16 +1,38 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class Asset {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
+    name: string;
+
+    @Column()
+    assetGroup: string; //TODO: add relationship
+
+    @Column()
+    dateOfAquisition: Date;
+
+    @Column()
+    aquisitionPrice: number;
+
+    @Column()
+    netBookValue: number;
+
+    @Column()
+    depreciation: number;
+
+    @Column()
+    salvageValue: number;
+
+    @Column()
+    company: string; //TODO: add relationship
+
+}
 /*
-
-
-type Asset {
-  id: ID! @id
-  name: String
-  assetGroup: AssetGroup @relation(link: INLINE)
-  dateOfAquisition: DateTime
-  aquisitionPrice: Float
-  netBookValue: Float
-  depreciation: Float
   salvageValue: Float
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt

@@ -1,6 +1,13 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class LedgerPosting {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-type LedgerPosting {
-  id: ID! @id
   postingType: PostingType
   mainAccount: MainAccount @relation(link: INLINE)
   company: Company! @relation(link: INLINE, onDelete: CASCADE)

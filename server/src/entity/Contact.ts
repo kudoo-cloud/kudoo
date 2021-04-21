@@ -1,6 +1,13 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class Contact {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-type Contact {
-  id: ID! @id
   name: String
   surname: String
   email: String

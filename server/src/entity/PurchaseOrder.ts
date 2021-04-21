@@ -1,7 +1,13 @@
-/*
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
 
-type PurchaseOrder {
-  id: ID! @id
+@Entity()
+export class PurchaseOrder {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
+/*
   pbsOrganisation: String
   date: DateTime
   orderer: User @relation(link: INLINE)

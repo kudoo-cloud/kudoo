@@ -1,6 +1,14 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class MainAccount {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-type MainAccount {
-  id: ID! @id
+
   code: String!
   name: String!
   description: String

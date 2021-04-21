@@ -1,6 +1,13 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class Project {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-type Project {
-    id: ID! @id
     company: Company! @relation(link: INLINE, onDelete: CASCADE)
     customer: Customer @relation(link: INLINE)
     description: String

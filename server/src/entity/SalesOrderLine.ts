@@ -1,6 +1,13 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class SalesOrderLine {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-type SalesOrderLine {
-    id: ID! @id
     salesOrder: SalesOrder @relation(link: INLINE)
     inventory: Inventory @relation(link: INLINE)
     qty: Int

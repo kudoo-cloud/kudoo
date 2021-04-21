@@ -1,6 +1,13 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class Invoice {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-type Invoice {
-  id: ID! @id
   title: String
   attachments: [Attachment] @relation(name: "InvoiceAttachments")
   buyer: Customer @relation(link: INLINE)

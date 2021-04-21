@@ -1,6 +1,13 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class Service {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-type Service {
-  id: ID! @id
   billingType: ServiceBillingType!
   company: Company! @relation(link: INLINE, onDelete: CASCADE)
   includeConsTax: Boolean!

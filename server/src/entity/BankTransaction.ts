@@ -1,11 +1,25 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class BankTransaction {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
+    transactionDate: Date;
+
+    @Column()
+    description: string;
+
+    @Column()
+    posted: boolean;
+
+    @Column()
+    ledgerJournal: string; //TODO: need to add relationship
+
+}
 /*
-type BankTransaction {
-  id: ID! @id
-  transactionDate: DateTime!
-  amount: Float!
-  description: String
-  posted: Boolean! @default(value: false)
-  ledgerJournal: LedgerJournal @relation(link: INLINE)
   company: Company! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)

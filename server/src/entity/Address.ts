@@ -1,13 +1,25 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class Address {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
+    street: string;
+
+    @Column()
+    city: string;
+
+    @Column()
+    country: string;
+
+    @Column()
+    postCode: string;
+
+}
 /*
-type Address {
-  id: ID! @id
-  street: String
-  city: String
-  state: String
-  country: String
-  postCode: String
-  latitude: String
-  longitude: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }

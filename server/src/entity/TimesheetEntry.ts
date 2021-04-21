@@ -1,6 +1,13 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class TimeSheetEntry {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-type TimeSheetEntry {
-  id: ID! @id
   customer: Customer @relation(link: INLINE)
   date: DateTime
   duration: Float

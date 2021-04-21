@@ -1,8 +1,13 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class POReceipt {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-
-
-type PoReceipt {
-  id: ID! @id
   receiptNumber: String
   purchaseOrder: PurchaseOrder @relation(link: INLINE)
   receiptDate: DateTime

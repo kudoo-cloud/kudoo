@@ -1,6 +1,13 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class ProjectService {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
 /*
-type ProjectService {
-  id: ID! @id
   amount: Float
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)

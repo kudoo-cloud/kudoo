@@ -1,7 +1,13 @@
-/*
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
 
-type WareHouse {
-  id: ID! @id
+@Entity()
+export class Warehouse {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+}
+/*
   name: String
   company: Company! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)

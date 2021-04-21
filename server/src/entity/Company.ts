@@ -1,11 +1,25 @@
+import {Entity, PrimaryGeneratedColumn, Column} from "typeorm";
+
+@Entity()
+export class Company {
+
+    @PrimaryGeneratedColumn()
+    id: number;
+
+    @Column()
+    bank: string; //TODO: add banking relationship
+
+    @Column()
+    country: string; //Add enum Country
+
+    @Column()
+    govNumber: string;
+
+    @Column()
+    currency: string; // Add enum Currency
+
+}
 /*
-type Company {
-    id: ID! @id
-    bankAccount: Json
-    businessType: BusinessType
-    country: Country! @default(value: AU)
-    govNumber: String
-    currency: Currency!
     isArchived: Boolean @default(value: false)
     isDeleted: Boolean @default(value: false)
     HPIO: String
