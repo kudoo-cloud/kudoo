@@ -20,6 +20,8 @@ import { client } from '@client/helpers/apollo';
 import { KudooThemeProvider, theme } from '@kudoo/components';
 import { store, persistor } from '@client/store/index';
 import { jss, JssProvider } from 'react-jss';
+import { Web3ReactProvider } from '@web3-react/core';
+import Web3 from 'web3';
 jss.options.insertionPoint = document.getElementById('jss-insertion-point');
 
 moment.locale('en-us', {
@@ -52,6 +54,10 @@ const EnhancedWebApp = compose(
   })
 )(WebApp);
 
+const getWeb3Library = provider => {
+  return new Web3(provider); // this will vary according to whether you use e.g. ethers or web3.js
+};
+
 const root = document.getElementById('root');
 
 if (root !== null) {
@@ -62,7 +68,9 @@ if (root !== null) {
           <JssProvider jss={jss}>
             <StripeProvider apiKey={process.env.STRIPE_API_KEY}>
               <KudooThemeProvider theme={theme}>
-                <EnhancedWebApp />
+                <Web3ReactProvider getLibrary={getWeb3Library}>
+                  <EnhancedWebApp />
+                </Web3ReactProvider>
               </KudooThemeProvider>
             </StripeProvider>
           </JssProvider>
