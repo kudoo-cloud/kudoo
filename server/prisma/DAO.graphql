@@ -1,78 +1,54 @@
 type User {
   id: ID! @id
-  contactNumber: Json
-  email: String
-  firstName: String
+  discord: String
+  telegram: String
+  cChainAddress: String
   isActive: Boolean @default(value: false)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   isRoot: Boolean @default(value: false)
   jobTitle: String
+  firstName: String
   lastName: String
-  password: String
-  secondAuthEnabled: Boolean @default(value: false)
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
-}
-
-type Address {
-  id: ID! @id
-  street: String
-  city: String
-  state: String
-  country: String
-  postCode: String
-  latitude: String
-  longitude: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
 type Contact {
   id: ID! @id
-  name: String
-  surname: String
-  email: String
-  mobileCode: String
-  mobileNumber: String
-  landlineCode: String
-  landlineNumber: String
+  discord: String
+  telegram: String
+  isActive: Boolean @default(value: false)
+  isArchived: Boolean @default(value: false)
+  isDeleted: Boolean @default(value: false)
+  firstName: String
+  lastName: String
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
-type Company {
+type DAO {
   id: ID! @id
-  bankAccount: Json
-  businessType: BusinessType
-  country: Country! @default(value: AU)
-  govNumber: String
+  cChainAddress: String
   currency: Currency!
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
-  HPIO: String
-  legalName: String!
   logo: Attachment @relation(link: INLINE)
   name: String!
-  salesTax: Boolean @default(value: false)
-  timeSheetSettings: Json
   websiteURL: String
-  addresses: [Address]
   contacts: [Contact]
-  companyMembers: [CompanyMember]
-  activePlan: Plan @relation(link: INLINE)
-  stripeCustomerId: String
+  daoMembers: [DAOMember]
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
-type CompanyMember {
+type DAOMember {
   id: ID! @id
-  company: Company! @relation(link: INLINE)
+  dao: DAO! @relation(link: INLINE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
-  role: CompanyMemberRole
-  status: CompanyMemberStatus
+  role: DAOMemberRole
+  status: DAOMemberStatus
   user: User @relation(link: INLINE)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
@@ -80,7 +56,7 @@ type CompanyMember {
 
 type Customer {
   id: ID! @id
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   description: String
   govNumber: String
   salesTax: Boolean @default(value: true)
@@ -95,20 +71,10 @@ type Customer {
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
-
-type Integration {
-  id: ID! @id
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
-  data: Json
-  type: IntegrationType
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
-}
-
 type Service {
   id: ID! @id
   billingType: ServiceBillingType!
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   includeConsTax: Boolean!
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
@@ -122,7 +88,7 @@ type Service {
 
 type Project {
   id: ID! @id
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   customer: Customer @relation(link: INLINE)
   description: String
   endsAt: DateTime
@@ -159,19 +125,6 @@ type ProjectServiceRule {
   updatedAt: DateTime! @updatedAt
 }
 
-type Plan {
-  id: ID! @id
-  company: Company!
-  isActive: Boolean @default(value: false)
-  isArchived: Boolean @default(value: false)
-  isDeleted: Boolean @default(value: false)
-  price: Float
-  type: PlanType
-  currency: Currency!
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
-}
-
 type Session {
   id: ID! @id
   expires_at: DateTime
@@ -187,7 +140,7 @@ type Session {
 type TimeSheet {
   id: ID! @id
   attachments: [Attachment] @relation(name: "TimesheetAttachments")
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   endsAt: DateTime
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
@@ -201,6 +154,7 @@ type TimeSheet {
   updatedAt: DateTime! @updatedAt
 }
 
+"TODO: When we get to implementing this we will replace S3 with Arweave or IPFS. I'd prefer Arweave - JT"
 type Attachment {
   id: ID! @id
   description: String
@@ -256,7 +210,7 @@ type Invoice {
   dueDate: DateTime
   preview: Attachment @relation(link: INLINE, name: "InvoicePreview")
   items: [InvoiceItemEntry]
-  seller: Company! @relation(link: INLINE, onDelete: CASCADE)
+  seller: DAO! @relation(link: INLINE, onDelete: CASCADE)
   status: InvoiceStatus
   type: InvoiceType
   total: Float
@@ -271,7 +225,7 @@ type MainAccount {
   description: String
   type: MainAccountType!
   ConsTaxFree: Boolean! @default(value: true)
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
@@ -285,7 +239,7 @@ type LedgerJournal {
   currency: Currency!
   includeConsTax: Boolean!
   posted: Boolean!
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
@@ -300,7 +254,7 @@ type LedgerTransaction {
   amount: Float!
   currency: Currency!
   date: DateTime!
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
@@ -311,44 +265,19 @@ type LedgerPosting {
   id: ID! @id
   postingType: PostingType
   mainAccount: MainAccount @relation(link: INLINE)
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
-type Bank {
+
+type Treasury {
   id: ID! @id
   name: String
-  institution: String
-  bsb: String
-  accountNumber: String
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
-  isArchived: Boolean @default(value: false)
-  isDeleted: Boolean @default(value: false)
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
-}
-
-type BankTransaction {
-  id: ID! @id
-  transactionDate: DateTime!
-  amount: Float!
-  description: String
-  posted: Boolean! @default(value: false)
-  ledgerJournal: LedgerJournal @relation(link: INLINE)
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
-  isArchived: Boolean @default(value: false)
-  isDeleted: Boolean @default(value: false)
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
-}
-
-type WareHouse {
-  id: ID! @id
-  name: String
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
+  "TODO: Need to add the assets of the treasury here. - JT"
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
@@ -362,9 +291,7 @@ type Inventory {
   uom: UOM
   price: Float
   SellingPrice: Float
-  Barcode: String
-  Taxable: Boolean
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
@@ -374,11 +301,10 @@ type Inventory {
 type Supplier {
   id: ID! @id
   name: String
-  address: [Address]
   termsOfPayment: SupplierTermsOfPayment
-  bankAccount: Json
+  cChainAddress: String
   emailAddressForRemittance: String
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
@@ -392,7 +318,7 @@ type AssetGroup {
   usefulLife: Int
   deprMainAccount: MainAccount @relation(link: INLINE)
   #accumDeprMainAccount: MainAccount @relation(link: INLINE)
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
@@ -408,7 +334,7 @@ type Asset {
   netBookValue: Float
   depreciation: Float
   salvageValue: Float
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
@@ -417,7 +343,6 @@ type Asset {
 
 type PurchaseOrder {
   id: ID! @id
-  pbsOrganisation: String
   date: DateTime
   orderer: User @relation(link: INLINE)
   status: PoStatus
@@ -425,7 +350,7 @@ type PurchaseOrder {
   isPbsPO: Boolean
   poNumber: Int!
   preview: Attachment @relation(link: INLINE)
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
@@ -447,11 +372,10 @@ type InventoryOnHand {
   id: ID! @id
   date: DateTime
   item: Inventory @relation(link: INLINE)
-  pbsDrug: String
   onHandQty: Int
   purchaseOrder: PurchaseOrder @relation(link: INLINE)
   warehouse: WareHouse @relation(link: INLINE)
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
@@ -461,7 +385,6 @@ type InventoryOnHand {
 type PurchaseOrderLine {
   id: ID! @id
   item: Inventory @relation(link: INLINE)
-  pbsDrug: String
   qty: Int
   unit: UOM
   unitPrice: Float
@@ -479,7 +402,7 @@ type ApInvoice {
   status: ApInvoiceStatus
   invoiceNumber: String
   purchaseOrder: PurchaseOrder @relation(link: INLINE)
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
@@ -491,7 +414,7 @@ type SalesOrder {
   customer: Customer @relation(link: INLINE)
   transactionDate: DateTime
   currency: Currency
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   isArchived: Boolean @default(value: false)
   isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
@@ -510,34 +433,24 @@ type SalesOrderLine {
   updatedAt: DateTime! @updatedAt
 }
 
-type PredictedSalesValueByCompany {
+"TODO: This is part of the machine learning aspect. Basically look for trends in historical data. This is where we need a data scientist like Matthew to build this. - JT"
+type PredictedSalesValueByDAO {
   id: ID! @id
   datePredictionRun: DateTime
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   predictedSalesValue: Float
   predictedDate: DateTime
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
 
-type PredictedSalesQuantityOfItemsByCompany {
+type PredictedSalesQuantityOfItemsByDAO {
   id: ID! @id
   datePredictionRun: DateTime
-  company: Company! @relation(link: INLINE, onDelete: CASCADE)
+  dao: DAO! @relation(link: INLINE, onDelete: CASCADE)
   inventory: Inventory @relation(link: INLINE)
   predictedSalesValue: Float
   predictedDate: DateTime
-  createdAt: DateTime! @createdAt
-  updatedAt: DateTime! @updatedAt
-}
-
-type MedicareService {
-  id: ID! @id
-  MBSScheduleFee: Float
-  description: String
-  isActive: Boolean
-  isArchived: Boolean @default(value: false)
-  isDeleted: Boolean @default(value: false)
   createdAt: DateTime! @createdAt
   updatedAt: DateTime! @updatedAt
 }
