@@ -1,34 +1,28 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import cx from 'classnames';
-import { Trans, withI18n } from '@lingui/react';
-import find from 'lodash/find';
-import get from 'lodash/get';
-import idx from 'idx';
-import { connect } from 'react-redux';
-import moment from 'moment';
-import { compose } from 'react-apollo';
 import {
-  withStyles,
-  composeStyles,
   Button,
   SectionHeader,
-  withStylesProps,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import actions from '@client/store/actions/createNewProject';
+import { Trans, withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+import idx from 'idx';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import moment from 'moment';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
 import {
-  withCreateCustomer,
-  withCustomer,
-  withCreateProject,
-} from '@kudoo/graphql';
-import {
-  SERVICE_BILLING_TYPE,
-  PROJECT_STATUS,
   PROJECT_SERVICE_RULES_TYPE,
-} from '@client/helpers/constants';
-import { showToast } from '@client/helpers/toast';
-import { IReduxState } from '@client/store/reducers';
+  PROJECT_STATUS,
+  SERVICE_BILLING_TYPE,
+} from 'src/helpers/constants';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
+import actions from 'src/store/actions/createNewProject';
+import { IReduxState } from 'src/store/reducers';
 import styles, { ReviewStepStyles } from './styles';
 
 type Props = {
@@ -49,6 +43,12 @@ type Props = {
 type State = {};
 
 class ReviewStep extends Component<Props, State> {
+  public static defaultProps = {
+    createProject: () => ({}),
+    createCustomer: () => ({}),
+    customer: {},
+  };
+
   state = {};
 
   _isThereFixedService = () => {
@@ -172,14 +172,14 @@ class ReviewStep extends Component<Props, State> {
         this.props.resetNewProjectData();
         this.props.history.push(URL.PROJECTS());
       } else {
-        projectRes.error(err => showToast(err));
+        projectRes.error((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
     }
   };
 
-  _goToStep = index => e => {
+  _goToStep = (index) => () => {
     this.props.makeStepActive(index);
   };
 
@@ -224,7 +224,8 @@ class ReviewStep extends Component<Props, State> {
               <div className={classes.customerValue}>{customer.govNumber}</div>
               <div
                 className={classes.customerValue}
-                style={{ marginBottom: 0 }}>
+                style={{ marginBottom: 0 }}
+              >
                 {customer.email}
               </div>
             </Grid>
@@ -270,22 +271,24 @@ class ReviewStep extends Component<Props, State> {
         </div>
         {service.map((ser, index) => {
           const isLast = index === service.length - 1;
-          const hasRules = Boolean(idx(ser, _ => _.paymentRule));
-          const projectStartRule = idx(ser, _ => _.paymentRule.projectBegins);
-          const projectEndRule = idx(ser, _ => _.paymentRule.projectEnds);
+          const hasRules = Boolean(idx(ser, (_) => _.paymentRule));
+          const projectStartRule = idx(ser, (_) => _.paymentRule.projectBegins);
+          const projectEndRule = idx(ser, (_) => _.paymentRule.projectEnds);
           return (
             <div
               data-test={`added-service-${ser.name}`}
               className={cx(classes.reviewSectionContent, {
                 [classes.sectionWithBottomBorder]: isLast,
               })}
-              key={index}>
+              key={index}
+            >
               <Grid container spacing={16}>
                 <Grid item xs={6}>
                   <div className={classes.value}>{ser.name}</div>
                   <div
                     className={classes.value}
-                    style={{ textTransform: 'capitalize' }}>
+                    style={{ textTransform: 'capitalize' }}
+                  >
                     {ser.billingType} Payment
                   </div>
                   <div className={classes.value}>
@@ -302,21 +305,21 @@ class ReviewStep extends Component<Props, State> {
                     {hasRules && (
                       <div className={classes.value}>
                         Project Starts:{' '}
-                        {idx(projectStartRule, _ => _.fixedOrPercent) ===
+                        {idx(projectStartRule, (_) => _.fixedOrPercent) ===
                         'percentage'
-                          ? `${idx(projectStartRule, _ => _.percentage)}%`
+                          ? `${idx(projectStartRule, (_) => _.percentage)}%`
                           : i18n._('currency-symbol') +
-                            `${idx(projectStartRule, _ => _.amount)}`}
+                            `${idx(projectStartRule, (_) => _.amount)}`}
                       </div>
                     )}
                     {hasRules && (
                       <div className={classes.value}>
                         Project Ends:{' '}
-                        {idx(projectEndRule, _ => _.fixedOrPercent) ===
+                        {idx(projectEndRule, (_) => _.fixedOrPercent) ===
                         'percentage'
-                          ? `${idx(projectEndRule, _ => _.percentage)}%`
+                          ? `${idx(projectEndRule, (_) => _.percentage)}%`
                           : i18n._('currency-symbol') +
-                            `${idx(projectEndRule, _ => _.amount)}`}
+                            `${idx(projectEndRule, (_) => _.amount)}`}
                       </div>
                     )}
                     {!hasRules && (
@@ -402,16 +405,16 @@ export default compose(
   withStyles(composeStyles(styles, ReviewStepStyles)),
   connect(
     (state: IReduxState) => ({
-      createNewProject: idx(state, x => x.sessionData.newProject),
+      createNewProject: idx(state, (x) => x.sessionData.newProject),
       profile: state.profile,
     }),
     {
       ...actions,
-    }
+    },
   ),
-  withCreateCustomer(),
-  withCustomer(props => ({
-    id: get(props, 'createNewProject.customer.id', ''),
-  })),
-  withCreateProject()
+  // withCreateCustomer(),
+  // withCustomer((props) => ({
+  //   id: get(props, 'createNewProject.customer.id', ''),
+  // })),
+  // withCreateProject(),
 )(ReviewStep);

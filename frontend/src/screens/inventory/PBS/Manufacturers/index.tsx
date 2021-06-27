@@ -1,18 +1,13 @@
-import React, { Component } from 'react';
-import { compose, withState } from 'recompose';
-import { connect } from 'react-redux';
-import find from 'lodash/find';
-import debounce from 'lodash/debounce';
-import {
-  withStyles,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import { Table, TextField, withStyles } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { withPBSOrganisations } from '@kudoo/graphql';
-import { Table, TextField } from '@kudoo/components';
+import debounce from 'lodash/debounce';
+import find from 'lodash/find';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose, withState } from 'recompose';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import URL from 'src/helpers/urls';
+
 import styles from './styles';
 
 interface IProps {
@@ -32,6 +27,14 @@ interface IProps {
 }
 
 class Manufacturers extends Component<IProps, {}> {
+  public static defaultProps = {
+    pbsOrganisations: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+  };
+
   public state = {
     columns: [
       {
@@ -77,7 +80,7 @@ class Manufacturers extends Component<IProps, {}> {
     });
   };
 
-  public _onSearchOrgs = debounce(text => {
+  public _onSearchOrgs = debounce((text) => {
     const { pbsOrganisations } = this.props;
     pbsOrganisations.refetch({
       where: {
@@ -103,7 +106,7 @@ class Manufacturers extends Component<IProps, {}> {
               <TextField
                 value={searchedText}
                 placeholder='Search manufacturer...'
-                onChangeText={text => {
+                onChangeText={(text) => {
                   setSearchedText(text);
                   this._onSearchOrgs(text);
                 }}
@@ -137,16 +140,16 @@ class Manufacturers extends Component<IProps, {}> {
 
 export default compose<any, any>(
   withStyles(styles),
-  withPBSOrganisations(() => {
-    return {
-      variables: {
-        orderBy: 'id_ASC',
-        first: 20,
-      },
-    };
-  }),
+  // withPBSOrganisations(() => {
+  //   return {
+  //     variables: {
+  //       orderBy: 'id_ASC',
+  //       first: 20,
+  //     },
+  //   };
+  // }),
   withState('searchedText', 'setSearchedText', ''),
   connect((state: any) => ({
     profile: state.profile,
-  }))
+  })),
 )(Manufacturers);

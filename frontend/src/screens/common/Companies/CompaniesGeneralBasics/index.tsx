@@ -1,42 +1,35 @@
+import {
+  Button,
+  Checkbox,
+  Dropdown,
+  ErrorBoundary,
+  RadioButton,
+  SectionHeader,
+  TextField,
+  withStyles,
+} from '@kudoo/components';
+import { Trans, withI18n } from '@lingui/react';
+import ButtonBase from '@material-ui/core/ButtonBase';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+import { Formik } from 'formik';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
+
 import * as React from 'react';
+import Dropzone from 'react-dropzone';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import cx from 'classnames';
-import { Trans, withI18n } from '@lingui/react';
-import isEqual from 'lodash/isEqual';
-import isEmpty from 'lodash/isEmpty';
-import get from 'lodash/get';
-import find from 'lodash/find';
-import { Formik } from 'formik';
-import Grid from '@material-ui/core/Grid';
-import Dropzone from 'react-dropzone';
 import * as Yup from 'yup';
 import {
-  withStyles,
-  Button,
-  ErrorBoundary,
-  TextField,
-  SectionHeader,
-  Dropdown,
-  RadioButton,
-  Checkbox,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import ButtonBase from '@material-ui/core/ButtonBase';
-import {
-  withCreateCompany,
-  withUpdateCompany,
-  withCompany,
-  withDeleteAttachment,
-} from '@kudoo/graphql';
-import {
-  SUPPORTED_COUNTRIES_COMPANY,
   DEFAULT_LOCALE,
-} from '@client/helpers/locale';
-import { showToast } from '@client/helpers/toast';
-import { any } from 'prop-types';
+  SUPPORTED_COUNTRIES_COMPANY,
+} from 'src/helpers/locale';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
+import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 interface IProps {
@@ -65,6 +58,10 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
   static defaultProps = {
     isCreateNewCompany: false,
     initialData: {},
+    createCompany: () => ({}),
+    updateCompany: () => ({}),
+    refetch: () => ({}),
+    removeLogo: () => ({}),
   };
 
   state = {
@@ -82,7 +79,7 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
     }
   }
 
-  _setTempLocale = props => {
+  _setTempLocale = (props) => {
     const { initialData, actions } = props;
     if (!isEmpty(initialData)) {
       const companyCountry: any =
@@ -148,7 +145,7 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
           this.props.actions.setTemporaryActiveLanguage(undefined);
           this.props.history.push(URL.MANAGE_COMPANIES());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
         }
       } else {
         // if update existing company
@@ -166,7 +163,7 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
           this.props.actions.setTemporaryActiveLanguage(undefined);
           this.props.history.push(URL.MANAGE_COMPANIES());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
         }
       }
     } catch (e) {
@@ -188,7 +185,7 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
         await this.props.refetch();
         showToast(null, 'Logo removed successfully');
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
@@ -214,7 +211,7 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
         });
         history.replace(URL.MANAGE_COMPANIES());
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
@@ -298,16 +295,19 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
                 <div
                   className={classes.uploadedLogoPreview}
                   style={{
-                    backgroundImage: `url(${selectedLogoPreview ||
-                      companyLogo})`,
-                  }}>
+                    backgroundImage: `url(${
+                      selectedLogoPreview || companyLogo
+                    })`,
+                  }}
+                >
                   <Dropzone
                     className={classes.selectNewImageText}
                     multiple={false}
                     accept='image/*'
-                    onDropAccepted={file => {
+                    onDropAccepted={(file) => {
                       this.setState({ selectedLogo: file[0] });
-                    }}>
+                    }}
+                  >
                     Select new image
                   </Dropzone>
                 </div>
@@ -316,9 +316,10 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
                   style={dropzoneStyle}
                   multiple={false}
                   accept='image/*'
-                  onDropAccepted={file => {
+                  onDropAccepted={(file) => {
                     this.setState({ selectedLogo: file[0] });
-                  }}>
+                  }}
+                >
                   <div className={classes.dropzoneText}>
                     Select or Drop image
                   </div>
@@ -328,7 +329,8 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
             {Boolean(companyLogo) && (
               <ButtonBase
                 classes={{ root: classes.deleteIcon }}
-                onClick={this._removeLogo}>
+                onClick={this._removeLogo}
+              >
                 <i className='icon icon-trash' />
               </ButtonBase>
             )}
@@ -401,7 +403,7 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
                     label={'Same as above'}
                     classes={{ component: classes.sameAsAboveCheckbox }}
                     value={values.legalNameSameAsName}
-                    onChange={checked => {
+                    onChange={(checked) => {
                       setFieldValue('legalNameSameAsName', checked);
                     }}
                   />
@@ -411,7 +413,7 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
                     label='Country'
                     items={SUPPORTED_COUNTRIES_COMPANY}
                     value={values.country}
-                    onChange={item => {
+                    onChange={(item) => {
                       setFieldValue('country', item.value);
                       actions.setTemporaryActiveLanguage(item.locale);
                       setFieldValue('currency', item.currency);
@@ -422,9 +424,9 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
                 <div className={classes.fieldRow}>
                   <Dropdown
                     label='Currency'
-                    items='AUD'
+                    items={[{ label: 'AUD', value: 'AUD' }]}
                     value={values.currency}
-                    onChange={item => {
+                    onChange={(item) => {
                       setFieldValue('currency', item.value);
                     }}
                     error={touched.currency && errors.currency}
@@ -453,7 +455,7 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
                       { label: 'Other', value: 'OTHER' },
                     ]}
                     value={values.businessType}
-                    onChange={item => {
+                    onChange={(item) => {
                       setFieldValue('businessType', item.value);
                     }}
                     error={touched.businessType && errors.businessType}
@@ -521,7 +523,8 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
             <ButtonBase
               id='delete-company'
               classes={{ root: classes.deleteCompanyText }}
-              onClick={this._showDeleteCompanyModal}>
+              onClick={this._showDeleteCompanyModal}
+            >
               Delete this company account
             </ButtonBase>
           )}
@@ -586,7 +589,7 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
           legalNameSameAsName: Yup.boolean(),
           govNumber: Yup.string()
             .required(i18n._(`ABN`) + ' is required')
-            .test('validate-abn', 'Not Valid!', function(value) {
+            .test('validate-abn', 'Not Valid!', function (value) {
               if (
                 this.parent &&
                 this.parent.country === AUSTRALIYA_COUNTRY_CODE
@@ -610,7 +613,8 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
               return true;
             }),
           businessType: Yup.string().required('Please select business type'),
-        })}>
+        })}
+      >
         {this._renderForm.bind(this)}
       </Formik>
     );
@@ -633,18 +637,18 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
 
 export default compose<any, any>(
   withI18n(),
-  withCreateCompany(),
-  withUpdateCompany(),
-  withDeleteAttachment(() => ({ name: 'removeLogo' })),
-  withCompany(
-    props => ({ id: get(props, 'match.params.companyId', '') }),
-    ({ data }) => ({
-      initialData: get(data, 'company', {}),
-      refetch: data.refetch,
-    })
-  ),
+  // withCreateCompany(),
+  // withUpdateCompany(),
+  // withDeleteAttachment(() => ({ name: 'removeLogo' })),
+  // withCompany(
+  //   (props) => ({ id: get(props, 'match.params.companyId', '') }),
+  //   ({ data }) => ({
+  //     initialData: get(data, 'company', {}),
+  //     refetch: data.refetch,
+  //   }),
+  // ),
   withStyles(styles),
-  connect(state => ({
+  connect((state: IReduxState) => ({
     profile: state.profile,
-  }))
+  })),
 )(CompaniesGeneralBasics);

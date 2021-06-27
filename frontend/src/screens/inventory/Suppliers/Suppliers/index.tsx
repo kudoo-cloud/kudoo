@@ -1,19 +1,17 @@
-import React, { Component } from 'react';
-import isEmpty from 'lodash/isEmpty';
-import { Link } from 'react-router-dom';
 import {
-  withStyles,
-  composeStyles,
   Button,
-  SectionHeader,
   ErrorBoundary,
-  Table,
   Loading,
-  withRouterProps,
-  withStylesProps,
+  SectionHeader,
+  Table,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
 import Grid from '@material-ui/core/Grid';
+import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import URL from 'src/helpers/urls';
 import TabContainer from './container';
 import styles, { SupplierStyles } from './styles';
 
@@ -71,7 +69,8 @@ class Suppliers extends Component<IProps> {
       return (
         <Link
           to={URL.EDIT_SUPPLIERS({ id: row.id })}
-          className={classes.supplierNameCell}>
+          className={classes.supplierNameCell}
+        >
           {ele}
         </Link>
       );
@@ -131,12 +130,12 @@ class Suppliers extends Component<IProps> {
 }
 
 const StyledSuppliers = withStyles(composeStyles(styles, SupplierStyles))(
-  Suppliers
+  Suppliers,
 );
 
 const EnhancedComponent = (props: any) => (
   <TabContainer {...props} type='active-suppliers'>
-    {childProps => <StyledSuppliers {...childProps} />}
+    {(childProps) => <StyledSuppliers {...childProps} />}
   </TabContainer>
 );
 

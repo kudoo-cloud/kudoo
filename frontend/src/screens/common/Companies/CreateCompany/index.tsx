@@ -1,13 +1,8 @@
+import { Tabs, withStyles } from '@kudoo/components';
 import React, { Component } from 'react';
-import {
-  withStyles,
-  Tabs,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
 import CompaniesGeneralBasics from '../CompaniesGeneralBasics';
-import CompaniesGeneralLocation from '../CompaniesGeneralLocation';
 import CompaniesGeneralContact from '../CompaniesGeneralContact';
+import CompaniesGeneralLocation from '../CompaniesGeneralLocation';
 import styles from './styles';
 
 type Props = {
@@ -48,7 +43,7 @@ class CreateCompany extends Component<Props, State> {
         ]}
         tabTheme='tertiary'
         activeIndex={this.state.activeTab}
-        onChange={value => {
+        onChange={(value) => {
           this.setState({
             activeTab: value,
           });

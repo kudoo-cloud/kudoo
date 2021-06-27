@@ -1,17 +1,16 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import Grid from '@material-ui/core/Grid';
 import {
-  withStyles,
   Button,
   SectionHeader,
   TextField,
-  withStylesProps,
+  withStyles,
 } from '@kudoo/components';
-import actions from '@client/store/actions/createNewProject';
-// import { State } from '@client/store/reducers/createNewProject';
-import { IReduxState } from '@client/store/reducers';
+import Grid from '@material-ui/core/Grid';
 import idx from 'idx';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import actions from 'src/store/actions/createNewProject';
+// import { State } from 'src/store/reducers/createNewProject';
+import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
@@ -68,9 +67,9 @@ class ProjectStep extends Component<Props, {}> {
 
 const connected = connect(
   (state: IReduxState) => ({
-    createNewProject: idx(state, x => x.sessionData.newProject),
+    createNewProject: idx(state, (x) => x.sessionData.newProject),
   }),
-  { ...actions }
+  { ...actions },
 )(ProjectStep);
 
 export default withStyles(styles)(connected);

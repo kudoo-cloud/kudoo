@@ -1,42 +1,32 @@
-import React, { Component } from 'react';
+import {
+  Button,
+  FileBlock,
+  SectionHeader,
+  Table,
+  composeStyles,
+  withStyles,
+} from '@kudoo/components';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
 import cx from 'classnames';
-import get from 'lodash/get';
-import find from 'lodash/find';
-import groupBy from 'lodash/groupBy';
-import { withI18n, Trans } from '@lingui/react';
 import idx from 'idx';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import groupBy from 'lodash/groupBy';
+import moment from 'moment';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import moment from 'moment';
-import Grid from '@material-ui/core/Grid';
 import {
-  withStyles,
-  composeStyles,
-  Table,
-  Button,
-  SectionHeader,
-  FileBlock,
-  withStylesProps,
-  withRouterProps,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import {
-  withCompany,
-  withCreateCustomer,
-  withUpdateProject,
-  withCreateInvoice,
-  withInvoiceNotify,
-  withUpdateTimeSheet,
-} from '@kudoo/graphql';
-import { generatePDF } from '@client/helpers/jsPDF';
-import * as actions from '@client/store/actions/createNewInvoice';
-import { showToast } from '@client/helpers/toast';
-import {
-  PROJECT_SERVICE_RULES_TYPE,
   INVOICE_STATUS,
   INVOICE_TYPE,
-} from '@client/helpers/constants';
-import { IReduxState } from '@client/store/reducers';
+  PROJECT_SERVICE_RULES_TYPE,
+} from 'src/helpers/constants';
+import { generatePDF } from 'src/helpers/jsPDF';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
+import * as actions from 'src/store/actions/createNewInvoice';
+import { IReduxState } from 'src/store/reducers';
 import SendInvoiceModal from './SendInvoiceModal';
 import styles, { reviewStyles } from './styles';
 
@@ -68,6 +58,15 @@ type State = {
 };
 
 class ReviewStep extends Component<Props, State> {
+  static defaultProps = {
+    company: {},
+    createInvoice: () => ({}),
+    createCustomer: () => ({}),
+    updateTimeSheet: () => ({}),
+    updateProject: () => ({}),
+    invoiceNotify: () => ({}),
+  };
+
   invoiceNumber: number;
 
   constructor(props) {
@@ -86,19 +85,19 @@ class ReviewStep extends Component<Props, State> {
   _loadBase64Image() {
     const { company } = this.props;
     const logoUrl = get(company, 'data.logo.url');
-    const self = this;
+    const self = this; // eslint-disable-line @typescript-eslint/no-this-alias
     if (logoUrl) {
       this.setState({
         logoIsLoading: true,
       });
       const img = new Image();
       img.crossOrigin = 'Anonymous';
-      img.onload = function() {
+      img.onload = function () {
         const canvas = document.createElement('canvas');
         const ctx: any = canvas.getContext('2d');
         let dataURL;
-        canvas.height = this.naturalHeight;
-        canvas.width = this.naturalWidth;
+        canvas.height = (this as any).naturalHeight;
+        canvas.width = (this as any).naturalWidth;
         ctx.drawImage(this, 0, 0);
         dataURL = canvas.toDataURL('image/png');
         self.setState({
@@ -169,7 +168,7 @@ class ReviewStep extends Component<Props, State> {
     let subtotal = 0;
     let gst = 0;
     let total = 0;
-    data.map(row => {
+    data.map((row) => {
       subtotal = subtotal + row.amount;
       if (row.includeConsTax) {
         gst = gst + row.gst;
@@ -296,11 +295,11 @@ class ReviewStep extends Component<Props, State> {
       },
     ];
     let data = get(newInvoice, `${createType}.tableData`, []);
-    data = data.filter(row => row.select);
+    data = data.filter((row) => row.select);
 
     let subtotal = 0;
     let gst = 0;
-    data.map(row => {
+    data.map((row) => {
       subtotal = subtotal + row.amount;
       if (row.includeConsTax) {
         gst = gst + row.gst;
@@ -392,11 +391,11 @@ class ReviewStep extends Component<Props, State> {
 
   _renderTimesheetsInvoiceServices() {
     const { classes, newInvoice, createType, i18n } = this.props;
-    const data = idx(newInvoice, _ => _[createType]);
-    let tableData = idx(data, _ => _.tableData) || [];
+    const data = idx(newInvoice, (_) => _[createType]);
+    let tableData = idx(data, (_) => _.tableData) || [];
     const showTimesheetDetails =
-      idx(data, _ => _.showTimesheetDetails) || false;
-    tableData = tableData.filter(row => row.select);
+      idx(data, (_) => _.showTimesheetDetails) || false;
+    tableData = tableData.filter((row) => row.select);
 
     const headerData = [
       {
@@ -467,7 +466,7 @@ class ReviewStep extends Component<Props, State> {
 
     let subtotal = 0;
     let gst = 0;
-    tableData.map(row => {
+    tableData.map((row) => {
       subtotal = subtotal + row.amount;
       if (row.includeConsTax) {
         gst = gst + row.gst;
@@ -617,7 +616,7 @@ class ReviewStep extends Component<Props, State> {
   _getProjectInvoiceItems = () => {
     const { newInvoice, createType } = this.props;
     let tableData = get(newInvoice, `${createType}.tableData`, []);
-    tableData = tableData.filter(row => row.select);
+    tableData = tableData.filter((row) => row.select);
     const project = get(newInvoice, `${createType}.project`, []);
 
     const items = tableData.map((row, index) => ({
@@ -646,10 +645,10 @@ class ReviewStep extends Component<Props, State> {
     const showTimesheetDetails = get(
       newInvoice,
       `${createType}.showTimesheetDetails`,
-      false
+      false,
     );
     let tableData = get(newInvoice, `${createType}.tableData`, []);
-    tableData = tableData.filter(row => row.select);
+    tableData = tableData.filter((row) => row.select);
 
     const items = tableData.map((row, index) => ({
       order: index + 1,
@@ -676,7 +675,7 @@ class ReviewStep extends Component<Props, State> {
     const { newInvoice, createType } = this.props;
     let tableData = get(newInvoice, `${createType}.tableData`, []);
     const project = get(newInvoice, `${createType}.project`, {});
-    tableData = tableData.filter(row => row.select);
+    tableData = tableData.filter((row) => row.select);
     const updateProjectServices: any = [];
     for (let index = 0; index < tableData.length; index++) {
       const row = tableData[index];
@@ -745,10 +744,10 @@ class ReviewStep extends Component<Props, State> {
     const showTimesheetDetails = get(
       newInvoice,
       `${createType}.showTimesheetDetails`,
-      false
+      false,
     );
     let tableData = get(newInvoice, `${createType}.tableData`, []);
-    tableData = tableData.filter(row => row.select);
+    tableData = tableData.filter((row) => row.select);
     const timeSheetGroup = groupBy(tableData, 'timeSheetId');
     const keys = Object.keys(timeSheetGroup);
     for (let index = 0; index < keys.length; index++) {
@@ -758,7 +757,7 @@ class ReviewStep extends Component<Props, State> {
       if (!showTimesheetDetails) {
         entries = value.reduce(
           (acc, item) => [].concat(acc, item.entriesId),
-          []
+          [],
         );
       } else {
         entries = value.reduce((acc, item) => [].concat(acc, item.entryId), []);
@@ -770,7 +769,7 @@ class ReviewStep extends Component<Props, State> {
         },
         data: {
           timeSheetEntries: {
-            update: (entries || []).map(entryId => ({
+            update: (entries || []).map((entryId) => ({
               where: {
                 id: entryId,
               },
@@ -786,19 +785,19 @@ class ReviewStep extends Component<Props, State> {
     }
   };
 
-  _createInvoice = async emails => {
+  _createInvoice = async (emails) => {
     try {
       const { newInvoice, createType, history } = this.props;
       this.setState({ submitting: true });
       const payment = get(newInvoice, `${createType}.payment`, {});
       const customer = get(newInvoice, `${createType}.customer`, {});
       const attachments = get(payment, `attachments`, []).filter(
-        attch => attch instanceof File
+        (attch) => attch instanceof File,
       );
       const showTimesheetDetails = get(
         newInvoice,
         `${createType}.showTimesheetDetails`,
-        false
+        false,
       );
       const pdfBlob = await this._generatePDF();
       const pdfFile = new File([pdfBlob], 'invoice.pdf');
@@ -865,7 +864,7 @@ class ReviewStep extends Component<Props, State> {
               },
             };
           } else {
-            customerRes.error.map(err => showToast(err));
+            customerRes.error.map((err) => showToast(err));
           }
         }
       }
@@ -902,7 +901,7 @@ class ReviewStep extends Component<Props, State> {
         history.push(URL.INVOICES());
       } else {
         this.setState({ submitting: false });
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       this.setState({ submitting: false });
@@ -961,11 +960,11 @@ class ReviewStep extends Component<Props, State> {
     const { title, subtitle } = this._getTitle();
     // const companyLogo = get(profile, 'selectedCompany.logo.url');
     const companyName = get(profile, 'selectedCompany.name');
-    const data = idx(newInvoice, _ => _[createType]);
-    const payment = idx(data, _ => _.payment) || {};
-    const customer = idx(data, _ => _.customer) || {};
+    const data = idx(newInvoice, (_) => _[createType]);
+    const payment = idx(data, (_) => _.payment) || {};
+    const customer = idx(data, (_) => _.customer) || {};
     const attachments = get(data, 'payment.attachments', []).filter(
-      attch => attch instanceof File
+      (attch) => attch instanceof File,
     );
     const sellerAddress = get(company, 'data.addresses.0', {});
     const sellerABN = get(profile, 'selectedCompany.govNumber');
@@ -1016,7 +1015,8 @@ class ReviewStep extends Component<Props, State> {
               <Grid
                 item
                 xs={6}
-                classes={{ item: classes.invoiceTitleRightPart }}>
+                classes={{ item: classes.invoiceTitleRightPart }}
+              >
                 <div className={classes.invoiceNumber}>
                   <div>Invoice #{this.invoiceNumber}</div>
                 </div>
@@ -1032,20 +1032,23 @@ class ReviewStep extends Component<Props, State> {
               <div className={classes.invoiceDateLabel}>Invoice Date</div>
               <div
                 className={classes.invoiceDateValue}
-                data-test='invoice-date'>
+                data-test='invoice-date'
+              >
                 {moment(payment.invoiceDate).format('DD MMM YYYY')}
               </div>
             </div>
             <div
               className={classes.invoiceDateBlock}
-              style={{ textAlign: 'right' }}>
+              style={{ textAlign: 'right' }}
+            >
               <div className={classes.invoiceDateLabel}>Due Date</div>
               <div className={classes.invoiceDateValue} data-test='due-date'>
                 {moment(payment.dueDate).format('DD MMM YYYY')}
               </div>
               <div
                 className={classes.invoiceDatePeriod}
-                data-test='number-of-days'>
+                data-test='number-of-days'
+              >
                 {`(${payment.numberOfDays}days to pay)`}
               </div>
             </div>
@@ -1059,12 +1062,14 @@ class ReviewStep extends Component<Props, State> {
                 </div>
                 <div
                   className={classes.invoiceTextValue}
-                  data-test='customer-name'>
+                  data-test='customer-name'
+                >
                   {customer.name}
                 </div>
                 <div
                   className={classes.invoiceTextValue}
-                  data-test='customer-contact-name'>
+                  data-test='customer-contact-name'
+                >
                   {get(customer, 'contactName')}{' '}
                   {get(customer, 'contactSurname')}
                 </div>
@@ -1075,7 +1080,8 @@ class ReviewStep extends Component<Props, State> {
                 )}
                 <div
                   className={classes.invoiceTextValue}
-                  data-test='customer-email'>
+                  data-test='customer-email'
+                >
                   {get(customer, 'email')}
                 </div>
               </Grid>
@@ -1144,7 +1150,8 @@ class ReviewStep extends Component<Props, State> {
                 <div className={classes.secureBtns}>
                   <div
                     className={classes.invoiceTextValue}
-                    style={{ marginRight: 10 }}>
+                    style={{ marginRight: 10 }}
+                  >
                     Please make payment into the following bank account
                   </div>
                 </div>
@@ -1159,7 +1166,8 @@ class ReviewStep extends Component<Props, State> {
                 </div>
                 <div
                   className={classes.invoiceTextValue}
-                  data-test='accountNumber'>
+                  data-test='accountNumber'
+                >
                   {i18n._(`Account Number`)} :{' '}
                   {get(company, 'data.bankAccount.accountNumber')}
                 </div>
@@ -1194,18 +1202,18 @@ export default compose<Props, Props>(
   connect(
     (state: IReduxState) => ({
       profile: state.profile,
-      newInvoice: idx(state, x => x.sessionData.newInvoice),
+      newInvoice: idx(state, (x) => x.sessionData.newInvoice),
     }),
     {
       ...actions,
-    }
+    },
   ),
-  withCompany(props => ({
-    id: get(props, 'profile.selectedCompany.id'),
-  })),
-  withCreateInvoice(),
-  withCreateCustomer(),
-  withUpdateProject(),
-  withInvoiceNotify(),
-  withUpdateTimeSheet()
+  // withCompany((props) => ({
+  //   id: get(props, 'profile.selectedCompany.id'),
+  // })),
+  // withCreateInvoice(),
+  // withCreateCustomer(),
+  // withUpdateProject(),
+  // withInvoiceNotify(),
+  // withUpdateTimeSheet(),
 )(ReviewStep);

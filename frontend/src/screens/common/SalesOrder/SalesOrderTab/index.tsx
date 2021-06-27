@@ -1,23 +1,21 @@
-import React, { Component } from 'react';
-import isEmpty from 'lodash/isEmpty';
-import { Link } from 'react-router-dom';
 import {
-  withStyles,
-  composeStyles,
   Button,
-  SectionHeader,
   ErrorBoundary,
-  Table,
   Loading,
-  withRouterProps,
-  withStylesProps,
+  SectionHeader,
+  Table,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
 import Grid from '@material-ui/core/Grid';
-import SelectedCompany from '@client/helpers/SelectedCompany';
+import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import uuid from 'uuid/v4';
-import styles, { SalesOrderStyles } from './styles';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import URL from 'src/helpers/urls';
 import TabContainer from './SalesOrderTabContainer';
+import styles, { SalesOrderStyles } from './styles';
 
 interface IProps {
   actions: any;
@@ -80,7 +78,8 @@ class SalesOrder extends Component<IProps, IState> {
       return (
         <Link
           to={URL.EDIT_SALES_ORDER({ id: row.id })}
-          className={classes.salesOrderNameCell}>
+          className={classes.salesOrderNameCell}
+        >
           {ele}
         </Link>
       );
@@ -129,7 +128,8 @@ class SalesOrder extends Component<IProps, IState> {
             this.setState({
               contentHash: uuid(),
             });
-          }}>
+          }}
+        >
           <ErrorBoundary>
             <div className={classes.page}>
               <div className={classes.content}>
@@ -149,12 +149,12 @@ class SalesOrder extends Component<IProps, IState> {
 }
 
 const StyledSalesOrders = withStyles(composeStyles(styles, SalesOrderStyles))(
-  SalesOrder
+  SalesOrder,
 );
 
 const EnhancedComponent = (props: any) => (
   <TabContainer {...props} type='active-salesOrders'>
-    {childProps => <StyledSalesOrders {...childProps} />}
+    {(childProps) => <StyledSalesOrders {...childProps} />}
   </TabContainer>
 );
 

@@ -1,29 +1,27 @@
+import {
+  ErrorBoundary,
+  Loading,
+  SectionHeader,
+  Table,
+  composeStyles,
+  withStyles,
+} from '@kudoo/components';
+import isEmpty from 'lodash/isEmpty';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import isEmpty from 'lodash/isEmpty';
-import {
-  Table,
-  SectionHeader,
-  ErrorBoundary,
-  withStyles,
-  composeStyles,
-  withRouterProps,
-  withStylesProps,
-  Loading,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import TabContainer from './TabContainer';
+import URL from 'src/helpers/urls';
 import styles, { ActiveWorkersStyles } from './styles';
+import TabContainer from './TabContainer';
 
 type Props = {
   actions: any;
-  workers: Array<any>;
-  onSortRequested: Function;
-  onArchiveWorker: Function;
-  workersLoading: boolean;
-  classes: any;
-  theme: any;
-  columns: any;
+  workers?: Array<any>;
+  onSortRequested?: Function;
+  onArchiveWorker?: Function;
+  workersLoading?: boolean;
+  classes?: any;
+  theme?: any;
+  columns?: any;
 };
 type State = {};
 
@@ -53,7 +51,7 @@ class ActiveWorkers extends Component<Props, State> {
     );
   }
 
-  _showArchiveDialog = worker => {
+  _showArchiveDialog = (worker) => {
     const { theme } = this.props;
     const title = `Archive ${worker.name}?`;
     const description = (
@@ -92,7 +90,8 @@ class ActiveWorkers extends Component<Props, State> {
       return (
         <Link
           to={URL.WORKER_DETAILS({ id: row.id })}
-          className={classes.workerNameCell}>
+          className={classes.workerNameCell}
+        >
           {ele}
         </Link>
       );
@@ -135,12 +134,12 @@ class ActiveWorkers extends Component<Props, State> {
 }
 
 const ActiveWorkersStyled = withStyles(
-  composeStyles(styles, ActiveWorkersStyles)
+  composeStyles(styles, ActiveWorkersStyles),
 )(ActiveWorkers);
 
 const ActiveWorkersTabContainer = (props: Props) => (
   <TabContainer {...props} type='active-workers'>
-    {childProps => <ActiveWorkersStyled {...childProps} />}
+    {(childProps) => <ActiveWorkersStyled {...childProps} />}
   </TabContainer>
 );
 

@@ -1,6 +1,6 @@
-import * as React from 'react';
-import queryString from 'query-string';
 import get from 'lodash/get';
+import queryString from 'query-string';
+import * as React from 'react';
 import Common from './CommonTemplate';
 
 class Invite extends React.Component {
@@ -17,7 +17,8 @@ class Invite extends React.Component {
             cellPadding={0}
             border={0}
             align='center'
-            style={{ maxWidth: 600, width: '100%' }}>
+            style={{ maxWidth: 600, width: '100%' }}
+          >
             <tbody>
               <tr>
                 <td
@@ -29,7 +30,8 @@ class Invite extends React.Component {
                     fontSize: 25,
                     fontWeight: 600,
                     color: '#434856',
-                  }}>
+                  }}
+                >
                   Company Invitation
                 </td>
               </tr>
@@ -37,13 +39,15 @@ class Invite extends React.Component {
                 <td
                   align='left'
                   valign='top'
-                  style={{ paddingBottom: 10, color: '#434856' }}>
+                  style={{ paddingBottom: 10, color: '#434856' }}
+                >
                   <div
                     style={{
                       fontSize: 17,
                       marginBottom: 10,
                       fontFamily: '"Roboto", sans-serif',
-                    }}>
+                    }}
+                  >
                     {query.first_name} {query.last_name} has invited you to join{' '}
                     {query.company_name} company on the Kudoo platform.
                   </div>
@@ -53,7 +57,8 @@ class Invite extends React.Component {
                         fontSize: 17,
                         marginBottom: 10,
                         fontFamily: '"Roboto", sans-serif',
-                      }}>
+                      }}
+                    >
                       To simplify the process we have automatically created your
                       account for this email, so all you need to do to finalise
                       setup of your account is to join {query.company_name}{' '}
@@ -65,7 +70,8 @@ class Invite extends React.Component {
                         fontSize: 17,
                         marginBottom: 10,
                         fontFamily: '"Roboto", sans-serif',
-                      }}>
+                      }}
+                    >
                       {query.type === 'update' ? (
                         <span>
                           You can do that by selecting link below and filling
@@ -89,7 +95,8 @@ class Invite extends React.Component {
                     cellSpacing={0}
                     border={0}
                     bgcolor='#29a9db'
-                    style={{ borderRadius: 200 }}>
+                    style={{ borderRadius: 200 }}
+                  >
                     <tbody>
                       <tr>
                         <td
@@ -99,7 +106,8 @@ class Invite extends React.Component {
                             fontFamily: '"Roboto", sans-serif',
                             fontSize: 14,
                             fontWeight: 'bold',
-                          }}>
+                          }}
+                        >
                           <a
                             href={query.token_url}
                             target='_blank'
@@ -112,7 +120,8 @@ class Invite extends React.Component {
                               lineHeight: '44px',
                               fontSize: '15px',
                               fontWeight: 'bold',
-                            }}>
+                            }}
+                          >
                             Accept Invitation
                           </a>
                         </td>

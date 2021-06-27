@@ -1,20 +1,18 @@
-import React, { Component } from 'react';
-import findIndex from 'lodash/findIndex';
-import { connect } from 'react-redux';
-import { compose } from 'recompose';
-import queryString from 'query-string';
 import {
-  withStyles,
   Button,
   ErrorBoundary,
   WizardSteps,
-  withRouterProps,
-  withStylesProps,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { resetInvoiceData } from '@client/store/actions/createNewInvoice';
-import { any } from 'prop-types';
+import findIndex from 'lodash/findIndex';
+
+import queryString from 'query-string';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import URL from 'src/helpers/urls';
+import { resetInvoiceData } from 'src/store/actions/createNewInvoice';
 import DetailStep from '../CreateInvoice/DetailStep';
 import ReviewStep from '../CreateInvoice/ReviewStep';
 import CustomerStep from './CustomerStep';
@@ -203,7 +201,8 @@ class CreateFreeTextInvoice extends Component<Props, State> {
           onChange={() => {
             this.props.resetInvoiceData('text');
             this.props.history.push(URL.CREATE_INVOICES());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             <div className={classes.allSteps}>
               <WizardSteps
@@ -228,5 +227,5 @@ class CreateFreeTextInvoice extends Component<Props, State> {
 
 export default compose<any, any>(
   withStyles(styles),
-  connect(() => ({}), { resetInvoiceData })
+  connect(() => ({}), { resetInvoiceData }),
 )(CreateFreeTextInvoice);

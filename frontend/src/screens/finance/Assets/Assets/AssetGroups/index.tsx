@@ -1,17 +1,15 @@
-import React, { Component } from 'react';
-import isEmpty from 'lodash/isEmpty';
 import {
-  withStyles,
-  composeStyles,
   Button,
-  SectionHeader,
   ErrorBoundary,
+  SectionHeader,
   Table,
-  withRouterProps,
-  withStylesProps,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
 import Grid from '@material-ui/core/Grid';
+import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
+import URL from 'src/helpers/urls';
 import styles, { AssetStyles } from '../styles';
 import Container from './container';
 
@@ -120,7 +118,7 @@ const Styled = withStyles(composeStyles(styles, AssetStyles))(AssetGroups);
 
 const EnhancedComponent = (props: any) => (
   <Container {...props} type='active-asset-groups'>
-    {childProps => <Styled {...childProps} />}
+    {(childProps) => <Styled {...childProps} />}
   </Container>
 );
 

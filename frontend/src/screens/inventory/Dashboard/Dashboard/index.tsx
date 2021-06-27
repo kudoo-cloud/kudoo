@@ -1,14 +1,10 @@
-import React, { Component } from 'react';
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
-import uuid from 'uuid/v4';
-import {
-  withStyles,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
+import { withStyles } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import SelectedCompany from '@client/helpers/SelectedCompany';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import uuid from 'uuid/v4';
+import SelectedCompany from 'src/helpers/SelectedCompany';
 import styles from './styles';
 import Widget from './Widget';
 
@@ -40,7 +36,8 @@ class Dashboard extends Component<IProps, IState> {
             this.setState({
               contentHash: uuid(),
             });
-          }}>
+          }}
+        >
           <Grid container spacing={0}>
             <Grid item xs={12}>
               <div className={classes.page}>
@@ -58,5 +55,5 @@ export default compose<any, any>(
   withStyles(styles),
   connect((state: any) => ({
     profile: state.profile,
-  }))
+  })),
 )(Dashboard);

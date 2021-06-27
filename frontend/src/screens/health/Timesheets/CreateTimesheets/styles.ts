@@ -1,4 +1,4 @@
-export default theme => ({
+export default (theme) => ({
   page: {
     flex: 1,
     display: 'flex',
@@ -64,7 +64,7 @@ export default theme => ({
   },
 });
 
-export const timesheetRowStyles = theme => ({
+export const timesheetRowStyles = (theme) => ({
   wrapper: {
     flexDirection: 'row',
     display: 'flex',
@@ -210,13 +210,13 @@ export const timesheetRowStyles = theme => ({
   },
 });
 
-export const TimesheetApproveModalStyles = theme => ({
+export const TimesheetApproveModalStyles = () => ({
   emailInputs: {
     marginTop: 15,
   },
 });
 
-export const fileBlockStyles = theme => ({
+export const fileBlockStyles = (theme) => ({
   component: {
     display: 'flex',
     alignItems: 'center',

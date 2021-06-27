@@ -1,9 +1,9 @@
 import idx from 'idx';
-import { IAvailability, LicensePlan } from '@client/store/types/security';
+import { IAvailability, LicensePlan } from 'src/store/types/security';
 
 export const isFeatureAvailable = (
   company,
-  availability: IAvailability[] = []
+  availability: IAvailability[] = [],
 ) => {
   const arr: IAvailability[] = ([] as IAvailability[]).concat(availability);
   // Whether company satifies all availability test
@@ -17,7 +17,7 @@ export const isFeatureAvailable = (
       found = item.country.indexOf(company.country) > -1;
     }
     if (item.security && found) {
-      found = item.security.indexOf(idx(company, x => x.role)) > -1;
+      found = item.security.indexOf(idx(company, (x) => x.role)) > -1;
     }
     return found;
   });
@@ -25,12 +25,13 @@ export const isFeatureAvailable = (
 
 export const needsLicenseUpgrade = (
   company,
-  licenseRequired: LicensePlan[]
+  licenseRequired: LicensePlan[],
 ) => {
   if (!licenseRequired || licenseRequired.length <= 0) {
     return false;
   }
   return (
-    (licenseRequired || []).indexOf(idx(company, x => x.activePlan.type)) <= -1
+    (licenseRequired || []).indexOf(idx(company, (x) => x.activePlan.type)) <=
+    -1
   );
 };

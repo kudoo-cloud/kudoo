@@ -1,4 +1,4 @@
-export default theme => ({
+export default (theme) => ({
   page: {
     padding: '40px 10px',
   },
@@ -64,7 +64,7 @@ export default theme => ({
   },
 });
 
-export const JoinModalStyles = theme => ({
+export const JoinModalStyles = (theme) => ({
   modalWrapper: {
     position: 'fixed',
     top: 0,

@@ -1,6 +1,6 @@
-import * as React from 'react';
-import queryString from 'query-string';
 import get from 'lodash/get';
+import queryString from 'query-string';
+import * as React from 'react';
 import Common from './CommonTemplate';
 
 class Welcome extends React.Component {
@@ -17,7 +17,8 @@ class Welcome extends React.Component {
             border='0'
             align='center'
             style={{ maxWidth: '640px', width: '100%' }}
-            bgcolor='#FFFFFF'>
+            bgcolor='#FFFFFF'
+          >
             <tbody>
               <tr>
                 <td align='center' valign='top' style={{ padding: '50px' }}>
@@ -27,7 +28,8 @@ class Welcome extends React.Component {
                     cellPadding='0'
                     border='0'
                     align='center'
-                    style={{ maxWidth: '600px', width: '100%' }}>
+                    style={{ maxWidth: '600px', width: '100%' }}
+                  >
                     <tbody>
                       <tr>
                         <td
@@ -39,7 +41,8 @@ class Welcome extends React.Component {
                             fontSize: '25px',
                             fontWeight: 600,
                             color: '#434856',
-                          }}>
+                          }}
+                        >
                           Welcome to the Kudoo family
                         </td>
                       </tr>
@@ -50,13 +53,15 @@ class Welcome extends React.Component {
                           style={{
                             paddingBottom: '10px',
                             color: '#434856',
-                          }}>
+                          }}
+                        >
                           <div
                             style={{
                               fontSize: '17px',
                               marginBottom: '10px',
                               fontFamily: "'Roboto', sans-serif",
-                            }}>
+                            }}
+                          >
                             Hi {query.first_name} {query.last_name},
                           </div>
                           <div
@@ -65,7 +70,8 @@ class Welcome extends React.Component {
                               marginBottom: '10px',
                               fontFamily: "'Roboto', sans-serif",
                               lineHeight: '24px',
-                            }}>
+                            }}
+                          >
                             We
                             {`'`}
                             re very excited to have you onboard. We
@@ -79,7 +85,8 @@ class Welcome extends React.Component {
                               marginBottom: '10px',
                               fontFamily: "'Roboto', sans-serif",
                               lineHeight: '24px',
-                            }}>
+                            }}
+                          >
                             If you
                             {`'`}d like to look at the documentation, please
                             head to https://docs.kudoo.io/user/1.0/
@@ -90,7 +97,8 @@ class Welcome extends React.Component {
                               marginBottom: '10px',
                               fontFamily: "'Roboto', sans-serif",
                               lineHeight: '24px',
-                            }}>
+                            }}
+                          >
                             If you have any questions or queries that can
                             {`'`}t be answered via the documentation, you can
                             log a post on our forum at
@@ -104,7 +112,8 @@ class Welcome extends React.Component {
                         <td
                           align='left'
                           valign='top'
-                          style={{ padding: '10px 0px' }}>
+                          style={{ padding: '10px 0px' }}
+                        >
                           <table
                             width='350'
                             height='60'
@@ -112,7 +121,8 @@ class Welcome extends React.Component {
                             cellSpacing='0'
                             border='0'
                             bgcolor='#29a9db'
-                            style={{ borderRadius: '200px' }}>
+                            style={{ borderRadius: '200px' }}
+                          >
                             <tbody>
                               <tr>
                                 <td
@@ -122,7 +132,8 @@ class Welcome extends React.Component {
                                     fontFamily: "'Roboto', sans-serif",
                                     fontSize: '14px',
                                     fontWeight: 'bold',
-                                  }}>
+                                  }}
+                                >
                                   <a
                                     href={window.location.origin}
                                     target='_blank'
@@ -135,7 +146,8 @@ class Welcome extends React.Component {
                                       lineHeight: '44px',
                                       fontSize: '15px',
                                       fontWeight: 'bold',
-                                    }}>
+                                    }}
+                                  >
                                     Go to Kudoo web app
                                   </a>
                                 </td>

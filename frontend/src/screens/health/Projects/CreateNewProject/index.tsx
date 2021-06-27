@@ -1,23 +1,21 @@
-import React, { Component } from 'react';
-import findIndex from 'lodash/findIndex';
-import { connect } from 'react-redux';
-import { compose } from 'recompose';
 import {
-  withStyles,
   Button,
   ErrorBoundary,
   WizardSteps,
-  withRouterProps,
-  withStylesProps,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import actions from '@client/store/actions/createNewProject';
-import ProjectStep from './ProjectStep';
+import findIndex from 'lodash/findIndex';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import URL from 'src/helpers/urls';
+import actions from 'src/store/actions/createNewProject';
 import CustomerStep from './CustomerStep';
-import ServiceStep from './ServiceStep';
-import RulesStep from './RulesStep';
+import ProjectStep from './ProjectStep';
 import ReviewStep from './ReviewStep';
+import RulesStep from './RulesStep';
+import ServiceStep from './ServiceStep';
 import styles from './styles';
 
 type Props = {
@@ -152,7 +150,8 @@ class CreateNewProject extends Component<Props, State> {
             // because new selected company will not have selected customer and services
             this.props.resetNewProjectData();
             this.props.history.push(URL.PROJECTS());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             <div className={classes.allSteps}>
               <WizardSteps
@@ -180,5 +179,5 @@ class CreateNewProject extends Component<Props, State> {
 
 export default compose<any, any>(
   connect(() => ({}), { resetNewProjectData: actions.resetNewProjectData }),
-  withStyles(styles)
+  withStyles(styles),
 )(CreateNewProject);

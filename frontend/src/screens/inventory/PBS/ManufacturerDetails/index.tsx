@@ -1,18 +1,12 @@
-import React, { Component } from 'react';
+import { ToggleButton, withStyles } from '@kudoo/components';
+import Grid from '@material-ui/core/Grid';
 import cx from 'classnames';
 import get from 'lodash/get';
-import {
-  withStyles,
-  ToggleButton,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import Grid from '@material-ui/core/Grid';
-import { connect } from 'react-redux';
+import React, { Component } from 'react';
 import { compose } from 'react-apollo';
-import { withPBSOrganisation } from '@kudoo/graphql';
-import SelectedCompany from '@client/helpers/SelectedCompany';
+import { connect } from 'react-redux';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import URL from 'src/helpers/urls';
 import DetailsTab from './DetailsTab';
 import InvoicesTab from './InvoicesTab';
 import styles from './styles';
@@ -34,6 +28,14 @@ interface IState {
 }
 
 class ManufacturerDetails extends Component<IProps, IState> {
+  public static defaultProps = {
+    pbsOrganisation: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+  };
+
   public customerBasicInfoForm: any;
   public customerAddressContactForm: any;
 
@@ -163,7 +165,8 @@ class ManufacturerDetails extends Component<IProps, IState> {
       <SelectedCompany
         onChange={() => {
           this.props.history.push(URL.MANUFACTURERS());
-        }}>
+        }}
+      >
         <div className={classes.page}>
           <div className={classes.content}>
             {this._renderDetailsCards()}
@@ -182,7 +185,7 @@ export default compose(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withPBSOrganisation(props => ({
-    id: get(props, 'match.params.id'),
-  }))
+  // withPBSOrganisation((props) => ({
+  //   id: get(props, 'match.params.id'),
+  // })),
 )(ManufacturerDetails);

@@ -1,54 +1,51 @@
-import * as React from 'react';
-import { compose } from 'react-apollo';
 import {
-  withCreatePurchaseOrder,
-  withCreatePurchaseOrderLine,
-  withPurchaseOrders,
-  withUpdatePurchaseOrder,
-  withUpdatePurchaseOrderLine,
-} from '@kudoo/graphql';
-import {
-  ErrorBoundary,
-  withStyles,
-  SectionHeader,
   Button,
+  Checkbox,
+  ErrorBoundary,
+  SectionHeader,
   Table,
   composeStyles,
-  Checkbox,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { connect } from 'react-redux';
-import styles, {
-  reviewStyles,
-  createPurchaseOrderStyles,
-} from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/styles';
 import { withI18n } from '@lingui/react';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { POSTATUS } from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/types';
-import { showToast } from '@client/helpers/toast';
 import {
-  findIndex,
-  filter,
-  get,
-  isEqual,
-  uniqBy,
-  includes,
-  find,
-} from 'lodash';
-import {
-  Grid,
   ExpansionPanel,
   ExpansionPanelDetails,
   ExpansionPanelSummary,
+  Grid,
 } from '@material-ui/core';
-import moment from 'moment';
-import { generatePDF } from '@client/helpers/jsPDF';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import { filter, find, findIndex, get, includes, uniqBy } from 'lodash';
+import moment from 'moment';
+import * as React from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import { generatePDF } from 'src/helpers/jsPDF';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
+import styles, {
+  createPurchaseOrderStyles,
+  reviewStyles,
+} from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/styles';
+import { POSTATUS } from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/types';
 import { IPOResponse, IPreviewPOProps, IPreviewPOState } from '../PBSPOtypes';
 class PreviewPurchaseOrder extends React.Component<
   IPreviewPOProps,
   IPreviewPOState
 > {
+  public static defaultProps = {
+    purchaseOrders: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+    createPurchaseOrder: () => ({}),
+    updatePurchaseOrder: () => ({}),
+    createPurchaseOrderLine: () => ({}),
+    updatePurchaseOrderLine: () => ({}),
+  };
+
   public state = {
     submitting: false,
     expanded: '',
@@ -66,7 +63,7 @@ class PreviewPurchaseOrder extends React.Component<
     }
   }
 
-  public handleChange = panel => (event, expanded) => {
+  public handleChange = (panel) => (event, expanded) => {
     this.setState({
       expanded: expanded ? panel : false,
     });
@@ -86,63 +83,66 @@ class PreviewPurchaseOrder extends React.Component<
 
     const purchaseOrderLineFilterData = filter(
       purchaseOrderLineData,
-      filterData => filterData.qty >= 0 && filterData.pbsDrug
+      (filterData) => filterData.qty >= 0 && filterData.pbsDrug,
     );
 
     let poLineFlag = 0;
     if (!isEditMode) {
-      purchaseOrderLineFilterData.forEach(_ => {
+      purchaseOrderLineFilterData.forEach((_: any) => {
         if (!includes(confirmPO, _.pbsOrganisation.value)) {
           const poIndex = findIndex(
             purchaseOrderLineData,
-            pol => pol.pbsOrganisation.value === _.pbsOrganisation.value
+            (pol) => pol.pbsOrganisation.value === _.pbsOrganisation.value,
           );
           purchaseOrderLineFilterData.splice(poIndex, 1);
         }
       });
 
-      uniqBy(purchaseOrderLineFilterData, _ => _.pbsOrganisation.value).forEach(
-        async _ => {
-          if (!_.id) {
-            const res = (await this._createUpdatePurchaseOrder(
-              _.pbsOrganisation
-            )) as IPOResponse;
-            if (res.success) {
-              filter(
-                purchaseOrderLineFilterData,
-                pol => pol.pbsOrganisation.value === _.pbsOrganisation.value
-              ).forEach(async poLine => {
-                const purchaseOrderLineResponse = (await this._createUpdatePurchaseOrderLine(
+      uniqBy(
+        purchaseOrderLineFilterData,
+        (_: any) => _.pbsOrganisation.value,
+      ).forEach(async (_) => {
+        if (!_.id) {
+          const res = (await this._createUpdatePurchaseOrder(
+            _.pbsOrganisation,
+          )) as IPOResponse;
+          if (res.success) {
+            filter(
+              purchaseOrderLineFilterData,
+              (pol: any) =>
+                pol.pbsOrganisation.value === _.pbsOrganisation.value,
+            ).forEach(async (poLine: any) => {
+              const purchaseOrderLineResponse =
+                (await this._createUpdatePurchaseOrderLine(
                   poLine,
-                  res
+                  res,
                 )) as IPOResponse;
-                if (purchaseOrderLineResponse.error) {
-                  if (poLineFlag === 0) {
-                    poLineFlag = 1;
-                    showToast(purchaseOrderLineResponse.error);
-                    actions.setSubmitting(false);
-                  }
+              if (purchaseOrderLineResponse.error) {
+                if (poLineFlag === 0) {
+                  poLineFlag = 1;
+                  showToast(purchaseOrderLineResponse.error as any);
+                  actions.setSubmitting(false);
                 }
-              });
-              if (poLineFlag === 0) {
-                this.setState({ submitting: false });
-                showToast(null, 'Purchase Order created successfully');
-                actions.setSubmitting(false);
-                this.props.history.push(URL.PBS_PURCHASE_ORDER());
               }
-            } else {
-              showToast(res.error);
+            });
+            if (poLineFlag === 0) {
+              this.setState({ submitting: false });
+              showToast(null, 'Purchase Order created successfully');
               actions.setSubmitting(false);
+              this.props.history.push(URL.PBS_PURCHASE_ORDER());
             }
+          } else {
+            showToast(res.error as any);
+            actions.setSubmitting(false);
           }
         }
-      );
+      });
     } else {
       const res = (await this._createUpdatePurchaseOrder(
-        JSON.parse(defaultData.pbsOrganisation)
+        JSON.parse(defaultData.pbsOrganisation),
       )) as IPOResponse;
       if (res.success) {
-        purchaseOrderLineFilterData.forEach(async _ => {
+        purchaseOrderLineFilterData.forEach(async (_) => {
           const polResponse = await this._createUpdatePurchaseOrderLine(_, res);
           if (polResponse.error) {
             if (poLineFlag === 0) {
@@ -159,13 +159,13 @@ class PreviewPurchaseOrder extends React.Component<
           this.props.history.push(URL.PBS_PURCHASE_ORDER());
         }
       } else {
-        showToast(res.error);
+        showToast(res.error as any);
         actions.setSubmitting(false);
       }
     }
   };
 
-  public _createUpdatePurchaseOrder = async pbsOrganisation => {
+  public _createUpdatePurchaseOrder = async (pbsOrganisation) => {
     const {
       purchaseOrderData: { defaultData, isEditMode = false },
       profile: { id = '' } = {},
@@ -181,15 +181,15 @@ class PreviewPurchaseOrder extends React.Component<
       status: POSTATUS.OPEN,
       isPbsPO: true,
       pbsOrganisation: `{\"key\": \"${pbsOrganisation.key}\", \"value\": \"${pbsOrganisation.value}\"}`,
-      preview: find(previewPDF, _ => _.key === pbsOrganisation.value).value,
+      preview: find(previewPDF, (_) => _.key === pbsOrganisation.value).value,
     };
     if (!isEditMode) {
       const createPO = this.props
         .createPurchaseOrder({ data: { ...dataToSend } })
-        .then(res => {
+        .then((res) => {
           return res;
         })
-        .catch(err => {
+        .catch((err) => {
           return { error: err };
         });
       return createPO;
@@ -199,10 +199,10 @@ class PreviewPurchaseOrder extends React.Component<
           data: dataToSend,
           where: { id: defaultData.id },
         })
-        .then(res => {
+        .then((res) => {
           return res;
         })
-        .catch(err => {
+        .catch((err) => {
           return { error: err };
         });
       return updatePO;
@@ -234,10 +234,10 @@ class PreviewPurchaseOrder extends React.Component<
             },
           },
         })
-        .then(res => {
+        .then((res) => {
           return res;
         })
-        .catch(err => {
+        .catch((err) => {
           return { error: err };
         });
       return createPOL;
@@ -254,10 +254,10 @@ class PreviewPurchaseOrder extends React.Component<
           },
           where: { id: poLine.id },
         })
-        .then(polResponse => {
+        .then((polResponse) => {
           return polResponse;
         })
-        .catch(err => {
+        .catch((err) => {
           return { error: err };
         });
       return updatePol;
@@ -397,7 +397,7 @@ class PreviewPurchaseOrder extends React.Component<
     ];
     const purchaseOrderLineFilterData = filter(
       purchaseOrderLineData,
-      filterData => filterData.qty >= 0 && filterData.pbsDrug
+      (filterData) => filterData.qty >= 0 && filterData.pbsDrug,
     );
     return (
       <div>
@@ -406,7 +406,7 @@ class PreviewPurchaseOrder extends React.Component<
           columnData={headerData}
           data={filter(
             purchaseOrderLineFilterData,
-            _ => pbsOrg.value === _.pbsOrganisation.value
+            (_: any) => pbsOrg.value === _.pbsOrganisation.value,
           )}
           stripe={false}
           sortable={false}
@@ -435,7 +435,7 @@ class PreviewPurchaseOrder extends React.Component<
     return ele;
   };
 
-  public _handleCheckBox = async pbsOrg => {
+  public _handleCheckBox = async (pbsOrg) => {
     const { confirmPO, previewPDF }: any = this.state;
     const {
       purchaseOrderData: { isEditMode },
@@ -444,7 +444,7 @@ class PreviewPurchaseOrder extends React.Component<
     const pdfFile = new File([pdfBlob], 'purchaseOrder.pdf');
     previewPDF.push({ key: pbsOrg, value: pdfFile });
     if (!isEditMode) {
-      const poIndex = findIndex(confirmPO, _ => _ === pbsOrg);
+      const poIndex = findIndex(confirmPO, (_) => _ === pbsOrg);
       if (poIndex <= -1) {
         confirmPO.push(pbsOrg);
       } else {
@@ -466,7 +466,7 @@ class PreviewPurchaseOrder extends React.Component<
     const logo = get(profile, 'selectedCompany.logo.url', '');
     const purchaseOrderLineFilterData = filter(
       purchaseOrderLineData,
-      filterData => filterData.qty >= 0 && filterData.pbsDrug.key
+      (filterData) => filterData.qty >= 0 && filterData.pbsDrug.key,
     );
     const uniqPO = uniqBy(purchaseOrderLineFilterData, 'pbsOrganisation.value');
     return (
@@ -474,21 +474,24 @@ class PreviewPurchaseOrder extends React.Component<
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.PURCHASE_ORDER());
-          }}>
+          }}
+        >
           <div className={classes.pbsPage}>
             {this._renderSectionHeading()}
 
             <div className={classes.content}>
-              {uniqPO.map((_, index) => (
+              {uniqPO.map((_: any, index) => (
                 <ExpansionPanel
                   key={index}
                   expanded={expanded === `panel${index}`}
-                  onChange={this.handleChange(`panel${index}`)}>
+                  onChange={this.handleChange(`panel${index}`)}
+                >
                   <ExpansionPanelSummary
                     className={classes.customExpansion}
                     expandIcon={
                       <ExpandMoreIcon className={classes.customExpansion} />
-                    }>
+                    }
+                  >
                     <div className={classes.expHeader}>
                       {_.pbsOrganisation.key}
                     </div>
@@ -520,7 +523,8 @@ class PreviewPurchaseOrder extends React.Component<
                             sm={12}
                             classes={{
                               item: classes.purchaseOrderTitleRightPart,
-                            }}>
+                            }}
+                          >
                             {logo && (
                               <div className={classes.purchaseOrderName}>
                                 {companyName}
@@ -537,19 +541,22 @@ class PreviewPurchaseOrder extends React.Component<
                           </div>
                           <div
                             className={classes.purchaseOrderDateValue}
-                            data-test='purchaseOrder-date'>
+                            data-test='purchaseOrder-date'
+                          >
                             {moment(defaultData.date).format('DD MMM YYYY')}
                           </div>
                         </div>
                         <div
                           className={classes.purchaseOrderDateBlock}
-                          style={{ textAlign: 'right' }}>
+                          style={{ textAlign: 'right' }}
+                        >
                           <div className={classes.purchaseOrderDateLabel}>
                             PBS Organisation
                           </div>
                           <div
                             className={classes.purchaseOrderDateValue}
-                            data-test='due-date'>
+                            data-test='due-date'
+                          >
                             {_.pbsOrganisation.key}
                           </div>
                         </div>
@@ -576,13 +583,13 @@ class PreviewPurchaseOrder extends React.Component<
 
 export default compose(
   withI18n(),
-  withPurchaseOrders(),
-  withCreatePurchaseOrder(),
-  withUpdatePurchaseOrder(),
-  withCreatePurchaseOrderLine(),
-  withUpdatePurchaseOrderLine(),
+  // withPurchaseOrders(),
+  // withCreatePurchaseOrder(),
+  // withUpdatePurchaseOrder(),
+  // withCreatePurchaseOrderLine(),
+  // withUpdatePurchaseOrderLine(),
   connect((state: { profile: object }) => ({
     profile: state.profile,
   })),
-  withStyles(composeStyles(styles, reviewStyles, createPurchaseOrderStyles))
+  withStyles(composeStyles(styles, reviewStyles, createPurchaseOrderStyles)),
 )(PreviewPurchaseOrder);

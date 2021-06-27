@@ -1,26 +1,23 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import get from 'lodash/get';
-import { withI18n } from '@lingui/react';
-import { connect } from 'react-redux';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { compose } from 'react-apollo';
 import {
-  withStyles,
-  Button,
-  PhoneNumberField,
   AddressForm,
+  Button,
   CustomerForm,
-  SectionHeader,
   ErrorBoundary,
-  withRouterProps,
-  withStylesProps,
+  PhoneNumberField,
+  SectionHeader,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { withCreateCustomer } from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
+import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
@@ -36,6 +33,10 @@ type Props = {
 type State = {};
 
 class CreateNewCustomer extends Component<Props, State> {
+  static defaultProps = {
+    createCustomer: () => ({}),
+  };
+
   componentDidMount() {
     this.props.actions.updateHeaderTitle('Customers');
   }
@@ -53,14 +54,15 @@ class CreateNewCustomer extends Component<Props, State> {
 
   _renderFormContent(formProps) {
     const { classes, i18n } = this.props;
-    const { values } = formProps;
+    // const { values } = formProps;
     return (
       <form className={classes.form} onSubmit={formProps.handleSubmit}>
         <div style={{ padding: '20px', flex: 1 }}>
           <Grid
             container
             classes={{ container: classes.formContainer }}
-            spacing={16}>
+            spacing={16}
+          >
             <Grid item xs={12} sm={6}>
               <CustomerForm
                 keys={{
@@ -123,7 +125,7 @@ class CreateNewCustomer extends Component<Props, State> {
     );
   }
 
-  _submitForm = async values => {
+  _submitForm = async (values) => {
     try {
       const res = await this.props.createCustomer({
         data: {
@@ -159,7 +161,7 @@ class CreateNewCustomer extends Component<Props, State> {
         showToast(null, 'Customer created successfully');
         this.props.history.push(URL.CUSTOMERS());
       } else {
-        res.error(err => showToast(err));
+        res.error((err) => showToast(err));
       }
     } catch (e) {
       console.error('submit form ===>', e);
@@ -212,7 +214,8 @@ class CreateNewCustomer extends Component<Props, State> {
             number: Yup.string().required('Number is required'),
           }),
         })}
-        onSubmit={this._submitForm}>
+        onSubmit={this._submitForm}
+      >
         {this._renderFormContent.bind(this)}
       </Formik>
     );
@@ -249,7 +252,8 @@ class CreateNewCustomer extends Component<Props, State> {
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.CUSTOMERS());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             {this._renderSectionHeading()}
             {this._renderForm()}
@@ -263,8 +267,8 @@ class CreateNewCustomer extends Component<Props, State> {
 export default compose(
   withStyles(styles),
   withI18n(),
-  connect(state => ({
+  connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-  withCreateCustomer()
+  // withCreateCustomer(),
 )(CreateNewCustomer);

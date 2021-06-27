@@ -1,33 +1,30 @@
-import React, { Component } from 'react';
+import {
+  Button,
+  DatePicker,
+  FieldLabel,
+  FileBlock,
+  SectionHeader,
+  TextField,
+  composeStyles,
+  withStyles,
+} from '@kudoo/components';
 import { withI18n } from '@lingui/react';
-import { connect } from 'react-redux';
-import { Link } from 'react-router-dom';
-import { compose } from 'react-apollo';
-import uniq from 'lodash/uniq';
-import get from 'lodash/get';
 import Grid from '@material-ui/core/Grid';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
-import moment from 'moment';
-import Dropzone from 'react-dropzone';
-import {
-  withStyles,
-  composeStyles,
-  Button,
-  SectionHeader,
-  FileBlock,
-  FieldLabel,
-  TextField,
-  DatePicker,
-  withStylesProps,
-  withRouterProps,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { withCompany } from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
-import * as actions from '@client/store/actions/createNewInvoice';
-import { IReduxState } from '@client/store/reducers';
 import idx from 'idx';
+import get from 'lodash/get';
+import uniq from 'lodash/uniq';
+import moment from 'moment';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import Dropzone from 'react-dropzone';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import * as Yup from 'yup';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
+import * as actions from 'src/store/actions/createNewInvoice';
+import { IReduxState } from 'src/store/reducers';
 import styles, { detailStepStyles } from './styles';
 
 type Props = {
@@ -47,6 +44,10 @@ type Props = {
 type State = {};
 
 class DetailStep extends Component<Props, State> {
+  static defaultProps = {
+    company: { data: {} },
+  };
+
   // form: any;
 
   state = {};
@@ -88,7 +89,7 @@ class DetailStep extends Component<Props, State> {
     setFieldTouched('options');
   };
 
-  _onSubmitForm = values => {
+  _onSubmitForm = (values) => {
     const { createType, company } = this.props;
     if (!get(company, 'data.bankAccount')) {
       showToast('Please add bank account');
@@ -115,28 +116,28 @@ class DetailStep extends Component<Props, State> {
     setFieldValue(key, value);
   };
 
-  _onDropAttachments = files => {
+  _onDropAttachments = (files) => {
     const { createType, newInvoice } = this.props;
     const attachments = get(
       newInvoice,
       `${createType}.payment.attachments`,
-      []
+      [],
     );
     let finalAttachments = [];
     finalAttachments = attachments.filter(
-      attachment => attachment instanceof File
+      (attachment) => attachment instanceof File,
     );
     this.props.updatePaymentInfo(createType, {
       attachments: [...finalAttachments, ...files],
     });
   };
 
-  _removeAttachment = index => {
+  _removeAttachment = (index) => {
     const { createType, newInvoice } = this.props;
     const attachments = get(
       newInvoice,
       `${createType}.payment.attachments`,
-      []
+      [],
     );
     attachments.splice(index, 1);
     this.props.updatePaymentInfo(createType, {
@@ -145,27 +146,15 @@ class DetailStep extends Component<Props, State> {
   };
 
   _renderForm(formProps) {
-    const {
-      values,
-      errors,
-      touched,
-      handleSubmit,
-      handleBlur,
-      setFieldValue,
-    } = formProps;
+    const { values, errors, touched, handleSubmit, handleBlur, setFieldValue } =
+      formProps;
 
-    const {
-      classes,
-      company,
-      profile,
-      newInvoice,
-      createType,
-      i18n,
-    } = this.props;
+    const { classes, company, profile, newInvoice, createType, i18n } =
+      this.props;
     const companyId = get(profile, 'selectedCompany.id');
     const customer = get(newInvoice, `${createType}.customer`) || {};
     let attachments = get(newInvoice, `${createType}.payment.attachments`, []);
-    attachments = attachments.filter(attch => attch instanceof File);
+    attachments = attachments.filter((attch) => attch instanceof File);
     return (
       <form className={classes.form} onSubmit={handleSubmit}>
         <div className={classes.input}>
@@ -179,7 +168,8 @@ class DetailStep extends Component<Props, State> {
                   to={
                     URL.COMPANY_BANKING({ companyId }) +
                     `?redirect=${encodeURIComponent(location.hash.substr(1))}`
-                  }>
+                  }
+                >
                   add bank
                 </Link>{' '}
                 information
@@ -205,7 +195,8 @@ class DetailStep extends Component<Props, State> {
                   to={
                     URL.COMPANY_BANKING({ companyId }) +
                     `?redirect=${encodeURIComponent(location.hash.substr(1))}`
-                  }>
+                  }
+                >
                   Update Information
                 </Link>
               </div>
@@ -222,14 +213,14 @@ class DetailStep extends Component<Props, State> {
                   id: 'invoice-date-input',
                 }}
                 value={values.invoiceDate}
-                onDateChange={date => {
+                onDateChange={(date) => {
                   this._onFieldChange('invoiceDate', date, setFieldValue);
                   const days = this._calculateDays(date, values.dueDate);
                   if (days !== false) {
                     this._onFieldChange(
                       'numberOfDays',
                       String(days),
-                      setFieldValue
+                      setFieldValue,
                     );
                   }
                 }}
@@ -243,14 +234,14 @@ class DetailStep extends Component<Props, State> {
                   id: 'due-date-input',
                 }}
                 value={values.dueDate}
-                onDateChange={date => {
+                onDateChange={(date) => {
                   this._onFieldChange('dueDate', date, setFieldValue);
                   const days = this._calculateDays(values.invoiceDate, date);
                   if (days !== false) {
                     this._onFieldChange(
                       'numberOfDays',
                       String(days),
-                      setFieldValue
+                      setFieldValue,
                     );
                   }
                 }}
@@ -262,23 +253,23 @@ class DetailStep extends Component<Props, State> {
                 id='numberOfDays'
                 name='numberOfDays'
                 isNumber
-                onChangeText={numberOfDays => {
+                onChangeText={(numberOfDays) => {
                   const number = Number(numberOfDays || 0);
                   if (number >= 0) {
                     const dueDate = moment(values.invoiceDate).add(
                       number,
-                      'days'
+                      'days',
                     );
                     this._onFieldChange(
                       'dueDate',
                       moment(dueDate).format('YYYY-MM-DD'),
-                      setFieldValue
+                      setFieldValue,
                     );
                   }
                   this._onFieldChange(
                     'numberOfDays',
                     String(number),
-                    setFieldValue
+                    setFieldValue,
                   );
                 }}
                 label='Number of Days'
@@ -295,7 +286,7 @@ class DetailStep extends Component<Props, State> {
                 id='message'
                 name='message'
                 value={values.message}
-                onChangeText={text => {
+                onChangeText={(text) => {
                   this._onFieldChange('message', text, setFieldValue);
                 }}
                 onBlur={handleBlur}
@@ -314,7 +305,8 @@ class DetailStep extends Component<Props, State> {
                 multiple
                 className={classes.dragAreaWrapper}
                 activeClassName={classes.activeDragArea}
-                onDropAccepted={this._onDropAttachments}>
+                onDropAccepted={this._onDropAttachments}
+              >
                 <div className={classes.attachWrapper}>
                   <TextField
                     classes={{ textInputWrapper: classes.searchInput }}
@@ -334,7 +326,7 @@ class DetailStep extends Component<Props, State> {
                           key={index}
                           file={attachment}
                           variant='interactive'
-                          onRemoveClick={e => {
+                          onRemoveClick={(e) => {
                             e.stopPropagation();
                             this._removeAttachment(index);
                           }}
@@ -379,8 +371,9 @@ class DetailStep extends Component<Props, State> {
             dueDate: Yup.string().required('Due date required'),
             numberOfDays: Yup.string().required('Number of days required'),
           })}
-          onSubmit={this._onSubmitForm}>
-          {formProps => (
+          onSubmit={this._onSubmitForm}
+        >
+          {(formProps) => (
             <>
               <SectionHeader
                 title={title}
@@ -430,11 +423,11 @@ export default compose(
   connect(
     (state: IReduxState) => ({
       profile: state.profile,
-      newInvoice: idx(state, x => x.sessionData.newInvoice),
+      newInvoice: idx(state, (x) => x.sessionData.newInvoice),
     }),
-    { ...actions }
+    { ...actions },
   ),
-  withCompany(props => ({
-    id: get(props, 'profile.selectedCompany.id'),
-  }))
+  // withCompany((props) => ({
+  //   id: get(props, 'profile.selectedCompany.id'),
+  // })),
 )(DetailStep);

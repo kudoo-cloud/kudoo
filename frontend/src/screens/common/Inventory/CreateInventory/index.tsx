@@ -1,28 +1,23 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import { withI18n } from '@lingui/react';
-import { connect } from 'react-redux';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { compose } from 'react-apollo';
 import {
   Button,
-  ErrorBoundary,
-  TextField,
   Dropdown,
+  ErrorBoundary,
   SectionHeader,
+  TextField,
   withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
 import idx from 'idx';
 import isEqual from 'lodash/isEqual';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import {
-  withCreateInventory,
-  withInventory,
-  withUpdateInventory,
-} from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import styles from './styles';
 import { INVENTORY_MODEL, UOM } from './types';
 
@@ -42,6 +37,12 @@ interface IState {
 }
 
 class CreateInventory extends Component<IProps, IState> {
+  static defaultProps = {
+    initialData: {},
+    createInventory: () => ({}),
+    updateInventory: () => ({}),
+  };
+
   public state = {
     isEditMode: false,
   };
@@ -63,7 +64,7 @@ class CreateInventory extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.INVENTORY());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       } else {
@@ -76,7 +77,7 @@ class CreateInventory extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.INVENTORY());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       }
@@ -89,14 +90,14 @@ class CreateInventory extends Component<IProps, IState> {
     this.props.actions.updateHeaderTitle('Inventory');
 
     this.setState({
-      isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+      isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
     });
   }
 
   public componentDidUpdate(prevProps) {
     if (!isEqual(this.props.initialData, prevProps.initialData)) {
       this.setState({
-        isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+        isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
       });
     }
   }
@@ -158,7 +159,7 @@ class CreateInventory extends Component<IProps, IState> {
                 id={keys.inventoryModel}
                 items={INVENTORY_MODEL}
                 value={values[keys.inventoryModel]}
-                onChange={e => setFieldValue(keys.inventoryModel, e.value)}
+                onChange={(e) => setFieldValue(keys.inventoryModel, e.value)}
                 onClose={() => setFieldTouched(keys.inventoryModel)}
                 error={
                   touched[keys.inventoryModel] && errors[keys.inventoryModel]
@@ -173,7 +174,7 @@ class CreateInventory extends Component<IProps, IState> {
                 id={keys.uom}
                 items={UOM}
                 value={values[keys.uom]}
-                onChange={e => {
+                onChange={(e) => {
                   setFieldValue(keys.uom, e.value);
                 }}
                 onClose={() => setFieldTouched(keys.uom)}
@@ -192,9 +193,9 @@ class CreateInventory extends Component<IProps, IState> {
     return (
       <Formik
         initialValues={{
-          name: idx(initialData, _ => _.name) || '',
-          inventoryModel: idx(initialData, _ => _.inventoryModel) || '',
-          uom: idx(initialData, _ => _.uom) || '',
+          name: idx(initialData, (_) => _.name) || '',
+          inventoryModel: idx(initialData, (_) => _.inventoryModel) || '',
+          uom: idx(initialData, (_) => _.uom) || '',
         }}
         enableReinitialize
         validationSchema={Yup.object().shape({
@@ -202,7 +203,8 @@ class CreateInventory extends Component<IProps, IState> {
           inventoryModel: Yup.string().required('Inventory Model is required'),
           uom: Yup.string().required('Unit of Measure is required'),
         })}
-        onSubmit={this._submitForm}>
+        onSubmit={this._submitForm}
+      >
         {({
           values,
           errors,
@@ -269,7 +271,8 @@ class CreateInventory extends Component<IProps, IState> {
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.INVENTORY());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             {this._renderSectionHeading()}
             {this._renderForm()}
@@ -282,19 +285,19 @@ class CreateInventory extends Component<IProps, IState> {
 
 export default compose(
   withI18n(),
-  withCreateInventory(),
-  withUpdateInventory(),
-  withInventory(
-    props => {
-      const inventoryId = idx(props, _ => _.match.params.id);
-      return {
-        id: inventoryId,
-      };
-    },
-    ({ data }) => ({ initialData: idx(data, _ => _.inventory) || {} })
-  ),
+  // withCreateInventory(),
+  // withUpdateInventory(),
+  // withInventory(
+  //   (props) => {
+  //     const inventoryId = idx(props, (_) => _.match.params.id);
+  //     return {
+  //       id: inventoryId,
+  //     };
+  //   },
+  //   ({ data }) => ({ initialData: idx(data, (_) => _.inventory) || {} }),
+  // ),
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withStyles(styles)
+  withStyles(styles),
 )(CreateInventory);

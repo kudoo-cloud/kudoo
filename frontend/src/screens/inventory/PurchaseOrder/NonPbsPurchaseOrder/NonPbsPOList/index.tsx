@@ -1,29 +1,28 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
-import { withStyles, composeStyles, ErrorBoundary } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import moment from 'moment';
-import filter from 'lodash/filter';
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
-import { withPurchaseOrders } from '@kudoo/graphql';
+import { ErrorBoundary, composeStyles, withStyles } from '@kudoo/components';
 import cx from 'classnames';
-import { Tooltip } from 'react-tippy';
-import ListPage from '@client/common_screens/ListPage';
-import { IReduxState } from '@client/store/reducers';
 import idx from 'idx';
-import useDeepCompareEffect from '@client/helpers/useDeepCompareEffect';
-import styles, { purchaseOrderStyles } from '../../PurchaseOrder/styles';
-import PONotificationModal from '../../PurchaseOrder/PONotificationModal';
+import filter from 'lodash/filter';
+import moment from 'moment';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { Tooltip } from 'react-tippy';
+import { compose } from 'recompose';
+import URL from 'src/helpers/urls';
+import useDeepCompareEffect from 'src/helpers/useDeepCompareEffect';
+import ListPage from 'src/screens/common/ListPage';
+import { IReduxState } from 'src/store/reducers';
 import POInvoiceModal from '../../PurchaseOrder/POInvoiceModal';
+import PONotificationModal from '../../PurchaseOrder/PONotificationModal';
 import POReceiptModal from '../../PurchaseOrder/POReceiptModal';
+import styles, { purchaseOrderStyles } from '../../PurchaseOrder/styles';
 import { IListProps } from './types';
 
-const PurchaseOrder: React.FC<IListProps> = props => {
+const PurchaseOrder: React.FC<IListProps> = (props) => {
   const { purchaseOrders, theme, actions, history, classes } = props;
 
-  const purchaseOrdersLoading = idx(purchaseOrders, x => x.loading);
-  const onLoadMore = idx(purchaseOrders, x => x.loadNextPage);
+  const purchaseOrdersLoading = idx(purchaseOrders, (x) => x.loading);
+  const onLoadMore = idx(purchaseOrders, (x) => x.loadNextPage);
 
   const [displayedOrders, setDisplayedOrders] = useState([]);
   const [notifiedPO, setNotifiedPO] = useState(null);
@@ -34,7 +33,7 @@ const PurchaseOrder: React.FC<IListProps> = props => {
       label: 'Order Date',
       sorted: true,
       order: 'asc',
-      renderCell: row => {
+      renderCell: (row) => {
         return (
           <Link
             to={
@@ -42,7 +41,8 @@ const PurchaseOrder: React.FC<IListProps> = props => {
                 ? URL.EDIT_NON_PBS_PURCHASE_ORDER({ id: row.id })
                 : URL.PREVIEW_PURCHASE_ORDER({ id: row.id })
             }
-            className={classes.borderCell}>
+            className={classes.borderCell}
+          >
             {row['date']}
           </Link>
         );
@@ -65,8 +65,9 @@ const PurchaseOrder: React.FC<IListProps> = props => {
                 animation='fade'
                 position='left'
                 arrow
-                arrowType='round'
-                trigger='mouseenter focus'>
+                // arrowType='round'
+                trigger={'mouseenter focus' as any}
+              >
                 <span
                   className={classes.dollarIcon}
                   style={
@@ -74,7 +75,8 @@ const PurchaseOrder: React.FC<IListProps> = props => {
                   }
                   onClick={() => {
                     showPOModal(row, 'sendEmail');
-                  }}>
+                  }}
+                >
                   <i className='fa fa-envelope-o' />
                 </span>
               </Tooltip>
@@ -84,14 +86,16 @@ const PurchaseOrder: React.FC<IListProps> = props => {
                   animation='fade'
                   position='left'
                   arrow
-                  arrowType='round'
-                  trigger='mouseenter focus'>
+                  // arrowType='round'
+                  trigger={'mouseenter focus' as any}
+                >
                   <span
                     data-test='invoice-paid-button'
                     className={classes.dollarIcon}
                     onClick={() => {
                       showPOModal(row, 'receipted');
-                    }}>
+                    }}
+                  >
                     <i className='fa fa-arrow-right' />
                   </span>
                 </Tooltip>
@@ -102,14 +106,16 @@ const PurchaseOrder: React.FC<IListProps> = props => {
                   animation='fade'
                   position='left'
                   arrow
-                  arrowType='round'
-                  trigger='mouseenter focus'>
+                  // arrowType='round'
+                  trigger={'mouseenter focus' as any}
+                >
                   <span
                     data-test='invoice-paid-button'
                     className={classes.dollarIcon}
                     onClick={() => {
                       showPOModal(row, 'invoiced');
-                    }}>
+                    }}
+                  >
                     <i className='fa fa-usd' />
                   </span>
                 </Tooltip>
@@ -123,6 +129,7 @@ const PurchaseOrder: React.FC<IListProps> = props => {
 
   useEffect(() => {
     updatePurchaseOrders();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useDeepCompareEffect(() => {
@@ -132,18 +139,18 @@ const PurchaseOrder: React.FC<IListProps> = props => {
   const updatePurchaseOrders = () => {
     // Filter Non PBS Purchase Order Data
     const purchaseOrderFilterData = filter(
-      idx(purchaseOrders, x => x.data),
-      _ => !_.isPbsPO
+      idx(purchaseOrders, (x) => x.data),
+      (_) => !_.isPbsPO,
     );
 
     // Format Data to display
-    const purchaseOrdersData = purchaseOrderFilterData.map(purchaseOrder => {
+    const purchaseOrdersData = purchaseOrderFilterData.map((purchaseOrder) => {
       return {
         ...purchaseOrder,
         orderer:
           idx(
             purchaseOrder,
-            _ => _.orderer.firstName + ' ' + _.orderer.lastName
+            (_) => _.orderer.firstName + ' ' + _.orderer.lastName,
           ) || '',
         date: moment(purchaseOrder.date as Date).format('DD MMM YYYY'),
       };
@@ -230,19 +237,28 @@ const PurchaseOrder: React.FC<IListProps> = props => {
   );
 };
 
+PurchaseOrder.defaultProps = {
+  purchaseOrders: {
+    refetch: () => ({}),
+    loadNextPage: () => ({}),
+    data: [],
+    loading: false,
+  },
+};
+
 export default compose(
   withStyles(composeStyles(styles, purchaseOrderStyles)),
   connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-  withPurchaseOrders(() => {
-    return {
-      variables: {
-        where: {
-          isArchived: false,
-        },
-        orderBy: 'date_ASC',
-      },
-    };
-  })
+  // withPurchaseOrders(() => {
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived: false,
+  //       },
+  //       orderBy: 'date_ASC',
+  //     },
+  //   };
+  // }),
 )(PurchaseOrder);

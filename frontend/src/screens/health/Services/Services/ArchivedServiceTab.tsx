@@ -1,18 +1,17 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import { Trans } from '@lingui/react';
 import {
-  withStyles,
-  composeStyles,
-  Table,
   Button,
-  SectionHeader,
   ErrorBoundary,
+  SectionHeader,
+  Table,
   ToggleButton,
-  withStylesProps,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import withTabContainer from './TabContainer';
+import { Trans } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import React, { Component } from 'react';
 import styles, { ActiveServicesStyles as ASStyles } from './styles';
+import withTabContainer from './TabContainer';
 
 // Presentational Component
 type Props = {
@@ -50,7 +49,7 @@ class ArchivedServiceTab extends Component<Props, {}> {
     );
   }
 
-  _showDeleteDialog = service => {
+  _showDeleteDialog = (service) => {
     const { theme } = this.props;
     const title = 'Permanently delete service?';
     const description = (
@@ -89,7 +88,7 @@ class ArchivedServiceTab extends Component<Props, {}> {
     });
   };
 
-  _showUnarchivedDialog = service => {
+  _showUnarchivedDialog = (service) => {
     const { theme } = this.props;
     const title = 'Activate service?';
     const description = (
@@ -159,7 +158,7 @@ class ArchivedServiceTab extends Component<Props, {}> {
           cellRenderer={this._renderCell}
           loading={this.props.fetchingServices}
           onBottomReachedThreshold={500}
-          onBottomReached={el => {
+          onBottomReached={() => {
             if (!this.props.fetchingServices) {
               this.props.onLoadMore();
             }
@@ -182,7 +181,7 @@ class ArchivedServiceTab extends Component<Props, {}> {
   }
 }
 const StyledComponent = withStyles(composeStyles(styles, ASStyles))(
-  ArchivedServiceTab
+  ArchivedServiceTab,
 );
 
 export default withTabContainer({ type: 'archived-services' })(StyledComponent);

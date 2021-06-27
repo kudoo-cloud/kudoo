@@ -1,6 +1,6 @@
-import React, { Component } from 'react';
+import { ErrorBoundary, SectionHeader, withStyles } from '@kudoo/components';
 import cx from 'classnames';
-import { withStyles, SectionHeader, ErrorBoundary } from '@kudoo/components';
+import React, { Component } from 'react';
 import { ProjectProgressStyles } from './styles';
 
 type ProgressFlowTypes = Array<{
@@ -37,7 +37,8 @@ class ProjectProgress extends Component<Props, State> {
                   completed: step.completed,
                   next: step.next,
                   current: step.current,
-                })}>
+                })}
+              >
                 <div className={classes.stepInfo}>
                   <div className={classes.stepTitle}>{step.title}</div>
                   <div className={classes.stepDate}>{step.subtitle}</div>

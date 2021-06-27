@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   IActions,
   IClasses,
@@ -166,3 +167,6 @@ export interface IPreviewPOProps {
 export interface IPreviewPOState {
   submitting: boolean;
 }
+
+export default {};
+/* eslint-enable */

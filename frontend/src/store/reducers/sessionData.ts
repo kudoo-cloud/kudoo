@@ -1,16 +1,16 @@
-import merge from 'lodash/merge';
-import assign from 'lodash/assign';
-import remove from 'lodash/remove';
-import findIndex from 'lodash/findIndex';
-import { handleActions } from 'redux-actions';
 import idx from 'idx';
-import ProfileTypes from '../types/profile';
-import ProjectTypes, { INewProjectState } from '../types/createNewProject';
-import PatientTypes, { INewPatientState } from '../types/createNewPatient';
+import assign from 'lodash/assign';
+import findIndex from 'lodash/findIndex';
+import merge from 'lodash/merge';
+import remove from 'lodash/remove';
+import { handleActions } from 'redux-actions';
 import InvoiceTypes, {
   INewInvoiceState,
   initialInvoice,
 } from '../types/createNewInvoice';
+import PatientTypes, { INewPatientState } from '../types/createNewPatient';
+import ProjectTypes, { INewProjectState } from '../types/createNewProject';
+import ProfileTypes from '../types/profile';
 
 interface IState {
   newPatient: INewPatientState;
@@ -53,7 +53,7 @@ export default handleActions(
 
     [PatientTypes.CP_UPDATE_PATIENT_CREATION_OPTION]: (
       state: IState,
-      action: IReduxAction
+      action: IReduxAction,
     ) => {
       return assign(
         {},
@@ -61,7 +61,7 @@ export default handleActions(
           newPatient: {
             patientCreationOption: action.payload,
           },
-        })
+        }),
       );
     },
 
@@ -72,7 +72,7 @@ export default handleActions(
           newPatient: {
             manualPatient: action.payload,
           },
-        })
+        }),
       );
     },
 
@@ -92,7 +92,7 @@ export default handleActions(
 
     [ProjectTypes.CREATE_PROJECT__UPDATE_PROJECT_NAME]: (
       state: IState,
-      action: IReduxAction
+      action: IReduxAction,
     ) => ({
       ...state,
       newProject: {
@@ -103,27 +103,27 @@ export default handleActions(
 
     [ProjectTypes.CREATE_PROJECT__UPDATE_CUSTOMER_INFO]: (
       state: IState,
-      action: IReduxAction
+      action: IReduxAction,
     ) => ({
       ...state,
       newProject: {
         ...state.newProject,
         customer: {
-          id: idx(action, _ => _.payload.id),
-          traderId: idx(action, _ => _.payload.traderId),
-          isAlreadySaved: idx(action, _ => _.payload.isAlreadySaved),
-          companyName: idx(action, _ => _.payload.companyName),
-          contactName: idx(action, _ => _.payload.contactName),
-          contactSurname: idx(action, _ => _.payload.contactSurname),
-          govNumber: idx(action, _ => _.payload.govNumber),
-          email: idx(action, _ => _.payload.email),
+          id: idx(action, (_) => _.payload.id),
+          traderId: idx(action, (_) => _.payload.traderId),
+          isAlreadySaved: idx(action, (_) => _.payload.isAlreadySaved),
+          companyName: idx(action, (_) => _.payload.companyName),
+          contactName: idx(action, (_) => _.payload.contactName),
+          contactSurname: idx(action, (_) => _.payload.contactSurname),
+          govNumber: idx(action, (_) => _.payload.govNumber),
+          email: idx(action, (_) => _.payload.email),
         },
       },
     }),
 
     [ProjectTypes.CREATE_PROJECT__ADD_SERVICE]: (
       state: IState,
-      action: IReduxAction
+      action: IReduxAction,
     ) => {
       const {
         id,
@@ -140,7 +140,7 @@ export default handleActions(
         newProject: {
           ...state.newProject,
           service: [
-            ...(idx(state, x => x.newProject.service) || []),
+            ...(idx(state, (x) => x.newProject.service) || []),
             {
               id,
               name,
@@ -158,10 +158,10 @@ export default handleActions(
 
     [ProjectTypes.CREATE_PROJECT__REMOVE_SERVICE]: (
       state: IState,
-      action: IReduxAction
+      action: IReduxAction,
     ) => {
       const { id } = action.payload;
-      const services = idx(state, x => x.newProject.service) || [];
+      const services = idx(state, (x) => x.newProject.service) || [];
       remove(services, { id });
       return {
         ...state,
@@ -174,7 +174,7 @@ export default handleActions(
 
     [ProjectTypes.CREATE_PROJECT__ADD_PAYMENT_RULE]: (
       state: IState,
-      action: IReduxAction
+      action: IReduxAction,
     ) => {
       const {
         serviceId,
@@ -184,7 +184,7 @@ export default handleActions(
         // sendInvoiceToCustomer,
       } = action.payload;
 
-      const services = idx(state, x => x.newProject.service) || [];
+      const services = idx(state, (x) => x.newProject.service) || [];
       const pos = findIndex(services, { id: serviceId });
       const service = services[pos];
       const paymentRule: any = {};
@@ -197,7 +197,7 @@ export default handleActions(
             amount,
             percentage: calculatePercentageFromAmount(
               service.paymentTotal,
-              amount
+              amount,
             ),
           };
 
@@ -207,7 +207,7 @@ export default handleActions(
             amount: service.paymentTotal - amount,
             percentage: calculatePercentageFromAmount(
               service.paymentTotal,
-              service.paymentTotal - amount
+              service.paymentTotal - amount,
             ),
           };
         } else if (type === 'percentage') {
@@ -223,7 +223,7 @@ export default handleActions(
             // sendInvoiceToCustomer,
             amount: calculateAmountFromPercentage(
               service.paymentTotal,
-              100 - parseFloat(amount)
+              100 - parseFloat(amount),
             ),
             percentage: 100 - parseFloat(amount),
           };
@@ -236,7 +236,7 @@ export default handleActions(
             amount,
             percentage: calculatePercentageFromAmount(
               service.paymentTotal,
-              amount
+              amount,
             ),
           };
 
@@ -246,7 +246,7 @@ export default handleActions(
             amount: service.paymentTotal - amount,
             percentage: calculatePercentageFromAmount(
               service.paymentTotal,
-              service.paymentTotal - amount
+              service.paymentTotal - amount,
             ),
           };
         } else if (type === 'percentage') {
@@ -262,7 +262,7 @@ export default handleActions(
             // sendInvoiceToCustomer,
             amount: calculateAmountFromPercentage(
               service.paymentTotal,
-              100 - parseFloat(amount)
+              100 - parseFloat(amount),
             ),
             percentage: 100 - parseFloat(amount),
           };
@@ -282,11 +282,12 @@ export default handleActions(
 
     [InvoiceTypes['CREATE_INVOICE.UPDATE_CUSTOMER_INFO']]: (
       state: IState,
-      action: IReduxAction
+      action: IReduxAction,
     ) => {
-      const invoiceType: any = idx(action, _ => _.payload.type);
-      const data = idx(action, _ => _.payload.data) || {};
-      const invoiceTypeState = idx(state, x => x.newInvoice[invoiceType]) || {};
+      const invoiceType: any = idx(action, (_) => _.payload.type);
+      const data = idx(action, (_) => _.payload.data) || {};
+      const invoiceTypeState =
+        idx(state, (x) => x.newInvoice[invoiceType]) || {};
       return {
         ...state,
         newInvoice: {
@@ -302,11 +303,12 @@ export default handleActions(
     },
     [InvoiceTypes['CREATE_INVOICE.UPDATE_PROJECT_INFO']]: (
       state: IState,
-      action: IReduxAction
+      action: IReduxAction,
     ) => {
-      const invoiceType: any = idx(action, _ => _.payload.type);
-      const data = idx(action, _ => _.payload.data) || {};
-      const invoiceTypeState = idx(state, x => x.newInvoice[invoiceType]) || {};
+      const invoiceType: any = idx(action, (_) => _.payload.type);
+      const data = idx(action, (_) => _.payload.data) || {};
+      const invoiceTypeState =
+        idx(state, (x) => x.newInvoice[invoiceType]) || {};
       return {
         ...state,
         newInvoice: {
@@ -322,11 +324,12 @@ export default handleActions(
     },
     [InvoiceTypes['CREATE_INVOICE.UPDATE_TABLE_DATA']]: (
       state: IState,
-      action: IReduxAction
+      action: IReduxAction,
     ) => {
-      const invoiceType: any = idx(action, _ => _.payload.type);
-      const data = idx(action, _ => _.payload.data) || {};
-      const invoiceTypeState = idx(state, x => x.newInvoice[invoiceType]) || {};
+      const invoiceType: any = idx(action, (_) => _.payload.type);
+      const data = idx(action, (_) => _.payload.data) || {};
+      const invoiceTypeState =
+        idx(state, (x) => x.newInvoice[invoiceType]) || {};
       return {
         ...state,
         newInvoice: {
@@ -340,11 +343,12 @@ export default handleActions(
     },
     [InvoiceTypes['CREATE_INVOICE.UPDATE_PAYMENT_INFO']]: (
       state: IState,
-      action: IReduxAction
+      action: IReduxAction,
     ) => {
-      const invoiceType: any = idx(action, _ => _.payload.type);
-      const data = idx(action, _ => _.payload.data) || {};
-      const invoiceTypeState = idx(state, x => x.newInvoice[invoiceType]) || {};
+      const invoiceType: any = idx(action, (_) => _.payload.type);
+      const data = idx(action, (_) => _.payload.data) || {};
+      const invoiceTypeState =
+        idx(state, (x) => x.newInvoice[invoiceType]) || {};
       return {
         ...state,
         newInvoice: {
@@ -361,11 +365,12 @@ export default handleActions(
     },
     [InvoiceTypes['CREATE_INVOICE.UPDATE_TIMESHEET_DETAILS_SELECTION']]: (
       state: IState,
-      action: IReduxAction
+      action: IReduxAction,
     ) => {
-      const invoiceType: any = idx(action, _ => _.payload.type);
-      const data = idx(action, _ => _.payload.data) || false;
-      const invoiceTypeState = idx(state, x => x.newInvoice[invoiceType]) || {};
+      const invoiceType: any = idx(action, (_) => _.payload.type);
+      const data = idx(action, (_) => _.payload.data) || false;
+      const invoiceTypeState =
+        idx(state, (x) => x.newInvoice[invoiceType]) || {};
       return {
         ...state,
         newInvoice: {
@@ -379,9 +384,9 @@ export default handleActions(
     },
     [InvoiceTypes['CREATE_INVOICE.RESET_INVOICE_DATA']]: (
       state: IState,
-      action: IReduxAction
+      action: IReduxAction,
     ) => {
-      const invoiceType: any = idx(action, _ => _.payload.type);
+      const invoiceType: any = idx(action, (_) => _.payload.type);
       return {
         ...state,
         newInvoice: {
@@ -394,5 +399,5 @@ export default handleActions(
       ...initialState,
     }),
   },
-  initialState
+  initialState,
 ) as IState;

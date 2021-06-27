@@ -1,21 +1,17 @@
-import * as React from 'react';
+import {
+  Button,
+  ErrorBoundary,
+  TextField,
+  withStyles,
+} from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
 import { Formik } from 'formik';
 import * as queryString from 'query-string';
-import * as Yup from 'yup';
+import * as React from 'react';
 import { compose } from 'recompose';
-import idx from 'idx';
-import {
-  withStyles,
-  ErrorBoundary,
-  Button,
-  TextField,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { showToast } from '@client/helpers/toast';
-import { withUpdateUser } from '@kudoo/graphql';
+import * as Yup from 'yup';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import styles from './styles';
 
 interface IUpdateUserParams {
@@ -27,11 +23,11 @@ interface IUpdateUserParams {
 
 interface IProps {
   actions: any;
-  client: any;
-  updateUser: (params: IUpdateUserParams) => any;
+  client?: any;
+  updateUser?: (params: IUpdateUserParams) => any;
   location: any;
   history: any;
-  classes: any;
+  classes?: any;
 }
 interface IState {
   loading: boolean;
@@ -39,6 +35,10 @@ interface IState {
 }
 
 class InviteEmail extends React.Component<IProps, IState> {
+  static defaultProps = {
+    updateUser: () => ({}),
+  };
+
   public state = {
     loading: false,
     updatingUser: false,
@@ -63,7 +63,7 @@ class InviteEmail extends React.Component<IProps, IState> {
     }
   }
 
-  public _updateUser = async values => {
+  public _updateUser = async (values) => {
     try {
       this.setState({ updatingUser: true });
       const res = await this.props.updateUser({
@@ -79,7 +79,7 @@ class InviteEmail extends React.Component<IProps, IState> {
         this.props.history.replace(URL.LOGIN());
       } else {
         this.setState({ updatingUser: false });
-        res.error.map(err => showToast(err.toString()));
+        res.error.map((err) => showToast(err.toString()));
       }
     } catch (e) {
       this.setState({ updatingUser: false });
@@ -162,7 +162,7 @@ class InviteEmail extends React.Component<IProps, IState> {
         <div className={classes.middleContainer}>
           <img
             className={classes.mailSentIcon}
-            src={require('images/reset-password.png')}
+            src={require('@kudoo/components/build/assets/images/reset-password.png')}
           />
           <div className={classes.messageWrapper}>
             <div className={classes.messageTitle}>Invited</div>
@@ -183,7 +183,8 @@ class InviteEmail extends React.Component<IProps, IState> {
                 .oneOf([Yup.ref('password'), null], 'Password does not match')
                 .required('Confirm Password is required!'),
             })}
-            onSubmit={this._updateUser}>
+            onSubmit={this._updateUser}
+          >
             {this._renderFormContent.bind(this)}
           </Formik>
         </div>
@@ -210,7 +211,4 @@ class InviteEmail extends React.Component<IProps, IState> {
   }
 }
 
-export default compose(
-  withStyles(styles),
-  withUpdateUser()
-)(InviteEmail as any);
+export default compose<IProps, IProps>(withStyles(styles))(InviteEmail as any);

@@ -1,52 +1,46 @@
-import * as React from 'react';
-import cx from 'classnames';
-import idx from 'idx';
-import isEqual from 'lodash/isEqual';
-import get from 'lodash/get';
-import Grid from '@material-ui/core/Grid';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { connect } from 'react-redux';
-import { compose } from 'recompose';
-
 import {
-  withStyles,
+  Button,
   ErrorBoundary,
+  PhoneNumberField,
   SectionHeader,
   TextField,
-  PhoneNumberField,
-  Button,
-  withRouterProps,
-  withStylesProps,
+  withStyles,
 } from '@kudoo/components';
-import { showToast } from '@client/helpers/toast';
-import { withUpdateUser } from '@kudoo/graphql';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+import { Formik } from 'formik';
+import get from 'lodash/get';
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import * as Yup from 'yup';
+
+import { showToast } from 'src/helpers/toast';
 import styles from './styles';
 
 interface IProps {
   actions: any;
-  profile: object;
-  updateAccount: (data: object) => any;
-  classes: any;
-  theme: any;
+  profile?: object;
+  updateAccount?: (data: object) => any;
+  classes?: any;
+  theme?: any;
 }
 
 class UserDetails extends React.Component<IProps, {}> {
+  static defaultProps = {
+    updateAccount: () => ({}),
+  };
+
   public _renderForm = (formProps: any) => {
-    const {
-      values,
-      errors,
-      touched,
-      handleChange,
-      handleBlur,
-      dirty,
-    } = formProps;
+    const { values, errors, touched, handleChange, handleBlur, dirty } =
+      formProps;
     const { classes, theme } = this.props;
     return (
       <form
         className={classes.formWrapper}
         autoComplete='off'
-        onSubmit={formProps.handleSubmit}>
+        onSubmit={formProps.handleSubmit}
+      >
         <div className={classes.formFields}>
           <Grid container>
             <Grid item xs={12} sm={6}>
@@ -174,13 +168,14 @@ class UserDetails extends React.Component<IProps, {}> {
                 isLoggedIn: true,
               });
             } else {
-              res.error.map(err => showToast(err));
+              res.error.map((err) => showToast(err));
             }
           } catch (e) {
             actions.setSubmitting(false);
             showToast(e.toString());
           }
-        }}>
+        }}
+      >
         {this._renderForm}
       </Formik>
     );
@@ -196,7 +191,7 @@ class UserDetails extends React.Component<IProps, {}> {
   }
 }
 
-export default compose(
+export default compose<IProps, IProps>(
   connect((state: any) => ({ profile: state.profile })),
-  withUpdateUser(() => ({ name: 'updateAccount' }))
+  // withUpdateUser(() => ({ name: 'updateAccount' })),
 )(withStyles(styles)(UserDetails));

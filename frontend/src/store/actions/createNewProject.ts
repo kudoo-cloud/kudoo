@@ -1,10 +1,10 @@
 import { createAction } from 'redux-actions';
-import uuidv4 from 'uuid/v4';
+import { v4 as uuidv4 } from 'uuid';
 import Types from '../types/createNewProject';
 
 const updateProjectName = createAction(
   Types.CREATE_PROJECT__UPDATE_PROJECT_NAME,
-  (name: string) => ({ name })
+  (name: string) => ({ name }),
 );
 
 interface IUpdateCustomerInfoParams {
@@ -20,7 +20,7 @@ interface IUpdateCustomerInfoParams {
 
 const updateCustomerInfo = createAction(
   Types.CREATE_PROJECT__UPDATE_CUSTOMER_INFO,
-  (params: IUpdateCustomerInfoParams) => params
+  (params: IUpdateCustomerInfoParams) => params,
 );
 
 interface IAddServiceParams {
@@ -39,12 +39,12 @@ const addService = createAction(
   (params: IAddServiceParams) => ({
     id: params.alreadySavedId || uuidv4(),
     ...params,
-  })
+  }),
 );
 
 const removeService = createAction(
   Types.CREATE_PROJECT__REMOVE_SERVICE,
-  (id: string) => ({ id })
+  (id: string) => ({ id }),
 );
 
 interface IAddPaymentRulesParams {
@@ -69,7 +69,7 @@ const addPaymentRule = createAction(
     type,
     amount: Number(amount),
     // sendInvoiceToCustomer,
-  })
+  }),
 );
 
 const resetNewProjectData = createAction(Types.CREATE_PROJECT__RESET_DATA);

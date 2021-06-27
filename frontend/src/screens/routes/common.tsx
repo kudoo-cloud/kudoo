@@ -1,9 +1,5 @@
-import URL from '@client/helpers/urls';
-import {
-  IRoute,
-  SecurityRole,
-  LicensePlan,
-} from '@client/store/types/security';
+import URL from 'src/helpers/urls';
+import { IRoute, LicensePlan, SecurityRole } from 'src/store/types/security';
 import * as Components from '../LoadableComponents';
 
 const paramsOptions = { path: true };

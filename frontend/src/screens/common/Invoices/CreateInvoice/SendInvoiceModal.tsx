@@ -1,10 +1,5 @@
+import { EmailInputFields, Modal, withStyles } from '@kudoo/components';
 import React, { Component } from 'react';
-import {
-  withStyles,
-  Modal,
-  EmailInputFields,
-  withStylesProps,
-} from '@kudoo/components';
 import { sendInvoiceModalStyles } from './styles';
 
 type Props = {
@@ -57,7 +52,7 @@ class SendInvoiceModal extends Component<Props, State> {
             <div>Please add emails</div>
             <EmailInputFields
               classes={{ component: classes.emailInputs }}
-              onEmailChange={value => {
+              onEmailChange={(value) => {
                 const { emails } = this.state;
                 this.setState({
                   emails: {

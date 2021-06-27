@@ -1,14 +1,13 @@
-import * as React from 'react';
-import cx from 'classnames';
-import Grid from '@material-ui/core/Grid';
 import {
-  composeStyles,
-  ErrorBoundary,
-  withStyles,
-  LinearProgressBar,
   CircularProgressBar,
-  withStylesProps,
+  ErrorBoundary,
+  LinearProgressBar,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+import * as React from 'react';
 import styles, { ProfileStatsStyles } from './styles';
 
 type Props = {
@@ -104,5 +103,5 @@ class ProfileStats extends React.Component<Props, State> {
 }
 
 export default withStyles(composeStyles(styles, ProfileStatsStyles))(
-  ProfileStats
+  ProfileStats,
 );

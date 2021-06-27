@@ -1,30 +1,22 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import { withI18n } from '@lingui/react';
-import { connect } from 'react-redux';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { compose } from 'react-apollo';
 import {
   Button,
   ErrorBoundary,
-  TextField,
-  Dropdown,
   SectionHeader,
-  withRouterProps,
+  TextField,
   withStyles,
-  withStylesProps,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
 import idx from 'idx';
 import isEqual from 'lodash/isEqual';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import {
-  withCreateWareHouse,
-  withWareHouse,
-  withUpdateWareHouse,
-} from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import styles from './styles';
 
 interface IProps {
@@ -43,6 +35,12 @@ interface IState {
 }
 
 class CreateWarehouse extends Component<IProps, IState> {
+  static defaultProps = {
+    updateWareHouse: () => ({}),
+    createWareHouse: () => ({}),
+    initialData: { data: [] },
+  };
+
   public state = {
     isEditMode: false,
   };
@@ -62,7 +60,7 @@ class CreateWarehouse extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.WAREHOUSE());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       } else {
@@ -75,7 +73,7 @@ class CreateWarehouse extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.WAREHOUSE());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       }
@@ -88,14 +86,14 @@ class CreateWarehouse extends Component<IProps, IState> {
     this.props.actions.updateHeaderTitle('Warehouse');
 
     this.setState({
-      isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+      isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
     });
   }
 
   public componentDidUpdate(prevProps) {
     if (!isEqual(this.props.initialData, prevProps.initialData)) {
       this.setState({
-        isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+        isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
       });
     }
   }
@@ -155,13 +153,14 @@ class CreateWarehouse extends Component<IProps, IState> {
     return (
       <Formik
         initialValues={{
-          name: idx(initialData, _ => _.name) || '',
+          name: idx(initialData, (_) => _.name) || '',
         }}
         enableReinitialize
         validationSchema={Yup.object().shape({
           name: Yup.string().required('Name is required'),
         })}
-        onSubmit={this._submitForm}>
+        onSubmit={this._submitForm}
+      >
         {({
           values,
           errors,
@@ -225,7 +224,8 @@ class CreateWarehouse extends Component<IProps, IState> {
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.WAREHOUSE());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             {this._renderSectionHeading()}
             {this._renderForm()}
@@ -238,19 +238,19 @@ class CreateWarehouse extends Component<IProps, IState> {
 
 export default compose(
   withI18n(),
-  withCreateWareHouse(),
-  withUpdateWareHouse(),
-  withWareHouse(
-    props => {
-      const wareHouseId = idx(props, _ => _.match.params.id);
-      return {
-        id: wareHouseId,
-      };
-    },
-    ({ data }) => ({ initialData: idx(data, _ => _.wareHouse) || {} })
-  ),
+  // withCreateWareHouse(),
+  // withUpdateWareHouse(),
+  // withWareHouse(
+  //   (props) => {
+  //     const wareHouseId = idx(props, (_) => _.match.params.id);
+  //     return {
+  //       id: wareHouseId,
+  //     };
+  //   },
+  //   ({ data }) => ({ initialData: idx(data, (_) => _.wareHouse) || {} }),
+  // ),
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withStyles(styles)
+  withStyles(styles),
 )(CreateWarehouse);

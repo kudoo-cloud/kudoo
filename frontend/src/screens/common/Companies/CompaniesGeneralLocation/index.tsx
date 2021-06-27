@@ -1,23 +1,23 @@
-import React, { Component } from 'react';
-import idx from 'idx';
-import isEqual from 'lodash/isEqual';
-import clone from 'lodash/clone';
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
+import {
+  AddressForm,
+  Button,
+  Checkbox,
+  ErrorBoundary,
+  SectionHeader,
+  withStyles,
+} from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
 import { Formik } from 'formik';
+// import idx from 'idx';
+import clone from 'lodash/clone';
 import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import * as Yup from 'yup';
-import {
-  withStyles,
-  ErrorBoundary,
-  AddressForm,
-  SectionHeader,
-  Checkbox,
-  Button,
-} from '@kudoo/components';
-import { showToast } from '@client/helpers/toast';
-import { withCompany, withUpdateCompany } from '@kudoo/graphql';
+import { showToast } from 'src/helpers/toast';
+import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
@@ -31,6 +31,11 @@ type Props = {
 type State = {};
 
 class CompaniesGeneralLocation extends Component<Props, State> {
+  static defaultProps = {
+    company: {},
+    updateCompany: () => ({}),
+  };
+
   addressForm: any;
   state = {};
 
@@ -140,7 +145,7 @@ class CompaniesGeneralLocation extends Component<Props, State> {
         showToast(null, 'Address Updated');
         this.props.company.refetch();
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       actions.setSubmitting(false);
@@ -158,7 +163,8 @@ class CompaniesGeneralLocation extends Component<Props, State> {
           <Grid
             container
             spacing={0}
-            classes={{ container: classes.formFields }}>
+            classes={{ container: classes.formFields }}
+          >
             <Grid item xs={12} sm={6} classes={{ item: classes.formSection }}>
               <div className={classes.sectionHeadingWrapper}>
                 <SectionHeader
@@ -180,7 +186,8 @@ class CompaniesGeneralLocation extends Component<Props, State> {
           <Grid
             container
             spacing={0}
-            classes={{ container: classes.formFields }}>
+            classes={{ container: classes.formFields }}
+          >
             <Grid item xs={12} sm={6} classes={{ item: classes.formSection }}>
               <div className={classes.sectionHeadingWrapper}>
                 <SectionHeader
@@ -190,7 +197,7 @@ class CompaniesGeneralLocation extends Component<Props, State> {
                 <Checkbox
                   label={'Same as above'}
                   value={sameAsPrimary}
-                  onChange={checked => {
+                  onChange={(checked) => {
                     formProps.setFieldValue('sameAsPrimary', checked);
                   }}
                 />
@@ -268,7 +275,7 @@ class CompaniesGeneralLocation extends Component<Props, State> {
             postCode: Yup.string().required('postcode is required'),
           }),
           sameAsPrimary: Yup.boolean(),
-          legal: Yup.mixed().when('sameAsPrimary', sameAsPrimary => {
+          legal: Yup.mixed().when('sameAsPrimary', (sameAsPrimary) => {
             if (sameAsPrimary) {
               return Yup.object();
             }
@@ -281,7 +288,8 @@ class CompaniesGeneralLocation extends Component<Props, State> {
             });
           }),
         })}
-        onSubmit={this._submitForm}>
+        onSubmit={this._submitForm}
+      >
         {this._renderFormFields.bind(this)}
       </Formik>
     );
@@ -299,11 +307,7 @@ class CompaniesGeneralLocation extends Component<Props, State> {
 
 export default compose<any, any>(
   withStyles(styles),
-  connect(state => ({
+  connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-  withCompany(props => ({
-    id: idx(props, _ => _.match.params.companyId),
-  })),
-  withUpdateCompany()
 )(CompaniesGeneralLocation);

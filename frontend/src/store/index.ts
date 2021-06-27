@@ -1,19 +1,17 @@
-import { createStore, compose, applyMiddleware } from 'redux';
+import { applyMiddleware, compose, createStore } from 'redux';
 import logger from 'redux-logger';
-import thunk from 'redux-thunk';
-import persistStore from 'redux-persist/lib/persistStore';
-import persistCombineReducers from 'redux-persist/lib/persistCombineReducers';
+import { persistReducer, persistStore } from 'redux-persist';
 import storage from 'redux-persist/lib/storage'; // default: localStorage if web
-import reducers from './reducers';
+import thunk from 'redux-thunk';
+import reducers, { IReduxState } from './reducers';
 
-const emptyMiddleware = store => next => action => {
+const emptyMiddleware = () => (next) => (action) => {
   // empty middleware
   next(action);
 };
 
 let loggerMiddleware;
 
-// @ts-ignore
 if (process.env.NODE_ENV === 'development') {
   loggerMiddleware = logger;
 } else {
@@ -25,23 +23,21 @@ const config = {
   storage,
 };
 
-const reducer = persistCombineReducers(config, reducers);
+const reducer = persistReducer<IReduxState>(config, reducers as any);
 
-let reduxDevTool = f => f;
-// @ts-ignore
-if (typeof window.__REDUX_DEVTOOLS_EXTENSION__ !== 'undefined') {
-  // @ts-ignore
-  reduxDevTool = window.__REDUX_DEVTOOLS_EXTENSION__();
+let reduxDevTool = (f) => f;
+if (typeof (window as any).__REDUX_DEVTOOLS_EXTENSION__ !== 'undefined') {
+  reduxDevTool = (window as any).__REDUX_DEVTOOLS_EXTENSION__();
 }
 
 const store = createStore(
   reducer,
-  {}, // initial state
+  {} as any, // initial state
   compose(
     applyMiddleware(thunk, loggerMiddleware),
     // If you are using the devToolsExtension, you can add it here also
-    reduxDevTool
-  )
+    reduxDevTool,
+  ),
 );
 
 const persistor = persistStore(store);

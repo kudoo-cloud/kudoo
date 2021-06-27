@@ -1,21 +1,17 @@
+import {
+  ErrorBoundary,
+  SectionHeader,
+  helpers as utils,
+  withStyles,
+} from '@kudoo/components';
+// import idx from 'idx';
+import queryString from 'query-string';
 import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import queryString from 'query-string';
-import get from 'lodash/get';
-import idx from 'idx';
-import {
-  withStyles,
-  SectionHeader,
-  ErrorBoundary,
-  withRouterProps,
-  withStylesProps,
-  helpers as utils,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { withIntegrations } from '@kudoo/graphql';
-import ComingSoon from '@client/common_screens/ComingSoon';
+import URL from 'src/helpers/urls';
+import ComingSoon from 'src/screens/common/ComingSoon';
 import styles from './styles';
 
 type Props = {
@@ -28,6 +24,10 @@ type Props = {
 type State = {};
 
 class Integrations extends Component<Props, State> {
+  static defaultProps = {
+    integrations: { data: [] },
+  };
+
   allIntegrations = [{ type: 'SLACK' }];
 
   columns = [
@@ -71,7 +71,7 @@ class Integrations extends Component<Props, State> {
     }, data);
   }
 
-  _renderIntegrated(type) {
+  _renderIntegrated() {
     return <span className={'fa fa-check'} />;
   }
 
@@ -82,31 +82,32 @@ class Integrations extends Component<Props, State> {
     return '';
   }
 
-  _renderIntegrationCell(row, cell, ele) {
-    const { classes, profile } = this.props;
+  _renderIntegrationCell(row) {
+    const { classes } = this.props;
     if (row.connected) {
-      return this._renderIntegrated(row.type);
+      return this._renderIntegrated();
     }
-    const type = row.type.toLowerCase(),
-      //url = baseUrl + 'integration/' + type + '/init',
-      params = {
-        'company-auth': 'Menshen ' + get(profile, 'selectedCompany.id'),
-        'redirect-to': location.href.split('?')[0],
-        'user-auth': 'Menshen ' + profile.token,
-      };
+    const type = row.type.toLowerCase();
+    //url = baseUrl + 'integration/' + type + '/init',
+    // params = {
+    //   'company-auth': 'Menshen ' + get(profile, 'selectedCompany.id'),
+    //   'redirect-to': location.href.split('?')[0],
+    //   'user-auth': 'Menshen ' + profile.token,
+    // };
     return (
       <div>
         <Link
           to={URL.INTEGRATION_LOGIN()}
           target='_blank'
-          className={classes.integrationImage}>
+          className={classes.integrationImage}
+        >
           <img src={this._integrationImage(type)} />
         </Link>
       </div>
     );
   }
 
-  _renderTypeCell(row, cell, ele) {
+  _renderTypeCell(row, cell) {
     const content = row[cell.id];
     return content.charAt(0).toUpperCase() + content.substr(1).toLowerCase();
   }
@@ -116,14 +117,14 @@ class Integrations extends Component<Props, State> {
     if (cell.id === 'type') {
       return (
         <div className={classes.borderCell}>
-          {this._renderTypeCell(row, cell, ele)}
+          {this._renderTypeCell(row, cell)}
         </div>
       );
     }
     if (cell.id === 'integration') {
       return (
         <div className={classes.borderCell}>
-          {this._renderIntegrationCell(row, cell, ele)}
+          {this._renderIntegrationCell(row)}
         </div>
       );
     }
@@ -131,7 +132,7 @@ class Integrations extends Component<Props, State> {
   };
 
   _renderTable() {
-    const data = get(this.props, 'integrations.data', []);
+    // const data = get(this.props, 'integrations.data', []);
     return <ComingSoon />;
     // return (
     //   <Table
@@ -163,15 +164,15 @@ export default compose(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withIntegrations((props: any) => {
-    const companyId = idx(props, _ => _.profile.selectedCompany.id);
-    return {
-      name: 'integrations',
-      variables: {
-        filters: {
-          companyId: { eq: companyId },
-        },
-      },
-    };
-  })
+  // withIntegrations((props: any) => {
+  //   const companyId = idx(props, (_) => _.profile.selectedCompany.id);
+  //   return {
+  //     name: 'integrations',
+  //     variables: {
+  //       filters: {
+  //         companyId: { eq: companyId },
+  //       },
+  //     },
+  //   };
+  // }),
 )(Integrations);

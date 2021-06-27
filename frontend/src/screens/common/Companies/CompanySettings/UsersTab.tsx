@@ -1,13 +1,8 @@
-import React, { Component } from 'react';
+import { Tabs, helpers as utils, withStyles } from '@kudoo/components';
 import idx from 'idx';
-import { Route, Redirect, Switch } from 'react-router';
-import {
-  withStyles,
-  Tabs,
-  withRouterProps,
-  helpers as utils,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import React, { Component } from 'react';
+import { Redirect, Route, Switch } from 'react-router';
+import URL from 'src/helpers/urls';
 import CompaniesUsers from '../CompaniesUsers';
 import InviteUser from '../InviteUser';
 import styles from './styles';
@@ -36,7 +31,7 @@ class UsersTab extends Component<Props, State> {
 
   _renderTertiaryTabs() {
     const { match } = this.props;
-    const companyId = idx(match, _ => _.params.companyId);
+    const companyId = idx(match, (_) => _.params.companyId);
     return (
       <Tabs
         tabs={[
@@ -61,7 +56,7 @@ class UsersTab extends Component<Props, State> {
 
   render() {
     const { classes, actions, match } = this.props;
-    const companyId = idx(match, _ => _.params.companyId);
+    const companyId = idx(match, (_) => _.params.companyId);
     return (
       <div className={classes.page}>
         {this._renderTertiaryTabs()}
@@ -69,11 +64,11 @@ class UsersTab extends Component<Props, State> {
         <Switch>
           <Route
             path={URL.COMPANY_USERS_LIST({ path: true })}
-            render={props => <CompaniesUsers {...props} actions={actions} />}
+            render={(props) => <CompaniesUsers {...props} actions={actions} />}
           />
           <Route
             path={URL.INVITE_USER({ path: true })}
-            render={props => <InviteUser {...props} actions={actions} />}
+            render={(props) => <InviteUser {...props} actions={actions} />}
           />
           <Redirect
             from={URL.COMPANY_USERS({ companyId })}

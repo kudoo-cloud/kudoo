@@ -1,21 +1,19 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import { Link } from 'react-router-dom';
-import isEmpty from 'lodash/isEmpty';
 import {
-  composeStyles,
-  withStyles,
-  Table,
   Button,
-  SectionHeader,
   ErrorBoundary,
   SearchInput,
-  withRouterProps,
-  withStylesProps,
+  SectionHeader,
+  Table,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import TabContainer from './TabContainer';
+import Grid from '@material-ui/core/Grid';
+import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import URL from 'src/helpers/urls';
 import styles, { ActiveCustomersStyles } from './styles';
+import TabContainer from './TabContainer';
 
 type Props = {
   actions: any;
@@ -70,7 +68,7 @@ class ActiveCustomers extends Component<Props, State> {
     );
   }
 
-  _showArchiveDialog = customer => {
+  _showArchiveDialog = (customer) => {
     const { theme } = this.props;
     const title = `Archive ${customer.name}?`;
     const description = (
@@ -109,7 +107,8 @@ class ActiveCustomers extends Component<Props, State> {
       return (
         <Link
           to={URL.CUSTOMER_DETAILS({ id: row.id })}
-          className={classes.customerNameCell}>
+          className={classes.customerNameCell}
+        >
           {ele}
         </Link>
       );
@@ -118,13 +117,8 @@ class ActiveCustomers extends Component<Props, State> {
   };
 
   _renderCustomers() {
-    const {
-      classes,
-      customers,
-      columns,
-      onSortRequested,
-      onSearchCustomer,
-    } = this.props;
+    const { classes, customers, columns, onSortRequested, onSearchCustomer } =
+      this.props;
     return (
       <div className={classes.customersContainer}>
         <Grid item xs={12} sm={6}>
@@ -164,12 +158,12 @@ class ActiveCustomers extends Component<Props, State> {
 }
 
 const ActiveCustomersStyled = withStyles(
-  composeStyles(styles, ActiveCustomersStyles)
+  composeStyles(styles, ActiveCustomersStyles),
 )(ActiveCustomers);
 
 const ActiveCustomersTabContainer = (props: Props) => (
   <TabContainer {...props} type='active-customers'>
-    {childProps => <ActiveCustomersStyled {...childProps} />}
+    {(childProps) => <ActiveCustomersStyled {...childProps} />}
   </TabContainer>
 );
 

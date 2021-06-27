@@ -1,20 +1,20 @@
+import { WizardSteps, withStyles } from '@kudoo/components';
+import { findIndex } from 'lodash';
 import * as React from 'react';
-import { withStyles, WizardSteps } from '@kudoo/components';
-import uuid from 'uuid/v4';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import { findIndex } from 'lodash';
+import uuid from 'uuid/v4';
 import { IProfile } from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/purchaseOrderTypes';
-import { POSTATUS } from '../../PurchaseOrder/types';
 import styles from '../../PurchaseOrder/styles';
+import { POSTATUS } from '../../PurchaseOrder/types';
+import CreatePurchaseOrder from './CreatePBSPurchaseOrder';
+import CreatePurchaseOrderLine from './CreatePBSPurchaseOrderLine';
 import {
+  IPBSPurchaseOrderData,
   IPbsPOProps,
   IPbsPOState,
-  IPBSPurchaseOrderData,
   IPurchaseOrderLineData,
 } from './PBSPOtypes';
-import CreatePurchaseOrderLine from './CreatePBSPurchaseOrderLine';
-import CreatePurchaseOrder from './CreatePBSPurchaseOrder';
 import PreviewPurchaseOrder from './PreviewPurchaseOrder';
 
 class CreatePbsPo extends React.Component<IPbsPOProps, IPbsPOState> {
@@ -189,5 +189,5 @@ export default compose(
   connect((state: { profile: IProfile }) => ({
     profile: state.profile,
   })),
-  withStyles(styles)
+  withStyles(styles),
 )(CreatePbsPo);

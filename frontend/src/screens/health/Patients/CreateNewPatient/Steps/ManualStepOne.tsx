@@ -1,25 +1,25 @@
-import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import {
+  AddressForm,
   Button,
-  SectionHeader,
-  FormikTextField,
+  Checkbox,
+  FieldLabel,
+  FormikCheckbox,
   FormikDatePicker,
   FormikDropdown,
-  FormikCheckbox,
-  AddressForm,
-  FieldLabel,
+  FormikTextField,
+  SectionHeader,
   withStyles,
-  Checkbox,
 } from '@kudoo/components';
-import { setManualStep1 } from 'src/store/actions/createNewPatient';
-import find from 'lodash/find';
+import FormControl from '@material-ui/core/FormControl';
+import Grid from '@material-ui/core/Grid';
 import { Formik } from 'formik';
-import { IReduxState } from '@client/store/reducers';
 import idx from 'idx';
+import find from 'lodash/find';
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import { setManualStep1 } from 'src/store/actions/createNewPatient';
+import { IReduxState } from 'src/store/reducers';
 import styles, { StyleKeys } from '../styles';
 
 type Props = IComponentProps<StyleKeys> & {
@@ -28,7 +28,7 @@ type Props = IComponentProps<StyleKeys> & {
   manualPatientData?: any;
 };
 
-const ManualStepOne: React.FC<Props> = props => {
+const ManualStepOne: React.FC<Props> = (props) => {
   const { classes, theme, manualPatientData } = props;
 
   return (
@@ -56,12 +56,12 @@ const ManualStepOne: React.FC<Props> = props => {
         },
         names: manualPatientData.names || [],
       }}
-      onSubmit={async values => {
-        const { birthAddress, names, currentAddress, ...rest } = values;
+      onSubmit={async (values) => {
         props.setManualStep1(values);
         props.goToNextStep();
-      }}>
-      {formProps => (
+      }}
+    >
+      {(formProps) => (
         <form onSubmit={formProps.handleSubmit}>
           <SectionHeader
             title='Create Patient'
@@ -145,7 +145,7 @@ const ManualStepOne: React.FC<Props> = props => {
                                     component: classes.checkbox,
                                   }}
                                   value={nameObj.isPrimary}
-                                  onChange={checked => {
+                                  onChange={() => {
                                     const names = [...formProps.values.names];
                                     const prevPrimaryName = find(names, {
                                       isPrimary: true,
@@ -239,12 +239,12 @@ const ManualStepOne: React.FC<Props> = props => {
 };
 
 export default compose<Props, Props>(
-  withStyles<Props>(styles),
+  withStyles(styles),
   connect(
     (state: IReduxState) => ({
       manualPatientData:
-        idx(state, x => x.sessionData.newPatient.manualPatient) || {},
+        idx(state, (x) => x.sessionData.newPatient.manualPatient) || {},
     }),
-    { setManualStep1 }
-  )
+    { setManualStep1 },
+  ),
 )(ManualStepOne);

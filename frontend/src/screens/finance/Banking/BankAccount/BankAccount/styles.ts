@@ -1,4 +1,4 @@
-export default theme => ({
+export default () => ({
   page: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -10,7 +10,7 @@ export default theme => ({
   },
 });
 
-export const BankStyles = theme => ({
+export const BankStyles = (theme) => ({
   page: {
     padding: '40px 20px',
     flex: 1,

@@ -1,8 +1,8 @@
-import * as React from 'react';
-import cx from 'classnames';
+import { ErrorBoundary, withStyles } from '@kudoo/components';
 import ButtonBase from '@material-ui/core/ButtonBase';
-import { withStyles, ErrorBoundary } from '@kudoo/components';
 import Collapse from '@material-ui/core/Collapse';
+import cx from 'classnames';
+import * as React from 'react';
 import LatestActivityItem from './LatestActivityItem';
 import { LatestActivityStyles } from './styles';
 
@@ -31,7 +31,8 @@ class LatestActivity extends React.Component<Props, State> {
               this.setState({
                 latestActivityCollapsed: !latestActivityCollapsed,
               });
-            }}>
+            }}
+          >
             <div className={classes.title}>Latest activity</div>
             <div className={classes.icon}>
               <i

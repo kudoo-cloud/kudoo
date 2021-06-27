@@ -1,26 +1,19 @@
-import * as React from 'react';
+import { Button, ErrorBoundary, TextField } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { compose } from 'recompose';
-import * as queryString from 'query-string';
 import get from 'lodash/get';
-import {
-  ErrorBoundary,
-  Button,
-  TextField,
-  withRouterProps,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { showToast } from '@client/helpers/toast';
-import { withResetPassword } from '@kudoo/graphql';
+import * as queryString from 'query-string';
+import * as React from 'react';
+import * as Yup from 'yup';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import './index.scss';
 
 interface IProps {
   actions: any;
-  history: any;
-  match: any;
-  resetPassword: (params: { password: string; passwordRepeat: string }) => any;
+  history?: any;
+  match?: any;
+  resetPassword?: (params: { password: string; passwordRepeat: string }) => any;
 }
 interface IState {
   token: any;
@@ -42,7 +35,7 @@ class NewPassword extends React.Component<IProps, IState> {
 
   public _resetPassword = async (values, actions) => {
     try {
-      const res = await this.props.resetPassword({
+      const res = await this?.props?.resetPassword({
         password: values.password,
         passwordRepeat: values.reTypePassword,
       });
@@ -51,7 +44,7 @@ class NewPassword extends React.Component<IProps, IState> {
         this.props.actions.resetUserData();
         this.props.history.push(URL.LOGIN());
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       actions.setSubmitting(false);
@@ -68,7 +61,7 @@ class NewPassword extends React.Component<IProps, IState> {
             <div className='middle-container'>
               <img
                 className='mail-sent-icon'
-                src={require('images/pass-code-icon.png')}
+                src={require('@kudoo/components/build/assets/images/pass-code-icon.png')}
               />
               <div className='message-wrapper'>
                 <div className='message-title'>Type a new password below</div>
@@ -90,7 +83,8 @@ class NewPassword extends React.Component<IProps, IState> {
                     .oneOf([Yup.ref('password')], 'Passwords do not match')
                     .required(`Retype your Password!`),
                 })}
-                onSubmit={this._resetPassword}>
+                onSubmit={this._resetPassword}
+              >
                 {({
                   values,
                   errors,
@@ -103,7 +97,8 @@ class NewPassword extends React.Component<IProps, IState> {
                   <form
                     className='form'
                     autoComplete='off'
-                    onSubmit={handleSubmit}>
+                    onSubmit={handleSubmit}
+                  >
                     <TextField
                       type='password'
                       name='password'
@@ -177,7 +172,7 @@ class NewPassword extends React.Component<IProps, IState> {
 
   public _renderError = () => {
     const { message } = queryString.parse(
-      get(this.props, 'location.search', '')
+      get(this.props, 'location.search', ''),
     );
     return (
       <React.Fragment>
@@ -202,4 +197,4 @@ class NewPassword extends React.Component<IProps, IState> {
   }
 }
 
-export default compose(withResetPassword())(NewPassword as any);
+export default NewPassword;

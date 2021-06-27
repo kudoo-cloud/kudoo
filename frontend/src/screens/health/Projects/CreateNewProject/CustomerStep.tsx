@@ -1,23 +1,21 @@
-import React, { Component } from 'react';
-import cx from 'classnames';
-import { withI18n } from '@lingui/react';
-import { connect } from 'react-redux';
-import { compose, withState } from 'recompose';
-import get from 'lodash/get';
-import Grid from '@material-ui/core/Grid';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
 import {
-  withStyles,
   Button,
+  SearchInput,
   SectionHeader,
   TextField,
-  SearchInput,
-  withStylesProps,
+  withStyles,
 } from '@kudoo/components';
-import actions from '@client/store/actions/createNewProject';
-import { withCustomers } from '@kudoo/graphql';
-import { IReduxState } from '@client/store/reducers';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+import { Formik } from 'formik';
+import get from 'lodash/get';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose, withState } from 'recompose';
+import * as Yup from 'yup';
+import actions from 'src/store/actions/createNewProject';
+import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
@@ -37,9 +35,17 @@ type Props = {
 type ComponentState = {};
 
 class CustomerStep extends Component<Props, ComponentState> {
+  public static defaultProps = {
+    customers: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+  };
+
   state = {};
 
-  _onSearch = searchText => {
+  _onSearch = (searchText) => {
     const { setSearchText } = this.props;
     setSearchText(searchText);
   };
@@ -114,7 +120,7 @@ class CustomerStep extends Component<Props, ComponentState> {
                     this._goToNextScreen();
                   } else {
                     // TODO:
-                    this.customerForm.submitForm();
+                    (this as any).customerForm.submitForm();
                   }
                 }}
               />
@@ -131,7 +137,7 @@ class CustomerStep extends Component<Props, ComponentState> {
               <SearchInput
                 placeholder={'Search by typing a customer’s name or company '}
                 showClearIcon={false}
-                items={customers.map(item => ({
+                items={customers.map((item) => ({
                   ...item,
                   label: item.name,
                 }))}
@@ -140,7 +146,7 @@ class CustomerStep extends Component<Props, ComponentState> {
                 defaultInputValue={
                   customer.isAlreadySaved ? customer.companyName : ''
                 }
-                onItemClick={item => {
+                onItemClick={(item) => {
                   updateCustomerInfo({
                     companyName: get(item, 'name') || '',
                     contactName: get(item, 'contacts[0].name') || '',
@@ -164,14 +170,14 @@ class CustomerStep extends Component<Props, ComponentState> {
                 name: Yup.string().required('Contact Name is required'),
                 surname: Yup.string().required('Surname is required'),
                 govNumber: Yup.string().required(
-                  i18n._(`ABN`) + ' is required'
+                  i18n._(`ABN`) + ' is required',
                 ),
                 // .test('is-abn', 'ABN is not valid', utils.validateABN),
                 email: Yup.string()
                   .required('Email is required')
                   .email('Email is not valid'),
               })}
-              onSubmit={values => {
+              onSubmit={(values) => {
                 updateCustomerInfo({
                   companyName: values.companyName,
                   contactName: values.name,
@@ -188,12 +194,13 @@ class CustomerStep extends Component<Props, ComponentState> {
                 handleChange,
                 handleBlur,
                 handleSubmit,
-                isSubmitting,
+                // isSubmitting,
               }) => (
                 <form
                   className={classes.form}
                   autoComplete='off'
-                  onSubmit={handleSubmit}>
+                  onSubmit={handleSubmit}
+                >
                   <div className={classes.input}>
                     <TextField
                       name='companyName'
@@ -275,22 +282,22 @@ export default compose<any, any>(
       createNewProject: state.sessionData.newProject,
       profile: state.profile,
     }),
-    { ...actions }
+    { ...actions },
   ),
   withState('searchText', 'setSearchText', ''),
-  withCustomers(props => {
-    let name;
-    if (props.searchText) {
-      name = props.searchText;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived: false,
-          name_contains: name,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  })
+  // withCustomers((props) => {
+  //   let name;
+  //   if (props.searchText) {
+  //     name = props.searchText;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived: false,
+  //         name_contains: name,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
 )(CustomerStep);

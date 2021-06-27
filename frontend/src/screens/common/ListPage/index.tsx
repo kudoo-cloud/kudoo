@@ -1,17 +1,17 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import isEmpty from 'lodash/isEmpty';
 import {
-  withStyles,
-  Table,
   Button,
-  SectionHeader,
   ErrorBoundary,
   SearchInput,
+  SectionHeader,
+  Table,
+  withStyles,
 } from '@kudoo/components';
+import Grid from '@material-ui/core/Grid';
+import find from 'lodash/find';
+import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
 import { withRouter } from 'react-router';
 import { compose } from 'recompose';
-import find from 'lodash/find';
 import styles, { ClassKeys } from './styles';
 
 type Props = IRouteProps<ClassKeys> & {
@@ -139,7 +139,7 @@ class ListPage extends Component<Props, State> {
     );
   }
 
-  _showArchiveDialog = item => {
+  _showArchiveDialog = (item) => {
     const { theme, alertMessages } = this.props;
     const title = `Archive ?`;
     const description = alertMessages.archiveItem;
@@ -199,7 +199,7 @@ class ListPage extends Component<Props, State> {
     });
   };
 
-  _showDeleteItemDialog = item => {
+  _showDeleteItemDialog = (item) => {
     const { theme, alertMessages } = this.props;
     const title = 'Permanently delete?';
     const description = alertMessages.deleteItem;
@@ -229,7 +229,7 @@ class ListPage extends Component<Props, State> {
     });
   };
 
-  _showUnarchiveItemDialog = item => {
+  _showUnarchiveItemDialog = (item) => {
     const { theme, alertMessages } = this.props;
     const title = 'Activate?';
     const description = alertMessages.unarchiveItem;
@@ -258,7 +258,7 @@ class ListPage extends Component<Props, State> {
     });
   };
 
-  _onRemoveClicked = args => {
+  _onRemoveClicked = (args) => {
     const { variant } = this.props;
     if (variant === 'active') {
       this._showArchiveDialog(args);
@@ -267,7 +267,7 @@ class ListPage extends Component<Props, State> {
     }
   };
 
-  _onSortRequested = column => {
+  _onSortRequested = (column) => {
     const columns = [...this.props.columns];
     const sortedColumn = find(columns, { sorted: true });
     const columnGoingToBeSorted = find(columns, { id: column.id });
@@ -287,6 +287,7 @@ class ListPage extends Component<Props, State> {
   };
 
   _renderItems() {
+    /* eslint-disable */
     const {
       classes,
       items,
@@ -305,6 +306,7 @@ class ListPage extends Component<Props, State> {
       loading,
       ...rest
     } = this.props;
+    /* eslint-enable */
 
     return (
       <div className={classes.itemsContainer}>

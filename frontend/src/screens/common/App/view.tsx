@@ -1,28 +1,28 @@
-import * as React from 'react';
-import { Switch, Redirect } from 'react-router';
-import { Link } from 'react-router-dom';
-import cx from 'classnames';
-import isEmpty from 'lodash/isEmpty';
-import { get } from 'lodash';
-import { ToastContainer } from 'react-toastify';
-import Screen from 'src/screens';
 import {
-  ISecurityConfig,
-  IMenuItem,
-  Product,
-  ProductType,
-} from '@client/store/types/security';
-import {
-  HeaderBar,
   Drawer,
-  Footer,
   ErrorBoundary,
+  Footer,
+  HeaderBar,
   Modal,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import cx from 'classnames';
 import idx from 'idx';
-import { isFeatureAvailable } from '@client/helpers/security';
-import Configuration from '../../../../kudoo.toml';
+import { get } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
+import * as React from 'react';
+// import { Redirect, Switch } from 'react-router';
+import { Link } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
+import { isFeatureAvailable } from 'src/helpers/security';
+import URL from 'src/helpers/urls';
+import Configuration from 'src/kudoo.json';
+import Screen from 'src/screens';
+import {
+  IMenuItem,
+  ISecurityConfig,
+  Product,
+  ProductType,
+} from 'src/store/types/security';
 import { toastStyle } from './styles';
 
 export interface IProps {
@@ -56,10 +56,11 @@ class App extends React.Component<IProps, IState> {
     return (
       <Link
         className={cx(classes.drawerMenuItem, {
-          active: idx(menuItem, x => x.isActive(pathname)),
+          active: idx(menuItem, (x) => x.isActive(pathname)),
         })}
         to={menuItem.url}
-        key={menuItem.name}>
+        key={menuItem.name}
+      >
         <div className={classes.itemIcon}>{(menuItem as any).icon()}</div>
         <div className={classes.itemTitle}>{menuItem.name}</div>
       </Link>
@@ -88,22 +89,26 @@ class App extends React.Component<IProps, IState> {
     } = this.props;
     const totalCompanies = get(companies, 'data', []).length;
     const menuConfig: ISecurityConfig =
-      Configuration.apps[
-        (app.kudoo_product || Product.inventory || '').toLowerCase()
+      Configuration?.apps?.[
+        (app?.kudoo_product || Product.inventory || '').toLowerCase()
       ];
+
     const products: {
       key: string;
       value: string;
       isAvailable: boolean;
     }[] = Object.values(Configuration.apps);
     const filteredProducts = products
-      .filter(product => product.isAvailable)
-      .map(product => ({ key: product.key, value: product.value }));
+      .filter((product) => product.isAvailable)
+      .map((product) => ({ key: product.key, value: product.value }));
     const menuItems = Object.values(menuConfig.menu || {});
-    let filteredItems: any = menuItems.filter(menuItem =>
-      isFeatureAvailable(profile.selectedCompany, menuItem.availability)
+    let filteredItems: any = menuItems.filter(
+      (menuItem) =>
+        // TODO: for now make all items available
+        true ||
+        isFeatureAvailable(profile.selectedCompany, menuItem.availability),
     );
-    filteredItems = filteredItems.map(item => {
+    filteredItems = filteredItems.map((item) => {
       return {
         ...item,
         isActive: () => false,
@@ -128,10 +133,12 @@ class App extends React.Component<IProps, IState> {
           <div className={classes.drawerWrapper}>
             <Drawer
               companies={get(companies, 'data', []).filter(
-                company => !company.isArchived
+                (company) => !company.isArchived,
               )}
               selectedCompany={
-                !isEmpty(selectedCompany) ? selectedCompany : companies.data[0]
+                !isEmpty(selectedCompany)
+                  ? selectedCompany || { name: '' }
+                  : companies?.data?.[0] || { name: '' }
               }
               onClose={() => {
                 this.setState({ isDrawerClosed: true });
@@ -139,7 +146,7 @@ class App extends React.Component<IProps, IState> {
               onOpen={() => {
                 this.setState({ isDrawerClosed: false });
               }}
-              onCompanyClick={company => {
+              onCompanyClick={(company) => {
                 this.props.actions.selectCompany(company);
               }}
               menuItems={filteredItems}
@@ -151,7 +158,11 @@ class App extends React.Component<IProps, IState> {
           className={cx(classes.loggedInRightContent, {
             'is-drawer-closed': this.state.isDrawerClosed,
             'is-drawer-hidden': totalCompanies === 0,
-          })}>
+          })}
+        >
+          <div className={classes.noInternet}>
+            App is not connected to server
+          </div>
           <HeaderBar
             headerLabel={app.headerTitle}
             actions={actions}
@@ -181,13 +192,13 @@ class App extends React.Component<IProps, IState> {
         </React.Fragment>
       );
     } else if (user) {
-      if (this.props.shouldRedirectToManageCompany()) {
-        return (
-          <Switch>
-            <Redirect to={URL.MANAGE_COMPANIES({ path: true })} />
-          </Switch>
-        );
-      }
+      // if (this.props.shouldRedirectToManageCompany()) {
+      //   return (
+      //     <Switch>
+      //       <Redirect to={URL.MANAGE_COMPANIES({ path: true })} />
+      //     </Switch>
+      //   );
+      // }
       return this._renderIfUserLoggedIn();
     }
     return this._renderIfGuestUser();
@@ -210,7 +221,7 @@ class App extends React.Component<IProps, IState> {
           <ToastContainer
             closeButton={false}
             hideProgressBar={true}
-            toastClassName={toastStyle}
+            toastStyle={toastStyle as any}
           />
         </div>
       </ErrorBoundary>

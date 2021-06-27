@@ -1,8 +1,8 @@
-import { handleActions } from 'redux-actions';
-import { Product } from '@client/store/types/security';
 import idx from 'idx';
+import { handleActions } from 'redux-actions';
 import Types from '../types/app';
 import ProfileTypes from '../types/profile';
+import { Product } from '../types/security';
 
 interface IState {
   kudoo_product: Product;
@@ -13,7 +13,7 @@ interface IState {
     description: any;
     buttons?: any;
     titleColor?: string | null;
-    classes?: object;
+    classes?: Record<string, unknown>;
   };
   activeLanguage: string;
   tempActiveLanguage: string | undefined;
@@ -46,7 +46,7 @@ export default handleActions(
         ...initialState,
         headerTitle: state.headerTitle,
         kudoo_product:
-          idx(action, x => x.payload.app.kudoo_product) ||
+          idx(action, (x) => x.payload.app.kudoo_product) ||
           initialState.kudoo_product,
       };
     },
@@ -73,7 +73,7 @@ export default handleActions(
       },
     }),
 
-    [Types.CLOSE_ALERT_DIALOG]: (state: IState, action: IAction) => ({
+    [Types.CLOSE_ALERT_DIALOG]: (state: IState) => ({
       ...state,
       alertDialog: initialState.alertDialog,
     }),
@@ -85,16 +85,16 @@ export default handleActions(
 
     [Types.SET_TEMPORARY_ACTIVE_LANGUAGE]: (
       state: IState,
-      action: IAction
+      action: IAction,
     ) => ({
       ...state,
       tempActiveLanguage: action.payload.language,
     }),
 
-    [ProfileTypes.LOGOUT_USER]: (state: IState, action: IAction) => ({
+    [ProfileTypes.LOGOUT_USER]: (state: IState) => ({
       ...initialState,
       kudoo_product: state.kudoo_product,
     }),
   },
-  initialState
+  initialState,
 ) as IState;

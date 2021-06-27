@@ -1,3 +1,4 @@
+/* eslint-disable */
 import {
   IActions,
   IClasses,
@@ -159,3 +160,4 @@ export interface IPreviewPOState {
   previewPDF: Array<object>;
   showError: boolean;
 }
+/* eslint-enable */

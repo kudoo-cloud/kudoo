@@ -1,0 +1,349 @@
+{
+  "apps": {
+    "finance": {
+      "isAvailable": true,
+      "key": "Finance",
+      "value": "finance",
+      "menu": {
+        "dashboard": {
+          "icon": "icon icon-dashboard",
+          "name": "Dashboard",
+          "url": "/dashboard",
+          "availability": [
+            {
+              "businessType": "HEALTH",
+              "country": "AU",
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "assets": {
+          "icon": "icon icon-projects",
+          "name": "Assets",
+          "url": "/assets",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "banking": {
+          "icon": "icon icon-projects",
+          "name": "Banking",
+          "url": "/banking",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "ledger": {
+          "icon": "icon icon-dashboard",
+          "name": "Ledger",
+          "url": "/ledger",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "reporting": {
+          "icon": "icon icon-projects",
+          "name": "Reporting",
+          "url": "/reporting",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        }
+      }
+    },
+    "health": {
+      "isAvailable": true,
+      "key": "Health",
+      "value": "health",
+      "menu": {
+        "dashboard": {
+          "icon": "icon icon-dashboard",
+          "name": "Dashboard",
+          "url": "/dashboard",
+          "availability": [
+            {
+              "businessType": "HEALTH",
+              "country": "AU",
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "customers": {
+          "icon": "icon icon-projects",
+          "name": "Customers",
+          "url": "/customers",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "healthcare": {
+          "icon": "icon icon-projects",
+          "name": "Healthcare Provider",
+          "url": "/healthcareProviders",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "invoices": {
+          "icon": "icon icon-projects",
+          "name": "Invoices",
+          "url": "/invoices",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "patients": {
+          "icon": "icon icon-projects",
+          "name": "Patients",
+          "url": "/patients",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "services": {
+          "icon": "icon icon-projects",
+          "name": "Services",
+          "url": "/services",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        }
+      }
+    },
+    "inventory": {
+      "isAvailable": true,
+      "key": "Inventory",
+      "value": "inventory",
+      "menu": {
+        "dashboard": {
+          "icon": "icon icon-dashboard",
+          "name": "Dashboard",
+          "url": "/dashboard",
+          "availability": [
+            {
+              "businessType": "HEALTH",
+              "country": "AU",
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "inventory": {
+          "icon": "icon icon-projects",
+          "name": "Inventory",
+          "url": "/inventory",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "purchaseOrders": {
+          "icon": "icon icon-dashboard",
+          "name": "Purchase Orders",
+          "url": "/po",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "sales": {
+          "icon": "icon icon-projects",
+          "name": "Sales",
+          "url": "/sales",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "suppliers": {
+          "icon": "icon icon-projects",
+          "name": "Suppliers",
+          "url": "/suppliers",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "warehouse": {
+          "icon": "icon icon-projects",
+          "name": "Warehouse",
+          "url": "/warehouse",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        }
+      }
+    },
+    "manufacturing": {
+      "isAvailable": true,
+      "key": "Manufacturing",
+      "value": "manufacturing",
+      "menu": {
+        "dashboard": {
+          "icon": "icon icon-dashboard",
+          "name": "Dashboard",
+          "url": "/dashboard",
+          "availability": [
+            {
+              "businessType": "HEALTH",
+              "country": "AU",
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "Routes": {
+          "icon": "icon icon-projects",
+          "name": "Routes",
+          "url": "/routes",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "billsOfMaterials": {
+          "icon": "icon icon-dashboard",
+          "name": "Bill of Materials",
+          "url": "/dashboard",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "formulas": {
+          "icon": "icon icon-projects",
+          "name": "Formulas",
+          "url": "/dashboard",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "productionOrder": {
+          "icon": "icon icon-projects",
+          "name": "Production Orders",
+          "url": "/dashboard",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        }
+      }
+    },
+    "projects": {
+      "isAvailable": true,
+      "key": "Projects",
+      "value": "projects",
+      "menu": {
+        "dashboard": {
+          "icon": "icon icon-dashboard",
+          "name": "Dashboard",
+          "url": "/dashboard",
+          "availability": [
+            {
+              "businessType": "HEALTH",
+              "country": "AU",
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "customers": {
+          "icon": "icon icon-projects",
+          "name": "Customers",
+          "url": "/customers",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "invoices": {
+          "icon": "icon icon-projects",
+          "name": "Invoices",
+          "url": "/invoices",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "projects": {
+          "icon": "icon icon-projects",
+          "name": "Projects",
+          "url": "/projects",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "services": {
+          "icon": "icon icon-projects",
+          "name": "Services",
+          "url": "/services",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "timesheets": {
+          "icon": "icon icon-projects",
+          "name": "Timesheets",
+          "url": "/timesheets",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        }
+      }
+    }
+  },
+  "licensing": {
+    "ENTERPRISE": {
+      "description": "",
+      "monthly-amount": 99.0,
+      "name": "Enterprise Plan",
+      "yearly-amount": 1188.0
+    },
+    "FREE": {
+      "description": "",
+      "monthly-amount": 0.0,
+      "name": "Free Plan",
+      "yearly-amount": 0.0
+    },
+    "PRO": {
+      "description": "",
+      "monthly-amount": 9.99,
+      "name": "Pro Plan",
+      "yearly-amount": 119.88
+    }
+  }
+}

@@ -1,15 +1,14 @@
+import { ErrorBoundary } from '@kudoo/components';
+import idx from 'idx';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+import moment from 'moment';
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import idx from 'idx';
-import get from 'lodash/get';
-import find from 'lodash/find';
-import isEqual from 'lodash/isEqual';
-import { ErrorBoundary, withRouterProps } from '@kudoo/components';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { withSalesOrders } from '@kudoo/graphql';
-import moment from 'moment';
-import { any } from 'prop-types';
+import SelectedCompany from 'src/helpers/SelectedCompany';
 
 interface IProps {
   actions: any;
@@ -31,13 +30,14 @@ class SalesOrderTabContainer extends Component<IProps, IState> {
       refetch: () => {},
       loadNextPage: () => {},
       children: ({}) => {},
+      data: [],
     },
   };
 
   constructor(props: IProps) {
     super(props);
     this.state = {
-      displayedSalesOrders: idx(props, _ => _.salesOrders.data),
+      displayedSalesOrders: idx(props, (_) => _.salesOrders.data),
       columns: [
         {
           id: 'transactionDate',
@@ -58,27 +58,27 @@ class SalesOrderTabContainer extends Component<IProps, IState> {
   }
 
   public componentDidUpdate(prevProps) {
-    const oldSalesOrders = idx(prevProps, _ => _.salesOrders.data) || [];
-    const newSalesOrders = idx(this.props, _ => _.salesOrders.data) || [];
+    const oldSalesOrders = idx(prevProps, (_) => _.salesOrders.data) || [];
+    const newSalesOrders = idx(this.props, (_) => _.salesOrders.data) || [];
     if (!isEqual(oldSalesOrders, newSalesOrders)) {
       this._updateSalesOrders(newSalesOrders);
     }
   }
 
   public _updateSalesOrders(salesOrders) {
-    const saleOrderData = salesOrders.map(salesOrder => {
+    const saleOrderData = salesOrders.map((salesOrder) => {
       return {
         ...salesOrder,
-        customer: idx(salesOrder, _ => _.customer.name) || '',
+        customer: idx(salesOrder, (_) => _.customer.name) || '',
         transactionDate: moment(salesOrder.transactionDate).format(
-          'DD MMM YYYY'
+          'DD MMM YYYY',
         ),
       };
     });
     this.setState({ displayedSalesOrders: saleOrderData });
   }
 
-  public _onRequestSort = async column => {
+  public _onRequestSort = async (column) => {
     const columns = this.state.columns;
     const sortedColumn = find(columns, { sorted: true });
     const columnGoingToBeSorted = find(columns, { id: column.id });
@@ -131,18 +131,18 @@ export default compose<any, any>(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withSalesOrders(({ type }) => {
-    let isArchived = false;
-    if (type === 'archived-salesOrders') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'transactionDate_ASC',
-      },
-    };
-  })
+  // withSalesOrders(({ type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-salesOrders') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'transactionDate_ASC',
+  //     },
+  //   };
+  // }),
 )(SalesOrderTabContainer);

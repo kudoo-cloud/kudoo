@@ -1,4 +1,4 @@
-export default theme => ({
+export default (theme) => ({
   page: {
     flex: 1,
     display: 'flex',
@@ -82,7 +82,7 @@ export default theme => ({
   },
 });
 
-export const customerStepsStyle = theme => ({
+export const customerStepsStyle = (theme) => ({
   project: {
     border: `1px solid ${theme.palette.primary.color2}`,
     fontSize: 16,
@@ -100,7 +100,7 @@ export const customerStepsStyle = theme => ({
   },
 });
 
-export const timesheetsStepsStyle = theme => ({
+export const timesheetsStepsStyle = (theme) => ({
   customerTitle: {
     color: theme.palette.primary.color1,
     fontSize: 24,
@@ -202,7 +202,7 @@ export const timesheetsStepsStyle = theme => ({
   },
 });
 
-export const reviewStyles = theme => ({
+export const reviewStyles = (theme) => ({
   invoiceHeader: {
     backgroundColor: theme.palette.primary.color1,
     padding: 20,

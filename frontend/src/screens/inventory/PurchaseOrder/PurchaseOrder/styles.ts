@@ -93,7 +93,7 @@ export type CreateStyleKeys =
   | 'errorLabel';
 
 export const createPurchaseOrderStyles = (
-  theme: Theme
+  theme: Theme,
 ): StyleFnReturnType<CreateStyleKeys> => ({
   addRowButton: {
     marginTop: 20,
@@ -241,7 +241,7 @@ export type POStyleKeys =
   | 'iconsWrapper';
 
 export const purchaseOrderStyles = (
-  theme: Theme
+  theme: Theme,
 ): StyleFnReturnType<POStyleKeys> => ({
   content: {
     flex: 1,
@@ -359,7 +359,7 @@ export type ReviewStyleKeys =
   | 'expHeader';
 
 export const reviewStyles = (
-  theme: Theme
+  theme: Theme,
 ): StyleFnReturnType<ReviewStyleKeys> => ({
   content: {
     padding: '35px',

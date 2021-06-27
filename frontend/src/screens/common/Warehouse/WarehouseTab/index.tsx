@@ -1,21 +1,19 @@
-import React, { Component } from 'react';
-import isEmpty from 'lodash/isEmpty';
-import { Link } from 'react-router-dom';
 import {
-  withStyles,
-  composeStyles,
   Button,
-  SectionHeader,
   ErrorBoundary,
-  Table,
   Loading,
-  withRouterProps,
-  withStylesProps,
+  SectionHeader,
+  Table,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
 import Grid from '@material-ui/core/Grid';
-import TabContainer from './WarehouseTabContainer';
+import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import URL from 'src/helpers/urls';
 import styles, { WarehouseStyles } from './styles';
+import TabContainer from './WarehouseTabContainer';
 
 interface IProps {
   actions: any;
@@ -71,7 +69,8 @@ class Warehouse extends Component<IProps> {
       return (
         <Link
           to={URL.EDIT_WAREHOUSE({ id: row.id })}
-          className={classes.warehouseNameCell}>
+          className={classes.warehouseNameCell}
+        >
           {ele}
         </Link>
       );
@@ -131,12 +130,12 @@ class Warehouse extends Component<IProps> {
 }
 
 const StyledWarehouses = withStyles(composeStyles(styles, WarehouseStyles))(
-  Warehouse
+  Warehouse,
 );
 
 const EnhancedComponent = (props: any) => (
   <TabContainer {...props} type='active-wareHouses'>
-    {childProps => <StyledWarehouses {...childProps} />}
+    {(childProps) => <StyledWarehouses {...childProps} />}
   </TabContainer>
 );
 

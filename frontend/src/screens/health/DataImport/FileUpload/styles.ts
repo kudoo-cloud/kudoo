@@ -1,4 +1,4 @@
-export default theme => ({
+export default () => ({
   dataImportPage: {
     flex: 1,
     display: 'flex',

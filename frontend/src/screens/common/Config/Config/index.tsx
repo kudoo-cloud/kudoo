@@ -1,12 +1,12 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'react-apollo';
+import { ErrorBoundary, withStyles } from '@kudoo/components';
+import Grid from '@material-ui/core/Grid';
 import cx from 'classnames';
 import idx from 'idx';
-import { withStyles, ErrorBoundary, withRouterProps } from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
-import Grid from '@material-ui/core/Grid';
+import URL from 'src/helpers/urls';
 import styles from './styles';
 
 interface IProps {
@@ -23,8 +23,8 @@ class Config extends Component<IProps, {}> {
 
   public render() {
     const { classes, profile, configToShow } = this.props;
-    const companyId = idx(profile, _ => _.selectedCompany.id) || '';
-    const isOwner = idx(profile, _ => _.selectedCompany.owner) || '';
+    const companyId = idx(profile, (_) => _.selectedCompany.id) || '';
+    const isOwner = idx(profile, (_) => _.selectedCompany.owner) || '';
     return (
       <ErrorBoundary>
         <div className={classes.page}>
@@ -38,12 +38,14 @@ class Config extends Component<IProps, {}> {
                 <div className={classes.linksWrapper}>
                   <Link
                     className={classes.whiteLink}
-                    to={URL.ACCOUNT_BASIC_DETAILS()}>
+                    to={URL.ACCOUNT_BASIC_DETAILS()}
+                  >
                     Basic Details
                   </Link>
                   <Link
                     className={classes.whiteLink}
-                    to={URL.ACCOUNT_USER_SECURITY()}>
+                    to={URL.ACCOUNT_USER_SECURITY()}
+                  >
                     Security
                   </Link>
                 </div>
@@ -61,31 +63,36 @@ class Config extends Component<IProps, {}> {
                             companyId,
                           })
                         : ''
-                    }>
+                    }
+                  >
                     General
                   </Link>
                   <Link
                     className={classes.whiteLink}
-                    to={companyId ? URL.COMPANY_USERS({ companyId }) : ''}>
+                    to={companyId ? URL.COMPANY_USERS({ companyId }) : ''}
+                  >
                     Users
                   </Link>
                   <Link
                     className={classes.whiteLink}
-                    to={companyId ? URL.COMPANY_BANKING({ companyId }) : ''}>
+                    to={companyId ? URL.COMPANY_BANKING({ companyId }) : ''}
+                  >
                     Banking
                   </Link>
                   <Link
                     className={classes.whiteLink}
                     to={
                       companyId ? URL.COMPANY_INTEGRATIONS({ companyId }) : ''
-                    }>
+                    }
+                  >
                     Integrations
                   </Link>
                   <Link
                     className={classes.whiteLink}
                     to={
                       companyId ? URL.COMPANY_SUBSCRIPTION({ companyId }) : ''
-                    }>
+                    }
+                  >
                     Subscription
                   </Link>
                 </div>
@@ -99,12 +106,14 @@ class Config extends Component<IProps, {}> {
                 <div className={classes.linksWrapper}>
                   <Link
                     className={classes.whiteLink}
-                    to={URL.TIMESHEET_SETTINGS_LAYOUT()}>
+                    to={URL.TIMESHEET_SETTINGS_LAYOUT()}
+                  >
                     Layout
                   </Link>
                   <Link
                     className={classes.whiteLink}
-                    to={URL.TIMESHEET_SETTINGS_AUTOMATION()}>
+                    to={URL.TIMESHEET_SETTINGS_AUTOMATION()}
+                  >
                     Automation
                   </Link>
                 </div>
@@ -132,5 +141,5 @@ export default compose(
   withStyles(styles),
   connect((state: any) => ({
     profile: state.profile,
-  }))
+  })),
 )(Config);

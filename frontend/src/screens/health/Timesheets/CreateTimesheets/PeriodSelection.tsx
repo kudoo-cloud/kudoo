@@ -1,15 +1,10 @@
+import { Dropdown, WeekPeriod, withStyles } from '@kudoo/components';
+import Grid from '@material-ui/core/Grid';
+import range from 'lodash/range';
+import moment from 'moment';
+
 import * as React from 'react';
 import { compose } from 'recompose';
-import range from 'lodash/range';
-import Grid from '@material-ui/core/Grid';
-import {
-  Dropdown,
-  WeekPeriod,
-  withStyles,
-  withStylesProps,
-} from '@kudoo/components';
-import moment from 'moment';
-import { any } from 'prop-types';
 import styles from './styles';
 
 class PeriodSelection extends React.Component {
@@ -17,23 +12,17 @@ class PeriodSelection extends React.Component {
 
   currentYear = moment().year();
   currentMonth = moment().month();
-  yearList = range(this.currentYear - 2, this.currentYear + 10).map(yr => ({
+  yearList = range(this.currentYear - 2, this.currentYear + 10).map((yr) => ({
     label: String(yr),
     value: yr,
   }));
-  monthList = range(0, 12).map(index => ({
-    label: moment()
-      .month(index)
-      .format('MMMM'),
+  monthList = range(0, 12).map((index) => ({
+    label: moment().month(index).format('MMMM'),
     value: index,
   }));
 
   _getWeekNumberFromMonth = (month, year) => {
-    return moment()
-      .month(month)
-      .year(year)
-      .date(1)
-      .week();
+    return moment().month(month).year(year).date(1).week();
   };
 
   render() {
@@ -53,10 +42,10 @@ class PeriodSelection extends React.Component {
                   label='Month'
                   items={this.monthList}
                   value={currentWeekPeriod.month}
-                  onChange={item => {
+                  onChange={(item) => {
                     const week = this._getWeekNumberFromMonth(
                       item.value,
-                      currentWeekPeriod.year
+                      currentWeekPeriod.year,
                     );
                     onUpdateCurrentWeekPeriod({
                       ...currentWeekPeriod,
@@ -71,7 +60,7 @@ class PeriodSelection extends React.Component {
                   label='Year'
                   items={this.yearList}
                   value={currentWeekPeriod.year}
-                  onChange={item => {
+                  onChange={(item) => {
                     onUpdateCurrentWeekPeriod({
                       ...currentWeekPeriod,
                       year: item.value,

@@ -1,14 +1,13 @@
+import { ErrorBoundary } from '@kudoo/components';
+import idx from 'idx';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import idx from 'idx';
-import get from 'lodash/get';
-import find from 'lodash/find';
-import isEqual from 'lodash/isEqual';
-import { ErrorBoundary, withRouterProps } from '@kudoo/components';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { withSuppliers } from '@kudoo/graphql';
-import { any } from 'prop-types';
+import SelectedCompany from 'src/helpers/SelectedCompany';
 
 interface IProps {
   actions: any;
@@ -29,14 +28,14 @@ class SupplierTabContainer extends Component<IProps, IState> {
     suppliers: {
       refetch: () => {},
       loadNextPage: () => {},
-      children: ({}) => {},
+      data: [],
     },
   };
 
   constructor(props: IProps) {
     super(props);
     this.state = {
-      displayedSuppliers: idx(props, _ => _.suppliers.data),
+      displayedSuppliers: idx(props, (_) => _.suppliers.data),
       columns: [
         {
           id: 'name',
@@ -57,8 +56,8 @@ class SupplierTabContainer extends Component<IProps, IState> {
   }
 
   public componentDidUpdate(prevProps) {
-    const oldSuppliers = idx(prevProps, _ => _.suppliers.data) || [];
-    const newSuppliers = idx(this.props, _ => _.suppliers.data) || [];
+    const oldSuppliers = idx(prevProps, (_) => _.suppliers.data) || [];
+    const newSuppliers = idx(this.props, (_) => _.suppliers.data) || [];
     if (!isEqual(oldSuppliers, newSuppliers)) {
       this._updateSuppliers(newSuppliers);
     }
@@ -68,7 +67,7 @@ class SupplierTabContainer extends Component<IProps, IState> {
     this.setState({ displayedSuppliers: suppliers });
   }
 
-  public _onRequestSort = async column => {
+  public _onRequestSort = async (column) => {
     const columns = this.state.columns;
     const sortedColumn = find(columns, { sorted: true });
     const columnGoingToBeSorted = find(columns, { id: column.id });
@@ -120,18 +119,18 @@ export default compose<any, any>(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withSuppliers(({ type }) => {
-    let isArchived = false;
-    if (type === 'archived-suppliers') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  })
+  // withSuppliers(({ type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-suppliers') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
 )(SupplierTabContainer);

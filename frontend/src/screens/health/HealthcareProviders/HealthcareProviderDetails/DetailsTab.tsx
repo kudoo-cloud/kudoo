@@ -1,18 +1,16 @@
-import React from 'react';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import get from 'lodash/get';
-import Grid from '@material-ui/core/Grid';
 import {
-  withStyles,
-  Button,
   AddressForm,
-  SectionHeader,
+  Button,
   PhoneNumberField,
-  withStylesProps,
-  helpers as utils,
+  SectionHeader,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
+import get from 'lodash/get';
+import React from 'react';
+import * as Yup from 'yup';
+import URL from 'src/helpers/urls';
 import styles from './styles';
 
 type Props = {
@@ -55,13 +53,15 @@ class DetailsTab extends React.Component<Props, any> {
             landlineNumber: Yup.string().required('Number is required'),
             mobileNumber: Yup.string().required('Number is required'),
           })}
-          onSubmit={onSubmit}>
-          {formProps => {
+          onSubmit={onSubmit}
+        >
+          {(formProps) => {
             const isDirty = formProps.dirty;
             return (
               <form
                 className={classes.detailsForm}
-                onSubmit={formProps.handleSubmit}>
+                onSubmit={formProps.handleSubmit}
+              >
                 <Grid container spacing={40}>
                   <Grid item xs={12} sm={6}>
                     <SectionHeader
@@ -92,12 +92,12 @@ class DetailsTab extends React.Component<Props, any> {
                       areaCodeLabel='Area Code'
                       areaCodePlaceholder='61'
                       areaCodeValue={String(
-                        get(formProps, 'values.mobileCode')
+                        get(formProps, 'values.mobileCode'),
                       )}
                       phoneNumberLabel={'Mobile'}
                       phoneNumberPlaceholder='0435900999'
                       phoneNumberValue={String(
-                        get(formProps, 'values.mobileNumber')
+                        get(formProps, 'values.mobileNumber'),
                       )}
                       error={
                         get(formProps, 'touched.mobileNumber') &&
@@ -113,12 +113,12 @@ class DetailsTab extends React.Component<Props, any> {
                       areaCodeLabel='Area Code'
                       areaCodePlaceholder='61'
                       areaCodeValue={String(
-                        get(formProps, 'values.landlineCode')
+                        get(formProps, 'values.landlineCode'),
                       )}
                       phoneNumberLabel={'Landline'}
                       phoneNumberPlaceholder='0435900999'
                       phoneNumberValue={String(
-                        get(formProps, 'values.landlineNumber')
+                        get(formProps, 'values.landlineNumber'),
                       )}
                       error={
                         get(formProps, 'touched.landlineNumber') &&

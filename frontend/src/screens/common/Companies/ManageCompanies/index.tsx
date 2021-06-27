@@ -1,25 +1,23 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import cx from 'classnames';
-import get from 'lodash/get';
-import find from 'lodash/find';
-import idx from 'idx';
-import isEqual from 'lodash/isEqual';
-import { Link } from 'react-router-dom';
-import { compose } from 'react-apollo';
 import {
-  withStyles,
-  DottedCreateButton,
-  CompanyCard,
   Button,
-  withRouterProps,
-  withStylesProps,
+  CompanyCard,
+  DottedCreateButton,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
 import Collapse from '@material-ui/core/Collapse';
-import { withCompanies, withUpdateCompany } from '@kudoo/graphql';
-import { SecurityRole } from '@client/store/types/security';
-import { showToast } from '@client/helpers/toast';
+import cx from 'classnames';
+import idx from 'idx';
+// import find from 'lodash/find';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import { Link } from 'react-router-dom';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
+import { IReduxState } from 'src/store/reducers';
+// import { SecurityRole } from 'src/store/types/security';
 import JoinModal from './JoinModal';
 import styles from './styles';
 
@@ -42,6 +40,12 @@ type State = {
 };
 
 class ManageCompanies extends Component<Props, State> {
+  static defaultProps = {
+    companies: { createdCompanies: [], joinedCompanies: [] },
+    allCompanies: {},
+    updateCompany: () => ({}),
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -61,17 +65,17 @@ class ManageCompanies extends Component<Props, State> {
     if (
       !isEqual(
         get(this.props, 'companies.createdCompanies', []).map(
-          company => company.id
+          (company) => company.id,
         ),
         get(prevProps, 'companies.createdCompanies', []).map(
-          company => company.id
-        )
+          (company) => company.id,
+        ),
       ) ||
       !isEqual(
-        get(profile, 'createdCompanies', []).map(company => company.id),
+        get(profile, 'createdCompanies', []).map((company) => company.id),
         get(prevProps, 'companies.createdCompanies', []).map(
-          company => company.id
-        )
+          (company) => company.id,
+        ),
       )
     ) {
       this.props.actions.setUserData({
@@ -80,7 +84,7 @@ class ManageCompanies extends Component<Props, State> {
     }
   }
 
-  _reactivateCompany = company => async e => {
+  _reactivateCompany = (company) => async () => {
     try {
       this.props.actions.selectCompany({ ...company, owner: true });
       const res = await this.props.updateCompany({
@@ -96,7 +100,7 @@ class ManageCompanies extends Component<Props, State> {
         // Reloading page , as re-activation of company will affect sidebar also
         window.location.reload();
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
@@ -120,7 +124,8 @@ class ManageCompanies extends Component<Props, State> {
           className={classes.collapseTitle}
           onClick={() => {
             this.setState({ isCreatedCompanyOpen: !isCreatedCompanyOpen });
-          }}>
+          }}
+        >
           <div>Created Companies</div>
           <i
             className={cx('icon icon-chevron-right', classes.collapseIcon, {
@@ -135,11 +140,12 @@ class ManageCompanies extends Component<Props, State> {
           data-test='create-company-wrapper'
           classes={{
             wrapperInner: classes.collapseContent,
-          }}>
+          }}
+        >
           <Link className={classes.cardComponent} to={URL.CREATE_COMPANY()}>
             <DottedCreateButton id='create-company' text='Create new company' />
           </Link>
-          {(idx(companies, x => x.createdCompanies) || []).map(company => (
+          {(idx(companies, (x) => x.createdCompanies) || []).map((company) => (
             <div
               className={classes.companyCardWrapper}
               key={company.id}
@@ -147,7 +153,8 @@ class ManageCompanies extends Component<Props, State> {
                 !company.isArchived
                   ? `created-company-${company.name}`
                   : `created-archived-company-${company.name}`
-              }>
+              }
+            >
               <Link
                 className={classes.companyCard}
                 to={URL.COMPANY_SETTINGS({ companyId: company.id })}
@@ -156,7 +163,8 @@ class ManageCompanies extends Component<Props, State> {
                     ...company,
                     owner: true,
                   });
-                }}>
+                }}
+              >
                 <CompanyCard
                   imageUrl={
                     get(company, 'logo.url')
@@ -197,7 +205,8 @@ class ManageCompanies extends Component<Props, State> {
           className={classes.collapseTitle}
           onClick={() => {
             this.setState({ isJoinedCompanyOpen: !isJoinedCompanyOpen });
-          }}>
+          }}
+        >
           <div>Joined Companies</div>
           <i
             className={cx('icon icon-chevron-right', classes.collapseIcon, {
@@ -211,8 +220,9 @@ class ManageCompanies extends Component<Props, State> {
           unmountOnExit
           classes={{
             wrapperInner: classes.collapseContent,
-          }}>
-          {(idx(companies, x => x.joinedCompanies) || []).map(company => (
+          }}
+        >
+          {(idx(companies, (x) => x.joinedCompanies) || []).map((company) => (
             <div
               className={classes.companyCardWrapper}
               key={company.id}
@@ -220,10 +230,12 @@ class ManageCompanies extends Component<Props, State> {
                 !company.isArchived
                   ? `joined-company-${company.name}`
                   : `joined-archived-company-${company.name}`
-              }>
+              }
+            >
               <div
                 className={classes.companyCard}
-                style={{ cursor: 'initial' }}>
+                style={{ cursor: 'initial' }}
+              >
                 <CompanyCard
                   imageUrl={
                     get(company, 'logo.url')
@@ -272,51 +284,51 @@ class ManageCompanies extends Component<Props, State> {
 
 export default compose(
   withStyles(styles),
-  connect(state => ({
+  connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-  withUpdateCompany(),
-  withCompanies(
-    props => ({
-      variables: {
-        joined: true,
-        created: true,
-      },
-    }),
-    ({ data, ownProps }) => {
-      const companies = get(data, 'companies') || [];
-      const createdCompanies: any = [];
-      const joinedCompanies: any = [];
-      for (let index = 0; index < companies.length; index++) {
-        const company = companies[index] || {};
-        const companyMember = find(company.companyMembers, {
-          user: { id: get(ownProps, 'profile.id') },
-        });
-        let role = SecurityRole.user;
-        if (get(ownProps, 'profile.isRoot')) {
-          role = SecurityRole.root;
-        } else if (companyMember.role === 'OWNER') {
-          role = SecurityRole.owner;
-        } else if (companyMember.role === 'ADMIN') {
-          role = SecurityRole.admin;
-        }
-        if (companyMember.role === 'OWNER' || companyMember.role === 'ADMIN') {
-          createdCompanies.push({ ...company, role });
-        } else {
-          joinedCompanies.push({ ...company, role });
-        }
-      }
-      return {
-        createdCompanies,
-        joinedCompanies,
-      };
-    }
-  ),
-  withCompanies(props => ({
-    name: 'allCompanies',
-    variables: {
-      joined: true,
-      created: true,
-    },
-  }))
+  // withUpdateCompany(),
+  // withCompanies(
+  //   () => ({
+  //     variables: {
+  //       joined: true,
+  //       created: true,
+  //     },
+  //   }),
+  //   ({ data, ownProps }) => {
+  //     const companies = get(data, 'companies') || [];
+  //     const createdCompanies: any = [];
+  //     const joinedCompanies: any = [];
+  //     for (let index = 0; index < companies.length; index++) {
+  //       const company = companies[index] || {};
+  //       const companyMember = find(company.companyMembers, {
+  //         user: { id: get(ownProps, 'profile.id') },
+  //       });
+  //       let role = SecurityRole.user;
+  //       if (get(ownProps, 'profile.isRoot')) {
+  //         role = SecurityRole.root;
+  //       } else if (companyMember.role === 'OWNER') {
+  //         role = SecurityRole.owner;
+  //       } else if (companyMember.role === 'ADMIN') {
+  //         role = SecurityRole.admin;
+  //       }
+  //       if (companyMember.role === 'OWNER' || companyMember.role === 'ADMIN') {
+  //         createdCompanies.push({ ...company, role });
+  //       } else {
+  //         joinedCompanies.push({ ...company, role });
+  //       }
+  //     }
+  //     return {
+  //       createdCompanies,
+  //       joinedCompanies,
+  //     };
+  //   },
+  // ),
+  // withCompanies(() => ({
+  //   name: 'allCompanies',
+  //   variables: {
+  //     joined: true,
+  //     created: true,
+  //   },
+  // })),
 )(ManageCompanies);

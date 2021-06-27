@@ -1,4 +1,4 @@
-export default theme => ({
+export default (theme) => ({
   page: {
     flex: 1,
     display: 'flex',
@@ -216,7 +216,7 @@ export default theme => ({
   },
 });
 
-export const ReviewStepStyles = theme => ({
+export const ReviewStepStyles = (theme) => ({
   projectNameWrapper: {
     backgroundColor: theme.palette.primary.color1,
     padding: 20,
@@ -280,7 +280,7 @@ export const ReviewStepStyles = theme => ({
   },
 });
 
-export const ServiceBlockStyles = theme => ({
+export const ServiceBlockStyles = (theme) => ({
   serviceBlock: {
     display: 'flex',
     alignItems: 'center',

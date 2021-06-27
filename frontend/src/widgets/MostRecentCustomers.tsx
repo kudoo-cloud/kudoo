@@ -1,16 +1,15 @@
-import * as React from 'react';
-import cx from 'classnames';
-import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import {
-  withStyles,
-  composeStyles,
   ErrorBoundary,
   Loading,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import { withCustomers } from '@kudoo/graphql';
+import cx from 'classnames';
+import get from 'lodash/get';
+// import isEqual from 'lodash/isEqual';
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import styles, { MostRecentBlockStyles } from './styles';
 
 type Props = {
@@ -23,18 +22,18 @@ type State = {};
 class MostRecentCustomers extends React.Component<Props, State> {
   state = {};
 
-  componentDidUpdate(prevProps) {
-    if (
-      !isEqual(get(this.props, 'contentHash'), get(prevProps, 'contentHash'))
-    ) {
-      if (get(this.props, 'customers.refetch')) {
-        this.props.customers.refetch();
-      }
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   if (
+  //     !isEqual(get(this.props, 'contentHash'), get(prevProps, 'contentHash'))
+  //   ) {
+  //     if (get(this.props, 'customers.refetch')) {
+  //       this.props.customers.refetch();
+  //     }
+  //   }
+  // }
 
   render() {
-    const { classes, customers } = this.props;
+    const { classes, customers = {} } = this.props;
     const customersList = get(customers, 'data', []);
     return (
       <ErrorBoundary>
@@ -51,7 +50,7 @@ class MostRecentCustomers extends React.Component<Props, State> {
             <div className={classes.component}>
               {customersList.length > 0 ? (
                 <div className={classes.list}>
-                  {customersList.map(customer => (
+                  {customersList.map((customer) => (
                     <div className={classes.listItem} key={customer.id}>
                       <div className={classes.listItemPrimary}>
                         {customer.name}
@@ -80,12 +79,4 @@ export default compose<any, any>(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withCustomers(props => ({
-    variables: {
-      first: 3,
-      where: {
-        isArchived: false,
-      },
-    },
-  }))
 )(MostRecentCustomers);

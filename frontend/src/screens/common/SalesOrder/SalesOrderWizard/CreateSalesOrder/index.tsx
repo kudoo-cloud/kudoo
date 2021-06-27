@@ -1,31 +1,23 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import { withI18n } from '@lingui/react';
-import { connect } from 'react-redux';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { compose } from 'react-apollo';
 import {
   Button,
-  ErrorBoundary,
   DatePicker,
   Dropdown,
+  ErrorBoundary,
   SectionHeader,
-  withRouterProps,
   withStyles,
-  withStylesProps,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
 import idx from 'idx';
 import isEqual from 'lodash/isEqual';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import {
-  withCreateSalesOrder,
-  withSalesOrder,
-  withUpdateSalesOrder,
-  withCustomers,
-} from '@kudoo/graphql';
-import styles from '@client/common_screens/SalesOrder/SalesOrderWizard/styles';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import URL from 'src/helpers/urls';
+import styles from 'src/screens/common/SalesOrder/SalesOrderWizard/styles';
 
 interface IProps {
   actions: any;
@@ -48,6 +40,12 @@ interface IState {
 }
 
 class CreateSalesOrder extends Component<IProps, IState> {
+  static defaultProps = {
+    customers: { data: [] },
+    initialData: { data: [] },
+    updateCompany: () => ({}),
+  };
+
   public state = {
     isEditMode: false,
     customersList: [],
@@ -87,7 +85,7 @@ class CreateSalesOrder extends Component<IProps, IState> {
     this.props.actions.updateHeaderTitle('SalesOrder');
 
     this.setState({
-      isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+      isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
     });
   }
 
@@ -98,7 +96,7 @@ class CreateSalesOrder extends Component<IProps, IState> {
       salesOrderData,
     } = this.props;
     const { customersList }: any = this.state;
-    const salesOrderId = idx(salesOrderData.data, _ => _.id);
+    const salesOrderId = idx(salesOrderData.data, (_) => _.id);
     if (data.length && !isEqual(data, prevProps.customers.data)) {
       data.forEach((rec: any) => {
         customersList.push({ value: rec.id, label: rec.name });
@@ -110,15 +108,15 @@ class CreateSalesOrder extends Component<IProps, IState> {
         const data = {
           id: initialData.id,
           transactionDate: initialData.transactionDate,
-          customer: initialData.customer.id,
+          customer: initialData?.customer?.id,
         };
         this.props.setSalesOrderData({
           data,
-          isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+          isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
         });
       }
       this.setState({
-        isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+        isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
       });
     }
   }
@@ -147,7 +145,9 @@ class CreateSalesOrder extends Component<IProps, IState> {
             <Grid item xs={12}>
               <DatePicker
                 label='Transaction Date'
-                onDateChange={date => setFieldValue(keys.transactionDate, date)}
+                onDateChange={(date) =>
+                  setFieldValue(keys.transactionDate, date)
+                }
                 value={values[keys.transactionDate]}
               />
             </Grid>
@@ -169,7 +169,7 @@ class CreateSalesOrder extends Component<IProps, IState> {
                       ]
                 }
                 value={values[keys.customer]}
-                onChange={e => setFieldValue(keys.customer, e.value)}
+                onChange={(e) => setFieldValue(keys.customer, e.value)}
                 onClose={() => setFieldTouched(keys.customer)}
                 error={touched[keys.customer] && errors[keys.customer]}
               />
@@ -190,17 +190,18 @@ class CreateSalesOrder extends Component<IProps, IState> {
     return (
       <Formik
         initialValues={{
-          transactionDate: idx(data, _ => _.transactionDate) || new Date(),
-          customer: idx(data, _ => _.customer) || '',
+          transactionDate: idx(data, (_) => _.transactionDate) || new Date(),
+          customer: idx(data, (_) => _.customer) || '',
         }}
         enableReinitialize
         validationSchema={Yup.object().shape({
           transactionDate: Yup.string().required(
-            'Transaction Date is required'
+            'Transaction Date is required',
           ),
           customer: Yup.string().required('Customer is required'),
         })}
-        onSubmit={this._submitForm}>
+        onSubmit={this._submitForm}
+      >
         {({
           values,
           errors,
@@ -268,7 +269,8 @@ class CreateSalesOrder extends Component<IProps, IState> {
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.SALES_ORDER());
-          }}>
+          }}
+        >
           <div className={classes.page}>{this._renderForm()}</div>
         </SelectedCompany>
       </ErrorBoundary>
@@ -278,33 +280,33 @@ class CreateSalesOrder extends Component<IProps, IState> {
 
 export default compose(
   withI18n(),
-  withCreateSalesOrder(),
-  withUpdateSalesOrder(),
-  withCustomers(({ profile, type }) => {
-    let isArchived = false;
-    if (type === 'archived-customers') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  }),
-  withSalesOrder(
-    props => {
-      const salesOrderId = idx(props, _ => _.match.params.id);
-      return {
-        id: salesOrderId,
-      };
-    },
-    ({ data }) => ({ initialData: idx(data, _ => _.salesOrder) || {} })
-  ),
+  // withCreateSalesOrder(),
+  // withUpdateSalesOrder(),
+  // withCustomers(({ type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-customers') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
+  // withSalesOrder(
+  //   (props) => {
+  //     const salesOrderId = idx(props, (_) => _.match.params.id);
+  //     return {
+  //       id: salesOrderId,
+  //     };
+  //   },
+  //   ({ data }) => ({ initialData: idx(data, (_) => _.salesOrder) || {} }),
+  // ),
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withStyles(styles)
+  withStyles(styles),
 )(CreateSalesOrder);

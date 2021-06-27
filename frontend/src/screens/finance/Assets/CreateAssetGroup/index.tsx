@@ -1,32 +1,24 @@
-import React, { Component } from 'react';
-import * as H from 'history';
-import Grid from '@material-ui/core/Grid';
-import { withI18n } from '@lingui/react';
-import { connect } from 'react-redux';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { compose } from 'react-apollo';
 import {
   Button,
-  ErrorBoundary,
-  TextField,
   Dropdown,
+  ErrorBoundary,
   SectionHeader,
-  withRouterProps,
+  TextField,
   withStyles,
-  withStylesProps,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import idx from 'idx';
-import isEqual from 'lodash/isEqual';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
+import * as H from 'history';
 import get from 'lodash/get';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import {
-  withCreateAssetGroup,
-  withAssetGroup,
-  withUpdateAssetGroup,
-} from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
+import isEqual from 'lodash/isEqual';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import styles from './styles';
 
 interface IProps {
@@ -45,6 +37,16 @@ interface IState {
 }
 
 class CreateAssetGroup extends Component<IProps, IState> {
+  public static defaultProps = {
+    createAssetGroup: () => ({}),
+    updateAssetGroup: () => ({}),
+    initialData: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+  };
+
   public state = {
     isEditMode: false,
   };
@@ -82,7 +84,7 @@ class CreateAssetGroup extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.ASSET_GROUPS());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       } else {
@@ -95,7 +97,7 @@ class CreateAssetGroup extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.ASSET_GROUPS());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       }
@@ -159,7 +161,7 @@ class CreateAssetGroup extends Component<IProps, IState> {
                   },
                 ]}
                 value={values.depreciationType}
-                onChange={e => setFieldValue('depreciationType', e.value)}
+                onChange={(e) => setFieldValue('depreciationType', e.value)}
                 onClose={() => setFieldTouched('depreciationType')}
                 error={touched.depreciationType && errors.depreciationType}
               />
@@ -200,7 +202,8 @@ class CreateAssetGroup extends Component<IProps, IState> {
           depreciationType: Yup.string().required('Depreciation Type required'),
           usefulLife: Yup.number().required('Useful Life required'),
         })}
-        onSubmit={this._submitForm}>
+        onSubmit={this._submitForm}
+      >
         {({
           values,
           errors,
@@ -265,7 +268,8 @@ class CreateAssetGroup extends Component<IProps, IState> {
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.ASSET_GROUPS());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             {this._renderSectionHeading()}
             {this._renderForm()}
@@ -278,21 +282,21 @@ class CreateAssetGroup extends Component<IProps, IState> {
 
 export default compose(
   withI18n(),
-  withCreateAssetGroup(),
-  withUpdateAssetGroup(),
-  withAssetGroup(
-    props => {
-      const id = get(props, 'match.params.id');
-      return {
-        id,
-      };
-    },
-    ({ data }) => ({
-      initialData: get(data, 'assetGroup') || {},
-    })
-  ),
+  // withCreateAssetGroup(),
+  // withUpdateAssetGroup(),
+  // withAssetGroup(
+  //   (props) => {
+  //     const id = get(props, 'match.params.id');
+  //     return {
+  //       id,
+  //     };
+  //   },
+  //   ({ data }) => ({
+  //     initialData: get(data, 'assetGroup') || {},
+  //   }),
+  // ),
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withStyles(styles)
+  withStyles(styles),
 )(CreateAssetGroup);

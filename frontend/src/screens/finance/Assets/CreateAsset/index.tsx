@@ -1,34 +1,25 @@
-import React, { Component } from 'react';
-import * as H from 'history';
-import Grid from '@material-ui/core/Grid';
-import { withI18n } from '@lingui/react';
-import { connect } from 'react-redux';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { compose } from 'react-apollo';
 import {
   Button,
-  ErrorBoundary,
-  TextField,
-  Dropdown,
-  SectionHeader,
-  withRouterProps,
-  withStyles,
-  withStylesProps,
   DatePicker,
+  Dropdown,
+  ErrorBoundary,
+  SectionHeader,
+  TextField,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import idx from 'idx';
-import isEqual from 'lodash/isEqual';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
+import * as H from 'history';
 import get from 'lodash/get';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import {
-  withCreateAsset,
-  withAssetGroups,
-  withAsset,
-  withUpdateAsset,
-} from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
+import isEqual from 'lodash/isEqual';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import styles from './styles';
 
 interface IProps {
@@ -48,6 +39,21 @@ interface IState {
 }
 
 class CreateAsset extends Component<IProps, IState> {
+  public static defaultProps = {
+    createAsset: () => ({}),
+    updateAsset: () => ({}),
+    initialData: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+    assetGroups: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+  };
+
   public state = {
     isEditMode: false,
   };
@@ -103,7 +109,7 @@ class CreateAsset extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.ASSETS());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       } else {
@@ -116,7 +122,7 @@ class CreateAsset extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.ASSETS());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       }
@@ -169,12 +175,12 @@ class CreateAsset extends Component<IProps, IState> {
                 placeholder={'Select Asset Group'}
                 name={'assetGroup'}
                 id={'assetGroup'}
-                items={get(assetGroups, 'data', []).map(group => ({
+                items={get(assetGroups, 'data', []).map((group) => ({
                   label: group.name,
                   value: group.id,
                 }))}
                 value={values.assetGroup}
-                onChange={e => setFieldValue('assetGroup', e.value)}
+                onChange={(e) => setFieldValue('assetGroup', e.value)}
                 onClose={() => setFieldTouched('assetGroup')}
                 error={touched.assetGroup && errors.assetGroup}
               />
@@ -183,7 +189,7 @@ class CreateAsset extends Component<IProps, IState> {
               <DatePicker
                 label='Date Of Aquisition'
                 value={values.dateOfAquisition}
-                onDateChange={date => {
+                onDateChange={(date) => {
                   setFieldValue('dateOfAquisition', date);
                   setFieldTouched('dateOfAquisition');
                 }}
@@ -270,7 +276,8 @@ class CreateAsset extends Component<IProps, IState> {
           name: Yup.string().required('Name is required'),
           assetGroup: Yup.string().required('Please select Asset Group'),
         })}
-        onSubmit={this._submitForm}>
+        onSubmit={this._submitForm}
+      >
         {({
           values,
           errors,
@@ -335,7 +342,8 @@ class CreateAsset extends Component<IProps, IState> {
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.ASSETS());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             {this._renderSectionHeading()}
             {this._renderForm()}
@@ -352,28 +360,28 @@ export default compose(
     profile: state.profile,
   })),
   withI18n(),
-  withCreateAsset(),
-  withUpdateAsset(),
-  withAssetGroups(({ profile }) => ({
-    variables: {
-      where: {
-        isArchived: false,
-        company: {
-          id: profile.selectedCompany.id,
-        },
-      },
-      orderBy: 'name_ASC',
-    },
-  })),
-  withAsset(
-    props => {
-      const id = get(props, 'match.params.id');
-      return {
-        id,
-      };
-    },
-    ({ data }) => ({
-      initialData: get(data, 'asset') || {},
-    })
-  )
+  // withCreateAsset(),
+  // withUpdateAsset(),
+  // withAssetGroups(({ profile }) => ({
+  //   variables: {
+  //     where: {
+  //       isArchived: false,
+  //       company: {
+  //         id: profile.selectedCompany.id,
+  //       },
+  //     },
+  //     orderBy: 'name_ASC',
+  //   },
+  // })),
+  // withAsset(
+  //   (props) => {
+  //     const id = get(props, 'match.params.id');
+  //     return {
+  //       id,
+  //     };
+  //   },
+  //   ({ data }) => ({
+  //     initialData: get(data, 'asset') || {},
+  //   }),
+  // ),
 )(CreateAsset);

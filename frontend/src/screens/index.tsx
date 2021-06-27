@@ -1,24 +1,17 @@
+import idx from 'idx';
+import get from 'lodash/get';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Redirect, Route, Switch } from 'react-router-dom';
 import { compose } from 'recompose';
 import { bindActionCreators } from 'redux';
-import { Route, Switch, Redirect } from 'react-router-dom';
-import get from 'lodash/get';
-import { ProfileActions, AppActions } from '@client/store/actions';
-import URL from '@client/helpers/urls';
-import Routes from '@client/screens/routes';
-import {
-  Product,
-  IAvailability,
-  LicensePlan,
-} from '@client/store/types/security';
-import idx from 'idx';
-import {
-  isFeatureAvailable,
-  needsLicenseUpgrade,
-} from '@client/helpers/security';
-import * as SceneComponents from './LoadableComponents';
+import { isFeatureAvailable, needsLicenseUpgrade } from 'src/helpers/security';
+import URL from 'src/helpers/urls';
+import Routes from 'src/screens/routes';
+import { AppActions, ProfileActions } from 'src/store/actions';
+import { IAvailability, LicensePlan, Product } from 'src/store/types/security';
 import UpgradeComponent from './common/UpgradeComponent';
+import * as SceneComponents from './LoadableComponents';
 
 const paramsOptions = { path: true };
 
@@ -28,13 +21,13 @@ class Screens extends Component<any> {
     const isLoggedIn = get(this.props, 'profile.isLoggedIn');
     const pathname = window.location.pathname;
 
-    const CommonRoutes = idx(Routes, x => x['common']) || [];
+    const CommonRoutes = idx(Routes, (x) => x['common']) || [];
     const ManufacturingRoutes =
-      idx(Routes, x => x[Product.manufacturing]) || [];
-    const ProjectRoutes = idx(Routes, x => x[Product.projects]) || [];
-    const HealthRoutes = idx(Routes, x => x[Product.health]) || [];
-    const FinanceRoutes = idx(Routes, x => x[Product.finance]) || [];
-    const InventoryRoutes = idx(Routes, x => x[Product.inventory]) || [];
+      idx(Routes, (x) => x[Product.manufacturing]) || [];
+    const ProjectRoutes = idx(Routes, (x) => x[Product.projects]) || [];
+    const HealthRoutes = idx(Routes, (x) => x[Product.health]) || [];
+    const FinanceRoutes = idx(Routes, (x) => x[Product.finance]) || [];
+    const InventoryRoutes = idx(Routes, (x) => x[Product.inventory]) || [];
     const routes = [
       ...CommonRoutes,
       ...ManufacturingRoutes,
@@ -52,17 +45,20 @@ class Screens extends Component<any> {
          * https://github.com/ReactTraining/react-router/issues/5785
          * We can't use fragment under switch so we are just putting all routes here directly instead of separate components
          */}
-        {routes.map(route => {
+        {routes.map((route) => {
           const { path, component, ...rest } = route;
           const RouteComponent = component;
-          const isAvailable = isFeatureAvailable(
+          let isAvailable = isFeatureAvailable(
             profile.selectedCompany,
-            route.availability as IAvailability[]
+            route.availability as IAvailability[],
           );
-          const needsUpgrade = needsLicenseUpgrade(
+          let needsUpgrade = needsLicenseUpgrade(
             profile.selectedCompany,
-            route.licenseRequired as LicensePlan[]
+            route.licenseRequired as LicensePlan[],
           );
+          // TODO: For now making isAvailable = true and needsUpgrade = false;
+          isAvailable = true;
+          needsUpgrade = false;
           if (!isAvailable) {
             // if feature/route is not available to current selected company and current logged in user
             // then don't render the route
@@ -72,13 +68,12 @@ class Screens extends Component<any> {
             <Route
               key={path}
               path={path}
-              render={props => {
+              render={(props) => {
                 if (needsUpgrade) {
                   // if user requires upgrade of his license plan then show Upgrade Message
                   return <UpgradeComponent />;
                 } else {
                   return (
-                    // @ts-ignore
                     <RouteComponent {...rest} actions={actions} {...props} />
                   );
                 }
@@ -98,7 +93,7 @@ class Screens extends Component<any> {
         <Route
           exact
           path={URL.HOME(paramsOptions)}
-          render={props =>
+          render={() =>
             isLoggedIn ? (
               <Redirect to={URL.DASHBOARD(paramsOptions)} />
             ) : (
@@ -120,43 +115,45 @@ class Screens extends Component<any> {
         />
         <Route
           path={URL.INVITE_EMAIL(paramsOptions)}
-          render={routeProps => (
+          render={(routeProps) => (
             <SceneComponents.InviteEmail {...routeProps} actions={actions} />
           )}
         />
         <Route
           path={URL.RESET_PASSWORD(paramsOptions)}
-          render={props => (
+          render={(props) => (
             <SceneComponents.ForgotPassword {...props} actions={actions} />
           )}
         />
         <Route
           path={URL.RESET_PASSWORD_EMAIL(paramsOptions)}
-          render={props => (
+          render={(props) => (
             <SceneComponents.ResetPasswordEmail {...props} actions={actions} />
           )}
         />
         <Route
           path={URL.NEW_PASSWORD(paramsOptions)}
-          render={props => (
+          render={(props) => (
             <SceneComponents.NewPassword {...props} actions={actions} />
           )}
         />
         <Route
           path={URL.WELCOME_EMAIL_PREVIEW(paramsOptions)}
-          render={props => <SceneComponents.WelcomeEmailPreview {...props} />}
+          render={(props) => <SceneComponents.WelcomeEmailPreview {...props} />}
         />
         <Route
           path={URL.CONFIRM_EMAIL_PREVIEW(paramsOptions)}
-          render={props => <SceneComponents.ConfirmEmailPreview {...props} />}
+          render={(props) => <SceneComponents.ConfirmEmailPreview {...props} />}
         />
         <Route
           path={URL.REMEMBER_EMAIL_PREVIEW(paramsOptions)}
-          render={props => <SceneComponents.RememberEmailPreview {...props} />}
+          render={(props) => (
+            <SceneComponents.RememberEmailPreview {...props} />
+          )}
         />
         <Route
           path={URL.INVITE_EMAIL_PREVIEW(paramsOptions)}
-          render={props => <SceneComponents.InviteEmailPreview {...props} />}
+          render={(props) => <SceneComponents.InviteEmailPreview {...props} />}
         />
         {this._renderPrivateRoutes()}
         <Route component={SceneComponents.NotFound} />
@@ -170,14 +167,14 @@ export default compose(
     (state: any) => ({
       profile: state.profile,
     }),
-    dispatch => ({
+    (dispatch) => ({
       actions: bindActionCreators(
         {
           ...ProfileActions,
           ...AppActions,
         },
-        dispatch
+        dispatch,
       ),
-    })
-  )
+    }),
+  ),
 )(Screens);

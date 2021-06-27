@@ -1,17 +1,12 @@
-import React, { Component } from 'react';
-import { compose, withState } from 'recompose';
-import { connect } from 'react-redux';
-import find from 'lodash/find';
-import debounce from 'lodash/debounce';
-import {
-  withStyles,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
+import { Table, TextField, withStyles } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { withPbsTPPs } from '@kudoo/graphql';
-import { Table, TextField } from '@kudoo/components';
+import debounce from 'lodash/debounce';
+import find from 'lodash/find';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose, withState } from 'recompose';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+
 import styles from './styles';
 
 interface IProps {
@@ -30,6 +25,14 @@ interface IProps {
 }
 
 class Drugs extends Component<IProps, {}> {
+  public static defaultProps = {
+    pbsTPPs: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+  };
+
   public state = {
     columns: [
       {
@@ -75,7 +78,7 @@ class Drugs extends Component<IProps, {}> {
     });
   };
 
-  public _onSearchDrugs = debounce(text => {
+  public _onSearchDrugs = debounce((text) => {
     const { pbsTPPs } = this.props;
     pbsTPPs.refetch({
       where: {
@@ -95,7 +98,7 @@ class Drugs extends Component<IProps, {}> {
               <TextField
                 value={searchedText}
                 placeholder='Search brand name...'
-                onChangeText={text => {
+                onChangeText={(text) => {
                   setSearchedText(text);
                   this._onSearchDrugs(text);
                 }}
@@ -126,16 +129,16 @@ class Drugs extends Component<IProps, {}> {
 
 export default compose<any, any>(
   withStyles(styles),
-  withPbsTPPs(() => {
-    return {
-      variables: {
-        orderBy: 'id_ASC',
-        first: 20,
-      },
-    };
-  }),
+  // withPbsTPPs(() => {
+  //   return {
+  //     variables: {
+  //       orderBy: 'id_ASC',
+  //       first: 20,
+  //     },
+  //   };
+  // }),
   withState('searchedText', 'setSearchedText', ''),
   connect((state: any) => ({
     profile: state.profile,
-  }))
+  })),
 )(Drugs);

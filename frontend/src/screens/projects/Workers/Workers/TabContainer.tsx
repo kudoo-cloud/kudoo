@@ -1,17 +1,12 @@
-import React, { Component } from 'react';
-import get from 'lodash/get';
 import { withI18n } from '@lingui/react';
-import compact from 'lodash/compact';
-import { compose } from 'recompose';
+// import compact from 'lodash/compact';
+import get from 'lodash/get';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { withRouterProps } from '@kudoo/components';
-import {
-  withCompany,
-  withUpdateCompanyMember,
-  withDeleteCompanyMember,
-} from '@kudoo/graphql';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { showToast } from '@client/helpers/toast';
+import { compose } from 'recompose';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import { IReduxState } from 'src/store/reducers';
 
 type Props = {
   actions: any;
@@ -28,6 +23,16 @@ type State = {
 };
 
 class TabContainer extends Component<Props, State> {
+  public static defaultProps = {
+    deleteCompanyMember: () => ({}),
+    updateCompanyMember: () => ({}),
+    workers: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+  };
+
   data: Array<Record<string, any>>;
 
   constructor(props: Props) {
@@ -63,7 +68,7 @@ class TabContainer extends Component<Props, State> {
 
   _onSortRequested = () => {};
 
-  _onArchiveWorker = async worker => {
+  _onArchiveWorker = async (worker) => {
     try {
       if (worker.role === 'OWNER' || worker.role === 'ADMIN') {
         showToast("Can't archive owner");
@@ -79,14 +84,14 @@ class TabContainer extends Component<Props, State> {
         showToast(null, 'Worker archived successfully');
         this.props.workers.refetch();
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
     }
   };
 
-  _onUnarchiveWorker = async worker => {
+  _onUnarchiveWorker = async (worker) => {
     try {
       const res = await this.props.updateCompanyMember({
         where: { id: worker.memberId },
@@ -98,14 +103,14 @@ class TabContainer extends Component<Props, State> {
         showToast(null, 'Worker un-archived successfully');
         this.props.workers.refetch();
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
     }
   };
 
-  _onRemoveWorker = async worker => {
+  _onRemoveWorker = async (worker) => {
     try {
       if (worker.role === 'OWNER' || worker.role === 'ADMIN') {
         showToast("Can't remove owner");
@@ -116,7 +121,7 @@ class TabContainer extends Component<Props, State> {
         showToast(null, 'Worker removed successfully');
         this.props.workers.refetch();
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
@@ -126,7 +131,7 @@ class TabContainer extends Component<Props, State> {
   render() {
     const { columns } = this.state;
     const { workers = {}, i18n } = this.props;
-    const workerRows = get(workers, 'data', []).map(worker => ({
+    const workerRows = get(workers, 'data', []).map((worker) => ({
       ...worker,
       id: worker.id,
       name: `${worker.firstName} ${worker.lastName}`,
@@ -152,42 +157,42 @@ class TabContainer extends Component<Props, State> {
   }
 }
 
-export default compose(
+export default compose<any, any>(
   withI18n(),
-  connect(state => ({ profile: state.profile })),
-  withCompany(
-    props => {
-      const company = get(props, 'profile.selectedCompany') || {};
-      return {
-        id: company.id,
-      };
-    },
-    ({ data, ownProps }) => {
-      const companyMemebers = get(data, 'company.companyMembers') || [];
-      let users = [];
-      if (companyMemebers) {
-        users = companyMemebers
-          .filter(({ isDeleted }) => isDeleted === false)
-          .map(({ id, user, role, isArchived }) => {
-            if (ownProps.type === 'active-workers' && isArchived) {
-              // if we want active workers but user is arcvhied
-              return null;
-            } else if (ownProps.type === 'archived-workers' && !isArchived) {
-              // if we want archived workers but user is active
-              return null;
-            }
-            return { ...user, role, memberId: id };
-          });
-      }
-      return {
-        workers: {
-          data: compact(users),
-          loading: data.loading,
-          refetch: data.refetch,
-        },
-      };
-    }
-  ),
-  withUpdateCompanyMember(),
-  withDeleteCompanyMember()
+  connect((state: IReduxState) => ({ profile: state.profile })),
+  // withCompany(
+  //   (props) => {
+  //     const company = get(props, 'profile.selectedCompany') || {};
+  //     return {
+  //       id: company.id,
+  //     };
+  //   },
+  //   ({ data, ownProps }) => {
+  //     const companyMemebers = get(data, 'company.companyMembers') || [];
+  //     let users = [];
+  //     if (companyMemebers) {
+  //       users = companyMemebers
+  //         .filter(({ isDeleted }) => isDeleted === false)
+  //         .map(({ id, user, role, isArchived }) => {
+  //           if (ownProps.type === 'active-workers' && isArchived) {
+  //             // if we want active workers but user is arcvhied
+  //             return null;
+  //           } else if (ownProps.type === 'archived-workers' && !isArchived) {
+  //             // if we want archived workers but user is active
+  //             return null;
+  //           }
+  //           return { ...user, role, memberId: id };
+  //         });
+  //     }
+  //     return {
+  //       workers: {
+  //         data: compact(users),
+  //         loading: data.loading,
+  //         refetch: data.refetch,
+  //       },
+  //     };
+  //   },
+  // ),
+  // withUpdateCompanyMember(),
+  // withDeleteCompanyMember(),
 )(TabContainer);

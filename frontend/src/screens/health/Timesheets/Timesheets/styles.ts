@@ -1,4 +1,4 @@
-export default theme => ({
+export default () => ({
   page: {
     flex: 1,
     display: 'flex',
@@ -6,7 +6,7 @@ export default theme => ({
   },
 });
 
-export const ActiveTimesheetsStyles = theme => ({
+export const ActiveTimesheetsStyles = (theme) => ({
   page: {
     padding: '40px 20px',
     flex: 1,
@@ -79,7 +79,7 @@ export const ActiveTimesheetsStyles = theme => ({
   },
 });
 
-export const timesheetBlockStyles = theme => ({
+export const timesheetBlockStyles = (theme) => ({
   wrapper: {},
   titleWrapper: {
     padding: 20,
@@ -175,13 +175,13 @@ export const timesheetBlockStyles = theme => ({
   },
 });
 
-export const TimesheetNotificationModalStyles = theme => ({
+export const TimesheetNotificationModalStyles = () => ({
   emailInputs: {
     marginTop: 15,
   },
 });
 
-export const ViewEntriesModalStyles = theme => ({
+export const ViewEntriesModalStyles = () => ({
   commonCell: {
     paddingLeft: 24,
     paddingRight: 24,

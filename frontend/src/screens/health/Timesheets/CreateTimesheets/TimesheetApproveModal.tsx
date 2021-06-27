@@ -1,13 +1,6 @@
+import { EmailInputFields, Modal, withStyles } from '@kudoo/components';
 import React, { Component } from 'react';
 import { compose } from 'recompose';
-import {
-  withStyles,
-  Modal,
-  EmailInputFields,
-  withStylesProps,
-} from '@kudoo/components';
-import { withTimeSheetApprove } from '@kudoo/graphql';
-import { any } from 'prop-types';
 import { TimesheetApproveModalStyles } from './styles';
 
 type Props = {
@@ -27,6 +20,7 @@ class TimesheetApproveModal extends Component<Props, State> {
   static defaultProps = {
     timesheets: [],
     onClose: () => {},
+    timeSheetApprove: () => ({}),
   };
 
   state = {
@@ -66,7 +60,7 @@ class TimesheetApproveModal extends Component<Props, State> {
               classes={{ component: classes.emailInputs }}
               showBCC={false}
               showCC={false}
-              onEmailChange={emails => {
+              onEmailChange={(emails) => {
                 this.setState({
                   emails: emails.to,
                 });
@@ -88,5 +82,5 @@ class TimesheetApproveModal extends Component<Props, State> {
 
 export default compose<any, any>(
   withStyles(TimesheetApproveModalStyles),
-  withTimeSheetApprove()
+  // withTimeSheetApprove(),
 )(TimesheetApproveModal);

@@ -1,4 +1,4 @@
-import pathToRegexp from 'path-to-regexp';
+import { compile } from 'path-to-regexp';
 
 // This function process any url/path given path regex and config options
 // - pathRegex: is the regex by which we can construct actual url, format is similar to react-router route urls
@@ -10,12 +10,16 @@ const processURL = (pathRegex, { path = '', ...params } = {}) => {
   if (path) {
     return pathRegex;
   }
-  const toPath = pathToRegexp.compile(pathRegex);
-  return toPath(params, { encode: (value, token) => value });
+  const toPath = compile(pathRegex, {
+    encode: (value) => value,
+  });
+  return toPath(params);
 };
 
-const abstractURL = pathRegex => (options = {}) =>
-  processURL(pathRegex, options);
+const abstractURL =
+  (pathRegex) =>
+  (options = {}) =>
+    processURL(pathRegex, options);
 
 export default {
   HOME: abstractURL('/'),
@@ -46,13 +50,13 @@ export default {
   COMPANY_SETTINGS: abstractURL('/company/settings/:companyId'),
   COMPANY_GENERAL: abstractURL('/company/settings/:companyId/general'),
   COMPANY_GENERAL_BASICS: abstractURL(
-    '/company/settings/:companyId/general/basics'
+    '/company/settings/:companyId/general/basics',
   ),
   COMPANY_GENERAL_CONTACT_DETAILS: abstractURL(
-    '/company/settings/:companyId/general/contact'
+    '/company/settings/:companyId/general/contact',
   ),
   COMPANY_GENERAL_LOCATION: abstractURL(
-    '/company/settings/:companyId/general/location'
+    '/company/settings/:companyId/general/location',
   ),
   COMPANY_USERS: abstractURL('/company/settings/:companyId/users'),
   COMPANY_USERS_LIST: abstractURL('/company/settings/:companyId/users/list'),
@@ -60,10 +64,10 @@ export default {
   INVITE_USER: abstractURL('/company/settings/:companyId/users/invite'),
   COMPANY_BANKING: abstractURL('/company/settings/:companyId/banking'),
   COMPANY_INTEGRATIONS: abstractURL(
-    '/company/settings/:companyId/integrations'
+    '/company/settings/:companyId/integrations',
   ),
   COMPANY_SUBSCRIPTION: abstractURL(
-    '/company/settings/:companyId/subscription'
+    '/company/settings/:companyId/subscription',
   ),
 
   // Projects
@@ -83,10 +87,10 @@ export default {
   CREATE_INVOICES: abstractURL('/invoices/create'),
   CREATE_TEXT_INVOICES: abstractURL('/invoices/create-text-invoice'),
   CREATE_PROJECT_TO_INVOICES: abstractURL(
-    '/invoices/create-project-to-invoice'
+    '/invoices/create-project-to-invoice',
   ),
   CREATE_TIMESHEETS_TO_INVOICES: abstractURL(
-    '/invoices/create-timesheets-to-invoice'
+    '/invoices/create-timesheets-to-invoice',
   ),
   INVOICE_SENT: abstractURL(`/invoices/sent`),
   PREVIEW_INVOICE: abstractURL('/preview/invoice/:id'),
@@ -122,11 +126,11 @@ export default {
 
   WORKERS_TIMESHEETS: abstractURL('/timesheets/workers-timesheets'),
   WORKERS_ACTIVE_TIMESHEETS: abstractURL(
-    '/timesheets/workers-timesheets/active'
+    '/timesheets/workers-timesheets/active',
   ),
   WORKERS_DRAFT_TIMESHEETS: abstractURL('/timesheets/workers-timesheets/draft'),
   WORKERS_ARCHIVED_TIMESHEETS: abstractURL(
-    '/timesheets/workers-timesheets/archived'
+    '/timesheets/workers-timesheets/archived',
   ),
 
   CREATE_TIMESHEETS: abstractURL('/timesheets/create'),
@@ -145,7 +149,7 @@ export default {
   INVITE_EMAIL_PREVIEW: abstractURL('/email/:type/invite'),
   TIMESHEET_NOTIFY_EMAIL_PREVIEW: abstractURL('/email/:type/time_sheet_notify'),
   TIMESHEET_APPROVE_EMAIL_PREVIEW: abstractURL(
-    '/email/:type/time_sheet_approve'
+    '/email/:type/time_sheet_approve',
   ),
   INVOICE_NOTIFY_EMAIL_PREVIEW: abstractURL('/email/:type/invoice_notify'),
 

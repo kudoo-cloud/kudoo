@@ -1,16 +1,16 @@
-import React, { useImperativeHandle } from 'react';
-import findIndex from 'lodash/findIndex';
 import {
-  withStyles,
   Button,
   ErrorBoundary,
   WizardSteps,
+  withStyles,
 } from '@kudoo/components';
-import SelectedCompany from '@client/helpers/SelectedCompany';
+import findIndex from 'lodash/findIndex';
+import React, { useImperativeHandle } from 'react';
+import SelectedCompany from 'src/helpers/SelectedCompany';
 import styles from './styles';
 import { WizardCreatePageProps as Props } from './types';
 
-const WizardCreatePage: React.FC<Props> = props => {
+const WizardCreatePage: React.FC<Props> = (props) => {
   const {
     classes,
     theme,

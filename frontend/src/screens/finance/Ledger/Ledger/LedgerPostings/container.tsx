@@ -1,13 +1,12 @@
+import { ErrorBoundary } from '@kudoo/components';
+import idx from 'idx';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import idx from 'idx';
-import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
-import find from 'lodash/find';
-import { ErrorBoundary, withRouterProps } from '@kudoo/components';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { withLedgerPostings } from '@kudoo/graphql';
+import SelectedCompany from 'src/helpers/SelectedCompany';
 
 interface IProps {
   actions: any;
@@ -28,13 +27,14 @@ class LedgerPostingTabContainer extends Component<IProps, IState> {
     ledgerPostings: {
       refetch: () => {},
       loadNextPage: () => {},
+      data: [],
     },
   };
 
   constructor(props: IProps) {
     super(props);
     this.state = {
-      displayedLedgerPostings: idx(props, _ => _.ledgerPostings.data),
+      displayedLedgerPostings: idx(props, (_) => _.ledgerPostings.data),
       columns: [
         {
           id: 'postingType',
@@ -55,25 +55,27 @@ class LedgerPostingTabContainer extends Component<IProps, IState> {
   }
 
   public componentDidUpdate(prevProps) {
-    const oldLedgerPostings = idx(prevProps, _ => _.ledgerPostings.data) || [];
-    const newLedgerPostings = idx(this.props, _ => _.ledgerPostings.data) || [];
+    const oldLedgerPostings =
+      idx(prevProps, (_) => _.ledgerPostings.data) || [];
+    const newLedgerPostings =
+      idx(this.props, (_) => _.ledgerPostings.data) || [];
     if (!isEqual(oldLedgerPostings, newLedgerPostings)) {
       this._updateLedgerPostings(newLedgerPostings);
     }
   }
 
   public _updateLedgerPostings(ledgerPostings) {
-    const ledgerPostingData = ledgerPostings.map(ledgerPosting => {
+    const ledgerPostingData = ledgerPostings.map((ledgerPosting) => {
       return {
         ...ledgerPosting,
-        mainAccount_type: idx(ledgerPosting, _ => _.mainAccount.type),
-        mainAccount_code: idx(ledgerPosting, _ => _.mainAccount.code),
+        mainAccount_type: idx(ledgerPosting, (_) => _.mainAccount.type),
+        mainAccount_code: idx(ledgerPosting, (_) => _.mainAccount.code),
       };
     });
     this.setState({ displayedLedgerPostings: ledgerPostingData });
   }
 
-  public _onRequestSort = async column => {
+  public _onRequestSort = async (column) => {
     const columns = this.state.columns;
     const sortedColumn = find(columns, { sorted: true });
     const columnGoingToBeSorted = find(columns, { id: column.id });
@@ -134,23 +136,23 @@ export default compose<any, any>(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withLedgerPostings(({ profile, type }) => {
-    let isArchived = false;
-    if (type === 'archived-ledgerPostings') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-          mainAccount: {
-            company: {
-              id: profile.selectedCompany.id,
-            },
-          },
-        },
-        orderBy: 'postingType_ASC',
-      },
-    };
-  })
+  // withLedgerPostings(({ profile, type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-ledgerPostings') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //         mainAccount: {
+  //           company: {
+  //             id: profile.selectedCompany.id,
+  //           },
+  //         },
+  //       },
+  //       orderBy: 'postingType_ASC',
+  //     },
+  //   };
+  // }),
 )(LedgerPostingTabContainer);

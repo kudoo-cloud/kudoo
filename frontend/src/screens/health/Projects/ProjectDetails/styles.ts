@@ -1,4 +1,4 @@
-export default theme => ({
+export default (theme) => ({
   page: {
     flex: 1,
     display: 'flex',
@@ -71,7 +71,7 @@ export default theme => ({
   },
 });
 
-export const ProjectProgressStyles = theme => ({
+export const ProjectProgressStyles = (theme) => ({
   component: {},
   wrapper: {
     display: 'flex',
@@ -149,7 +149,7 @@ export const ProjectProgressStyles = theme => ({
   },
 });
 
-export const ServiceListItemStyles = theme => ({
+export const ServiceListItemStyles = (theme) => ({
   wrapper: {
     marginTop: 20,
   },

@@ -1,19 +1,17 @@
-import React, { Component } from 'react';
-import isEmpty from 'lodash/isEmpty';
 import {
-  withStyles,
-  composeStyles,
   Button,
-  SectionHeader,
   ErrorBoundary,
-  Table,
   Loading,
-  withRouterProps,
-  withStylesProps,
+  SectionHeader,
+  Table,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
 import Grid from '@material-ui/core/Grid';
+import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
+import URL from 'src/helpers/urls';
 import styles, { LedgerStyles } from '../styles';
 import TabContainer from './container';
 
@@ -71,7 +69,8 @@ class LedgerPostings extends Component<IProps> {
       return (
         <Link
           to={URL.EDIT_LEDGER_POSTING({ id: row.id })}
-          className={classes.mainAccountNameCell}>
+          className={classes.mainAccountNameCell}
+        >
           {ele}
         </Link>
       );
@@ -131,12 +130,12 @@ class LedgerPostings extends Component<IProps> {
 }
 
 const StyledLedgerPostings = withStyles(composeStyles(styles, LedgerStyles))(
-  LedgerPostings
+  LedgerPostings,
 );
 
 const EnhancedComponent = (props: any) => (
   <TabContainer {...props} type='active-ledgerPostings'>
-    {childProps => <StyledLedgerPostings {...childProps} />}
+    {(childProps) => <StyledLedgerPostings {...childProps} />}
   </TabContainer>
 );
 

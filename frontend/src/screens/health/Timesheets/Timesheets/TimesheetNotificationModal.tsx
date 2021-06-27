@@ -1,13 +1,7 @@
+import { EmailInputFields, Modal, withStyles } from '@kudoo/components';
 import React, { Component } from 'react';
 import { compose } from 'recompose';
-import {
-  withStyles,
-  Modal,
-  EmailInputFields,
-  withStylesProps,
-} from '@kudoo/components';
-import { withTimeSheetNotify } from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
+import { showToast } from 'src/helpers/toast';
 import { TimesheetNotificationModalStyles } from './styles';
 
 type Props = {
@@ -31,6 +25,7 @@ class TimesheetNotificationModal extends Component<Props, State> {
 
   static defaultProps = {
     onClose: () => {},
+    timeSheetNotify: () => ({}),
   };
 
   state = {
@@ -77,7 +72,7 @@ class TimesheetNotificationModal extends Component<Props, State> {
             <div>Please add emails</div>
             <EmailInputFields
               classes={{ component: classes.emailInputs }}
-              onEmailChange={value => {
+              onEmailChange={(value) => {
                 const { emails } = this.state;
                 this.setState({
                   emails: {
@@ -104,5 +99,5 @@ class TimesheetNotificationModal extends Component<Props, State> {
 
 export default compose<any, any>(
   withStyles(TimesheetNotificationModalStyles),
-  withTimeSheetNotify()
+  // withTimeSheetNotify(),
 )(TimesheetNotificationModal);

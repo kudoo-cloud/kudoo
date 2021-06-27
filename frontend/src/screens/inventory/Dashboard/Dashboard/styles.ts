@@ -1,4 +1,4 @@
-export default theme => ({
+export default (theme) => ({
   page: {
     display: 'flex',
     flexWrap: 'wrap',
@@ -43,7 +43,7 @@ export default theme => ({
   },
 });
 
-export const PurchaseOrderStyles = theme => ({
+export const PurchaseOrderStyles = (theme) => ({
   purchaseOrderBlock: {
     padding: 20,
     backgroundColor: theme.palette.grey['100'],

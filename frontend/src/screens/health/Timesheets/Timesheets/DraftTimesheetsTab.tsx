@@ -1,23 +1,21 @@
-import React, { Component } from 'react';
-import cx from 'classnames';
-import isEmpty from 'lodash/isEmpty';
-import get from 'lodash/get';
-import pluralize from 'pluralize';
 import {
-  withStyles,
   Button,
   Dropdown,
-  SectionHeader,
   ErrorBoundary,
-  withRouterProps,
-  withStylesProps,
   Loading,
   ScrollObserver,
+  SectionHeader,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import TimesheetBlock from './TimesheetBlock';
-import TabContainer from './TabContainer';
+import cx from 'classnames';
+import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import pluralize from 'pluralize';
+import React, { Component } from 'react';
+import URL from 'src/helpers/urls';
 import { ActiveTimesheetsStyles } from './styles';
+import TabContainer from './TabContainer';
+import TimesheetBlock from './TimesheetBlock';
 
 type Props = {
   actions: any;
@@ -78,7 +76,7 @@ class DraftTimesheets extends Component<Props, State> {
       <div className={classes.dropdownWrapper}>
         <Dropdown
           label='Filter Users'
-          items={users.map(user => {
+          items={users.map((user) => {
             const name = user.firstName + ' ' + user.lastName;
             return { label: name, value: user };
           })}
@@ -115,14 +113,16 @@ class DraftTimesheets extends Component<Props, State> {
     return (
       <ScrollObserver
         onBottomReached={() => loadMore()}
-        onBottomReachedThreshold={500}>
+        onBottomReachedThreshold={500}
+      >
         <div className={classes.timesheetsContainer}>
           <div className={classes.expandHideWrapper}>
             <span
               className={cx(classes.expandHideLabel, { active: allHide })}
               onClick={() => {
                 this.setState({ allHide: false });
-              }}>
+              }}
+            >
               Expand
             </span>
             <span className={classes.slash}>/</span>
@@ -130,11 +130,12 @@ class DraftTimesheets extends Component<Props, State> {
               className={cx(classes.expandHideLabel, { active: !allHide })}
               onClick={() => {
                 this.setState({ allHide: true });
-              }}>
+              }}
+            >
               Hide
             </span>
           </div>
-          {Object.keys(timeSheetData).map(key => {
+          {Object.keys(timeSheetData).map((key) => {
             const timesheet: any = timeSheetData[key];
             const project = get(timesheet, 'project') || {};
             const service = get(timesheet, 'service') || {};
@@ -155,7 +156,7 @@ class DraftTimesheets extends Component<Props, State> {
                   showEmailIcon={false}
                   showRemoveIcon
                   showViewIcon={false}
-                  rows={Object.keys(timesheet.rows).map(rowKey => {
+                  rows={Object.keys(timesheet.rows).map((rowKey) => {
                     const row = timesheet.rows[rowKey];
                     const user = get(row, 'user', {});
                     const firstName = user.firstName;
@@ -170,7 +171,7 @@ class DraftTimesheets extends Component<Props, State> {
                       startsAt: row.startsAtFormatted,
                     };
                   })}
-                  onCellClick={(e, { row, column }) => {
+                  onCellClick={(e, { row }) => {
                     history.push(URL.EDIT_TIMESHEETS({ id: row.id }));
                   }}
                   onRemoveClicked={this.props.showArchiveDialog}
@@ -210,7 +211,7 @@ type IProps = {
 
 const DraftTimesheetsTab = (props: IProps) => (
   <TabContainer {...props} timesheet_type='draft'>
-    {childProps => <StyledComponent {...childProps} />}
+    {(childProps) => <StyledComponent {...childProps} />}
   </TabContainer>
 );
 

@@ -1,4 +1,4 @@
-export default theme => ({
+export default (theme) => ({
   page: {
     flex: 1,
     display: 'flex',
@@ -168,7 +168,7 @@ export default theme => ({
   },
 });
 
-export const reviewStyles = theme => ({
+export const reviewStyles = (theme) => ({
   invoiceHeader: {
     backgroundColor: theme.palette.primary.color1,
     padding: 20,
@@ -350,7 +350,7 @@ export const reviewStyles = theme => ({
   },
 });
 
-export const ServiceInputRowStyles = theme => ({
+export const ServiceInputRowStyles = (theme) => ({
   fieldCell: {
     border: `1px solid ${theme.palette.grey['300']}`,
     padding: '0px !important',

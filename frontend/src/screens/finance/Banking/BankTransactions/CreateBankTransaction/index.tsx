@@ -1,31 +1,23 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import { withI18n } from '@lingui/react';
-import { connect } from 'react-redux';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { compose } from 'react-apollo';
-import moment from 'moment';
 import {
   Button,
-  ErrorBoundary,
-  TextField,
   DatePicker,
+  ErrorBoundary,
   SectionHeader,
-  withRouterProps,
+  TextField,
   withStyles,
-  withStylesProps,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
 import idx from 'idx';
 import isEqual from 'lodash/isEqual';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import {
-  withCreateBankTransaction,
-  withBankTransaction,
-  withUpdateBankTransaction,
-} from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import styles from './styles';
 
 interface IProps {
@@ -44,6 +36,16 @@ interface IState {
 }
 
 class CreateNewBankTransaction extends Component<IProps, IState> {
+  public static defaultProps = {
+    createBankTransaction: () => ({}),
+    updateBankTransaction: () => ({}),
+    initialData: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+  };
+
   public state = {
     isEditMode: false,
   };
@@ -68,7 +70,7 @@ class CreateNewBankTransaction extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.BANKING_BANK_TRANSACTIONS());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       } else {
@@ -81,7 +83,7 @@ class CreateNewBankTransaction extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.BANKING_BANK_TRANSACTIONS());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       }
@@ -94,14 +96,14 @@ class CreateNewBankTransaction extends Component<IProps, IState> {
     this.props.actions.updateHeaderTitle('Bank Transaction');
 
     this.setState({
-      isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+      isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
     });
   }
 
   public componentDidUpdate(prevProps) {
     if (!isEqual(this.props.initialData, prevProps.initialData)) {
       this.setState({
-        isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+        isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
       });
     }
   }
@@ -148,7 +150,9 @@ class CreateNewBankTransaction extends Component<IProps, IState> {
             <Grid item xs={12}>
               <DatePicker
                 label='Transaction Date'
-                onDateChange={date => setFieldValue(keys.transactionDate, date)}
+                onDateChange={(date) =>
+                  setFieldValue(keys.transactionDate, date)
+                }
                 value={values[keys.transactionDate]}
                 classes={{ component: classes.fromDatePicker }}
               />
@@ -191,19 +195,20 @@ class CreateNewBankTransaction extends Component<IProps, IState> {
     return (
       <Formik
         initialValues={{
-          transactionDate: idx(initialData, _ => _.transactionDate) || '',
-          amount: idx(initialData, _ => _.amount) || 0.0,
-          description: idx(initialData, _ => _.description) || '',
+          transactionDate: idx(initialData, (_) => _.transactionDate) || '',
+          amount: idx(initialData, (_) => _.amount) || 0.0,
+          description: idx(initialData, (_) => _.description) || '',
         }}
         enableReinitialize
         validationSchema={Yup.object().shape({
           transactionDate: Yup.string().required(
-            'Transaction Date is required'
+            'Transaction Date is required',
           ),
           amount: Yup.string().required('Amount is required'),
           description: Yup.string().required('Description is required'),
         })}
-        onSubmit={this._submitForm}>
+        onSubmit={this._submitForm}
+      >
         {({
           values,
           errors,
@@ -238,7 +243,7 @@ class CreateNewBankTransaction extends Component<IProps, IState> {
                     }
                     onClick={() => {
                       this.props.history.replace(
-                        URL.BANKING_BANK_TRANSACTIONS()
+                        URL.BANKING_BANK_TRANSACTIONS(),
                       );
                     }}
                     buttonColor={theme.palette.grey['200']}
@@ -273,7 +278,8 @@ class CreateNewBankTransaction extends Component<IProps, IState> {
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.BANKING_BANK_TRANSACTIONS());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             {this._renderSectionHeading()}
             {this._renderForm()}
@@ -286,21 +292,21 @@ class CreateNewBankTransaction extends Component<IProps, IState> {
 
 export default compose(
   withI18n(),
-  withCreateBankTransaction(),
-  withUpdateBankTransaction(),
-  withBankTransaction(
-    props => {
-      const bankTransactionId = idx(props, _ => _.match.params.id);
-      return {
-        id: bankTransactionId,
-      };
-    },
-    ({ data }) => ({
-      initialData: idx(data, _ => _.bankTransaction) || {},
-    })
-  ),
+  // withCreateBankTransaction(),
+  // withUpdateBankTransaction(),
+  // withBankTransaction(
+  //   (props) => {
+  //     const bankTransactionId = idx(props, (_) => _.match.params.id);
+  //     return {
+  //       id: bankTransactionId,
+  //     };
+  //   },
+  //   ({ data }) => ({
+  //     initialData: idx(data, (_) => _.bankTransaction) || {},
+  //   }),
+  // ),
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withStyles(styles)
+  withStyles(styles),
 )(CreateNewBankTransaction);

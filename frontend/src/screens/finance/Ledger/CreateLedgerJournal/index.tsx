@@ -1,29 +1,24 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import { withI18n } from '@lingui/react';
-import { connect } from 'react-redux';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { compose } from 'react-apollo';
 import {
   Button,
-  ErrorBoundary,
-  TextField,
   Checkbox,
   Dropdown,
+  ErrorBoundary,
   SectionHeader,
+  TextField,
   withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import isEqual from 'lodash/isEqual';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
 import get from 'lodash/get';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import {
-  withCreateLedgerJournal,
-  withLedgerJournal,
-  withUpdateLedgerJournal,
-} from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
+import isEqual from 'lodash/isEqual';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import styles from './styles';
 
 interface IProps {
@@ -42,6 +37,16 @@ interface IState {
 }
 
 class CreateLedgerJournal extends Component<IProps, IState> {
+  public static defaultProps = {
+    createLedgerJournal: () => ({}),
+    updateLedgerJournal: () => ({}),
+    initialData: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+  };
+
   public state = {
     isEditMode: false,
   };
@@ -82,7 +87,7 @@ class CreateLedgerJournal extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.LEDGER_JOURNALS());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       } else {
@@ -95,7 +100,7 @@ class CreateLedgerJournal extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.LEDGER_JOURNALS());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       }
@@ -165,7 +170,7 @@ class CreateLedgerJournal extends Component<IProps, IState> {
                 id={'currency'}
                 items={'AUD'}
                 value={values.currency}
-                onChange={e => setFieldValue('currency', e.value)}
+                onChange={(e) => setFieldValue('currency', e.value)}
                 onClose={() => setFieldTouched('currency')}
                 error={touched.currency && errors.currency}
               />
@@ -174,7 +179,7 @@ class CreateLedgerJournal extends Component<IProps, IState> {
               <Checkbox
                 label={'Include Tax'}
                 value={values.includeConsTax}
-                onChange={checked => {
+                onChange={(checked) => {
                   setFieldValue('includeConsTax', checked);
                 }}
                 error={touched.includeConsTax && errors.includeConsTax}
@@ -184,7 +189,7 @@ class CreateLedgerJournal extends Component<IProps, IState> {
               <Checkbox
                 label={'Posted'}
                 value={values.posted}
-                onChange={checked => {
+                onChange={(checked) => {
                   setFieldValue('posted', checked);
                 }}
                 error={touched.posted && errors.posted}
@@ -214,7 +219,8 @@ class CreateLedgerJournal extends Component<IProps, IState> {
           description: Yup.string().required('Description required'),
           currency: Yup.string().required('Currency required'),
         })}
-        onSubmit={this._submitForm}>
+        onSubmit={this._submitForm}
+      >
         {({
           values,
           errors,
@@ -280,7 +286,8 @@ class CreateLedgerJournal extends Component<IProps, IState> {
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.LEDGER());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             {this._renderSectionHeading()}
             {this._renderForm()}
@@ -293,21 +300,21 @@ class CreateLedgerJournal extends Component<IProps, IState> {
 
 export default compose(
   withI18n(),
-  withCreateLedgerJournal(),
-  withUpdateLedgerJournal(),
-  withLedgerJournal(
-    props => {
-      const id = get(props, 'match.params.id');
-      return {
-        id,
-      };
-    },
-    ({ data }) => ({
-      initialData: get(data, 'ledgerJournal') || {},
-    })
-  ),
+  // withCreateLedgerJournal(),
+  // withUpdateLedgerJournal(),
+  // withLedgerJournal(
+  //   (props) => {
+  //     const id = get(props, 'match.params.id');
+  //     return {
+  //       id,
+  //     };
+  //   },
+  //   ({ data }) => ({
+  //     initialData: get(data, 'ledgerJournal') || {},
+  //   }),
+  // ),
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withStyles(styles)
+  withStyles(styles),
 )(CreateLedgerJournal);

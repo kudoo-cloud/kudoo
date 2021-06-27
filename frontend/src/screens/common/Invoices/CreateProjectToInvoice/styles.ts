@@ -1,4 +1,4 @@
-export default theme => ({
+export default (theme) => ({
   page: {
     flex: 1,
     display: 'flex',
@@ -123,7 +123,7 @@ export default theme => ({
   },
 });
 
-export const serviceStepStyles = theme => ({
+export const serviceStepStyles = (theme) => ({
   selectedProjectInfo: {
     marginBottom: 30,
   },

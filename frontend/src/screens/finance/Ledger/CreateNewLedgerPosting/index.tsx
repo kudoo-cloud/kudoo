@@ -1,34 +1,25 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import { withI18n } from '@lingui/react';
-import { connect } from 'react-redux';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { compose } from 'react-apollo';
 import {
   Button,
-  ErrorBoundary,
-  LedgerPostingForm,
-  SectionHeader,
-  withRouterProps,
-  withStyles,
-  withStylesProps,
-  Loading,
   Dropdown,
+  ErrorBoundary,
+  Loading,
+  SectionHeader,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
 import idx from 'idx';
 import isEqual from 'lodash/isEqual';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import {
-  withCreateLedgerPosting,
-  withLedgerPosting,
-  withMainAccounts,
-  withUpdateLedgerPosting,
-} from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
-import styles from './styles';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import { POSTING_TYPES } from './postingTypes';
+import styles from './styles';
 
 interface IProps {
   actions: any;
@@ -48,6 +39,21 @@ interface IState {
 }
 
 class CreateNewLedgerPosting extends Component<IProps, IState> {
+  public static defaultProps = {
+    createLedgerPosting: () => ({}),
+    updateLedgerPosting: () => ({}),
+    initialData: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+    mainAccounts: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+  };
+
   public state = {
     isEditMode: false,
     mainAccountsList: [],
@@ -74,7 +80,7 @@ class CreateNewLedgerPosting extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.LEDGER_POSTINGS());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       } else {
@@ -87,7 +93,7 @@ class CreateNewLedgerPosting extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.LEDGER_POSTINGS());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       }
@@ -99,11 +105,11 @@ class CreateNewLedgerPosting extends Component<IProps, IState> {
   public componentDidMount() {
     this.props.actions.updateHeaderTitle('Ledger Posting');
     this.setState({
-      isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+      isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
     });
   }
 
-  public componentDidUpdate(prevProps, prevState) {
+  public componentDidUpdate(prevProps) {
     const {
       mainAccounts: { data },
     } = this.props;
@@ -116,7 +122,7 @@ class CreateNewLedgerPosting extends Component<IProps, IState> {
     }
     if (!isEqual(this.props.initialData, prevProps.initialData)) {
       this.setState({
-        isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+        isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
       });
     }
   }
@@ -166,7 +172,7 @@ class CreateNewLedgerPosting extends Component<IProps, IState> {
                 id={keys.postingType}
                 items={POSTING_TYPES}
                 value={values[keys.postingType]}
-                onChange={e => setFieldValue(keys.postingType, e.value)}
+                onChange={(e) => setFieldValue(keys.postingType, e.value)}
                 onClose={() => setFieldTouched(keys.postingType)}
                 error={touched[keys.postingType] && errors[keys.postingType]}
               />
@@ -189,7 +195,7 @@ class CreateNewLedgerPosting extends Component<IProps, IState> {
                       ]
                 }
                 value={values[keys.mainAccount_id]}
-                onChange={e => setFieldValue(keys.mainAccount_id, e.value)}
+                onChange={(e) => setFieldValue(keys.mainAccount_id, e.value)}
                 onClose={() => setFieldTouched(keys.mainAccount_id)}
                 error={
                   touched[keys.mainAccount_id] && errors[keys.mainAccount_id]
@@ -208,15 +214,16 @@ class CreateNewLedgerPosting extends Component<IProps, IState> {
     return (
       <Formik
         initialValues={{
-          postingType: idx(initialData, _ => _.postingType) || '',
-          mainAccount_id: idx(initialData, _ => _.mainAccount.id) || '',
+          postingType: idx(initialData, (_) => _.postingType) || '',
+          mainAccount_id: idx(initialData, (_) => _.mainAccount.id) || '',
         }}
         enableReinitialize
         validationSchema={Yup.object().shape({
           postingType: Yup.string().required('Type is required'),
           mainAccount_id: Yup.string().required('Select Main Account'),
         })}
-        onSubmit={this._submitForm}>
+        onSubmit={this._submitForm}
+      >
         {({
           values,
           errors,
@@ -286,7 +293,8 @@ class CreateNewLedgerPosting extends Component<IProps, IState> {
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.LEDGER_POSTINGS());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             {this._renderSectionHeading()}
             {this._renderForm()}
@@ -299,35 +307,35 @@ class CreateNewLedgerPosting extends Component<IProps, IState> {
 
 export default compose(
   withI18n(),
-  withCreateLedgerPosting(),
-  withUpdateLedgerPosting(),
-  withMainAccounts(({ profile, type }) => {
-    let isArchived = false;
-    if (type === 'archived-mainAccounts') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  }),
-  withLedgerPosting(
-    props => {
-      const ledgerPostingId = idx(props, _ => _.match.params.id);
-      return {
-        id: ledgerPostingId,
-      };
-    },
-    ({ data }) => ({
-      initialData: idx(data, _ => _.ledgerPosting) || {},
-    })
-  ),
+  // withCreateLedgerPosting(),
+  // withUpdateLedgerPosting(),
+  // withMainAccounts(({ type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-mainAccounts') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
+  // withLedgerPosting(
+  //   (props) => {
+  //     const ledgerPostingId = idx(props, (_) => _.match.params.id);
+  //     return {
+  //       id: ledgerPostingId,
+  //     };
+  //   },
+  //   ({ data }) => ({
+  //     initialData: idx(data, (_) => _.ledgerPosting) || {},
+  //   }),
+  // ),
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withStyles(styles)
+  withStyles(styles),
 )(CreateNewLedgerPosting);

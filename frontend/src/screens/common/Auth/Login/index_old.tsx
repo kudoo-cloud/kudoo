@@ -1,33 +1,31 @@
+import {
+  Button,
+  Checkbox,
+  ErrorBoundary,
+  TermsOfService,
+  TextField,
+  ToggleButton,
+  helpers as utils,
+  withStyles,
+} from '@kudoo/components';
+import LogoImage from '@kudoo/components/build/assets/images/logo512px.png';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+import { Formik } from 'formik';
+import idx from 'idx';
+import get from 'lodash/get';
+import * as queryString from 'query-string';
 import * as React from 'react';
+import { Portal } from 'react-portal';
 import { connect } from 'react-redux';
 import { Redirect } from 'react-router';
 import { Link } from 'react-router-dom';
-import { bindActionCreators } from 'redux';
-import { Portal } from 'react-portal';
 import { compose } from 'recompose';
-import * as queryString from 'query-string';
-import Grid from '@material-ui/core/Grid';
-import { Formik } from 'formik';
+import { bindActionCreators } from 'redux';
 import * as Yup from 'yup';
-import idx from 'idx';
-import get from 'lodash/get';
-import cx from 'classnames';
-import {
-  ErrorBoundary,
-  Checkbox,
-  TextField,
-  ToggleButton,
-  Button,
-  withStyles,
-  TermsOfService,
-  withStylesProps,
-  withRouterProps,
-  helpers as utils,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import ProfileActions from '@client/store/actions/profile';
-import { withLogin, withRegister } from '@kudoo/graphql';
-import { clearStore } from '@client/helpers/apollo'; // eslint-disable-line
+import URL from 'src/helpers/urls';
+import ProfileActions from 'src/store/actions/profile';
+import { clearStore } from 'src/helpers/apollo'; // eslint-disable-line
 import styles from './styles';
 
 interface ILoginParams {
@@ -59,7 +57,6 @@ interface IState {
   signupError: string | null;
   shouldShowTOSModal: boolean;
 }
-
 class Login extends React.Component<IProps, IState> {
   public state: any = {
     activeForm: 0,
@@ -67,6 +64,11 @@ class Login extends React.Component<IProps, IState> {
     loginError: null,
     signupError: null,
     shouldShowTOSModal: false,
+  };
+
+  static defaultProps = {
+    login: () => ({}),
+    register: () => ({}),
   };
 
   public componentDidMount() {
@@ -78,7 +80,7 @@ class Login extends React.Component<IProps, IState> {
     this._observeRoute();
   }
 
-  public componentDidUpdate(prevProps, prevState) {
+  public componentDidUpdate() {
     if (
       (this.state.activeForm === 0 && utils.isURLMatching(URL.SIGNUP())) ||
       (this.state.activeForm === 1 && utils.isURLMatching(URL.LOGIN()))
@@ -101,7 +103,7 @@ class Login extends React.Component<IProps, IState> {
     });
   };
 
-  public _navigate = index => {
+  public _navigate = (index) => {
     if (index === 0) {
       this.props.history.push(URL.LOGIN());
     } else if (index === 1) {
@@ -137,7 +139,7 @@ class Login extends React.Component<IProps, IState> {
     }
   };
 
-  public _signupPress = async values => {
+  public _signupPress = async (values) => {
     try {
       const { firstName, lastName, password, reTypePassword, email } = values;
       this.setState({ isFormSubmitting: true });
@@ -173,13 +175,12 @@ class Login extends React.Component<IProps, IState> {
           email: Yup.string()
             .email(`Invalid email address`)
             .required(`Email is required!`),
-          password: Yup.string()
-            .min(4)
-            .required(`Password is required!`),
+          password: Yup.string().min(4).required(`Password is required!`),
         })}
         onSubmit={(values: any) => {
           this._loginPress(values.email, values.password);
-        }}>
+        }}
+      >
         {({
           values,
           errors,
@@ -191,7 +192,8 @@ class Login extends React.Component<IProps, IState> {
           <form
             className={classes.form}
             autoComplete='off'
-            onSubmit={handleSubmit}>
+            onSubmit={handleSubmit}
+          >
             <TextField
               applyTopBorderRadius
               type='email'
@@ -243,13 +245,14 @@ class Login extends React.Component<IProps, IState> {
             )}
             <Link
               to={URL.RESET_PASSWORD()}
-              className={classes.forgotPasswordText}>
+              className={classes.forgotPasswordText}
+            >
               Forgot Password?
             </Link>
             <Button
               type='submit'
               classes={{ component: classes.submitBtn }}
-              title='Sign In'
+              title='Sign in'
               buttonColor={theme.palette.primary.color2}
               applyBorderRadius
               id='login_button'
@@ -289,10 +292,11 @@ class Login extends React.Component<IProps, IState> {
             .required('Retype your Password!'),
           tocCheckbox: Yup.boolean().oneOf(
             [true],
-            `Please read our terms & conditions and agree in order to create your account`
+            `Please read our terms & conditions and agree in order to create your account`,
           ),
         })}
-        onSubmit={this._signupPress}>
+        onSubmit={this._signupPress}
+      >
         {({
           values,
           errors,
@@ -300,14 +304,14 @@ class Login extends React.Component<IProps, IState> {
           handleChange,
           handleBlur,
           handleSubmit,
-          isSubmitting,
           setFieldValue,
         }: any) => {
           return (
             <form
               className={classes.form}
               autoComplete='off'
-              onSubmit={handleSubmit}>
+              onSubmit={handleSubmit}
+            >
               <TextField
                 applyTopBorderRadius
                 type='text'
@@ -321,7 +325,7 @@ class Login extends React.Component<IProps, IState> {
                     <i
                       className={cx(
                         'icon icon-user-account',
-                        classes.greenTextColor
+                        classes.greenTextColor,
                       )}
                     />
                   )
@@ -345,7 +349,7 @@ class Login extends React.Component<IProps, IState> {
                     <i
                       className={cx(
                         'icon icon-user-account',
-                        classes.greenTextColor
+                        classes.greenTextColor,
                       )}
                     />
                   )
@@ -369,7 +373,7 @@ class Login extends React.Component<IProps, IState> {
                     <i
                       className={cx(
                         'icon icon-message',
-                        classes.greenTextColor
+                        classes.greenTextColor,
                       )}
                     />
                   )
@@ -392,7 +396,7 @@ class Login extends React.Component<IProps, IState> {
                     <i
                       className={cx(
                         'icon icon-password',
-                        classes.greenTextColor
+                        classes.greenTextColor,
                       )}
                     />
                   )
@@ -416,7 +420,7 @@ class Login extends React.Component<IProps, IState> {
                     <i
                       className={cx(
                         'icon icon-password',
-                        classes.greenTextColor
+                        classes.greenTextColor,
                       )}
                     />
                   )
@@ -430,7 +434,7 @@ class Login extends React.Component<IProps, IState> {
               />
               <Checkbox
                 value={values.tocCheckbox}
-                onChange={value => {
+                onChange={(value) => {
                   setFieldValue('tocCheckbox', value);
                 }}
                 id='terms-condition'
@@ -441,7 +445,8 @@ class Login extends React.Component<IProps, IState> {
                       className={classes.tocLink}
                       onClick={() => {
                         this.setState({ shouldShowTOSModal: true });
-                      }}>
+                      }}
+                    >
                       Terms & Conditions
                     </span>
                   </span>
@@ -500,7 +505,7 @@ class Login extends React.Component<IProps, IState> {
   public render() {
     const { activeForm } = this.state;
     const { classes } = this.props;
-    const isLoggedIn = idx(this.props, _ => _.profile.isLoggedIn);
+    const isLoggedIn = idx(this.props, (_) => _.profile.isLoggedIn);
     if (isLoggedIn) {
       return <Redirect to={URL.DASHBOARD()} />;
     }
@@ -509,11 +514,7 @@ class Login extends React.Component<IProps, IState> {
         <div className={classes.page}>
           <div className={classes.title}>
             <a href='https://kudoo.io/'>
-              <img
-                src={require('images/logo512px.png')}
-                alt='Kudoo'
-                style={{ maxWidth: '160px' }}
-              />
+              <img src={LogoImage} alt='Kudoo' style={{ maxWidth: '160px' }} />
             </a>
           </div>
           {/* Segment */}
@@ -537,13 +538,15 @@ class Login extends React.Component<IProps, IState> {
             <Grid
               item
               xs={12}
-              classes={activeForm === 1 ? { item: classes.hideForm } : {}}>
+              classes={activeForm === 1 ? { item: classes.hideForm } : {}}
+            >
               {this._renderLoginForm()}
             </Grid>
             <Grid
               item
               xs={12}
-              classes={activeForm === 0 ? { item: classes.hideForm } : {}}>
+              classes={activeForm === 0 ? { item: classes.hideForm } : {}}
+            >
               {this._renderSignupForm()}
             </Grid>
           </Grid>
@@ -561,12 +564,10 @@ export default compose(
       profile: state.profile,
       app: state.app,
     }),
-    dispatch => {
+    (dispatch) => {
       return {
         actions: bindActionCreators({ ...ProfileActions }, dispatch),
       };
-    }
+    },
   ),
-  withLogin(),
-  withRegister()
 )(Login as any);

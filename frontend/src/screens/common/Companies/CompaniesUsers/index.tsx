@@ -1,46 +1,37 @@
-import React, { Component, useState } from 'react';
+import {
+  Button,
+  ErrorBoundary,
+  SectionHeader,
+  Table,
+  Tooltip,
+  withStyles,
+} from '@kudoo/components';
 import idx from 'idx';
-import isEqual from 'lodash/isEqual';
-import get from 'lodash/get';
 import find from 'lodash/find';
 import findIndex from 'lodash/findIndex';
+import get from 'lodash/get';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import {
-  withStyles,
-  Button,
-  Table,
-  SectionHeader,
-  ErrorBoundary,
-  Tooltip,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { showToast } from '@client/helpers/toast';
-import {
-  withCompany,
-  withDeleteCompanyMember,
-  withResendInvite,
-} from '@kudoo/graphql';
-import { IProfileState } from '@client/store/reducers/profile';
-import {
-  ICompanyEntity,
-  IUser,
-  ICompanyMembersEntity,
-} from '@client/store/types';
-import useDeepCompareEffect from '@client/helpers/useDeepCompareEffect';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
+import useDeepCompareEffect from 'src/helpers/useDeepCompareEffect';
+import { IReduxState } from 'src/store/reducers';
+import { IProfileState } from 'src/store/reducers/profile';
+import { ICompanyEntity } from 'src/store/types';
 import styles, { StyleKeys } from './styles';
 
 type Props = IRouteProps<StyleKeys> & {
-  company: {
+  company?: {
     refetch: Function;
     data: ICompanyEntity;
   };
-  profile: IProfileState;
-  deleteCompanyMember: Function;
-  resendInvite: Function;
+  profile?: IProfileState;
+  deleteCompanyMember?: Function;
+  resendInvite?: Function;
 };
 
-const CompaniesUsers: React.FC<Props> = props => {
+const CompaniesUsers: React.FC<Props> = (props) => {
   const {
     classes,
     theme,
@@ -64,7 +55,7 @@ const CompaniesUsers: React.FC<Props> = props => {
   ]);
 
   useDeepCompareEffect(() => {
-    updateDisplayedUsers(idx(company, x => x.data.companyMembers) || []);
+    updateDisplayedUsers(idx(company, (x) => x.data.companyMembers) || []);
   }, [company.data]);
 
   const renderCell = (row, column, ele) => {
@@ -80,16 +71,17 @@ const CompaniesUsers: React.FC<Props> = props => {
     return ele;
   };
 
-  const showRemoveAlert = row => {
+  const showRemoveAlert = (row) => {
     if (row.role === 'OWNER') {
       showToast(
-        "You can't remove owner of the company without transfering ownership"
+        "You can't remove owner of the company without transfering ownership",
       );
       return;
     }
     const title = 'Delete member';
-    const description = `Are you sure you want to remove ${row.firstName ||
-      ''} ${row.lastName || ''}?`;
+    const description = `Are you sure you want to remove ${
+      row.firstName || ''
+    } ${row.lastName || ''}?`;
     const buttons = [
       {
         title: 'Cancel',
@@ -112,7 +104,7 @@ const CompaniesUsers: React.FC<Props> = props => {
     });
   };
 
-  const removeMember = async row => {
+  const removeMember = async (row) => {
     try {
       const res = await deleteCompanyMember({
         id: row.companyMemberId,
@@ -121,7 +113,7 @@ const CompaniesUsers: React.FC<Props> = props => {
         showToast(null, 'Member removed successfully');
         company.refetch();
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
@@ -130,8 +122,8 @@ const CompaniesUsers: React.FC<Props> = props => {
     }
   };
 
-  const onRequestSort = column => {
-    const users = idx(company, _ => _.data.companyMembers) || [];
+  const onRequestSort = (column) => {
+    const users = idx(company, (_) => _.data.companyMembers) || [];
     const sortedColumn = find(columnData, { sorted: true });
     const columnGoingToBeSorted = find(columnData, {
       id: column.id,
@@ -167,7 +159,7 @@ const CompaniesUsers: React.FC<Props> = props => {
   };
 
   const updateDisplayedUsers = (users = []) => {
-    const newUsers = users.map(member => ({
+    const newUsers = users.map((member) => ({
       ...member,
       ...member.user,
       access_level: member.role,
@@ -176,7 +168,7 @@ const CompaniesUsers: React.FC<Props> = props => {
     setDisplayedUsers(newUsers);
   };
 
-  const resendInviteEmail = async data => {
+  const resendInviteEmail = async (data) => {
     try {
       const res = await resendInvite({
         email: data.email,
@@ -195,7 +187,7 @@ const CompaniesUsers: React.FC<Props> = props => {
   };
 
   const renderUserTable = () => {
-    const loggedInUserId = idx(profile, _ => _.id);
+    const loggedInUserId = idx(profile, (_) => _.id);
     const user = find(displayedUser, { id: loggedInUserId }) || {};
     return (
       <Table
@@ -242,14 +234,20 @@ const CompaniesUsers: React.FC<Props> = props => {
   );
 };
 
+CompaniesUsers.defaultProps = {
+  company: { data: {} as ICompanyEntity, refetch: () => {} },
+  deleteCompanyMember: () => ({}),
+  resendInvite: () => ({}),
+};
+
 export default compose<Props, Props>(
   withStyles(styles),
-  connect(state => ({
+  connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-  withCompany(props => ({
-    id: get(props, 'match.params.companyId'),
-  })),
-  withDeleteCompanyMember(),
-  withResendInvite()
+  // withCompany((props) => ({
+  //   id: get(props, 'match.params.companyId'),
+  // })),
+  // withDeleteCompanyMember(),
+  // withResendInvite(),
 )(CompaniesUsers);

@@ -1,4 +1,4 @@
-export default theme => ({
+export default (theme) => ({
   page: {
     flex: 1,
     display: 'flex',
@@ -48,7 +48,7 @@ export default theme => ({
   },
 });
 
-export const timesheetRowStyles = theme => ({
+export const timesheetRowStyles = (theme) => ({
   wrapper: {
     flexDirection: 'row',
     display: 'flex',

@@ -1,31 +1,25 @@
-import React, { Component } from 'react';
-import cx from 'classnames';
-import get from 'lodash/get';
-import find from 'lodash/find';
-import moment from 'moment';
 import {
-  withStyles,
-  Tabs,
+  Checkbox,
   SectionHeader,
   Table,
-  Checkbox,
-  withRouterProps,
-  withStylesProps,
+  Tabs,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import Grid from '@material-ui/core/Grid';
 import ButtonBase from '@material-ui/core/ButtonBase';
-import { Tooltip } from 'react-tippy';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+// import find from 'lodash/find';
+import get from 'lodash/get';
+import moment from 'moment';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { Tooltip } from 'react-tippy';
 import { compose } from 'recompose';
-import {
-  withCompany,
-  withUpdateTimeSheet,
-  withTimeSheets,
-} from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
-import { TIMESHEET_STATUS } from '@client/helpers/constants';
-import SelectedCompany from '@client/helpers/SelectedCompany';
+import { TIMESHEET_STATUS } from 'src/helpers/constants';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
+import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
@@ -35,13 +29,30 @@ type Props = {
   timeSheets: Record<string, any>;
   user: Record<string, any>;
   approveTimesheet: Function;
+  history?: any;
+  classes?: any;
 };
 type State = {
+  columnData: Array<Record<string, any>>;
   showingTimesheetType: Record<string, any>;
   approvingTimesheets: any;
 };
 
 class WorkerDetails extends Component<Props, State> {
+  public static defaultProps = {
+    user: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+    approveTimesheet: () => ({}),
+    timeSheets: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+  };
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -137,9 +148,9 @@ class WorkerDetails extends Component<Props, State> {
     return tableData;
   };
 
-  _approveTimesheet = row => async event => {
+  _approveTimesheet = (row) => async () => {
     try {
-      this.setState(prevState => ({
+      this.setState((prevState) => ({
         approvingTimesheets: {
           ...prevState.approvingTimesheets,
           [row.id]: true,
@@ -155,7 +166,7 @@ class WorkerDetails extends Component<Props, State> {
     } catch (error) {
       showToast(error.toString());
     } finally {
-      this.setState(prevState => ({
+      this.setState((prevState) => ({
         approvingTimesheets: {
           ...prevState.approvingTimesheets,
           [row.id]: false,
@@ -164,8 +175,8 @@ class WorkerDetails extends Component<Props, State> {
     }
   };
 
-  _toggleShowingTimesheetType = type => checked => {
-    this.setState(prevState => ({
+  _toggleShowingTimesheetType = (type) => (checked) => {
+    this.setState((prevState) => ({
       showingTimesheetType: {
         ...prevState.showingTimesheetType,
         [type]: checked,
@@ -243,14 +254,16 @@ class WorkerDetails extends Component<Props, State> {
         <div className={classes.tickCell}>
           <ButtonBase
             onClick={this._approveTimesheet(row)}
-            disabled={approvingTimesheets[row.id]}>
+            disabled={approvingTimesheets[row.id]}
+          >
             <Tooltip
               title='Mark as approved'
               animation='fade'
               position='top'
               arrow
-              arrowType='round'
-              trigger='mouseenter focus'>
+              // arrowType="round"
+              trigger={'mouseenter focus' as any}
+            >
               <span className={classes.tickIcon}>
                 <i
                   className={cx('fa', {
@@ -283,7 +296,7 @@ class WorkerDetails extends Component<Props, State> {
                 label='Finalised'
                 classes={{ component: classes.checkbox }}
                 onChange={this._toggleShowingTimesheetType(
-                  TIMESHEET_STATUS.FINALISED
+                  TIMESHEET_STATUS.FINALISED,
                 )}
                 value={showingTimesheetType[TIMESHEET_STATUS.FINALISED]}
               />
@@ -291,7 +304,7 @@ class WorkerDetails extends Component<Props, State> {
                 label='Approved'
                 classes={{ component: classes.checkbox }}
                 onChange={this._toggleShowingTimesheetType(
-                  TIMESHEET_STATUS.APPROVED
+                  TIMESHEET_STATUS.APPROVED,
                 )}
                 value={showingTimesheetType[TIMESHEET_STATUS.APPROVED]}
               />
@@ -299,7 +312,7 @@ class WorkerDetails extends Component<Props, State> {
                 label='Invoiced'
                 classes={{ component: classes.checkbox }}
                 onChange={this._toggleShowingTimesheetType(
-                  TIMESHEET_STATUS.INVOICED
+                  TIMESHEET_STATUS.INVOICED,
                 )}
                 value={showingTimesheetType[TIMESHEET_STATUS.INVOICED]}
               />
@@ -332,7 +345,8 @@ class WorkerDetails extends Component<Props, State> {
       <SelectedCompany
         onChange={() => {
           this.props.history.push(URL.WORKERS());
-        }}>
+        }}
+      >
         <div className={classes.page}>
           {this._renderSecondaryTabs()}
           <div className={classes.content}>
@@ -347,39 +361,39 @@ class WorkerDetails extends Component<Props, State> {
 
 export default compose(
   withStyles(styles),
-  connect(state => ({
+  connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-  withCompany(
-    ({ profile }) => ({
-      id: get(profile, 'selectedCompany.id', ''),
-    }),
-    ({ data, ownProps }) => {
-      const companyMemebers = get(data, 'company.companyMembers') || [];
-      const userId = get(ownProps, 'match.params.id');
-      const member = find(companyMemebers, ({ user }) => user.id === userId);
-      return {
-        user: {
-          data: get(member, 'user', {}),
-          loading: data.loading,
-        },
-      };
-    }
-  ),
-  withTimeSheets(props => {
-    return {
-      variables: {
-        first: 10,
-        where: {
-          isArchived: false,
-          status_not: TIMESHEET_STATUS.DRAFT,
-          user: {
-            id: get(props, 'match.params.id'),
-          },
-        },
-        orderBy: 'startsAt_DESC',
-      },
-    };
-  }),
-  withUpdateTimeSheet(() => ({ name: 'approveTimesheet' }))
+  // withCompany(
+  //   ({ profile }) => ({
+  //     id: get(profile, 'selectedCompany.id', ''),
+  //   }),
+  //   ({ data, ownProps }) => {
+  //     const companyMemebers = get(data, 'company.companyMembers') || [];
+  //     const userId = get(ownProps, 'match.params.id');
+  //     const member = find(companyMemebers, ({ user }) => user.id === userId);
+  //     return {
+  //       user: {
+  //         data: get(member, 'user', {}),
+  //         loading: data.loading,
+  //       },
+  //     };
+  //   },
+  // ),
+  // withTimeSheets((props) => {
+  //   return {
+  //     variables: {
+  //       first: 10,
+  //       where: {
+  //         isArchived: false,
+  //         status_not: TIMESHEET_STATUS.DRAFT,
+  //         user: {
+  //           id: get(props, 'match.params.id'),
+  //         },
+  //       },
+  //       orderBy: 'startsAt_DESC',
+  //     },
+  //   };
+  // }),
+  // withUpdateTimeSheet(() => ({ name: 'approveTimesheet' })),
 )(WorkerDetails);

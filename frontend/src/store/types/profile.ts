@@ -13,7 +13,7 @@ const types: IProfileActionsTypes = createTypes(
   'LOGOUT_USER',
   'SELECT_COMPANY',
   'SET_ONLY_TOKEN',
-  'RESET_USER_DATA'
+  'RESET_USER_DATA',
 );
 
 export default types;

@@ -1,15 +1,15 @@
-import React from 'react';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import Grid from '@material-ui/core/Grid';
 import {
-  withStyles,
-  Button,
   AddressForm,
-  SectionHeader,
+  Button,
   PhoneNumberField,
+  SectionHeader,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
+import React from 'react';
+import * as Yup from 'yup';
+import URL from 'src/helpers/urls';
 import styles, { StyleKeys } from './styles';
 import { CustomerObject } from './types';
 
@@ -18,7 +18,7 @@ type Props = IRouteProps<StyleKeys> & {
   onSubmit: (values: Record<string, any>) => void;
 };
 
-const DetailsTab: React.FC<Props> = props => {
+const DetailsTab: React.FC<Props> = (props) => {
   const { classes, theme, customer, onSubmit } = props;
   const { address, contact } = customer;
   return (
@@ -49,13 +49,15 @@ const DetailsTab: React.FC<Props> = props => {
           landlineNumber: Yup.string().required('Number is required'),
           mobileNumber: Yup.string().required('Number is required'),
         })}
-        onSubmit={onSubmit}>
-        {formProps => {
+        onSubmit={onSubmit}
+      >
+        {(formProps) => {
           const isDirty = formProps.dirty;
           return (
             <form
               className={classes.detailsForm}
-              onSubmit={formProps.handleSubmit}>
+              onSubmit={formProps.handleSubmit}
+            >
               <Grid container spacing={40}>
                 <Grid item xs={12} sm={6}>
                   <SectionHeader

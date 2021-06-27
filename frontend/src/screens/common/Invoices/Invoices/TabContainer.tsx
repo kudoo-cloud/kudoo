@@ -1,16 +1,15 @@
-import React, { Component } from 'react';
+import { ErrorBoundary } from '@kudoo/components';
+import { withI18n } from '@lingui/react';
 import idx from 'idx';
 import get from 'lodash/get';
-import { withI18n } from '@lingui/react';
-import moment from 'moment';
 import isEqual from 'lodash/isEqual';
+import moment from 'moment';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { ErrorBoundary, withRouterProps } from '@kudoo/components';
-import { withInvoices, withUpdateInvoiceStatus } from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { INVOICE_STATUS } from '@client/helpers/constants';
+import { INVOICE_STATUS } from 'src/helpers/constants';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
 import InvoiceNotificationModal from './InvoiceNotificationModal';
 
 type Props = {
@@ -29,8 +28,10 @@ type State = {
 class TabContainer extends Component<Props, State> {
   static defaultProps = {
     invoices: {
+      data: [],
       refetch: () => {},
     },
+    updateInvoice: () => ({}),
   };
 
   state = {
@@ -40,7 +41,7 @@ class TabContainer extends Component<Props, State> {
   };
 
   componentDidMount() {
-    this._updateInvoicesData(idx(this.props, _ => _.invoices.data) || []);
+    this._updateInvoicesData(idx(this.props, (_) => _.invoices.data) || []);
   }
 
   componentDidUpdate(prevProps) {
@@ -48,14 +49,14 @@ class TabContainer extends Component<Props, State> {
     if (
       !isEqual(
         invoices.data,
-        idx(prevProps, _ => _.invoices.data)
+        idx(prevProps, (_) => _.invoices.data),
       )
     ) {
-      this._updateInvoicesData(idx(this.props, _ => _.invoices.data) || []);
+      this._updateInvoicesData(idx(this.props, (_) => _.invoices.data) || []);
     }
   }
 
-  _markInvoiceAsPaid = async invoice => {
+  _markInvoiceAsPaid = async (invoice) => {
     try {
       const res = await this.props.updateInvoice({
         status: INVOICE_STATUS.FULLY_PAID,
@@ -65,14 +66,14 @@ class TabContainer extends Component<Props, State> {
         this.props.invoices.refetch();
         showToast(null, 'Invoice marked as paid');
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
     }
   };
 
-  _archiveInvoice = async invoice => {
+  _archiveInvoice = async (invoice) => {
     try {
       const res = await this.props.updateInvoice({
         status: INVOICE_STATUS.ARCHIVED,
@@ -82,14 +83,14 @@ class TabContainer extends Component<Props, State> {
         this.props.invoices.refetch();
         showToast(null, 'Invoice Archived');
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
     }
   };
 
-  _unArchiveInvoice = async invoice => {
+  _unArchiveInvoice = async (invoice) => {
     try {
       const res = await this.props.updateInvoice({
         status: INVOICE_STATUS.FULLY_PAID,
@@ -99,23 +100,23 @@ class TabContainer extends Component<Props, State> {
         this.props.invoices.refetch();
         showToast(null, 'Invoice Unarchived');
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
     }
   };
 
-  _updateInvoicesData = invoices => {
+  _updateInvoicesData = (invoices) => {
     const { i18n } = this.props;
-    const invoiceData = invoices.map(invoice => {
-      const dueDate = idx(invoice, _ => _.dueDate);
-      const issueDate = idx(invoice, _ => _.invoiceDate);
+    const invoiceData = invoices.map((invoice) => {
+      const dueDate = idx(invoice, (_) => _.dueDate);
+      const issueDate = idx(invoice, (_) => _.invoiceDate);
       return {
         ...invoice,
         id: invoice.id,
-        hash: idx(invoice, _ => _.number),
-        customer: idx(invoice, _ => _.buyer.name),
+        hash: idx(invoice, (_) => _.number),
+        customer: idx(invoice, (_) => _.buyer.name),
         date: moment(issueDate).format('DD MMM YYYY'),
         due: moment(dueDate).format('DD MMM YYYY'),
         total: i18n._('currency-symbol') + `${invoice.total}`,
@@ -128,7 +129,7 @@ class TabContainer extends Component<Props, State> {
     });
   };
 
-  _showInvoiceEmailModal = invoice => {
+  _showInvoiceEmailModal = (invoice) => {
     this.setState({
       notifiedInvoice: invoice,
       isShowingInvoiceEmailModal: true,
@@ -159,7 +160,7 @@ class TabContainer extends Component<Props, State> {
   };
 
   render() {
-    const { children, ...rest }:any = this.props; // eslint-disable-line
+    const { children, ...rest }: any = this.props; // eslint-disable-line
     return (
       <ErrorBoundary>
         <SelectedCompany onChange={this.props.invoices.refetch}>
@@ -192,31 +193,31 @@ export default compose(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withUpdateInvoiceStatus(() => ({ name: 'updateInvoice' })),
-  withInvoices(props => {
-    let where = {};
-    if (props.invoiceType === 'unpaid') {
-      where = {
-        ...where,
-        status_in: [INVOICE_STATUS.DRAFT, INVOICE_STATUS.APPROVED],
-      };
-    } else if (props.invoiceType === 'paid') {
-      where = {
-        ...where,
-        status: INVOICE_STATUS.FULLY_PAID,
-      };
-    } else if (props.invoiceType === 'archived') {
-      where = {
-        ...where,
-        status: INVOICE_STATUS.ARCHIVED,
-      };
-    }
-    return {
-      variables: {
-        first: 20,
-        where,
-        orderBy: 'invoiceDate_DESC',
-      },
-    };
-  })
+  // withUpdateInvoiceStatus(() => ({ name: 'updateInvoice' })),
+  // withInvoices((props) => {
+  //   let where = {};
+  //   if (props.invoiceType === 'unpaid') {
+  //     where = {
+  //       ...where,
+  //       status_in: [INVOICE_STATUS.DRAFT, INVOICE_STATUS.APPROVED],
+  //     };
+  //   } else if (props.invoiceType === 'paid') {
+  //     where = {
+  //       ...where,
+  //       status: INVOICE_STATUS.FULLY_PAID,
+  //     };
+  //   } else if (props.invoiceType === 'archived') {
+  //     where = {
+  //       ...where,
+  //       status: INVOICE_STATUS.ARCHIVED,
+  //     };
+  //   }
+  //   return {
+  //     variables: {
+  //       first: 20,
+  //       where,
+  //       orderBy: 'invoiceDate_DESC',
+  //     },
+  //   };
+  // }),
 )(TabContainer as any);

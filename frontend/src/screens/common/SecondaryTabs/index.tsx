@@ -1,14 +1,11 @@
+import { Tabs, helpers as utils, withStyles } from '@kudoo/components';
 import React, { Component } from 'react';
-import { Route, Switch, Redirect } from 'react-router';
-import { compose } from 'recompose';
 import { connect } from 'react-redux';
-import { withStyles, Tabs, helpers as utils } from '@kudoo/components';
-import UpgradeComponent from '@client/common_screens/UpgradeComponent';
-import { ITab } from '@client/store/types/security';
-import {
-  isFeatureAvailable,
-  needsLicenseUpgrade,
-} from '@client/helpers/security';
+import { Redirect, Route, Switch } from 'react-router';
+import { compose } from 'recompose';
+import { isFeatureAvailable, needsLicenseUpgrade } from 'src/helpers/security';
+import UpgradeComponent from 'src/screens/common/UpgradeComponent';
+import { ITab } from 'src/store/types/security';
 import styles from './styles';
 
 interface IProps {
@@ -29,8 +26,10 @@ class SecondaryTabs extends Component<IProps> {
 
   public _findActiveSecondaryTab = () => {
     const { tabs, profile } = this.props;
-    const filteredAvailableTabs = tabs.filter(tab =>
-      isFeatureAvailable(profile.selectedCompany, tab.availability!)
+    // TODO: For now we will hsow all tabs
+    const filteredAvailableTabs = tabs.filter(
+      (tab) =>
+        true || isFeatureAvailable(profile.selectedCompany, tab.availability!),
     );
     let activeTab = 0;
     filteredAvailableTabs.forEach((tab, index) => {
@@ -43,12 +42,14 @@ class SecondaryTabs extends Component<IProps> {
 
   public _renderSecondaryTabs() {
     const { tabs, history, profile, isTertiaryTab } = this.props;
-    const filteredAvailableTabs = tabs.filter(tab =>
-      isFeatureAvailable(profile.selectedCompany, tab.availability!)
+    // TODO: For now we will hsow all tabs
+    const filteredAvailableTabs = tabs.filter(
+      (tab) =>
+        true || isFeatureAvailable(profile.selectedCompany, tab.availability!),
     );
     return (
       <Tabs
-        tabs={filteredAvailableTabs.map(tab => ({
+        tabs={filteredAvailableTabs.map((tab) => ({
           label: tab.name,
           onClick: () => {
             history.push(tab.url!());
@@ -63,8 +64,10 @@ class SecondaryTabs extends Component<IProps> {
   public render() {
     const { classes, actions, profile, history, tabs } = this.props;
 
-    const filteredAvailableTabs = tabs.filter(tab =>
-      isFeatureAvailable(profile.selectedCompany, tab.availability!)
+    // TODO: For now we will hsow all tabs
+    const filteredAvailableTabs = tabs.filter(
+      (tab) =>
+        true || isFeatureAvailable(profile.selectedCompany, tab.availability!),
     );
 
     if (filteredAvailableTabs.length <= 0) {
@@ -85,7 +88,7 @@ class SecondaryTabs extends Component<IProps> {
               url,
               tabs,
               isTertiaryTab,
-              availability,
+              availability, // eslint-disable-line
               licenseRequired,
               ...rest
             } = tab;
@@ -93,16 +96,18 @@ class SecondaryTabs extends Component<IProps> {
               <Route
                 key={index}
                 path={url!({ path: true })}
-                render={routeParams => {
-                  const requireLicenseUpgrade = needsLicenseUpgrade(
+                render={(routeParams) => {
+                  let requireLicenseUpgrade = needsLicenseUpgrade(
                     profile.selectedCompany,
-                    licenseRequired!
+                    licenseRequired!,
                   );
+                  // TODO: for now we will show content to user
+                  requireLicenseUpgrade = false;
+
                   if (requireLicenseUpgrade) {
                     return <UpgradeComponent history={history} />;
                   } else {
                     return (
-                      // @ts-ignore
                       <TabComponent
                         actions={actions}
                         {...routeParams}
@@ -129,5 +134,5 @@ export default compose<IProps, IProps>(
   withStyles(styles),
   connect((state: any) => ({
     profile: state.profile,
-  }))
+  })),
 )(SecondaryTabs);

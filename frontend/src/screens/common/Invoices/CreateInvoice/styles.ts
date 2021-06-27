@@ -1,4 +1,4 @@
-export default theme => ({
+export default (theme) => ({
   page: {
     flex: 1,
     display: 'flex',
@@ -80,7 +80,7 @@ export default theme => ({
   },
 });
 
-export const detailStepStyles = theme => ({
+export const detailStepStyles = (theme) => ({
   form: {
     marginTop: 20,
   },
@@ -186,7 +186,7 @@ export const detailStepStyles = theme => ({
   },
 });
 
-export const reviewStyles = theme => ({
+export const reviewStyles = (theme) => ({
   content: {
     marginTop: '50px !important',
   },
@@ -413,7 +413,7 @@ export const reviewStyles = theme => ({
   },
 });
 
-export const sendInvoiceModalStyles = theme => ({
+export const sendInvoiceModalStyles = () => ({
   emailInputs: {
     marginTop: 15,
   },

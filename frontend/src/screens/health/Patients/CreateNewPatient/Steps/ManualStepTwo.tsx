@@ -1,24 +1,23 @@
-import React, { useState } from 'react';
-import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import {
   Button,
-  SectionHeader,
-  FormikTextField,
-  withStyles,
   FormikDropdown,
+  FormikTextField,
+  SectionHeader,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { withRouter } from 'react-router-dom';
-import { withCreatePatient } from '@kudoo/graphql';
-import * as Yup from 'yup';
-import { resetManualData } from 'src/store/actions/createNewPatient';
+import FormControl from '@material-ui/core/FormControl';
+import Grid from '@material-ui/core/Grid';
 import { Formik } from 'formik';
-import { IReduxState } from '@client/store/reducers';
-import { showToast } from '@client/helpers/toast';
 import idx from 'idx';
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { withRouter } from 'react-router-dom';
+import { compose } from 'recompose';
+import * as Yup from 'yup';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
+import { resetManualData } from 'src/store/actions/createNewPatient';
+import { IReduxState } from 'src/store/reducers';
 import styles, { StyleKeys } from '../styles';
 
 type Props = IRouteProps<StyleKeys> & {
@@ -28,7 +27,7 @@ type Props = IRouteProps<StyleKeys> & {
   resetManualData?: Function;
 };
 
-const ManualStepTwo: React.FC<Props> = props => {
+const ManualStepTwo: React.FC<Props> = (props) => {
   const { classes, theme, manualPatientData, resetManualData, history } = props;
   const [showVeteranDetails, setShowVeteranDetails] = useState(false);
   console.log(props);
@@ -41,7 +40,7 @@ const ManualStepTwo: React.FC<Props> = props => {
       const eightDigit = matches[1];
       const checkDigit = matches[2];
       const weights = [1, 3, 7, 9, 1, 3, 7, 9];
-      const total = weights.reduce((total, currVal, index, arr) => {
+      const total = weights.reduce((total, currVal, index) => {
         return total + Number(eightDigit[index]) * Number(currVal);
       }, 0);
       return total % 10 === Number(checkDigit);
@@ -65,10 +64,10 @@ const ManualStepTwo: React.FC<Props> = props => {
           .test(
             'validate-medicare-number',
             'Invalid Medicare Number',
-            validateMedicareNumber
+            validateMedicareNumber,
           ),
       })}
-      onSubmit={async values => {
+      onSubmit={async (values) => {
         const {
           currentAddress,
           birthAddress,
@@ -104,8 +103,9 @@ const ManualStepTwo: React.FC<Props> = props => {
         } catch (e) {
           showToast(e.toString());
         }
-      }}>
-      {formProps => (
+      }}
+    >
+      {(formProps) => (
         <form onSubmit={formProps.handleSubmit}>
           <SectionHeader
             title='Step 2'
@@ -188,7 +188,7 @@ const ManualStepTwo: React.FC<Props> = props => {
                           : theme.palette.secondary.color2
                       }
                       onClick={() => {
-                        setShowVeteranDetails(val => !val);
+                        setShowVeteranDetails((val) => !val);
                       }}
                     />
                   </FormControl>
@@ -202,15 +202,19 @@ const ManualStepTwo: React.FC<Props> = props => {
   );
 };
 
+ManualStepTwo.defaultProps = {
+  createPatient: () => ({}),
+};
+
 export default compose<Props, Props>(
-  withStyles<Props>(styles),
-  withCreatePatient(),
+  withStyles(styles),
+  // withCreatePatient(),
   withRouter,
   connect(
     (state: IReduxState) => ({
       manualPatientData:
-        idx(state, x => x.sessionData.newPatient.manualPatient) || {},
+        idx(state, (x) => x.sessionData.newPatient.manualPatient) || {},
     }),
-    { resetManualData }
-  )
+    { resetManualData },
+  ),
 )(ManualStepTwo);

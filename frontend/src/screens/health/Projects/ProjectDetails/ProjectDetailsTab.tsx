@@ -1,22 +1,19 @@
-import React, { Component } from 'react';
-import { withI18n } from '@lingui/react';
-import get from 'lodash/get';
-import { connect } from 'react-redux';
-import { compose } from 'react-apollo';
 import {
-  withStyles,
   Button,
+  ErrorBoundary,
   SectionHeader,
   TextField,
-  ErrorBoundary,
-  withRouterProps,
-  withStylesProps,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import Grid from '@material-ui/core/Grid';
+import { withI18n } from '@lingui/react';
 import ButtonBase from '@material-ui/core/ButtonBase';
-import { withProject, withUpdateProject } from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
+import Grid from '@material-ui/core/Grid';
+import get from 'lodash/get';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import ProjectProgress from './ProjectProgress';
 import styles from './styles';
 
@@ -37,6 +34,15 @@ type Props = {
 type State = {};
 
 class ProjectDetailsTab extends Component<Props, State> {
+  public static defaultProps = {
+    archiveProject: () => ({}),
+    project: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+  };
+
   _archiveProject = async () => {
     const { history, match } = this.props;
     const id = get(match, 'params.id', '');
@@ -49,14 +55,14 @@ class ProjectDetailsTab extends Component<Props, State> {
         showToast(null, 'Archived successfully');
         history.push(URL.PROJECTS());
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
     }
   };
 
-  _showArchivedDialog = invoice => {
+  _showArchivedDialog = () => {
     const { theme, classes, project } = this.props;
     const title = 'Archive this project?';
     const description = (
@@ -104,14 +110,8 @@ class ProjectDetailsTab extends Component<Props, State> {
   };
 
   render() {
-    const {
-      classes,
-      projectCompleted,
-      project,
-      theme,
-      progressSteps,
-      i18n,
-    } = this.props;
+    const { classes, projectCompleted, project, theme, progressSteps, i18n } =
+      this.props;
     const customer = get(project, 'data.customer') || {};
     return (
       <ErrorBoundary>
@@ -212,7 +212,8 @@ class ProjectDetailsTab extends Component<Props, State> {
           {!get(project, 'data.isArchived', false) && (
             <ButtonBase
               classes={{ root: classes.archiveProjectButton }}
-              onClick={this._showArchivedDialog}>
+              onClick={this._showArchivedDialog}
+            >
               Archive Project
             </ButtonBase>
           )}
@@ -228,10 +229,10 @@ export default compose(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withUpdateProject(() => ({
-    name: 'archiveProject',
-  })),
-  withProject(props => ({
-    id: get(props, 'match.params.id', ''),
-  }))
+  // withUpdateProject(() => ({
+  //   name: 'archiveProject',
+  // })),
+  // withProject((props) => ({
+  //   id: get(props, 'match.params.id', ''),
+  // })),
 )(ProjectDetailsTab);

@@ -1,12 +1,6 @@
+import { Button, Tabs, withStyles } from '@kudoo/components';
 import React, { Component } from 'react';
-import {
-  withStyles,
-  Tabs,
-  Button,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import URL from 'src/helpers/urls';
 import styles from './styles';
 
 type Props = {

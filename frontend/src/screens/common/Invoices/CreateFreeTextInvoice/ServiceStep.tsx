@@ -1,27 +1,25 @@
-import React, { Component } from 'react';
-import { withI18n, Trans } from '@lingui/react';
-import get from 'lodash/get';
-import findIndex from 'lodash/findIndex';
-import debounce from 'lodash/debounce';
-import uuid from 'uuid/v4';
+import {
+  Button,
+  SearchInput,
+  SectionHeader,
+  Table,
+  TextField,
+  ToggleSwitch,
+  withStyles,
+} from '@kudoo/components';
+import { Trans, withI18n } from '@lingui/react';
 import Grid from '@material-ui/core/Grid';
-import { withState } from 'recompose';
+import idx from 'idx';
+import debounce from 'lodash/debounce';
+import findIndex from 'lodash/findIndex';
+import get from 'lodash/get';
+import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import {
-  withStyles,
-  Button,
-  Table,
-  SectionHeader,
-  TextField,
-  SearchInput,
-  ToggleSwitch,
-  withStylesProps,
-} from '@kudoo/components';
-import { withServices } from '@kudoo/graphql';
-import * as actions from '@client/store/actions/createNewInvoice';
-import { IReduxState } from '@client/store/reducers';
-import idx from 'idx';
+import { withState } from 'recompose';
+import uuid from 'uuid/v4';
+import * as actions from 'src/store/actions/createNewInvoice';
+import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
@@ -43,6 +41,10 @@ type State = {
 };
 
 class ServiceStep extends Component<Props, State> {
+  static defaultProps = {
+    services: { data: [] },
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -78,11 +80,11 @@ class ServiceStep extends Component<Props, State> {
     });
   }
 
-  _onSearch = debounce(searchText => {
+  _onSearch = debounce((searchText) => {
     this.props.setSearchText(searchText);
   }, 100);
 
-  _onItemClick = async item => {
+  _onItemClick = async (item) => {
     const { profile } = this.props;
     const country = get(profile, 'selectedCompany.country');
     const rate = Number(get(item, 'totalAmount', 0));
@@ -100,7 +102,7 @@ class ServiceStep extends Component<Props, State> {
     });
   };
 
-  _addServiceToTable = service => {
+  _addServiceToTable = (service) => {
     const { newInvoice } = this.props;
     const tableData = get(newInvoice, 'text.tableData', []);
     const pos = findIndex(tableData, { id: service.id });
@@ -124,7 +126,7 @@ class ServiceStep extends Component<Props, State> {
     });
   };
 
-  _onRemoveRow = row => {
+  _onRemoveRow = (row) => {
     const { newInvoice } = this.props;
     const tableData = get(newInvoice, 'text.tableData', []);
     const pos = findIndex(tableData, { id: row.id });
@@ -134,7 +136,7 @@ class ServiceStep extends Component<Props, State> {
     }
   };
 
-  _updateServiceInTable = (id, key) => value => {
+  _updateServiceInTable = (id, key) => (value) => {
     const { newInvoice, profile } = this.props;
     const country = get(profile, 'selectedCompany.country');
     const tableData = get(newInvoice, 'text.tableData', []);
@@ -190,7 +192,7 @@ class ServiceStep extends Component<Props, State> {
     this.props.updateTableData('text', tableData);
   };
 
-  _updateIncludeGstSwitch = id => isChecked => {
+  _updateIncludeGstSwitch = (id) => (isChecked) => {
     const { newInvoice } = this.props;
     const tableData = get(newInvoice, 'text.tableData', []);
     const pos = findIndex(tableData, { id });
@@ -347,7 +349,7 @@ class ServiceStep extends Component<Props, State> {
     } = this.props;
     let tableData = get(newInvoice, 'text.tableData', []);
     let total = 0;
-    tableData = tableData.map(row => {
+    tableData = tableData.map((row) => {
       const amount = row.amount || 0;
       const gst = row.includeConsTax ? row.gst || 0 : 0;
       total += amount + gst;
@@ -399,7 +401,7 @@ class ServiceStep extends Component<Props, State> {
               <SearchInput
                 placeholder={'Search by typing a service name'}
                 showClearIcon={false}
-                items={get(services, 'data', []).map(service => ({
+                items={get(services, 'data', []).map((service) => ({
                   ...service,
                   label: service.name,
                 }))}
@@ -438,7 +440,8 @@ class ServiceStep extends Component<Props, State> {
               <div className={classes.totalLabel}>Total</div>
               <div
                 className={classes.totalValue}
-                data-test={`total-amount-${total}`}>
+                data-test={`total-amount-${total}`}
+              >
                 {i18n._('currency-symbol')} {total}
               </div>
             </div>
@@ -456,27 +459,27 @@ export default compose(
   connect(
     (state: IReduxState) => ({
       profile: state.profile,
-      newInvoice: idx(state, x => x.sessionData.newInvoice),
+      newInvoice: idx(state, (x) => x.sessionData.newInvoice),
     }),
     {
       ...actions,
-    }
+    },
   ),
-  withServices(props => {
-    let where: any = {
-      isArchived: false,
-      isTemplate: true,
-    };
-    if (props.searchText) {
-      where = {
-        ...where,
-        name_contains: props.searchText,
-      };
-    }
-    return {
-      variables: {
-        where,
-      },
-    };
-  })
+  // withServices((props) => {
+  //   let where: any = {
+  //     isArchived: false,
+  //     isTemplate: true,
+  //   };
+  //   if (props.searchText) {
+  //     where = {
+  //       ...where,
+  //       name_contains: props.searchText,
+  //     };
+  //   }
+  //   return {
+  //     variables: {
+  //       where,
+  //     },
+  //   };
+  // }),
 )(ServiceStep);

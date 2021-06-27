@@ -1,34 +1,27 @@
-import * as React from 'react';
-import { compose } from 'react-apollo';
 import {
-  withCreatePurchaseOrder,
-  withCreatePurchaseOrderLine,
-  withPurchaseOrders,
-  withUpdatePurchaseOrder,
-  withUpdatePurchaseOrderLine,
-} from '@kudoo/graphql';
-import {
-  ErrorBoundary,
-  withStyles,
-  SectionHeader,
   Button,
+  ErrorBoundary,
+  SectionHeader,
   Table,
   composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import { withI18n } from '@lingui/react';
+import { Grid } from '@material-ui/core';
+import idx from 'idx';
+import { filter, get } from 'lodash';
+import moment from 'moment';
+import * as React from 'react';
+import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { generatePDF } from 'src/helpers/jsPDF';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import styles, {
   reviewStyles,
 } from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/styles';
-import { withI18n } from '@lingui/react';
-import SelectedCompany from '@client/helpers/SelectedCompany';
 import { POSTATUS } from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/types';
-import { showToast } from '@client/helpers/toast';
-import { filter, get, isEqual } from 'lodash';
-import { Grid } from '@material-ui/core';
-import moment from 'moment';
-import idx from 'idx';
-import { generatePDF } from '@client/helpers/jsPDF';
 import {
   IPOResponse,
   IPreviewPOProps,
@@ -39,6 +32,18 @@ class PreviewPurchaseOrder extends React.Component<
   IPreviewPOProps,
   IPreviewPOState
 > {
+  public static defaultProps = {
+    purchaseOrders: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+    createPurchaseOrder: () => ({}),
+    updatePurchaseOrder: () => ({}),
+    createPurchaseOrderLine: () => ({}),
+    updatePurchaseOrderLine: () => ({}),
+  };
+
   public state = {
     submitting: false,
   };
@@ -77,7 +82,7 @@ class PreviewPurchaseOrder extends React.Component<
 
     const purchaseOrderLineFilterData = filter(
       purchaseOrderLineData,
-      filterData => filterData.qty >= 0 && filterData.item.key
+      (filterData: any) => filterData.qty >= 0 && filterData.item.key,
     );
     let flag = 0;
 
@@ -86,7 +91,7 @@ class PreviewPurchaseOrder extends React.Component<
         data: { ...dataToSend },
       });
       if (res.success) {
-        purchaseOrderLineFilterData.forEach(async _ => {
+        purchaseOrderLineFilterData.forEach(async (_: any) => {
           const purchaseOrderLineDataToSend = {
             purchaseOrder: {
               connect: {
@@ -107,13 +112,14 @@ class PreviewPurchaseOrder extends React.Component<
             unit: _.unit || 'EA',
             unitPrice: parseFloat(_.unitPrice) || 0,
           };
-          const purchaseOrderLineResponse: IPOResponse = await this.props.createPurchaseOrderLine(
-            { data: purchaseOrderLineDataToSend }
-          );
+          const purchaseOrderLineResponse: IPOResponse =
+            await this.props.createPurchaseOrderLine({
+              data: purchaseOrderLineDataToSend,
+            });
           if (!purchaseOrderLineResponse.success && flag === 0) {
             flag = 1;
-            (idx(purchaseOrderLineResponse, x => x.error) || []).forEach(err =>
-              showToast(err)
+            (idx(purchaseOrderLineResponse, (x) => x.error) || []).forEach(
+              (err) => showToast(err),
             );
             actions.setSubmitting(false);
           }
@@ -125,7 +131,7 @@ class PreviewPurchaseOrder extends React.Component<
           this.props.history.push(URL.PURCHASE_ORDER());
         }
       } else {
-        (idx(res, x => x.error) || []).forEach(err => showToast(err));
+        (idx(res, (x) => x.error) || []).forEach((err) => showToast(err));
         actions.setSubmitting(false);
       }
     } else {
@@ -135,7 +141,7 @@ class PreviewPurchaseOrder extends React.Component<
       });
       if (res.success) {
         let purchaseOrderLineResponse: IPOResponse | null = null;
-        purchaseOrderLineFilterData.forEach(async _ => {
+        purchaseOrderLineFilterData.forEach(async (_: any) => {
           const purchaseOrderLineDataToSend = {
             purchaseOrder: {
               connect: {
@@ -157,22 +163,20 @@ class PreviewPurchaseOrder extends React.Component<
             unitPrice: parseFloat(_.unitPrice) || 0,
           };
           if (_.id) {
-            purchaseOrderLineResponse = (await this.props.updatePurchaseOrderLine(
-              {
+            purchaseOrderLineResponse =
+              (await this.props.updatePurchaseOrderLine({
                 data: purchaseOrderLineDataToSend,
                 where: { id: _.id },
-              }
-            )) as IPOResponse;
+              })) as IPOResponse;
           } else {
-            purchaseOrderLineResponse = (await this.props.createPurchaseOrderLine(
-              {
+            purchaseOrderLineResponse =
+              (await this.props.createPurchaseOrderLine({
                 data: purchaseOrderLineDataToSend,
-              }
-            )) as IPOResponse;
+              })) as IPOResponse;
           }
           if (!purchaseOrderLineResponse.success && flag === 0) {
             flag = 1;
-            (idx(res, x => x.error) || []).forEach(err => showToast(err));
+            (idx(res, (x) => x.error) || []).forEach((err) => showToast(err));
             actions.setSubmitting(false);
           }
         });
@@ -183,7 +187,7 @@ class PreviewPurchaseOrder extends React.Component<
           this.props.history.push(URL.PURCHASE_ORDER());
         }
       } else {
-        (idx(res, x => x.error) || []).forEach(err => showToast(err));
+        (idx(res, (x) => x.error) || []).forEach((err) => showToast(err));
         actions.setSubmitting(false);
       }
     }
@@ -326,7 +330,7 @@ class PreviewPurchaseOrder extends React.Component<
 
     const purchaseOrderLineFilterData = filter(
       purchaseOrderLineData,
-      filterData => filterData.qty >= 0 && filterData.item.key
+      (filterData) => filterData.qty >= 0 && filterData.item.key,
     );
 
     return (
@@ -382,7 +386,8 @@ class PreviewPurchaseOrder extends React.Component<
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.PURCHASE_ORDER());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             {this._renderSectionHeading()}
             <div className={classes.content} id='pdf-content'>
@@ -394,7 +399,8 @@ class PreviewPurchaseOrder extends React.Component<
                   <Grid
                     item
                     xs={6}
-                    classes={{ item: classes.purchaseOrderTitleRightPart }}>
+                    classes={{ item: classes.purchaseOrderTitleRightPart }}
+                  >
                     {logo && (
                       <div className={classes.purchaseOrderName}>
                         {companyName}
@@ -411,17 +417,20 @@ class PreviewPurchaseOrder extends React.Component<
                   </div>
                   <div
                     className={classes.purchaseOrderDateValue}
-                    data-test='purchaseOrder-date'>
+                    data-test='purchaseOrder-date'
+                  >
                     {moment(defaultData.date).format('DD MMM YYYY')}
                   </div>
                 </div>
                 <div
                   className={classes.purchaseOrderDateBlock}
-                  style={{ textAlign: 'right' }}>
+                  style={{ textAlign: 'right' }}
+                >
                   <div className={classes.purchaseOrderDateLabel}>Supplier</div>
                   <div
                     className={classes.purchaseOrderDateValue}
-                    data-test='due-date'>
+                    data-test='due-date'
+                  >
                     {defaultData.supplier.key}
                   </div>
                 </div>
@@ -444,13 +453,13 @@ class PreviewPurchaseOrder extends React.Component<
 
 export default compose(
   withI18n(),
-  withPurchaseOrders(),
-  withCreatePurchaseOrder(),
-  withUpdatePurchaseOrder(),
-  withCreatePurchaseOrderLine(),
-  withUpdatePurchaseOrderLine(),
+  // withPurchaseOrders(),
+  // withCreatePurchaseOrder(),
+  // withUpdatePurchaseOrder(),
+  // withCreatePurchaseOrderLine(),
+  // withUpdatePurchaseOrderLine(),
   connect((state: { profile: object }) => ({
     profile: state.profile,
   })),
-  withStyles(composeStyles(styles, reviewStyles))
+  withStyles(composeStyles(styles, reviewStyles)),
 )(PreviewPurchaseOrder);

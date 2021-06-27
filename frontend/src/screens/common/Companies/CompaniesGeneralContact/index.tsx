@@ -1,27 +1,25 @@
+import {
+  Button,
+  Checkbox,
+  ErrorBoundary,
+  PhoneNumberField,
+  SectionHeader,
+  TextField,
+  withStyles,
+} from '@kudoo/components';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
+// import idx from 'idx';
+import clone from 'lodash/clone';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import Grid from '@material-ui/core/Grid';
-import get from 'lodash/get';
-import clone from 'lodash/clone';
-import { Formik } from 'formik';
 import * as Yup from 'yup';
-import idx from 'idx';
-import isEqual from 'lodash/isEqual';
-import {
-  withStyles,
-  ErrorBoundary,
-  PhoneNumberField,
-  TextField,
-  Checkbox,
-  SectionHeader,
-  Button,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
-import { withCompany, withUpdateCompany } from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
-import { any } from 'prop-types';
+import { showToast } from 'src/helpers/toast';
+import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
@@ -34,6 +32,11 @@ type Props = {
 type State = {};
 
 class CompaniesGeneralContact extends Component<Props, State> {
+  static defaultProps = {
+    company: {},
+    updateCompany: () => ({}),
+  };
+
   contactForm: any;
   state: any;
 
@@ -150,7 +153,7 @@ class CompaniesGeneralContact extends Component<Props, State> {
         showToast(null, 'Contact Updated');
         this.props.company.refetch();
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       actions.setSubmitting(false);
@@ -178,7 +181,8 @@ class CompaniesGeneralContact extends Component<Props, State> {
           <Grid
             container
             spacing={0}
-            classes={{ container: classes.formFields }}>
+            classes={{ container: classes.formFields }}
+          >
             <Grid item xs={12} sm={6} classes={{ item: classes.formSection }}>
               <div className={classes.sectionHeadingWrapper}>
                 <SectionHeader
@@ -247,7 +251,8 @@ class CompaniesGeneralContact extends Component<Props, State> {
           <Grid
             container
             spacing={0}
-            classes={{ container: classes.formFields }}>
+            classes={{ container: classes.formFields }}
+          >
             <Grid item xs={12} sm={6} classes={{ item: classes.formSection }}>
               <div className={classes.sectionHeadingWrapper}>
                 <SectionHeader
@@ -257,7 +262,7 @@ class CompaniesGeneralContact extends Component<Props, State> {
                 <Checkbox
                   label='Same as above'
                   value={values.sameAsCompanyContact}
-                  onChange={checked => {
+                  onChange={(checked) => {
                     setFieldValue('sameAsCompanyContact', checked);
                   }}
                 />
@@ -405,7 +410,7 @@ class CompaniesGeneralContact extends Component<Props, State> {
           sameAsCompanyContact: Yup.boolean(),
           supportContact: Yup.mixed().when(
             'sameAsCompanyContact',
-            sameAsCompanyContact => {
+            (sameAsCompanyContact) => {
               if (sameAsCompanyContact) {
                 return Yup.object();
               }
@@ -424,10 +429,11 @@ class CompaniesGeneralContact extends Component<Props, State> {
                   .required('Email is required')
                   .email('Email is not valid'),
               });
-            }
+            },
           ),
         })}
-        onSubmit={this._submitForm}>
+        onSubmit={this._submitForm}
+      >
         {this._renderContactFormFields.bind(this)}
       </Formik>
     );
@@ -445,11 +451,11 @@ class CompaniesGeneralContact extends Component<Props, State> {
 
 export default compose<any, any>(
   withStyles(styles),
-  connect(state => ({
+  connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-  withCompany(props => ({
-    id: idx(props, _ => _.match.params.companyId),
-  })),
-  withUpdateCompany()
+  // withCompany((props) => ({
+  //   id: idx(props, (_) => _.match.params.companyId),
+  // })),
+  // withUpdateCompany(),
 )(CompaniesGeneralContact);

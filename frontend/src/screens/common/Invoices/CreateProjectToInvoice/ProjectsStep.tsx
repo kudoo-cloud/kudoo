@@ -1,21 +1,14 @@
-import React, { Component } from 'react';
+import { Button, Dropdown, SectionHeader, withStyles } from '@kudoo/components';
+import Grid from '@material-ui/core/Grid';
+import idx from 'idx';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
-import Grid from '@material-ui/core/Grid';
-import { connect } from 'react-redux';
+import React, { Component } from 'react';
 import { compose } from 'react-apollo';
-import {
-  withStyles,
-  SectionHeader,
-  Button,
-  Dropdown,
-  withStylesProps,
-} from '@kudoo/components';
-import { withProjects } from '@kudoo/graphql';
-import * as actions from '@client/store/actions/createNewInvoice';
-import { showToast } from '@client/helpers/toast';
-import { IReduxState } from '@client/store/reducers';
-import idx from 'idx';
+import { connect } from 'react-redux';
+import { showToast } from 'src/helpers/toast';
+import * as actions from 'src/store/actions/createNewInvoice';
+import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
@@ -33,6 +26,10 @@ type Props = {
 type State = {};
 
 class ProjectsStep extends Component<Props, State> {
+  static defaultProps = {
+    projects: { data: [] },
+  };
+
   state = {};
 
   _goToNextStep = () => {
@@ -41,7 +38,7 @@ class ProjectsStep extends Component<Props, State> {
     markedVisited(0);
   };
 
-  _onSelectProject = async item => {
+  _onSelectProject = async (item) => {
     try {
       this.props.updateProjectInfo('project', item.value);
       const customer = item.value.customer;
@@ -93,7 +90,7 @@ class ProjectsStep extends Component<Props, State> {
                   label='Projects'
                   value={selectedProject}
                   onChange={this._onSelectProject}
-                  items={projects.data.map(project => ({
+                  items={projects?.data?.map((project) => ({
                     label: project.name,
                     value: project,
                   }))}
@@ -112,20 +109,20 @@ export default compose(
   connect(
     (state: IReduxState) => ({
       profile: state.profile,
-      newInvoice: idx(state, x => x.sessionData.newInvoice),
+      newInvoice: idx(state, (x) => x.sessionData.newInvoice),
     }),
     {
       ...actions,
-    }
+    },
   ),
-  withProjects(props => {
-    return {
-      variables: {
-        where: {
-          isArchived: false,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  })
+  // withProjects(() => {
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived: false,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
 )(ProjectsStep);

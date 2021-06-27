@@ -1,45 +1,29 @@
-import React, { Component } from 'react';
+import { Button, Modal, SectionHeader, withStyles } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import { withProps, compose } from 'recompose';
-import { connect } from 'react-redux';
-import moment from 'moment';
 import get from 'lodash/get';
-import set from 'lodash/set';
+import isEmpty from 'lodash/isEmpty';
 import merge from 'lodash/merge';
 import range from 'lodash/range';
-import isEmpty from 'lodash/isEmpty';
+import set from 'lodash/set';
+import moment from 'moment';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose, withProps } from 'recompose';
 import uuid from 'uuid';
 import {
-  withStyles,
-  SectionHeader,
-  Modal,
-  Button,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import {
-  withCustomers,
-  withServices,
-  withProjects,
-  withTimeSheet,
-  withTimeSheets,
-  withUpdateTimeSheet,
-  withCreateTimeSheet,
-} from '@kudoo/graphql';
-import { generatePDF } from '@client/helpers/jsPDF';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import {
-  SERVICE_BILLING_TYPE,
-  TIMESHEET_STATUS,
   DATE_TIME_API_FORMAT,
-} from '@client/helpers/constants';
-import { showToast } from '@client/helpers/toast';
-import TimesheetApproveModal from './TimesheetApproveModal';
-import InputRows from './InputRows';
+  // SERVICE_BILLING_TYPE,
+  TIMESHEET_STATUS,
+} from 'src/helpers/constants';
+import { generatePDF } from 'src/helpers/jsPDF';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import Attachments from './Attachments';
+import InputRows from './InputRows';
 import PeriodSelection from './PeriodSelection';
 import styles from './styles';
+import TimesheetApproveModal from './TimesheetApproveModal';
 
 type Props = {
   actions: any;
@@ -52,8 +36,37 @@ type Props = {
   theme: any;
 };
 
-type State = {};
-class CreateTimesheets extends Component<Props, State> {
+class CreateTimesheets extends Component<Props, any> {
+  static defaultProps = {
+    updateTimeSheet: () => ({}),
+    createTimeSheet: () => ({}),
+    projects: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+    services: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+    customers: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+    timeSheets: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+    timeSheet: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+  };
+
   yearList: any;
   monthList: any;
 
@@ -61,14 +74,12 @@ class CreateTimesheets extends Component<Props, State> {
     super(props);
     const currentYear = moment().year();
     const currentMonth = moment().month();
-    this.yearList = range(currentYear - 2, currentYear + 10).map(yr => ({
+    this.yearList = range(currentYear - 2, currentYear + 10).map((yr) => ({
       label: String(yr),
       value: yr,
     }));
-    this.monthList = range(0, 12).map(index => ({
-      label: moment()
-        .month(index)
-        .format('MMMM'),
+    this.monthList = range(0, 12).map((index) => ({
+      label: moment().month(index).format('MMMM'),
       value: index,
     }));
     this.state = {
@@ -109,16 +120,20 @@ class CreateTimesheets extends Component<Props, State> {
     }
   }
 
-  _updateStateForEditMode = props => {
+  _updateStateForEditMode = (props) => {
     const timesheet = get(props, 'timeSheet.data', {});
     this._updateWeekPeriodDataState(
       props,
       timesheet,
-      get(props, 'match.params.id')
+      get(props, 'match.params.id'),
     );
   };
 
-  _updateWeekPeriodDataState = (props, timesheet, alreadySavedTimesheetId) => {
+  _updateWeekPeriodDataState = (
+    props,
+    timesheet,
+    alreadySavedTimesheetId = '',
+  ) => {
     let { weekPeriodData, currentWeekPeriod }: any = this.state;
     weekPeriodData = weekPeriodData || {};
     const timeSheetEntries = get(timesheet, 'timeSheetEntries', []);
@@ -196,14 +211,14 @@ class CreateTimesheets extends Component<Props, State> {
     }
   };
 
-  _getWeekPeriodId = weekPeriod => {
+  _getWeekPeriodId = (weekPeriod) => {
     const startDay = moment(weekPeriod.startWeekDay).format('YYYY-MM-DD');
     const endDay = moment(weekPeriod.endWeekDay).format('YYYY-MM-DD');
     const id = `${startDay}__${endDay}`;
     return { id, startDay, endDay };
   };
 
-  _onWeekPeriodChange = async currentWeekPeriod => {
+  _onWeekPeriodChange = async (currentWeekPeriod) => {
     const { weekPeriodData }: any = this.state;
     const { id, startDay, endDay } = this._getWeekPeriodId(currentWeekPeriod);
     const { profile }: any = this.props;
@@ -266,7 +281,7 @@ class CreateTimesheets extends Component<Props, State> {
     return hasData;
   };
 
-  _isWeekPeriodEmpty = weekPeriod => {
+  _isWeekPeriodEmpty = (weekPeriod) => {
     const timesheetRows = get(weekPeriod, 'timesheetRows', {});
     const values = Object.values(timesheetRows);
     let hasData = false;
@@ -308,15 +323,15 @@ class CreateTimesheets extends Component<Props, State> {
             let parsedTimeSheetRes;
             // we only need to upload file which is object of File i.e. which user uploaded in this session
             const attachments = get(weekPeriod, 'attachedFiles', [])
-              .filter(file => file instanceof File)
-              .map(file => file);
+              .filter((file) => file instanceof File)
+              .map((file) => file);
             // Prepare timesheet data to save
             let dataToSave: any = {
               endsAt: moment(weekPeriod.endWeekDay).format(
-                DATE_TIME_API_FORMAT
+                DATE_TIME_API_FORMAT,
               ),
               startsAt: moment(weekPeriod.startWeekDay).format(
-                DATE_TIME_API_FORMAT
+                DATE_TIME_API_FORMAT,
               ),
               status: isDraft
                 ? TIMESHEET_STATUS.DRAFT
@@ -337,7 +352,7 @@ class CreateTimesheets extends Component<Props, State> {
             // if there are timesheet rows in weekperiod
             if (!isEmpty(weekPeriod.timesheetRows)) {
               const timesheetRows: any = Object.values(
-                weekPeriod.timesheetRows
+                weekPeriod.timesheetRows,
               );
               // iterate through all timesheet row
               for (let i = 0; i < timesheetRows.length; i++) {
@@ -437,7 +452,7 @@ class CreateTimesheets extends Component<Props, State> {
                 finalisingTimesheet: false,
                 showFinaliseModal: false,
               });
-              parsedTimeSheetRes.error.map(err => showToast(err));
+              parsedTimeSheetRes.error.map((err) => showToast(err));
               return;
             }
           }
@@ -446,7 +461,7 @@ class CreateTimesheets extends Component<Props, State> {
       if (!isDraft) {
         showToast(
           null,
-          `Timesheets ${isEditMode ? 'updated' : 'saved'} successfully`
+          `Timesheets ${isEditMode ? 'updated' : 'saved'} successfully`,
         );
         if (get(selectedCompany, 'timeSheetSettings.approvalsEnabled')) {
           this._showApprovalModal(timeSheetsId);
@@ -456,7 +471,9 @@ class CreateTimesheets extends Component<Props, State> {
       } else {
         showToast(
           null,
-          !isEditMode ? 'Timesheet saved as a draft' : `Timesheet draft updated`
+          !isEditMode
+            ? 'Timesheet saved as a draft'
+            : `Timesheet draft updated`,
         );
         this.props.history.push(URL.MY_DRAFT_TIMESHEETS());
       }
@@ -478,7 +495,7 @@ class CreateTimesheets extends Component<Props, State> {
     });
   };
 
-  _showApprovalModal = timeSheetsId => {
+  _showApprovalModal = (timeSheetsId) => {
     this.setState({
       showApprovalModal: true,
       approvalTimesheets: timeSheetsId,
@@ -493,14 +510,10 @@ class CreateTimesheets extends Component<Props, State> {
   };
 
   _getWeekNumberFromMonth = (month, year) => {
-    return moment()
-      .month(month)
-      .year(year)
-      .date(1)
-      .week();
+    return moment().month(month).year(year).date(1).week();
   };
 
-  _updateWeekPeriod = data => {
+  _updateWeekPeriod = (data) => {
     const { currentWeekPeriod, weekPeriodData }: any = this.state;
     const { id } = this._getWeekPeriodId(currentWeekPeriod);
     if (data.timesheetRows) {
@@ -649,7 +662,8 @@ class CreateTimesheets extends Component<Props, State> {
       <SelectedCompany
         onChange={() => {
           this.props.history.push(URL.TIMESHEETS());
-        }}>
+        }}
+      >
         <div className={classes.page}>
           <div className={classes.content}>
             {this._renderSectionHeading()}
@@ -657,7 +671,7 @@ class CreateTimesheets extends Component<Props, State> {
               <PeriodSelection
                 currentWeekPeriod={currentWeekPeriod}
                 onWeekPeriodChange={this._onWeekPeriodChange}
-                onUpdateCurrentWeekPeriod={currentWeekPeriod => {
+                onUpdateCurrentWeekPeriod={(currentWeekPeriod) => {
                   this.setState({
                     currentWeekPeriod,
                   });
@@ -695,40 +709,40 @@ export default compose(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withProps(props => ({
+  withProps((props) => ({
     isEditMode: Boolean(get(props, 'match.params.id')),
   })),
-  withUpdateTimeSheet(),
-  withCreateTimeSheet(),
-  withCustomers(() => ({
-    variables: {
-      where: {
-        isArchived: false,
-      },
-      orderBy: 'name_ASC',
-    },
-  })),
-  withServices(() => ({
-    variables: {
-      where: {
-        isArchived: false,
-        isTemplate: true,
-        billingType: SERVICE_BILLING_TYPE.TIME_BASED,
-      },
-      orderBy: 'name_ASC',
-    },
-  })),
-  withProjects(() => ({
-    variables: {
-      where: {
-        isArchived: false,
-      },
-    },
-  })),
-  withTimeSheet(props => ({
-    id: get(props, 'match.params.id'),
-  })),
-  withTimeSheets(() => ({
-    skip: true,
-  }))
+  // withUpdateTimeSheet(),
+  // withCreateTimeSheet(),
+  // withCustomers(() => ({
+  //   variables: {
+  //     where: {
+  //       isArchived: false,
+  //     },
+  //     orderBy: 'name_ASC',
+  //   },
+  // })),
+  // withServices(() => ({
+  //   variables: {
+  //     where: {
+  //       isArchived: false,
+  //       isTemplate: true,
+  //       billingType: SERVICE_BILLING_TYPE.TIME_BASED,
+  //     },
+  //     orderBy: 'name_ASC',
+  //   },
+  // })),
+  // withProjects(() => ({
+  //   variables: {
+  //     where: {
+  //       isArchived: false,
+  //     },
+  //   },
+  // })),
+  // withTimeSheet((props) => ({
+  //   id: get(props, 'match.params.id'),
+  // })),
+  // withTimeSheets(() => ({
+  //   skip: true,
+  // })),
 )(CreateTimesheets);

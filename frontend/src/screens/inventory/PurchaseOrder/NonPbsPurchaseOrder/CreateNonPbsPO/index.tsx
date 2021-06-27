@@ -1,19 +1,19 @@
-import * as React from 'react';
-import { withStyles, WizardSteps, URL } from '@kudoo/components';
+import { WizardSteps, withStyles } from '@kudoo/components';
 import findIndex from 'lodash/findIndex';
-import uuid from 'uuid/v4';
+import * as React from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import uuid from 'uuid/v4';
 import styles from '../../PurchaseOrder/styles';
 import { POSTATUS } from '../../PurchaseOrder/types';
-import PreviewPurchaseOrder from './PreviewPurchaseOrder';
-import CreatePurchaseOrderLine from './CreatePurchaseOrderLine';
 import CreatePurchaseOrder from './CreatePurchaseOrder';
+import CreatePurchaseOrderLine from './CreatePurchaseOrderLine';
 import {
   INONPbsPOProps,
   INONPbsPOState,
   IPurchaseOrderData,
 } from './NonPBSPOtypes';
+import PreviewPurchaseOrder from './PreviewPurchaseOrder';
 
 class CreateNonPbsPo extends React.Component<INONPbsPOProps, INONPbsPOState> {
   public isPbsPO = false;
@@ -190,5 +190,5 @@ export default compose(
   connect((state: { profile: object }) => ({
     profile: state.profile,
   })),
-  withStyles(styles)
+  withStyles(styles),
 )(CreateNonPbsPo);

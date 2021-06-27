@@ -1,18 +1,17 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import { Trans } from '@lingui/react';
 import {
-  Table,
-  withStyles,
-  composeStyles,
   Button,
-  SectionHeader,
   ErrorBoundary,
+  SectionHeader,
+  Table,
   ToggleButton,
-  withStylesProps,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import withTabContainer from './TabContainer';
+import { Trans } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import React, { Component } from 'react';
 import styles, { ActiveServicesStyles as ASStyles } from './styles';
+import withTabContainer from './TabContainer';
 
 // Presentational Component
 type Props = {
@@ -31,7 +30,7 @@ type Props = {
   columns: any;
 };
 class ActiveServices extends Component<Props, {}> {
-  _showArchiveDialog = service => {
+  _showArchiveDialog = (service) => {
     const { theme } = this.props;
     const title = 'Archive service?';
     const description = (
@@ -93,7 +92,8 @@ class ActiveServices extends Component<Props, {}> {
           onClick={() => {
             this.props.goToEditService(row.id);
           }}
-          className={classes.nameValueCell}>
+          className={classes.nameValueCell}
+        >
           {ele}
         </div>
       );
@@ -130,7 +130,7 @@ class ActiveServices extends Component<Props, {}> {
           cellRenderer={this._renderCell}
           loading={this.props.fetchingServices}
           onBottomReachedThreshold={500}
-          onBottomReached={el => {
+          onBottomReached={() => {
             if (!this.props.fetchingServices) {
               this.props.onLoadMore();
             }
@@ -153,7 +153,7 @@ class ActiveServices extends Component<Props, {}> {
   }
 }
 const StyledComponent = withStyles(composeStyles(styles, ASStyles))(
-  ActiveServices
+  ActiveServices,
 );
 
 export default withTabContainer({ type: 'active-services' })(StyledComponent);

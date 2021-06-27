@@ -1,7 +1,7 @@
 import idx from 'idx';
 import { handleActions } from 'redux-actions';
-import Types from '../types/profile';
 import { ICompanyEntity } from '../types';
+import Types from '../types/profile';
 
 export interface IProfileState {
   email: string;
@@ -44,7 +44,7 @@ export default handleActions(
       ...state,
       ...action.payload,
     }),
-    [Types.RESET_USER_DATA]: (state: IProfileState, action: IAction) => ({
+    [Types.RESET_USER_DATA]: () => ({
       ...initialState,
     }),
     [Types.SELECT_COMPANY]: (state: IProfileState, action: IAction) => ({
@@ -52,11 +52,11 @@ export default handleActions(
       selectedCompany: action.payload,
     }),
     [Types.SET_ONLY_TOKEN]: (state: IProfileState, action: IAction) => ({
-      token: idx(action, _ => _.payload.token),
+      token: idx(action, (_) => _.payload.token),
     }),
-    [Types.LOGOUT_USER]: (state: IProfileState, action: IAction) => ({
+    [Types.LOGOUT_USER]: () => ({
       ...initialState,
     }),
   },
-  initialState
+  initialState,
 ) as IProfileState;

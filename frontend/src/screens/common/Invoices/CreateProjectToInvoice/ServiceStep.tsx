@@ -1,31 +1,28 @@
-import React, { Component } from 'react';
-import { withI18n, Trans } from '@lingui/react';
-import get from 'lodash/get';
-import find from 'lodash/find';
-import isEqual from 'lodash/isEqual';
-import Grid from '@material-ui/core/Grid';
 import {
-  Table,
-  withStyles,
-  composeStyles,
   Button,
-  SectionHeader,
   Checkbox,
+  SectionHeader,
+  Table,
   TextField,
-  withStylesProps,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
+import { Trans, withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import idx from 'idx';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { showToast } from '@client/helpers/toast';
-import * as actions from '@client/store/actions/createNewInvoice';
-import { withProject, withInvoices } from '@kudoo/graphql';
 import {
-  SERVICE_BILLING_TYPE,
   PROJECT_SERVICE_RULES_TYPE,
-} from '@client/helpers/constants';
-import { any } from 'prop-types';
-import { IReduxState } from '@client/store/reducers';
-import idx from 'idx';
+  SERVICE_BILLING_TYPE,
+} from 'src/helpers/constants';
+import { showToast } from 'src/helpers/toast';
+import * as actions from 'src/store/actions/createNewInvoice';
+import { IReduxState } from 'src/store/reducers';
 import styles, { serviceStepStyles } from './styles';
 
 type Props = {
@@ -48,6 +45,11 @@ type State = {
 };
 
 class ServiceStep extends Component<Props, State> {
+  static defaultProps = {
+    invoices: { data: [] },
+    project: { data: {} },
+  };
+
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -81,26 +83,26 @@ class ServiceStep extends Component<Props, State> {
     if (
       !isEqual(
         get(prevProps, 'project.data'),
-        get(this.props, 'project.data')
+        get(this.props, 'project.data'),
       ) ||
       !isEqual(
         get(prevProps, 'invoices.data'),
-        get(this.props, 'invoices.data')
+        get(this.props, 'invoices.data'),
       )
     ) {
       this._updateDisplayServices(this.props);
     }
   }
 
-  _updateDisplayServices = props => {
+  _updateDisplayServices = (props) => {
     const { i18n, newInvoice, project, invoices } = props;
     const invoiceItems = get(invoices, 'data', []).reduce(
       (acc, invoice) => [].concat(acc, invoice.items || []),
-      []
+      [],
     );
     let projectServices = get(project, 'data.projectService', []);
     projectServices = projectServices.filter(
-      pSer => pSer.service.billingType === SERVICE_BILLING_TYPE.FIXED
+      (pSer) => pSer.service.billingType === SERVICE_BILLING_TYPE.FIXED,
     );
     const displayedServices: any = [];
     for (let index = 0; index < projectServices.length; index++) {
@@ -113,7 +115,7 @@ class ServiceStep extends Component<Props, State> {
       let amountEditable = false;
       let remainder = 0;
       const serviceHookups =
-        (invoiceItems || []).filter(item => item.service.id === service.id) ||
+        (invoiceItems || []).filter((item) => item.service.id === service.id) ||
         [];
       if (serviceHookups.length >= 2) {
         // if there are 2 hookups means service is invoiced completely
@@ -173,7 +175,7 @@ class ServiceStep extends Component<Props, State> {
     this.props.updateTableData('project', displayedServices);
   };
 
-  _updateSelectedServiceSelection = row => {
+  _updateSelectedServiceSelection = (row) => {
     const { newInvoice } = this.props;
     const tableData = get(newInvoice, 'project.tableData', []);
     const foundRow = find(tableData, { id: row.id });
@@ -191,7 +193,7 @@ class ServiceStep extends Component<Props, State> {
 
     if (Number(amount) > Number(row.maxAmount)) {
       showToast(
-        `You are trying to enter amount which is more than ${row.maxAmount}`
+        `You are trying to enter amount which is more than ${row.maxAmount}`,
       );
       amount = amount.substr(0, amount.length - 1);
     }
@@ -245,7 +247,7 @@ class ServiceStep extends Component<Props, State> {
               textInput: classes.gstTextInput,
             }}
             isReadOnly={!row.amountEditable}
-            onChangeText={value => {
+            onChangeText={(value) => {
               this._onUpdateAmount(row, value);
             }}
           />
@@ -327,18 +329,21 @@ class ServiceStep extends Component<Props, State> {
           <div className={classes.selectedProjectInfo}>
             <div
               className={classes.selectedProjectName}
-              data-test='customer-name'>
+              data-test='customer-name'
+            >
               {get(customer, 'name', '')}
             </div>
             <div
               className={classes.selectedProjectContact}
-              data-test='contact-name'>
+              data-test='contact-name'
+            >
               {get(customer, 'contactName', '')}{' '}
               {get(customer, 'contactSurname', '')}
             </div>
             <div
               className={classes.selectedProjectEmail}
-              data-test='contact-email'>
+              data-test='contact-email'
+            >
               {get(customer, 'email', '')}
             </div>
           </div>
@@ -367,28 +372,28 @@ export default compose<any, any>(
   connect(
     (state: IReduxState) => ({
       profile: state.profile,
-      newInvoice: idx(state, x => x.sessionData.newInvoice),
+      newInvoice: idx(state, (x) => x.sessionData.newInvoice),
     }),
     {
       ...actions,
-    }
+    },
   ),
-  withProject(props => {
-    return {
-      id: get(props, 'newInvoice.project.project.id', ''),
-    };
-  }),
-  withInvoices(props => {
-    return {
-      variables: {
-        where: {
-          items_every: {
-            project: {
-              id: get(props, 'newInvoice.project.project.id', ''),
-            },
-          },
-        },
-      },
-    };
-  })
+  // withProject((props) => {
+  //   return {
+  //     id: get(props, 'newInvoice.project.project.id', ''),
+  //   };
+  // }),
+  // withInvoices((props) => {
+  //   return {
+  //     variables: {
+  //       where: {
+  //         items_every: {
+  //           project: {
+  //             id: get(props, 'newInvoice.project.project.id', ''),
+  //           },
+  //         },
+  //       },
+  //     },
+  //   };
+  // }),
 )(ServiceStep);

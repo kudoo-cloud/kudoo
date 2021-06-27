@@ -1,4 +1,4 @@
-export default theme => ({
+export default (theme) => ({
   page: {
     padding: '0px 20px 20px',
   },

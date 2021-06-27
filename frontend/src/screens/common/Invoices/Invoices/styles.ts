@@ -1,4 +1,4 @@
-export default theme => ({
+export default () => ({
   page: {
     flex: 1,
     display: 'flex',
@@ -9,7 +9,7 @@ export default theme => ({
   },
 });
 
-export const UnpaidInvoicesTabStyles = theme => ({
+export const UnpaidInvoicesTabStyles = (theme) => ({
   page: {
     flex: 1,
     display: 'flex',

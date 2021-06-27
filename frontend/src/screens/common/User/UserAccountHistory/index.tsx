@@ -1,11 +1,10 @@
-import React, { Component } from 'react';
 import {
-  withStyles,
   ErrorBoundary,
-  Table,
   SectionHeader,
-  withRouterProps,
+  Table,
+  withStyles,
 } from '@kudoo/components';
+import React, { Component } from 'react';
 // import { type ColumnFlowType } from 'components/Table/types';
 import styles from './styles';
 

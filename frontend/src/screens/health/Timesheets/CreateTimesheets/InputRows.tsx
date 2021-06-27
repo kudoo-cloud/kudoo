@@ -1,11 +1,9 @@
+import { Button, withStyles } from '@kudoo/components';
 import * as React from 'react';
 import { compose } from 'recompose';
-import { Button, withStyles, withStylesProps } from '@kudoo/components';
-import { withUpdateTimeSheet } from '@kudoo/graphql';
 import uuid from 'uuid';
-import { any } from 'prop-types';
-import TimesheetInputRow from './TimesheetInputRow';
 import styles from './styles';
+import TimesheetInputRow from './TimesheetInputRow';
 
 type Props = {
   onUpdateRows: any;
@@ -16,6 +14,7 @@ type State = {};
 class InputRows extends React.Component<Props, State> {
   static defaultProps = {
     timesheetRows: {},
+    updateTimeSheet: () => {},
   };
 
   _onAddNewTimesheetRow = () => {
@@ -25,7 +24,7 @@ class InputRows extends React.Component<Props, State> {
     this.props.onUpdateRows({ timesheetRows: newTimeSheetRows });
   };
 
-  _onTimeSheetRowUpdate = key => data => {
+  _onTimeSheetRowUpdate = (key) => (data) => {
     const { timesheetRows }: any = this.props;
     const newTimeSheetRows = { ...timesheetRows };
     newTimeSheetRows[key] = {
@@ -35,7 +34,7 @@ class InputRows extends React.Component<Props, State> {
     this.props.onUpdateRows({ timesheetRows: newTimeSheetRows });
   };
 
-  _onRemoveTimesheetRow = key => () => {
+  _onRemoveTimesheetRow = (key) => () => {
     const {
       timesheetRows,
       theme,
@@ -70,7 +69,7 @@ class InputRows extends React.Component<Props, State> {
             const deleteRows = Object.values(row.entries).map(
               ({ id }: any) => ({
                 id,
-              })
+              }),
             );
             // delete timesheet entries from db
             await updateTimeSheet({
@@ -155,5 +154,5 @@ class InputRows extends React.Component<Props, State> {
 
 export default compose<any, any>(
   withStyles(styles),
-  withUpdateTimeSheet()
+  // withUpdateTimeSheet(),
 )(InputRows);

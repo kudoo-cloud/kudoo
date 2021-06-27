@@ -1,17 +1,12 @@
-import React, { Component } from 'react';
 import idx from 'idx';
-import isEqual from 'lodash/isEqual';
 import find from 'lodash/find';
+import isEqual from 'lodash/isEqual';
+import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import { withRouterProps } from '@kudoo/components';
-import {
-  withCustomers,
-  withUpdateCustomer,
-  withDeleteCustomer,
-} from '@kudoo/graphql';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { showToast } from '@client/helpers/toast';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import { IReduxState } from 'src/store/reducers';
 
 type Props = {
   actions: any;
@@ -33,10 +28,17 @@ type State = {
 class TabContainer extends Component<Props, State> {
   // data: Array<Object>;
 
+  static defaultProps = {
+    customers: { data: [] },
+    archiveCustomer: () => ({}),
+    unArchiveCustomer: () => ({}),
+    deleteCustomer: () => ({}),
+  };
+
   constructor(props: Props) {
     super(props);
     this.state = {
-      displayedCustomers: idx(props, _ => _.customers.data),
+      displayedCustomers: idx(props, (_) => _.customers.data),
       columns: [
         {
           id: 'name',
@@ -59,8 +61,8 @@ class TabContainer extends Component<Props, State> {
   }
 
   componentDidUpdate(prevProps) {
-    const oldCustomers = idx(prevProps, _ => _.customers.data) || [];
-    const newCustomers = idx(this.props, _ => _.customers.data) || [];
+    const oldCustomers = idx(prevProps, (_) => _.customers.data) || [];
+    const newCustomers = idx(this.props, (_) => _.customers.data) || [];
     if (!isEqual(oldCustomers, newCustomers)) {
       this._updateCustomers(newCustomers);
     }
@@ -72,7 +74,7 @@ class TabContainer extends Component<Props, State> {
     });
   }
 
-  _onSortRequested = async column => {
+  _onSortRequested = async (column) => {
     const columns = this.state.columns;
     const sortedColumn = find(columns, { sorted: true });
     const columnGoingToBeSorted = find(columns, { id: column.id });
@@ -97,7 +99,7 @@ class TabContainer extends Component<Props, State> {
     });
   };
 
-  _onArchiveCustomer = async customer => {
+  _onArchiveCustomer = async (customer) => {
     try {
       const res = await this.props.archiveCustomer({
         where: { id: customer.id },
@@ -107,7 +109,7 @@ class TabContainer extends Component<Props, State> {
         showToast(null, 'Customer archived successfully');
         this.props.customers.refetch();
       } else {
-        res.error(err => showToast(err));
+        res.error((err) => showToast(err));
       }
     } catch (e) {
       showToast('Something went wrong');
@@ -115,7 +117,7 @@ class TabContainer extends Component<Props, State> {
     }
   };
 
-  _onUnarchiveCustomer = async customer => {
+  _onUnarchiveCustomer = async (customer) => {
     try {
       const res = await this.props.unArchiveCustomer({
         where: { id: customer.id },
@@ -125,7 +127,7 @@ class TabContainer extends Component<Props, State> {
         showToast(null, 'Customer activated successfully');
         this.props.customers.refetch();
       } else {
-        res.error(err => showToast(err));
+        res.error((err) => showToast(err));
       }
     } catch (e) {
       showToast('Something went wrong');
@@ -133,7 +135,7 @@ class TabContainer extends Component<Props, State> {
     }
   };
 
-  _onRemoveCustomer = async customer => {
+  _onRemoveCustomer = async (customer) => {
     try {
       const res = await this.props.deleteCustomer({
         where: { id: customer.id },
@@ -142,7 +144,7 @@ class TabContainer extends Component<Props, State> {
         showToast(null, 'Customer deleted successfully');
         this.props.customers.refetch();
       } else {
-        res.error(err => showToast(err));
+        res.error((err) => showToast(err));
       }
     } catch (e) {
       showToast('Something went wrong');
@@ -150,7 +152,7 @@ class TabContainer extends Component<Props, State> {
     }
   };
 
-  _searchCustomer = async text => {
+  _searchCustomer = async (text) => {
     this.props.customers.refetch({
       where: {
         name_contains: text ? text : undefined,
@@ -182,26 +184,26 @@ class TabContainer extends Component<Props, State> {
 }
 
 export default compose(
-  connect(state => ({ profile: state.profile })),
-  withCustomers(({ profile, type }) => {
-    let isArchived = false;
-    if (type === 'archived-customers') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  }),
-  withDeleteCustomer(),
-  withUpdateCustomer(() => ({
-    name: 'archiveCustomer',
-  })),
-  withUpdateCustomer(() => ({
-    name: 'unArchiveCustomer',
-  }))
+  connect((state: IReduxState) => ({ profile: state.profile })),
+  // withCustomers(({ type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-customers') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
+  // withDeleteCustomer(),
+  // withUpdateCustomer(() => ({
+  //   name: 'archiveCustomer',
+  // })),
+  // withUpdateCustomer(() => ({
+  //   name: 'unArchiveCustomer',
+  // })),
 )(TabContainer);

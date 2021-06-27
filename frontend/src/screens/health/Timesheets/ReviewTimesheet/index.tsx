@@ -1,26 +1,23 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import get from 'lodash/get';
-import merge from 'lodash/merge';
-import isEmpty from 'lodash/isEmpty';
-import moment from 'moment';
-import { connect } from 'react-redux';
-import { compose } from 'react-apollo';
 import {
-  withStyles,
-  SectionHeader,
   Button,
   FieldLabel,
-  TimesheetRowDisplay,
   FileBlock,
-  withRouterProps,
-  withStylesProps,
+  SectionHeader,
+  TimesheetRowDisplay,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { withTimeSheet, withUpdateTimeSheet } from '@kudoo/graphql';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { TIMESHEET_STATUS } from '@client/helpers/constants';
-import { showToast } from '@client/helpers/toast';
+import Grid from '@material-ui/core/Grid';
+import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import merge from 'lodash/merge';
+import moment from 'moment';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import { TIMESHEET_STATUS } from 'src/helpers/constants';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import styles from './styles';
 
 type Props = {
@@ -35,6 +32,15 @@ type Props = {
 type State = {};
 
 class ReviewTimesheet extends Component<Props, State> {
+  static defaultProps = {
+    updateTimeSheet: () => ({}),
+    timeSheet: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+  };
+
   componentDidMount() {
     this.props.actions.updateHeaderTitle('Timesheets');
   }
@@ -43,7 +49,7 @@ class ReviewTimesheet extends Component<Props, State> {
     const { timeSheet } = this.props;
     const entries = get(timeSheet, 'data.timeSheetEntries') || [];
     const timesheetRows = {};
-    entries.forEach(entry => {
+    entries.forEach((entry) => {
       const projectCustomerId =
         get(entry, 'project.id') || get(entry, 'customer.id');
       const serviceId = get(entry, 'service.id');
@@ -87,7 +93,7 @@ class ReviewTimesheet extends Component<Props, State> {
       if (res.success) {
         showToast(null, 'Timesheet Approved');
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (error) {
       showToast(error.toString());
@@ -108,7 +114,7 @@ class ReviewTimesheet extends Component<Props, State> {
       if (res.success) {
         showToast(null, 'Timesheet UnApproved');
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (error) {
       showToast(error.toString());
@@ -316,7 +322,8 @@ class ReviewTimesheet extends Component<Props, State> {
       <SelectedCompany
         onChange={() => {
           this.props.history.push(URL.TIMESHEETS());
-        }}>
+        }}
+      >
         <div className={classes.page}>
           <div className={classes.content}>
             {this._renderSectionHeading()}
@@ -336,8 +343,8 @@ export default compose(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withTimeSheet(props => ({
-    id: get(props, 'match.params.id'),
-  })),
-  withUpdateTimeSheet()
+  // withTimeSheet((props) => ({
+  //   id: get(props, 'match.params.id'),
+  // })),
+  // withUpdateTimeSheet(),
 )(ReviewTimesheet);
