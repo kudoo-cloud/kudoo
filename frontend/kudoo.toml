@@ -131,7 +131,7 @@
     [apps.health]
         key = "Health"
         value = "health"
-        isAvailable = true
+        isAvailable = false
         [apps.health.menu]
             [apps.health.menu.dashboard]
                 name = "Dashboard"
@@ -174,7 +174,7 @@
     [apps.manufacturing]
         key = "Manufacturing"
         value = "manufacturing"
-        isAvailable = true
+        isAvailable = false
         [apps.manufacturing.menu]
             [apps.manufacturing.menu.dashboard]
                 name = "Dashboard"
