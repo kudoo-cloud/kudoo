@@ -1,7 +1,7 @@
 import { SimpleCreatePageProps, StyleKeys } from './types';
 
 export default (
-  theme: Theme
+  theme: Theme,
 ): StyleFnReturnType<StyleKeys, SimpleCreatePageProps> => ({
   page: {
     flex: 1,

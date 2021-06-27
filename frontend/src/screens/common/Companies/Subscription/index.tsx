@@ -1,37 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import contents from '../../../../../kudoo.toml';
-import { compose } from 'recompose';
 import {
-  withStyles,
-  ErrorBoundary,
-  TextField,
-  SectionHeader,
-  License,
   Button,
+  ErrorBoundary,
+  License,
+  SectionHeader,
+  TextField,
+  withStyles,
 } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import { withInvoices, withUpdateCompany } from '@kudoo/graphql';
-import { INVOICE_STATUS } from '@client/helpers/constants';
-import { showToast } from '@client/helpers/toast';
-import get from 'lodash/get';
-import { connect } from 'react-redux';
 import idx from 'idx';
-import { ICompanyEntity } from '@client/store/types';
-import useDeepCompareEffect from '@client/helpers/useDeepCompareEffect';
-import { IReduxState } from '@client/store/reducers';
+// import get from 'lodash/get';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+// import { INVOICE_STATUS } from 'src/helpers/constants';
+import { showToast } from 'src/helpers/toast';
+import useDeepCompareEffect from 'src/helpers/useDeepCompareEffect';
+import { IReduxState } from 'src/store/reducers';
+import { ICompanyEntity } from 'src/store/types';
 import PaymentModal from './PaymentModal';
 import styles, { StylesKeys } from './styles';
 
 type IProps = IRouteProps<StylesKeys> & {
-  company: ICompanyEntity;
-  contentHash: string;
-  paidInvoices: {
+  company?: ICompanyEntity;
+  contentHash?: string;
+  paidInvoices?: {
     total: number;
     count: number;
     refetch: () => void;
     loading: boolean;
   };
-  updateCompany: Function;
+  updateCompany?: Function;
 };
 
 type SelectedTierType = {
@@ -45,7 +43,7 @@ type SelectedTierType = {
   };
 };
 
-const UserDetails: React.FC<IProps> = props => {
+const UserDetails: React.FC<IProps> = (props) => {
   const { classes, theme, paidInvoices, company, updateCompany } = props;
 
   const [selectedPlan, setSelectedPlan] = useState(0);
@@ -55,18 +53,19 @@ const UserDetails: React.FC<IProps> = props => {
   const isDirty = initialSelectedPlan !== selectedPlan;
 
   useEffect(() => {
-    const activePlanType = idx(company, x => x.activePlan.type);
+    const activePlanType = idx(company, (x) => x.activePlan.type);
     getInitialData();
     selectPlan(activePlanType);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useDeepCompareEffect(() => {
-    const activePlanType = idx(company, x => x.activePlan.type);
+    const activePlanType = idx(company, (x) => x.activePlan.type);
     getInitialData();
     selectPlan(activePlanType);
   }, [company]);
 
-  const selectPlan = type => {
+  const selectPlan = (type) => {
     let selectedPlan = 0;
     if (type === 'FREE') {
       selectedPlan = 0;
@@ -103,14 +102,14 @@ const UserDetails: React.FC<IProps> = props => {
     if (res.success) {
       showToast(null, 'Plan updated successfully');
     } else {
-      (idx(res, x => x.error) || []).forEach(err => {
+      (idx(res, (x) => x.error) || []).forEach((err) => {
         showToast(err);
       });
     }
   };
 
   const onClickSubscribe = () => {
-    if (idx(selectedTier, x => x.tier.type) === 'FREE') {
+    if (idx(selectedTier, (x) => x.tier.type) === 'FREE') {
       // if user selects free tier then dont show payment modal
       onPaymentDone();
     } else {
@@ -135,11 +134,11 @@ const UserDetails: React.FC<IProps> = props => {
               label='Subscription Plan'
               isReadOnly
               disabled
-              value={idx(company, x => x.activePlan.type)}
+              value={idx(company, (x) => x.activePlan.type)}
             />
           </Grid>
         </Grid>
-        {idx(company, x => x.role) === 'OWNER' && (
+        {idx(company, (x) => x.role) === 'OWNER' && (
           <>
             <SectionHeader
               title='Available subscription plans'
@@ -210,39 +209,49 @@ const UserDetails: React.FC<IProps> = props => {
         visible={shouldShowPaymentModal}
         onClose={closePaymentModal}
         onPaymentComplete={onPaymentDone}
-        selectedPlanName={idx(selectedTier, x => x.tier.type) || ''}
+        selectedPlanName={idx(selectedTier, (x) => x.tier.type) || ''}
       />
     </ErrorBoundary>
   );
 };
 
+UserDetails.defaultProps = {
+  paidInvoices: {
+    total: 0,
+    count: 0,
+    refetch: () => ({}),
+    loading: false,
+  },
+  updateCompany: () => ({}),
+};
+
 export default compose<IProps, IProps>(
   withStyles(styles),
   connect((state: IReduxState) => ({ company: state.profile.selectedCompany })),
-  withInvoices(
-    () => ({
-      variables: {
-        where: {
-          status_in: [
-            INVOICE_STATUS.FULLY_PAID,
-            INVOICE_STATUS.PARTIALLY_PAID,
-            INVOICE_STATUS.UNPAID,
-          ],
-        },
-      },
-    }),
-    ({ data }) => {
-      const invoices = get(data, 'invoices.edges', []);
-      const count = get(data, 'invoices.aggregate.count');
-      return {
-        paidInvoices: {
-          total: invoices.reduce((acc, { node }) => acc + node.total, 0),
-          count,
-          refetch: data.refetch,
-          loading: data.loading,
-        },
-      };
-    }
-  ),
-  withUpdateCompany()
+  // withInvoices(
+  //   () => ({
+  //     variables: {
+  //       where: {
+  //         status_in: [
+  //           INVOICE_STATUS.FULLY_PAID,
+  //           INVOICE_STATUS.PARTIALLY_PAID,
+  //           INVOICE_STATUS.UNPAID,
+  //         ],
+  //       },
+  //     },
+  //   }),
+  //   ({ data }) => {
+  //     const invoices = get(data, 'invoices.edges', []);
+  //     const count = get(data, 'invoices.aggregate.count');
+  //     return {
+  //       paidInvoices: {
+  //         total: invoices.reduce((acc, { node }) => acc + node.total, 0),
+  //         count,
+  //         refetch: data.refetch,
+  //         loading: data.loading,
+  //       },
+  //     };
+  //   },
+  // ),
+  // withUpdateCompany(),
 )(UserDetails);

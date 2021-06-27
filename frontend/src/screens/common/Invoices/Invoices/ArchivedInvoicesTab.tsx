@@ -1,21 +1,19 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import {
+  ErrorBoundary,
+  Loading,
+  SectionHeader,
+  Table,
+  withStyles,
+} from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import isEmpty from 'lodash/isEmpty';
 import clone from 'lodash/clone';
 import find from 'lodash/find';
-import {
-  withStyles,
-  Table,
-  SectionHeader,
-  ErrorBoundary,
-  withRouterProps,
-  withStylesProps,
-  Loading,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import TabContainer from './TabContainer';
+import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import URL from 'src/helpers/urls';
 import { UnpaidInvoicesTabStyles } from './styles';
+import TabContainer from './TabContainer';
 
 type Props = {
   actions: any;
@@ -66,7 +64,7 @@ class ArchivedInvoicesTab extends Component<Props, State> {
     };
   }
 
-  _onRequestSort = column => {
+  _onRequestSort = (column) => {
     const { headerData } = this.state;
     const newHeaderData = clone(headerData);
     const sortedColumn = find(newHeaderData, { sorted: true });
@@ -85,7 +83,7 @@ class ArchivedInvoicesTab extends Component<Props, State> {
     this.props.onRequestSort(column, sortDirection);
   };
 
-  _showUnArchivedDialog = invoice => {
+  _showUnArchivedDialog = (invoice) => {
     const { theme } = this.props;
     const title = 'Unarchive Invoice?';
     const description = (
@@ -146,7 +144,8 @@ class ArchivedInvoicesTab extends Component<Props, State> {
           <Link
             to={URL.PREVIEW_INVOICE({ id: row.id })}
             target='_blank'
-            className={classes.invoiceLink}>
+            className={classes.invoiceLink}
+          >
             {row[column.id]}
           </Link>
         </div>
@@ -169,7 +168,7 @@ class ArchivedInvoicesTab extends Component<Props, State> {
             showAddIcon
             sortable
             cellRenderer={this._renderCell}
-            onAddClicked={item => {
+            onAddClicked={(item) => {
               this._showUnArchivedDialog(item);
             }}
             onRequestSort={this._onRequestSort}
@@ -207,7 +206,7 @@ const Styled = withStyles(UnpaidInvoicesTabStyles)(ArchivedInvoicesTab);
 
 const ArchivedTabContainer = (props: any) => (
   <TabContainer {...props} invoiceType='archived'>
-    {childProps => <Styled {...childProps} />}
+    {(childProps) => <Styled {...childProps} />}
   </TabContainer>
 );
 

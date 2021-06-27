@@ -1,9 +1,8 @@
+import { ErrorBoundary } from '@kudoo/components';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { ErrorBoundary, withRouterProps } from '@kudoo/components';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { withProjects } from '@kudoo/graphql';
+import SelectedCompany from 'src/helpers/SelectedCompany';
 
 type Props = {
   actions: any;
@@ -13,6 +12,14 @@ type Props = {
 type State = {};
 
 class TabContainer extends Component<Props, State> {
+  public static defaultProps = {
+    projects: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+  };
+
   state = {};
 
   render() {
@@ -31,22 +38,22 @@ export default compose<any, any>(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withProjects(props => {
-    let isArchived = false;
-    if (props.type === 'active') {
-      isArchived = false;
-    } else if (props.type === 'archived') {
-      isArchived = true;
-    } else if (props.type === 'draft') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  })
+  // withProjects((props) => {
+  //   let isArchived = false;
+  //   if (props.type === 'active') {
+  //     isArchived = false;
+  //   } else if (props.type === 'archived') {
+  //     isArchived = true;
+  //   } else if (props.type === 'draft') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
 )(TabContainer);

@@ -1,19 +1,18 @@
-import * as React from 'react';
+import {
+  Button,
+  ErrorBoundary,
+  SearchInput,
+  TextField,
+  ToggleButton,
+  withStyles,
+} from '@kudoo/components';
+import Grid from '@material-ui/core/Grid';
 import cx from 'classnames';
 import idx from 'idx';
 import find from 'lodash/find';
 import isEqual from 'lodash/isEqual';
-import Grid from '@material-ui/core/Grid';
 import range from 'lodash/range';
-import {
-  withStyles,
-  ToggleButton,
-  ErrorBoundary,
-  SearchInput,
-  TextField,
-  Button,
-  withStylesProps,
-} from '@kudoo/components';
+import * as React from 'react';
 import { JoinModalStyles } from './styles';
 
 type Props = {
@@ -51,26 +50,26 @@ class JoinModal extends React.Component<Props, State> {
   componentDidUpdate(prevProps) {
     if (
       !isEqual(
-        idx(this.props, _ => _.createdCompanies),
-        idx(prevProps, _ => _.createdCompanies)
+        idx(this.props, (_) => _.createdCompanies),
+        idx(prevProps, (_) => _.createdCompanies),
       ) ||
       !isEqual(
-        idx(this.props, _ => _.joinedCompanies),
-        idx(prevProps, _ => _.joinedCompanies)
+        idx(this.props, (_) => _.joinedCompanies),
+        idx(prevProps, (_) => _.joinedCompanies),
       ) ||
       !isEqual(
-        idx(this.props, _ => _.allCompanies.data),
-        idx(prevProps, _ => _.allCompanies.data)
+        idx(this.props, (_) => _.allCompanies.data),
+        idx(prevProps, (_) => _.allCompanies.data),
       )
     ) {
       this._updateShouldJoinCompaniesList(this.props);
     }
   }
 
-  _updateShouldJoinCompaniesList = nextProps => {
+  _updateShouldJoinCompaniesList = (nextProps) => {
     const { joinedCompanies, createdCompanies, allCompanies } = nextProps;
     let restCompanies = (idx(allCompanies, (_: any) => _.data) || []).filter(
-      company => {
+      (company) => {
         let found = false;
         if (!found) {
           found = find(createdCompanies || [], {
@@ -83,9 +82,9 @@ class JoinModal extends React.Component<Props, State> {
           });
         }
         return !found;
-      }
+      },
     );
-    restCompanies = restCompanies.map(company => ({
+    restCompanies = restCompanies.map((company) => ({
       ...company,
       label: company.name,
     }));
@@ -95,11 +94,11 @@ class JoinModal extends React.Component<Props, State> {
     });
   };
 
-  _onCompanySearch = text => {
+  _onCompanySearch = (text) => {
     const { restCompanies } = this.state;
     const arr = restCompanies.filter(
       (company: any) =>
-        company.label.toLowerCase().indexOf(text.toLowerCase()) > -1
+        company.label.toLowerCase().indexOf(text.toLowerCase()) > -1,
     );
     this.setState({ shouldJoinCompaniesList: arr });
   };
@@ -127,7 +126,7 @@ class JoinModal extends React.Component<Props, State> {
     }
   };
 
-  _onKeyUp = (e, index) => {
+  _onKeyUp = (e) => {
     const { currentFocusedInput } = this.state;
     if (e.keyCode === 37) {
       // Arrow left
@@ -138,7 +137,7 @@ class JoinModal extends React.Component<Props, State> {
     }
   };
 
-  _focus = index => {
+  _focus = (index) => {
     if (index >= 0 && index <= 5) {
       this.setState({ currentFocusedInput: index });
       this.inputRefs[index].focus();
@@ -166,18 +165,18 @@ class JoinModal extends React.Component<Props, State> {
         <div className={classes.joinCompanyFieldContent}>
           {joinCompanyTab === 0 ? (
             <Grid container spacing={8}>
-              {range(0, 6).map(number => (
+              {range(0, 6).map((number) => (
                 <Grid item xs={2} key={number}>
                   <TextField
                     placeholder={'-'}
-                    getRef={ref => {
+                    getRef={(ref) => {
                       this.inputRefs[number] = ref;
                     }}
                     value={code[number] || ''}
                     showClearIcon={false}
                     maxlength={1}
-                    onKeyUp={e => this._onKeyUp(e, number)}
-                    onChangeText={text => {
+                    onKeyUp={(e) => this._onKeyUp(e)}
+                    onChangeText={(text) => {
                       this._onChangeCode(text, number);
                     }}
                     classes={{ textInput: classes.accessCodeField }}
@@ -231,7 +230,8 @@ class JoinModal extends React.Component<Props, State> {
           className={cx(classes.modalWrapper, {
             visible: visible,
             hide: !visible,
-          })}>
+          })}
+        >
           <div className={classes.modal}>
             {this._renderTitle()}
             {this._renderContent()}

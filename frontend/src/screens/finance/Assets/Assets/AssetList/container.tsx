@@ -1,12 +1,11 @@
+import { ErrorBoundary } from '@kudoo/components';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
-import find from 'lodash/find';
-import { ErrorBoundary, withRouterProps } from '@kudoo/components';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { withAssets } from '@kudoo/graphql';
+import SelectedCompany from 'src/helpers/SelectedCompany';
 
 interface IProps {
   actions: any;
@@ -26,6 +25,7 @@ class AssetListContainer extends Component<IProps, IState> {
     assets: {
       refetch: () => {},
       loadNextPage: () => {},
+      data: [],
     },
   };
 
@@ -65,13 +65,13 @@ class AssetListContainer extends Component<IProps, IState> {
   }
 
   public _updateAssets(items) {
-    const data = items.map(item => {
+    const data = items.map((item) => {
       return { ...item };
     });
     this.setState({ displayedAssets: data });
   }
 
-  public _onRequestSort = async column => {
+  public _onRequestSort = async (column) => {
     const columns = this.state.columns;
     const sortedColumn = find(columns, { sorted: true });
     const columnGoingToBeSorted = find(columns, { id: column.id });
@@ -126,21 +126,21 @@ export default compose<any, any>(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withAssets(({ profile, type }) => {
-    let isArchived = false;
-    if (type === 'archived-assets') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-          company: {
-            id: profile.selectedCompany.id,
-          },
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  })
+  // withAssets(({ profile, type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-assets') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //         company: {
+  //           id: profile.selectedCompany.id,
+  //         },
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
 )(AssetListContainer);

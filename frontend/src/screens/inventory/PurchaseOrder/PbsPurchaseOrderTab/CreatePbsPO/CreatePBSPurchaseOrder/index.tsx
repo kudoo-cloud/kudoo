@@ -1,34 +1,39 @@
+import {
+  Button,
+  DatePicker,
+  ErrorBoundary,
+  SectionHeader,
+  composeStyles,
+  withStyles,
+} from '@kudoo/components';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
+import idx from 'idx';
+import { isEqual } from 'lodash';
 import * as React from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import URL from 'src/helpers/urls';
 import styles, {
   createPurchaseOrderStyles,
 } from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/styles';
-import { compose } from 'react-apollo';
-import { connect } from 'react-redux';
-import {
-  withRouterProps,
-  withStyles,
-  withStylesProps,
-  Checkbox,
-  DatePicker,
-  SectionHeader,
-  Button,
-  ErrorBoundary,
-  composeStyles,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { withPurchaseOrder } from '@kudoo/graphql';
-import Grid from '@material-ui/core/Grid';
-import idx from 'idx';
-import { isEqual } from 'lodash';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
 import { ICreatePBSPOProps, ICreatePBSPOState } from '../PBSPOtypes';
 
 class CreatePBSPurchaseOrder extends React.Component<
   ICreatePBSPOProps,
   ICreatePBSPOState
 > {
+  public static defaultProps = {
+    initialData: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+      pbsOrganisation: '',
+    },
+  };
+
   public state = {
     isEditMode: false,
   };
@@ -37,7 +42,7 @@ class CreatePBSPurchaseOrder extends React.Component<
     this.props.actions.updateHeaderTitle('PBS Purchase Order');
 
     this.setState({
-      isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+      isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
     });
   }
 
@@ -51,14 +56,14 @@ class CreatePBSPurchaseOrder extends React.Component<
     if (isEditMode && !isEqual(initialData.id, prevProps.initialData.id)) {
       const data = {
         id: defaultData.id
-          ? idx(defaultData, _ => _.id)
-          : idx(initialData, _ => _.id) || '',
+          ? idx(defaultData, (_) => _.id)
+          : idx(initialData, (_) => _.id) || '',
         date: defaultData.id
-          ? idx(defaultData, _ => _.date)
-          : idx(initialData, _ => _.date) || '',
+          ? idx(defaultData, (_) => _.date)
+          : idx(initialData, (_) => _.date) || '',
         pbsOrganisation: defaultData.id
-          ? idx(defaultData, _ => _.pbsOrganisation)
-          : idx(initialData, _ => _.pbsOrganisation) || '',
+          ? idx(defaultData, (_) => _.pbsOrganisation)
+          : idx(initialData, (_) => _.pbsOrganisation) || '',
       };
 
       this.props.setPurchaseOrderData({
@@ -100,7 +105,7 @@ class CreatePBSPurchaseOrder extends React.Component<
           <Grid item xs={12}>
             <DatePicker
               label='Purchase Order Date'
-              onDateChange={date => setFieldValue('date', date)}
+              onDateChange={(date) => setFieldValue('date', date)}
               value={values.date}
               error={touched.date && errors.date}
             />
@@ -162,13 +167,14 @@ class CreatePBSPurchaseOrder extends React.Component<
     return (
       <Formik
         initialValues={{
-          date: idx(defaultData, _ => _.date) || new Date(),
+          date: idx(defaultData, (_) => _.date) || new Date(),
         }}
         validationSchema={Yup.object().shape({
           date: Yup.date().required('Purchase Order Date is required'),
         })}
         enableReinitialize
-        onSubmit={this._submitForm}>
+        onSubmit={this._submitForm}
+      >
         {({
           values,
           errors,
@@ -205,7 +211,8 @@ class CreatePBSPurchaseOrder extends React.Component<
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.PURCHASE_ORDER());
-          }}>
+          }}
+        >
           {this._renderForm()}
         </SelectedCompany>
       </React.Fragment>
@@ -215,16 +222,16 @@ class CreatePBSPurchaseOrder extends React.Component<
 
 export default compose(
   withStyles(composeStyles(styles, createPurchaseOrderStyles)),
-  withPurchaseOrder(
-    props => {
-      const purchaseOrderId = idx(props, _ => _.match.params.id);
-      return {
-        id: purchaseOrderId,
-      };
-    },
-    ({ data }) => ({ initialData: idx(data, _ => _.purchaseOrder) || {} })
-  ),
+  // withPurchaseOrder(
+  //   (props) => {
+  //     const purchaseOrderId = idx(props, (_) => _.match.params.id);
+  //     return {
+  //       id: purchaseOrderId,
+  //     };
+  //   },
+  //   ({ data }) => ({ initialData: idx(data, (_) => _.purchaseOrder) || {} }),
+  // ),
   connect((state: { profile: any }) => ({
     profile: state.profile,
-  }))
+  })),
 )(CreatePBSPurchaseOrder);

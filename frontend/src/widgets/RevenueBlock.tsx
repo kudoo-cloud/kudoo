@@ -1,23 +1,21 @@
-import * as React from 'react';
-import cx from 'classnames';
-import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
-import range from 'lodash/range';
-import reverse from 'lodash/reverse';
-import pluralize from 'pluralize';
+import {
+  ErrorBoundary,
+  Loading,
+  composeStyles,
+  withStyles,
+} from '@kudoo/components';
 import { Trans, withI18n } from '@lingui/react';
 import { ResponsiveBar } from '@nivo/bar';
+import cx from 'classnames';
+// import get from 'lodash/get';
+// import isEqual from 'lodash/isEqual';
+// import range from 'lodash/range';
+import reverse from 'lodash/reverse';
+// import moment from 'moment';
 import numeral from 'numeral';
-import moment from 'moment';
+import pluralize from 'pluralize';
+import * as React from 'react';
 import { compose } from 'recompose';
-import {
-  withStyles,
-  composeStyles,
-  ErrorBoundary,
-  withStylesProps,
-  Loading,
-} from '@kudoo/components';
-import { withInvoices } from '@kudoo/graphql';
 import styles, { RevenueStyles } from './styles';
 
 type Props = {
@@ -38,24 +36,24 @@ class RevenueBlock extends React.Component<Props, State> {
     chartData: {},
   };
 
-  componentDidUpdate(prevProps) {
-    if (
-      !isEqual(get(this.props, 'contentHash'), get(prevProps, 'contentHash'))
-    ) {
-      if (this.props.refetch) {
-        this.props.refetch();
-      }
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   if (
+  //     !isEqual(get(this.props, 'contentHash'), get(prevProps, 'contentHash'))
+  //   ) {
+  //     if (this.props.refetch) {
+  //       this.props.refetch();
+  //     }
+  //   }
+  // }
 
   render() {
     const {
       classes,
       theme,
-      invoiceTotal,
-      chartData,
+      invoiceTotal = 0,
+      chartData = {},
       i18n,
-      loading,
+      loading = false,
     } = this.props;
 
     return (
@@ -93,12 +91,12 @@ class RevenueBlock extends React.Component<Props, State> {
                   left: 50,
                 }}
                 axisLeft={{
-                  format: value =>
+                  format: (value) =>
                     i18n._('currency-symbol') +
                     `${numeral(value).format('(0,00a)')}`,
                 }}
                 axisBottom={{
-                  format: value => ``,
+                  format: () => ``,
                 }}
                 padding={0.3}
                 colors={[theme.palette.primary.color1]}
@@ -139,60 +137,60 @@ class RevenueBlock extends React.Component<Props, State> {
 export default compose(
   withI18n(),
   withStyles(composeStyles(styles, RevenueStyles)),
-  withInvoices(
-    () => ({
-      variables: {
-        where: {
-          invoiceDate_gt: moment()
-            .subtract(12, 'months')
-            .startOf('month')
-            .format('YYYY-MM-DD'),
-        },
-      },
-    }),
-    ({ data }) => {
-      const chartData = {};
-      range(0, 13).map(index => {
-        const newMonth = moment().subtract(index, 'months');
-        const formattedMonth = newMonth.format('MMM');
-        const formattedYear = newMonth.format('YYYY');
-        const key = `${formattedMonth}-${formattedYear}`;
-        chartData[key] = {
-          month: formattedMonth,
-          year: formattedYear,
-          key,
-          total: 0,
-          count: 0,
-        };
-      });
-      const invoices = get(data, 'invoices.edges', []);
-      let invoiceTotal = 0;
-      invoices.map(({ node }) => {
-        invoiceTotal += Number(node.total);
-        const formattedMonth = moment(node.invoiceDate).format('MMM');
-        const formattedYear = moment(node.invoiceDate).format('YYYY');
-        const key = `${formattedMonth}-${formattedYear}`;
-        const chartItem = chartData[key] || {
-          month: formattedMonth,
-          year: formattedYear,
-          key,
-          total: 0,
-          count: 0,
-        };
+  // withInvoices(
+  //   () => ({
+  //     variables: {
+  //       where: {
+  //         invoiceDate_gt: moment()
+  //           .subtract(12, 'months')
+  //           .startOf('month')
+  //           .format('YYYY-MM-DD'),
+  //       },
+  //     },
+  //   }),
+  //   ({ data }) => {
+  //     const chartData = {};
+  //     range(0, 13).map((index) => {
+  //       const newMonth = moment().subtract(index, 'months');
+  //       const formattedMonth = newMonth.format('MMM');
+  //       const formattedYear = newMonth.format('YYYY');
+  //       const key = `${formattedMonth}-${formattedYear}`;
+  //       chartData[key] = {
+  //         month: formattedMonth,
+  //         year: formattedYear,
+  //         key,
+  //         total: 0,
+  //         count: 0,
+  //       };
+  //     });
+  //     const invoices = get(data, 'invoices.edges', []);
+  //     let invoiceTotal = 0;
+  //     invoices.map(({ node }) => {
+  //       invoiceTotal += Number(node.total);
+  //       const formattedMonth = moment(node.invoiceDate).format('MMM');
+  //       const formattedYear = moment(node.invoiceDate).format('YYYY');
+  //       const key = `${formattedMonth}-${formattedYear}`;
+  //       const chartItem = chartData[key] || {
+  //         month: formattedMonth,
+  //         year: formattedYear,
+  //         key,
+  //         total: 0,
+  //         count: 0,
+  //       };
 
-        chartData[key] = {
-          ...chartItem,
-          total: chartItem.total + Number(node.total),
-          count: chartItem.count + 1,
-        };
-      });
+  //       chartData[key] = {
+  //         ...chartItem,
+  //         total: chartItem.total + Number(node.total),
+  //         count: chartItem.count + 1,
+  //       };
+  //     });
 
-      return {
-        chartData,
-        invoiceTotal,
-        refetch: data.refetch,
-        loading: data.loading,
-      };
-    }
-  )
+  //     return {
+  //       chartData,
+  //       invoiceTotal,
+  //       refetch: data.refetch,
+  //       loading: data.loading,
+  //     };
+  //   },
+  // ),
 )(RevenueBlock as any);

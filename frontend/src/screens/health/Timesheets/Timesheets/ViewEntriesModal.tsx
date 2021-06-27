@@ -1,9 +1,9 @@
-import React, { Component } from 'react';
-import { compose } from 'recompose';
+import { Modal, Table, withStyles } from '@kudoo/components';
 import moment from 'moment';
 import pluralize from 'pluralize';
-import { withStyles, Modal, Table, withStylesProps } from '@kudoo/components';
-import { any } from 'prop-types';
+
+import React, { Component } from 'react';
+import { compose } from 'recompose';
 import { ViewEntriesModalStyles } from './styles';
 
 type Props = {
@@ -92,5 +92,5 @@ class ViewEntriesModal extends Component<Props, State> {
 }
 
 export default compose<any, any>(withStyles(ViewEntriesModalStyles))(
-  ViewEntriesModal
+  ViewEntriesModal,
 );

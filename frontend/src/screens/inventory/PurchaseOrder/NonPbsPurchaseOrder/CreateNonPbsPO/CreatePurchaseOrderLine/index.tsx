@@ -1,41 +1,33 @@
-import * as React from 'react';
+import {
+  Button,
+  Dropdown,
+  ErrorBoundary,
+  SectionHeader,
+  Table,
+  TextField,
+  composeStyles,
+  withStyles,
+} from '@kudoo/components';
 import { withI18n } from '@lingui/react';
-import { filter, findIndex, find, isEqual } from 'lodash';
 import Grid from '@material-ui/core/Grid';
+// import idx from 'idx';
+import { filter, find, findIndex, isEqual } from 'lodash';
+import * as React from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import uuid from 'uuid/v4';
-import {
-  withStyles,
-  Button,
-  Table,
-  SectionHeader,
-  TextField,
-  Dropdown,
-  withStylesProps,
-  ErrorBoundary,
-  withRouterProps,
-  composeStyles,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import {
-  withInventories,
-  withWareHouses,
-  withPurchaseOrderLines,
-  withDeletePurchaseOrderLine,
-} from '@kudoo/graphql';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import URL from 'src/helpers/urls';
 import styles, {
   createPurchaseOrderStyles,
   reviewStyles,
 } from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/styles';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import idx from 'idx';
 import { UOM } from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/types';
 import {
   ICreatePOLineProps,
   ICreatePOLineState,
-  IPOResponse,
   IPOLine,
+  IPOResponse,
   IPurchaseOrderLineData,
 } from '../NonPBSPOtypes';
 
@@ -43,6 +35,26 @@ class CreateNonPbsPO extends React.Component<
   ICreatePOLineProps,
   ICreatePOLineState
 > {
+  public static defaultProps = {
+    wareHouses: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+    inventories: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+    purchaseOrderLines: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+    deletePurchaseOrderLine: () => ({}),
+    purchaseOrderLineData: [],
+  };
+
   public state = {
     columnData: [],
     inventoryList: [],
@@ -93,7 +105,7 @@ class CreateNonPbsPO extends React.Component<
     });
   }
 
-  public componentDidUpdate(prevProps, prevState) {
+  public componentDidUpdate(prevProps) {
     let {
       inventories,
       wareHouses,
@@ -136,13 +148,13 @@ class CreateNonPbsPO extends React.Component<
     ) {
       purchaseOrderLineData = filter(
         purchaseOrderLineData,
-        _ => _.item && _.id
+        (_) => _.item && _.id,
       );
       purchaseOrderLines.data.forEach((purchaseOrderLineRec: IPOLine) => {
         // For Navigation
         const polRec = find(
           purchaseOrderLineData,
-          _ => _.id === purchaseOrderLineRec.id
+          (_) => _.id === purchaseOrderLineRec.id,
         );
         let record = {} as IPurchaseOrderLineData;
         if (polRec) {
@@ -174,7 +186,7 @@ class CreateNonPbsPO extends React.Component<
         }
         const recIndex = findIndex(
           purchaseOrderLineData,
-          _ => _.id === record.id
+          (_: any) => _.id === record.id,
         );
         if (recIndex >= 0) {
           purchaseOrderLineData.splice(recIndex, 1, record);
@@ -189,7 +201,7 @@ class CreateNonPbsPO extends React.Component<
   public _submitForm = () => {
     const { makeStepActive, markedVisited, purchaseOrderLineData } = this.props;
     let flag = 0;
-    purchaseOrderLineData.forEach(_ => {
+    purchaseOrderLineData.forEach((_) => {
       if (flag === 0 && _.item.key && _.site.key && _.qty >= 0) {
         flag++;
       }
@@ -258,7 +270,7 @@ class CreateNonPbsPO extends React.Component<
     });
   }
 
-  public _addRowToTable = row => {
+  public _addRowToTable = (row) => {
     const { purchaseOrderLineData = [] }: any = this.props;
     const pos = findIndex(purchaseOrderLineData, { tempId: row.tempId });
     if (pos > -1) {
@@ -269,7 +281,7 @@ class CreateNonPbsPO extends React.Component<
     this.props.setPurchaseOrderLineData(purchaseOrderLineData);
   };
 
-  public _onRemoveRow = async row => {
+  public _onRemoveRow = async (row) => {
     const { purchaseOrderLineData } = this.props;
     const pos = findIndex(purchaseOrderLineData, { tempId: row.tempId });
     if (pos > -1) {
@@ -288,7 +300,7 @@ class CreateNonPbsPO extends React.Component<
     }
   };
 
-  public _updatePurchaseOrderInTable = (tempId, key) => value => {
+  public _updatePurchaseOrderInTable = (tempId, key) => (value) => {
     const { purchaseOrderLineData = [] } = this.props;
     const pos = findIndex(purchaseOrderLineData, { tempId });
     if (purchaseOrderLineData[pos]) {
@@ -418,7 +430,7 @@ class CreateNonPbsPO extends React.Component<
             }}
             onChangeText={this._updatePurchaseOrderInTable(
               row.tempId,
-              'unitPrice'
+              'unitPrice',
             )}
           />
         </div>
@@ -493,7 +505,8 @@ class CreateNonPbsPO extends React.Component<
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.PURCHASE_ORDER());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             {this._renderSectionHeading()}
             {this._renderForm()}
@@ -506,55 +519,55 @@ class CreateNonPbsPO extends React.Component<
 
 export default compose(
   withI18n(),
-  withDeletePurchaseOrderLine(),
-  withInventories(({ type }) => {
-    let isArchived = false;
-    if (type === 'archived-inventories') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  }),
-  withWareHouses(({ type }) => {
-    let isArchived = false;
-    if (type === 'archived-wareHouses') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  }),
-  withPurchaseOrderLines((props, type) => {
-    let isArchived = false;
-    if (type === 'archived-purchaseOrderLines') {
-      isArchived = true;
-    }
-    const purchaseOrderId = idx(props, _ => _.match.params.id);
-    return {
-      variables: {
-        where: {
-          purchaseOrder: {
-            id: purchaseOrderId,
-          },
-          isArchived,
-        },
-        orderBy: 'id_ASC',
-      },
-    };
-  }),
+  // withDeletePurchaseOrderLine(),
+  // withInventories(({ type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-inventories') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
+  // withWareHouses(({ type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-wareHouses') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
+  // withPurchaseOrderLines((props, type) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-purchaseOrderLines') {
+  //     isArchived = true;
+  //   }
+  //   const purchaseOrderId = idx(props, (_) => _.match.params.id);
+  //   return {
+  //     variables: {
+  //       where: {
+  //         purchaseOrder: {
+  //           id: purchaseOrderId,
+  //         },
+  //         isArchived,
+  //       },
+  //       orderBy: 'id_ASC',
+  //     },
+  //   };
+  // }),
   connect((state: { profile: object }) => ({
     profile: state.profile,
   })),
-  withStyles(composeStyles(styles, createPurchaseOrderStyles, reviewStyles))
+  withStyles(composeStyles(styles, createPurchaseOrderStyles, reviewStyles)),
 )(CreateNonPbsPO);

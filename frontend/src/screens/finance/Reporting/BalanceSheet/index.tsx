@@ -1,15 +1,11 @@
-import React, { Component } from 'react';
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
-import uuid from 'uuid/v4';
-import {
-  withStyles,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
+import { withStyles } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import ComingSoon from '@client/common_screens/ComingSoon';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import uuid from 'uuid/v4';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import ComingSoon from 'src/screens/common/ComingSoon';
 import styles from './styles';
 interface IProps {
   actions: any;
@@ -39,7 +35,8 @@ class BalanceSheet extends Component<IProps, IState> {
             this.setState({
               contentHash: uuid(),
             });
-          }}>
+          }}
+        >
           <Grid container spacing={0}>
             <Grid item xs={12}>
               <div className={classes.page}>
@@ -57,5 +54,5 @@ export default compose<any, any>(
   withStyles(styles),
   connect((state: any) => ({
     profile: state.profile,
-  }))
+  })),
 )(BalanceSheet);

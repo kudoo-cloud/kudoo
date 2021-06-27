@@ -1,28 +1,29 @@
-import 'core-js/stable';
-import 'regenerator-runtime/runtime';
 import 'normalize.css';
-import '@kudoo/components/build/config/theme/css/index.scss';
 import 'react-tippy/dist/tippy.css';
 import 'react-toastify/dist/ReactToastify.css';
 import 'react-datasheet/lib/react-datasheet.css';
+import '@kudoo/components/build/config/theme/css/index.scss';
+import { ApolloProvider } from '@apollo/client';
+import { I18nLoader, KudooThemeProvider, theme } from '@kudoo/components';
+import ButtonBase from '@material-ui/core/ButtonBase';
+import { Web3ReactProvider } from '@web3-react/core';
+import moment from 'moment';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import moment from 'moment';
-import { StripeProvider } from 'react-stripe-elements';
+import { JssProvider, jss } from 'react-jss';
+import { Provider, useSelector } from 'react-redux';
 import { HashRouter as Router } from 'react-router-dom';
-import { ApolloProvider } from 'react-apollo';
-import { Provider, connect } from 'react-redux';
-import { compose } from 'recompose';
-import { PersistGate } from 'redux-persist/lib/integration/react';
-import App from '@client/common_screens/App';
-import { I18nLoader } from '@kudoo/components';
-import { client } from '@client/helpers/apollo';
-import { KudooThemeProvider, theme } from '@kudoo/components';
-import { store, persistor } from '@client/store/index';
-import { jss, JssProvider } from 'react-jss';
-import { Web3ReactProvider } from '@web3-react/core';
+import { StripeProvider } from 'react-stripe-elements';
+import { PersistGate } from 'redux-persist/integration/react';
 import Web3 from 'web3';
-jss.options.insertionPoint = document.getElementById('jss-insertion-point');
+import { client } from 'src/helpers/apollo';
+import App from 'src/screens/common/App';
+import { persistor, store } from 'src/store';
+import { IReduxState } from './store/reducers';
+
+(jss as any).options.insertionPoint = document.getElementById(
+  'jss-insertion-point',
+);
 
 moment.locale('en-us', {
   week: {
@@ -30,53 +31,52 @@ moment.locale('en-us', {
   },
 } as any);
 
-class WebApp extends React.Component<any, {}> {
-  public render() {
-    const { tempActiveLanguage, activeLanguage } = this.props;
-    return (
-      // <React.StrictMode>
-      <I18nLoader language={tempActiveLanguage || activeLanguage}>
-        <Router>
-          <App />
-        </Router>
-      </I18nLoader>
-      // </React.StrictMode>
-    );
-  }
-}
-
-const EnhancedWebApp = compose(
-  connect((state: any) => {
-    return {
-      activeLanguage: state.app.activeLanguage,
-      tempActiveLanguage: state.app.tempActiveLanguage,
-    };
-  })
-)(WebApp);
-
-const getWeb3Library = provider => {
+const getWeb3Library = (provider) => {
   return new Web3(provider); // this will vary according to whether you use e.g. ethers or web3.js
 };
 
-const root = document.getElementById('root');
+const MainApp = () => {
+  const activeLanguage = useSelector(
+    (state: IReduxState) => state?.app?.activeLanguage,
+  );
+  const tempActiveLanguage = useSelector(
+    (state: IReduxState) => state?.app?.tempActiveLanguage,
+  );
+  return (
+    <I18nLoader language={tempActiveLanguage || activeLanguage}>
+      <Router>
+        <React.Suspense fallback={<div>Loading...</div>}>
+          {/* TODO: till we find solution, This is dummy material ui button, so material button styles got loaded earlier, otherwise its breaking style of shared component button */}
+          <ButtonBase style={{ display: 'none' }} />
+          <App />
+        </React.Suspense>
+      </Router>
+    </I18nLoader>
+  );
+};
 
-if (root !== null) {
-  ReactDOM.render(
+const WebApp: React.FC<Record<string, unknown>> = () => {
+  return (
     <ApolloProvider client={client}>
       <Provider store={store}>
         <PersistGate persistor={persistor}>
           <JssProvider jss={jss}>
-            <StripeProvider apiKey={process.env.STRIPE_API_KEY}>
+            <StripeProvider apiKey={process.env.REACT_APP_STRIPE_API_KEY}>
               <KudooThemeProvider theme={theme}>
                 <Web3ReactProvider getLibrary={getWeb3Library}>
-                  <EnhancedWebApp />
+                  <MainApp />
                 </Web3ReactProvider>
               </KudooThemeProvider>
             </StripeProvider>
           </JssProvider>
         </PersistGate>
       </Provider>
-    </ApolloProvider>,
-    root
+    </ApolloProvider>
   );
+};
+
+const root = document.getElementById('root');
+
+if (root !== null) {
+  ReactDOM.render(<WebApp />, root);
 }

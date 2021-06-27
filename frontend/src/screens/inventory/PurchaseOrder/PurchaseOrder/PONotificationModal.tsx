@@ -1,16 +1,15 @@
-import React, { Component, useState } from 'react';
-import { compose } from 'react-apollo';
 import {
-  withStyles,
-  Modal,
-  EmailInputFields,
   Checkbox,
+  EmailInputFields,
+  Modal,
+  withStyles,
 } from '@kudoo/components';
-import { withPurchaseOrderMailSend } from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
-import { connect } from 'react-redux';
-import { IProfileState } from '@client/store/reducers/profile';
 import idx from 'idx';
+import React, { useState } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import { showToast } from 'src/helpers/toast';
+import { IProfileState } from 'src/store/reducers/profile';
 import styles, { StyleKeys } from './styles';
 
 type IProps = IComponentProps<StyleKeys> & {
@@ -33,14 +32,9 @@ type IProps = IComponentProps<StyleKeys> & {
   profile: IProfileState;
 };
 
-const PONotificationModal: React.FC<IProps> = props => {
-  const {
-    onClose,
-    visible,
-    classes,
-    purchaseOrder,
-    sendPurchaseOrderMail,
-  } = props;
+const PONotificationModal: React.FC<IProps> = (props) => {
+  const { onClose, visible, classes, purchaseOrder, sendPurchaseOrderMail } =
+    props;
 
   const [emails, setEmails] = useState({
     to: [],
@@ -60,7 +54,7 @@ const PONotificationModal: React.FC<IProps> = props => {
           poNumber: purchaseOrder.poNumber,
           name: purchaseOrder.isPbsPO
             ? JSON.parse(purchaseOrder.pbsOrganisation).key
-            : idx(purchaseOrder, x => x.supplier.name),
+            : idx(purchaseOrder, (x) => x.supplier.name),
           preview: purchaseOrder.preview,
           companyName: name,
           to: (emails.to || []).map(({ email }) => email),
@@ -76,7 +70,7 @@ const PONotificationModal: React.FC<IProps> = props => {
         onClose();
         setSendViaEdi(false);
       } else {
-        res.error.forEach(err => showToast(err));
+        res.error.forEach((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
@@ -95,8 +89,8 @@ const PONotificationModal: React.FC<IProps> = props => {
         <div>
           <div>Please add emails</div>
           <EmailInputFields
-            onEmailChange={value => {
-              setEmails(prev => ({
+            onEmailChange={(value) => {
+              setEmails((prev) => ({
                 ...prev,
                 ...value,
               }));
@@ -107,7 +101,7 @@ const PONotificationModal: React.FC<IProps> = props => {
               <Checkbox
                 label='Send Via EDI'
                 value={sendViaEdi}
-                onChange={checked => {
+                onChange={(checked) => {
                   setSendViaEdi(checked);
                 }}
               />
@@ -129,12 +123,13 @@ const PONotificationModal: React.FC<IProps> = props => {
 
 PONotificationModal.defaultProps = {
   onClose: () => {},
+  sendPurchaseOrderMail: () => ({} as any),
 };
 
 export default compose<IProps, IProps>(
   withStyles(styles),
-  withPurchaseOrderMailSend(),
+  // withPurchaseOrderMailSend(),
   connect((state: { profile: object }) => ({
     profile: state.profile,
-  }))
+  })),
 )(PONotificationModal);

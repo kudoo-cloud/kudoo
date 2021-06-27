@@ -1,16 +1,11 @@
-import React, { Component } from 'react';
+import { Tabs, helpers as utils, withStyles } from '@kudoo/components';
 import idx from 'idx';
-import { Route, Redirect, Switch } from 'react-router';
-import {
-  withStyles,
-  Tabs,
-  withRouterProps,
-  helpers as utils,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import React, { Component } from 'react';
+import { Redirect, Route, Switch } from 'react-router';
+import URL from 'src/helpers/urls';
 import CompaniesGeneralBasics from '../CompaniesGeneralBasics';
-import CompaniesGeneralLocation from '../CompaniesGeneralLocation';
 import CompaniesGeneralContact from '../CompaniesGeneralContact';
+import CompaniesGeneralLocation from '../CompaniesGeneralLocation';
 import styles from './styles';
 
 type Props = {
@@ -42,7 +37,7 @@ class GeneralTab extends Component<Props, State> {
 
   _renderTertiaryTabs() {
     const { match } = this.props;
-    const companyId = idx(match, _ => _.params.companyId);
+    const companyId = idx(match, (_) => _.params.companyId);
     return (
       <Tabs
         tabs={[
@@ -50,7 +45,7 @@ class GeneralTab extends Component<Props, State> {
             label: 'Basic Details',
             onClick: () => {
               this.props.history.push(
-                URL.COMPANY_GENERAL_BASICS({ companyId })
+                URL.COMPANY_GENERAL_BASICS({ companyId }),
               );
             },
           },
@@ -58,7 +53,7 @@ class GeneralTab extends Component<Props, State> {
             label: 'Contact Details',
             onClick: () => {
               this.props.history.push(
-                URL.COMPANY_GENERAL_CONTACT_DETAILS({ companyId })
+                URL.COMPANY_GENERAL_CONTACT_DETAILS({ companyId }),
               );
             },
           },
@@ -66,7 +61,7 @@ class GeneralTab extends Component<Props, State> {
             label: 'Location Details',
             onClick: () => {
               this.props.history.push(
-                URL.COMPANY_GENERAL_LOCATION({ companyId })
+                URL.COMPANY_GENERAL_LOCATION({ companyId }),
               );
             },
           },
@@ -79,7 +74,7 @@ class GeneralTab extends Component<Props, State> {
 
   render() {
     const { classes, actions, match } = this.props;
-    const companyId = idx(match, _ => _.params.companyId);
+    const companyId = idx(match, (_) => _.params.companyId);
     return (
       <div className={classes.page}>
         {this._renderTertiaryTabs()}
@@ -87,19 +82,19 @@ class GeneralTab extends Component<Props, State> {
         <Switch>
           <Route
             path={URL.COMPANY_GENERAL_BASICS({ path: true })}
-            render={props => (
+            render={(props) => (
               <CompaniesGeneralBasics actions={actions} {...props} />
             )}
           />
           <Route
             path={URL.COMPANY_GENERAL_CONTACT_DETAILS({ path: true })}
-            render={props => (
+            render={(props) => (
               <CompaniesGeneralContact actions={actions} {...props} />
             )}
           />
           <Route
             path={URL.COMPANY_GENERAL_LOCATION({ path: true })}
-            render={props => (
+            render={(props) => (
               <CompaniesGeneralLocation actions={actions} {...props} />
             )}
           />

@@ -1,20 +1,19 @@
-import * as React from 'react';
-import isEqual from 'lodash/isEqual';
-import get from 'lodash/get';
-import { compose } from 'recompose';
-import { Trans } from '@lingui/react';
-import moment from 'moment';
-import numeral from 'numeral';
-import cx from 'classnames';
-import Grid from '@material-ui/core/Grid';
 import {
-  withStyles,
-  composeStyles,
   ErrorBoundary,
   Loading,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import { withInvoices } from '@kudoo/graphql';
-import { INVOICE_STATUS } from '@client/helpers/constants';
+import { Trans } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+import get from 'lodash/get';
+// import isEqual from 'lodash/isEqual';
+// import moment from 'moment';
+import numeral from 'numeral';
+import * as React from 'react';
+import { compose } from 'recompose';
+// import { INVOICE_STATUS } from 'src/helpers/constants';
 import styles, { InvoiceStyles } from './styles';
 
 type Props = {
@@ -41,28 +40,28 @@ type Props = {
 };
 
 class Invoices extends React.Component<Props, any> {
-  componentDidUpdate(prevProps) {
-    if (
-      !isEqual(get(this.props, 'contentHash'), get(prevProps, 'contentHash'))
-    ) {
-      if (get(this.props, 'paidInvoices.refetch')) {
-        this.props.paidInvoices.refetch();
-      }
-      if (get(this.props, 'unpaidInvoices.refetch')) {
-        this.props.unpaidInvoices.refetch();
-      }
-      if (get(this.props, 'overdueInvoices.refetch')) {
-        this.props.overdueInvoices.refetch();
-      }
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   if (
+  //     !isEqual(get(this.props, 'contentHash'), get(prevProps, 'contentHash'))
+  //   ) {
+  //     if (get(this.props, 'paidInvoices.refetch')) {
+  //       this.props.paidInvoices.refetch();
+  //     }
+  //     if (get(this.props, 'unpaidInvoices.refetch')) {
+  //       this.props.unpaidInvoices.refetch();
+  //     }
+  //     if (get(this.props, 'overdueInvoices.refetch')) {
+  //       this.props.overdueInvoices.refetch();
+  //     }
+  //   }
+  // }
 
   render() {
     const {
       classes,
-      paidInvoices,
-      unpaidInvoices,
-      overdueInvoices,
+      paidInvoices = { total: 0, count: 0 },
+      unpaidInvoices = { total: 0, count: 0 },
+      overdueInvoices = { total: 0, count: 0 },
     } = this.props;
     const showLoader =
       get(paidInvoices, 'loading') ||
@@ -85,10 +84,10 @@ class Invoices extends React.Component<Props, any> {
                 <div className={cx(classes.invoiceBlockItem, 'green')}>
                   <div className={classes.invoiceAmount}>
                     <Trans id='currency-symbol' />
-                    {numeral(paidInvoices.total).format('0,00')}
+                    {numeral(paidInvoices?.total).format('0,00')}
                   </div>
                   <div className={classes.invoiceNumber}>
-                    {paidInvoices.count} Invoices
+                    {paidInvoices?.count} Invoices
                   </div>
                   <div className={classes.invoiceTitle}>
                     Total paid invoices
@@ -133,68 +132,68 @@ class Invoices extends React.Component<Props, any> {
 
 export default compose<any, any>(
   withStyles(composeStyles(styles, InvoiceStyles)),
-  withInvoices(
-    () => ({
-      variables: {
-        where: {
-          status: INVOICE_STATUS.FULLY_PAID,
-        },
-      },
-    }),
-    ({ data }) => {
-      const invoices = get(data, 'invoices.edges', []);
-      const count = get(data, 'invoices.aggregate.count');
-      return {
-        paidInvoices: {
-          total: invoices.reduce((acc, { node }) => acc + node.total, 0),
-          count,
-          refetch: data.refetch,
-          loading: data.loading,
-        },
-      };
-    }
-  ),
-  withInvoices(
-    () => ({
-      variables: {
-        where: {
-          status_in: [INVOICE_STATUS.DRAFT, INVOICE_STATUS.APPROVED],
-        },
-      },
-    }),
-    ({ data }) => {
-      const invoices = get(data, 'invoices.edges', []);
-      const count = get(data, 'invoices.aggregate.count');
-      return {
-        unpaidInvoices: {
-          total: invoices.reduce((acc, { node }) => acc + node.total, 0),
-          count,
-          refetch: data.refetch,
-          loading: data.loading,
-        },
-      };
-    }
-  ),
-  withInvoices(
-    () => ({
-      variables: {
-        where: {
-          status_in: [INVOICE_STATUS.DRAFT, INVOICE_STATUS.APPROVED],
-          dueDate_lt: moment().format('YYYY-MM-DD'),
-        },
-      },
-    }),
-    ({ data }) => {
-      const invoices = get(data, 'invoices.edges', []);
-      const count = get(data, 'invoices.aggregate.count');
-      return {
-        overdueInvoices: {
-          total: invoices.reduce((acc, { node }) => acc + node.total, 0),
-          count,
-          refetch: data.refetch,
-          loading: data.loading,
-        },
-      };
-    }
-  )
+  // withInvoices(
+  //   () => ({
+  //     variables: {
+  //       where: {
+  //         status: INVOICE_STATUS.FULLY_PAID,
+  //       },
+  //     },
+  //   }),
+  //   ({ data }) => {
+  //     const invoices = get(data, 'invoices.edges', []);
+  //     const count = get(data, 'invoices.aggregate.count');
+  //     return {
+  //       paidInvoices: {
+  //         total: invoices.reduce((acc, { node }) => acc + node.total, 0),
+  //         count,
+  //         refetch: data.refetch,
+  //         loading: data.loading,
+  //       },
+  //     };
+  //   },
+  // ),
+  // withInvoices(
+  //   () => ({
+  //     variables: {
+  //       where: {
+  //         status_in: [INVOICE_STATUS.DRAFT, INVOICE_STATUS.APPROVED],
+  //       },
+  //     },
+  //   }),
+  //   ({ data }) => {
+  //     const invoices = get(data, 'invoices.edges', []);
+  //     const count = get(data, 'invoices.aggregate.count');
+  //     return {
+  //       unpaidInvoices: {
+  //         total: invoices.reduce((acc, { node }) => acc + node.total, 0),
+  //         count,
+  //         refetch: data.refetch,
+  //         loading: data.loading,
+  //       },
+  //     };
+  //   },
+  // ),
+  // withInvoices(
+  //   () => ({
+  //     variables: {
+  //       where: {
+  //         status_in: [INVOICE_STATUS.DRAFT, INVOICE_STATUS.APPROVED],
+  //         dueDate_lt: moment().format('YYYY-MM-DD'),
+  //       },
+  //     },
+  //   }),
+  //   ({ data }) => {
+  //     const invoices = get(data, 'invoices.edges', []);
+  //     const count = get(data, 'invoices.aggregate.count');
+  //     return {
+  //       overdueInvoices: {
+  //         total: invoices.reduce((acc, { node }) => acc + node.total, 0),
+  //         count,
+  //         refetch: data.refetch,
+  //         loading: data.loading,
+  //       },
+  //     };
+  //   },
+  // ),
 )(Invoices);

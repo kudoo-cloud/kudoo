@@ -1,28 +1,27 @@
-import React, { Component, useState } from 'react';
-import cx from 'classnames';
-import idx from 'idx';
-import get from 'lodash/get';
-import { withI18n } from '@lingui/react';
 import {
-  withStyles,
-  Tabs,
   Button,
   CustomerForm,
-  ToggleButton,
   Modal,
-  helpers as utils,
+  Tabs,
+  ToggleButton,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import Grid from '@material-ui/core/Grid';
-import { Formik } from 'formik';
-import { connect } from 'react-redux';
-import { compose } from 'react-apollo';
-import * as Yup from 'yup';
-import { withCustomer, withUpdateCustomer, withInvoices } from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
-import SelectedCompany from '@client/helpers/SelectedCompany';
 import { I18n } from '@lingui/core';
-import { IProfileState } from '@client/store/reducers/profile';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+import { Formik } from 'formik';
+import idx from 'idx';
+import get from 'lodash/get';
+import React, { useState } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
+import { IReduxState } from 'src/store/reducers';
+import { IProfileState } from 'src/store/reducers/profile';
 import DetailsTab from './DetailsTab';
 import InvoicesTab from './InvoicesTab';
 import styles, { StyleKeys } from './styles';
@@ -39,16 +38,9 @@ type Props = IRouteProps<StyleKeys> & {
   i18n: I18n;
 };
 
-const CustomerDetails: React.FC<Props> = props => {
-  const {
-    classes,
-    history,
-    i18n,
-    customer,
-    invoices,
-    theme,
-    updateCustomer,
-  } = props;
+const CustomerDetails: React.FC<Props> = (props) => {
+  const { classes, history, i18n, customer, invoices, theme, updateCustomer } =
+    props;
   const [activeSection, setActiveSection] = useState(0);
   const [showModal, setShowModal] = useState(false);
 
@@ -65,7 +57,7 @@ const CustomerDetails: React.FC<Props> = props => {
     };
   };
 
-  const getUpdatedAddressContactData = values => {
+  const getUpdatedAddressContactData = (values) => {
     const address = get(customer, 'data.addresses[0]') || {};
     const contact = get(customer, 'data.contacts[0]') || {};
     const isContactUpdate = Boolean(contact.id);
@@ -124,7 +116,7 @@ const CustomerDetails: React.FC<Props> = props => {
     };
   };
 
-  const submitBasicDetails = async values => {
+  const submitBasicDetails = async (values) => {
     try {
       const updatedAddressContactData = getUpdatedAddressContactData(values);
       const res = await updateCustomer({
@@ -134,7 +126,7 @@ const CustomerDetails: React.FC<Props> = props => {
           ...updatedAddressContactData,
         },
         where: {
-          id: idx(customer, _ => _.data.id),
+          id: idx(customer, (_) => _.data.id),
         },
       });
       if (res.success) {
@@ -143,7 +135,7 @@ const CustomerDetails: React.FC<Props> = props => {
         showToast(null, 'Customer updated');
         setShowModal(false);
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
@@ -164,7 +156,7 @@ const CustomerDetails: React.FC<Props> = props => {
         actions.setSubmitting(false);
         customer.refetch();
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
         actions.setSubmitting(false);
       }
     } catch (e) {
@@ -242,7 +234,8 @@ const CustomerDetails: React.FC<Props> = props => {
                   className={classes.editButton}
                   onClick={() => {
                     setShowModal(true);
-                  }}>
+                  }}
+                >
                   <i className='ion-edit' />
                 </div>
               </div>
@@ -339,17 +332,20 @@ const CustomerDetails: React.FC<Props> = props => {
                 .required('Email is required')
                 .required('Invalid Email'),
             })}
-            onSubmit={submitBasicDetails}>
-            {formProps => {
+            onSubmit={submitBasicDetails}
+          >
+            {(formProps) => {
               const isDirty = formProps.dirty;
               return (
                 <form
                   className={classes.modalForm}
-                  onSubmit={formProps.handleSubmit}>
+                  onSubmit={formProps.handleSubmit}
+                >
                   <Grid
                     container
                     spacing={0}
-                    classes={{ container: classes.formFields }}>
+                    classes={{ container: classes.formFields }}
+                  >
                     <Grid item xs={12} sm={12}>
                       <CustomerForm
                         keys={{
@@ -407,7 +403,8 @@ const CustomerDetails: React.FC<Props> = props => {
     <SelectedCompany
       onChange={() => {
         history.push(URL.CUSTOMERS());
-      }}>
+      }}
+    >
       <div className={classes.page}>
         {renderSecondaryTabs()}
         <div className={classes.content}>
@@ -422,25 +419,31 @@ const CustomerDetails: React.FC<Props> = props => {
   );
 };
 
+CustomerDetails.defaultProps = {
+  customer: { data: {} as CustomerObject, refetch: () => {} },
+  invoices: { data: [] },
+  updateCustomer: () => ({}),
+};
+
 export default compose<Props, Props>(
   withI18n(),
   withStyles(styles),
-  connect(state => ({
+  connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-  withUpdateCustomer(),
-  withCustomer(props => ({
-    id: get(props, 'match.params.id'),
-  })),
-  withInvoices(props => {
-    return {
-      variables: {
-        where: {
-          buyer: {
-            id: get(props, 'match.params.id'),
-          },
-        },
-      },
-    };
-  })
+  // withUpdateCustomer(),
+  // withCustomer((props) => ({
+  //   id: get(props, 'match.params.id'),
+  // })),
+  // withInvoices((props) => {
+  //   return {
+  //     variables: {
+  //       where: {
+  //         buyer: {
+  //           id: get(props, 'match.params.id'),
+  //         },
+  //       },
+  //     },
+  //   };
+  // }),
 )(CustomerDetails);

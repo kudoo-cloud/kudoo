@@ -1,25 +1,23 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import cx from 'classnames';
+import {
+  Button,
+  ErrorBoundary,
+  Loading,
+  SectionHeader,
+  Table,
+  Tabs,
+  withStyles,
+} from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import { Tooltip } from 'react-tippy';
-import isEmpty from 'lodash/isEmpty';
+import cx from 'classnames';
 import clone from 'lodash/clone';
 import find from 'lodash/find';
-import {
-  withStyles,
-  Tabs,
-  Table,
-  Button,
-  SectionHeader,
-  ErrorBoundary,
-  withRouterProps,
-  withStylesProps,
-  Loading,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import TabContainer from './TabContainer';
+import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import { Tooltip } from 'react-tippy';
+import URL from 'src/helpers/urls';
 import { UnpaidInvoicesTabStyles } from './styles';
+import TabContainer from './TabContainer';
 
 type Props = {
   invoices: Array<any>;
@@ -72,7 +70,7 @@ class UnpaidInvoicesTab extends Component<Props, State> {
     };
   }
 
-  _onRequestSort = column => {
+  _onRequestSort = (column) => {
     const { headerData } = this.state;
     const newHeaderData = clone(headerData);
     const sortedColumn = find(newHeaderData, { sorted: true });
@@ -134,7 +132,8 @@ class UnpaidInvoicesTab extends Component<Props, State> {
           <Link
             to={URL.PREVIEW_INVOICE({ id: row.id })}
             target='_blank'
-            className={classes.invoiceLink}>
+            className={classes.invoiceLink}
+          >
             {row[column.id]}
           </Link>
         </div>
@@ -151,14 +150,16 @@ class UnpaidInvoicesTab extends Component<Props, State> {
               animation='fade'
               position='left'
               arrow
-              arrowType='round'
-              trigger='mouseenter focus'>
+              // arrowType='round'
+              trigger={'mouseenter focus' as any}
+            >
               <span
                 className={classes.dollarIcon}
                 style={{ marginRight: 10 }}
                 onClick={() => {
                   showInvoiceEmailModal(row);
-                }}>
+                }}
+              >
                 <i className='fa fa-envelope-o' />
               </span>
             </Tooltip>
@@ -167,14 +168,16 @@ class UnpaidInvoicesTab extends Component<Props, State> {
               animation='fade'
               position='left'
               arrow
-              arrowType='round'
-              trigger='mouseenter focus'>
+              // arrowType='round'
+              trigger={'mouseenter focus' as any}
+            >
               <span
                 data-test='invoice-paid-button'
                 className={classes.dollarIcon}
                 onClick={() => {
                   markInvoiceAsPaid(row);
-                }}>
+                }}
+              >
                 <i className='fa fa-usd' />
               </span>
             </Tooltip>
@@ -251,7 +254,7 @@ const Styled = withStyles(UnpaidInvoicesTabStyles)(UnpaidInvoicesTab);
 
 const UnpaidTabContainer = (props: any) => (
   <TabContainer {...props} invoiceType='unpaid'>
-    {childProps => <Styled {...childProps} />}
+    {(childProps) => <Styled {...childProps} />}
   </TabContainer>
 );
 

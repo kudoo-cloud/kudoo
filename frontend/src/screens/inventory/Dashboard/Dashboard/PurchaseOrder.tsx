@@ -1,9 +1,8 @@
+import { ErrorBoundary, composeStyles, withStyles } from '@kudoo/components';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
 import * as React from 'react';
 import { compose } from 'recompose';
-import cx from 'classnames';
-import Grid from '@material-ui/core/Grid';
-import { withStyles, composeStyles, ErrorBoundary } from '@kudoo/components';
-import { withInventory } from '@kudoo/graphql';
 import styles, { PurchaseOrderStyles } from './styles';
 
 interface IProps {
@@ -30,7 +29,7 @@ interface IProps {
 }
 
 class PurchaseOrder extends React.Component<IProps, any> {
-  public componentDidUpdate(prevProps) {
+  public componentDidUpdate() {
     // refetch code
   }
 
@@ -77,5 +76,5 @@ class PurchaseOrder extends React.Component<IProps, any> {
 }
 
 export default compose<any, any>(
-  withStyles(composeStyles(styles, PurchaseOrderStyles))
+  withStyles(composeStyles(styles, PurchaseOrderStyles)),
 )(PurchaseOrder);

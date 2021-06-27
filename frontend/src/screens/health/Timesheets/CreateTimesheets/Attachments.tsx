@@ -1,15 +1,8 @@
+import { FieldLabel, FileBlock, withStyles } from '@kudoo/components';
 import React, { Component } from 'react';
-import { compose } from 'recompose';
-import {
-  withStyles,
-  withStylesProps,
-  FieldLabel,
-  FileBlock,
-} from '@kudoo/components';
-import { withDeleteAttachment } from '@kudoo/graphql';
 import Dropzone from 'react-dropzone';
-import { showToast } from '@client/helpers/toast';
-import { any } from 'prop-types';
+import { compose } from 'recompose';
+import { showToast } from 'src/helpers/toast';
 import styles from './styles';
 
 type Props = {
@@ -23,13 +16,14 @@ type Props = {
 
 type State = {};
 class Attachments extends Component<Props, State> {
+  static defaultProps = {
+    deleteAttachment: () => ({}),
+  };
+
   _removeAttachment = async (file, index) => {
     try {
-      const {
-        attachedFiles,
-        deleteAttachment,
-        onUpdateAttachments,
-      }: any = this.props;
+      const { attachedFiles, deleteAttachment, onUpdateAttachments }: any =
+        this.props;
       if (file.id) {
         // if file is already uploaded, then update db also
         await deleteAttachment({
@@ -46,12 +40,8 @@ class Attachments extends Component<Props, State> {
   };
 
   render() {
-    const {
-      classes,
-      allowedToEdit,
-      attachedFiles,
-      onUpdateAttachments,
-    } = this.props;
+    const { classes, allowedToEdit, attachedFiles, onUpdateAttachments } =
+      this.props;
     let extraProp = {};
     // if there are more than one file attached then we are going to print below section in pdf
     if (attachedFiles.length <= 0) {
@@ -71,11 +61,12 @@ class Attachments extends Component<Props, State> {
           multiple
           className={classes.dragAreaWrapper}
           activeClassName={classes.activeDragArea}
-          onDropAccepted={file => {
+          onDropAccepted={(file) => {
             onUpdateAttachments({
               attachedFiles: [].concat(attachedFiles, file),
             });
-          }}>
+          }}
+        >
           <div className={classes.attachementBlock}>
             <div className={classes.attachedFilesBlock}>
               {attachedFiles.map((file, index) => (
@@ -87,7 +78,7 @@ class Attachments extends Component<Props, State> {
                       : { ...file, name: file.fileName }
                   }
                   variant='interactive'
-                  onRemoveClick={e => {
+                  onRemoveClick={(e) => {
                     e.stopPropagation();
                     this._removeAttachment(file, index);
                   }}
@@ -110,5 +101,5 @@ class Attachments extends Component<Props, State> {
 
 export default compose<any, any>(
   withStyles(styles),
-  withDeleteAttachment()
+  // withDeleteAttachment(),
 )(Attachments);

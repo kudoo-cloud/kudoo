@@ -1,14 +1,13 @@
+import { ErrorBoundary } from '@kudoo/components';
+import idx from 'idx';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+import moment from 'moment';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import moment from 'moment';
-import idx from 'idx';
-import get from 'lodash/get';
-import find from 'lodash/find';
-import isEqual from 'lodash/isEqual';
-import { ErrorBoundary, withRouterProps } from '@kudoo/components';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { withBankTransactions } from '@kudoo/graphql';
+import SelectedCompany from 'src/helpers/SelectedCompany';
 
 interface IProps {
   actions: any;
@@ -29,14 +28,14 @@ class BankTransactionContainer extends Component<IProps, IState> {
     bankTransactions: {
       refetch: () => {},
       loadNextPage: () => {},
-      children: ({}) => {},
+      data: [],
     },
   };
 
   constructor(props: IProps) {
     super(props);
     this.state = {
-      displayedBankTransactions: idx(props, _ => _.bankTransactions.data),
+      displayedBankTransactions: idx(props, (_) => _.bankTransactions.data),
       columns: [
         {
           id: 'transactionDate',
@@ -58,22 +57,22 @@ class BankTransactionContainer extends Component<IProps, IState> {
 
   public componentDidUpdate(prevProps) {
     const oldBankTransactions =
-      idx(prevProps, _ => _.bankTransactions.data) || [];
+      idx(prevProps, (_) => _.bankTransactions.data) || [];
     const newBankTransactions =
-      idx(this.props, _ => _.bankTransactions.data) || [];
+      idx(this.props, (_) => _.bankTransactions.data) || [];
     if (!isEqual(oldBankTransactions, newBankTransactions)) {
       this._updateBankTransactions(newBankTransactions);
     }
   }
 
   public _updateBankTransactions(bankTransactions) {
-    bankTransactions.forEach(data => {
+    bankTransactions.forEach((data) => {
       data.transactionDate = moment(data.transactionDate).format('DD MMM YYYY');
     });
     this.setState({ displayedBankTransactions: bankTransactions });
   }
 
-  public _onRequestSort = async column => {
+  public _onRequestSort = async (column) => {
     const columns = this.state.columns;
     const sortedColumn = find(columns, { sorted: true });
     const columnGoingToBeSorted = find(columns, { id: column.id });
@@ -119,7 +118,7 @@ class BankTransactionContainer extends Component<IProps, IState> {
             bankTransactions: displayedBankTransactions,
             bankTransactionsLoading: get(
               this.props,
-              'bankTransactions.loading'
+              'bankTransactions.loading',
             ),
             onSortRequested: this._onRequestSort,
             onLoadMore: get(this.props, 'bankTransactions.loadNextPage'),
@@ -134,18 +133,18 @@ export default compose<any, any>(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withBankTransactions(({ profile, type }) => {
-    let isArchived = false;
-    if (type === 'archived-bankTransactions') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'transactionDate_ASC',
-      },
-    };
-  })
+  // withBankTransactions(({ type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-bankTransactions') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'transactionDate_ASC',
+  //     },
+  //   };
+  // }),
 )(BankTransactionContainer);

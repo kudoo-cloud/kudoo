@@ -1,19 +1,17 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
 import {
-  withStyles,
-  composeStyles,
-  Table,
   Button,
-  SectionHeader,
   ErrorBoundary,
   SearchInput,
-  withRouterProps,
-  withStylesProps,
+  SectionHeader,
+  Table,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import TabContainer from './TabContainer';
+import Grid from '@material-ui/core/Grid';
+import React, { Component } from 'react';
+import URL from 'src/helpers/urls';
 import styles, { ActiveCustomersStyles } from './styles';
+import TabContainer from './TabContainer';
 
 type Props = {
   actions: any;
@@ -88,7 +86,7 @@ class ArchivedCustomers extends Component<Props, State> {
     });
   };
 
-  _showDeleteCustomerDialog = customer => {
+  _showDeleteCustomerDialog = (customer) => {
     const { theme } = this.props;
     const title = 'Permanently delete customer?';
     const description = (
@@ -127,7 +125,7 @@ class ArchivedCustomers extends Component<Props, State> {
     });
   };
 
-  _showActivateCustomerDialog = customer => {
+  _showActivateCustomerDialog = (customer) => {
     const { theme } = this.props;
     const title = 'Activate customer?';
     const description = (
@@ -166,13 +164,8 @@ class ArchivedCustomers extends Component<Props, State> {
   };
 
   _renderCustomers() {
-    const {
-      classes,
-      customers,
-      columns,
-      onSortRequested,
-      onSearchCustomer,
-    } = this.props;
+    const { classes, customers, columns, onSortRequested, onSearchCustomer } =
+      this.props;
     return (
       <div className={classes.customersContainer}>
         <Grid item xs={12} sm={6}>
@@ -217,12 +210,12 @@ class ArchivedCustomers extends Component<Props, State> {
 }
 
 const ArchivedCustomersStyled = withStyles(
-  composeStyles(styles, ActiveCustomersStyles)
+  composeStyles(styles, ActiveCustomersStyles),
 )(ArchivedCustomers);
 
 const ArchivedCustomersTabContainer = (props: Props) => (
   <TabContainer {...props} type='archived-customers'>
-    {childProps => <ArchivedCustomersStyled {...childProps} />}
+    {(childProps) => <ArchivedCustomersStyled {...childProps} />}
   </TabContainer>
 );
 

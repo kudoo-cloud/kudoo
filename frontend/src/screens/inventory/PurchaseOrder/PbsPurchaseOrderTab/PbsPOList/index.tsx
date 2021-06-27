@@ -1,24 +1,22 @@
-import React, { Component } from 'react';
-import { isEmpty } from 'lodash';
-import { Link } from 'react-router-dom';
 import {
-  withStyles,
-  composeStyles,
   Button,
-  SectionHeader,
   ErrorBoundary,
-  Table,
   Loading,
-  withRouterProps,
-  withStylesProps,
+  SectionHeader,
+  Table,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
 import Grid from '@material-ui/core/Grid';
 import cx from 'classnames';
+import { isEmpty } from 'lodash';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Tooltip } from 'react-tippy';
+import URL from 'src/helpers/urls';
 import styles, { purchaseOrderStyles } from '../../PurchaseOrder/styles';
-import TabContainer from './POContainer';
 import { IListProps } from './listTypes';
+import TabContainer from './POContainer';
 
 class PBSPurchaseOrder extends Component<IListProps> {
   public componentDidMount() {
@@ -70,7 +68,8 @@ class PBSPurchaseOrder extends Component<IListProps> {
               ? URL.EDIT_PBS_PURCHASE_ORDER({ id: row.id })
               : URL.PREVIEW_PURCHASE_ORDER({ id: row.id })
           }
-          className={classes.PurchaseOrderNameCell}>
+          className={classes.PurchaseOrderNameCell}
+        >
           {ele}
         </Link>
       );
@@ -84,14 +83,16 @@ class PBSPurchaseOrder extends Component<IListProps> {
               animation='fade'
               position='left'
               arrow
-              arrowType='round'
-              trigger='mouseenter focus'>
+              // arrowType='round'
+              trigger={'mouseenter focus' as any}
+            >
               <span
                 className={classes.dollarIcon}
                 style={{ marginRight: row[cell.id] !== 'INVOICED' ? 10 : 0 }}
                 onClick={() => {
                   showPOModal(row, 'sendEmail');
-                }}>
+                }}
+              >
                 <i className='fa fa-envelope-o' />
               </span>
             </Tooltip>
@@ -101,14 +102,16 @@ class PBSPurchaseOrder extends Component<IListProps> {
                 animation='fade'
                 position='left'
                 arrow
-                arrowType='round'
-                trigger='mouseenter focus'>
+                // arrowType='round'
+                trigger={'mouseenter focus' as any}
+              >
                 <span
                   data-test='invoice-paid-button'
                   className={classes.dollarIcon}
                   onClick={() => {
                     showPOModal(row, 'receipted');
-                  }}>
+                  }}
+                >
                   <i className='fa fa-arrow-right' />
                 </span>
               </Tooltip>
@@ -119,14 +122,16 @@ class PBSPurchaseOrder extends Component<IListProps> {
                 animation='fade'
                 position='left'
                 arrow
-                arrowType='round'
-                trigger='mouseenter focus'>
+                // arrowType='round'
+                trigger={'mouseenter focus' as any}
+              >
                 <span
                   data-test='invoice-paid-button'
                   className={classes.dollarIcon}
                   onClick={() => {
                     showPOModal(row, 'invoiced');
-                  }}>
+                  }}
+                >
                   <i className='fa fa-usd' />
                 </span>
               </Tooltip>
@@ -190,12 +195,12 @@ class PBSPurchaseOrder extends Component<IListProps> {
 }
 
 const StyledPurchaseOrders = withStyles(
-  composeStyles(styles, purchaseOrderStyles)
+  composeStyles(styles, purchaseOrderStyles),
 )(PBSPurchaseOrder);
 
 const EnhancedComponent = (props: object) => (
   <TabContainer {...props} type='active-purchaseOrder'>
-    {childProps => <StyledPurchaseOrders {...childProps} />}
+    {(childProps) => <StyledPurchaseOrders {...childProps} />}
   </TabContainer>
 );
 

@@ -1,31 +1,24 @@
-import React, { Component } from 'react';
+import {
+  Button,
+  Dropdown,
+  ErrorBoundary,
+  SectionHeader,
+  Table,
+  TextField,
+  withStyles,
+} from '@kudoo/components';
 import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+// import idx from 'idx';
 import { filter } from 'lodash';
 import findIndex from 'lodash/findIndex';
-import Grid from '@material-ui/core/Grid';
+import isEqual from 'lodash/isEqual';
+import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import uuid from 'uuid/v4';
-import {
-  withStyles,
-  Button,
-  Table,
-  SectionHeader,
-  TextField,
-  Dropdown,
-  withStylesProps,
-  ErrorBoundary,
-  withRouterProps,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import {
-  withInventories,
-  withSalesOrderLines,
-  withDeleteSalesOrderLine,
-} from '@kudoo/graphql';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import isEqual from 'lodash/isEqual';
-import idx from 'idx';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import URL from 'src/helpers/urls';
 import styles from '../styles';
 interface IProps {
   classes: any;
@@ -50,6 +43,12 @@ interface IState {
 }
 
 class CreateSalesOrder extends Component<IProps, IState> {
+  static defaultProps = {
+    inventories: { data: [] },
+    salesOrderLines: { data: [] },
+    deleteSalesOrderLine: () => ({}),
+  };
+
   public state = {
     columnData: [],
     inventoryList: [],
@@ -72,7 +71,7 @@ class CreateSalesOrder extends Component<IProps, IState> {
     });
   }
 
-  public componentDidUpdate(prevProps, prevState) {
+  public componentDidUpdate(prevProps) {
     let {
       inventories: { data = {} } = {},
       salesOrderLines, // Query Response
@@ -94,7 +93,7 @@ class CreateSalesOrder extends Component<IProps, IState> {
     ) {
       salesOrderLineData = filter(
         salesOrderLineData,
-        _ => _.id && !_.inventory
+        (_) => _.id && !_.inventory,
       );
       salesOrderLines.data.forEach((salesOrderLineRec: any) => {
         const record = {
@@ -161,7 +160,7 @@ class CreateSalesOrder extends Component<IProps, IState> {
     });
   }
 
-  public _addRowToTable = row => {
+  public _addRowToTable = (row) => {
     const { salesOrderLineData = [] } = this.props;
     const pos = findIndex(salesOrderLineData, { tempId: row.tempId });
     if (pos > -1) {
@@ -172,7 +171,7 @@ class CreateSalesOrder extends Component<IProps, IState> {
     this.props.setSalesOrderLineData(salesOrderLineData);
   };
 
-  public _onRemoveRow = async row => {
+  public _onRemoveRow = async (row) => {
     const { salesOrderLineData = [] } = this.props;
     const pos = findIndex(salesOrderLineData, { tempId: row.tempId });
     if (pos > -1) {
@@ -185,7 +184,7 @@ class CreateSalesOrder extends Component<IProps, IState> {
     }
   };
 
-  public _updateSalesOrderInTable = (tempId, key) => value => {
+  public _updateSalesOrderInTable = (tempId, key) => (value) => {
     const { salesOrderLineData = [] } = this.props;
     const pos = findIndex(salesOrderLineData, { tempId });
     if (salesOrderLineData[pos]) {
@@ -308,7 +307,8 @@ class CreateSalesOrder extends Component<IProps, IState> {
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.SALES_ORDER());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             {this._renderSectionHeading()}
             {this._renderForm()}
@@ -321,41 +321,41 @@ class CreateSalesOrder extends Component<IProps, IState> {
 
 export default compose(
   withI18n(),
-  withDeleteSalesOrderLine(),
-  withInventories(({ type }) => {
-    let isArchived = false;
-    if (type === 'archived-inventories') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  }),
-  withSalesOrderLines((props, type) => {
-    let isArchived = false;
-    if (type === 'archived-saleOrderLines') {
-      isArchived = true;
-    }
-    const salesOrderId = idx(props, _ => _.match.params.id);
-    return {
-      variables: {
-        where: {
-          salesOrder: {
-            id: salesOrderId,
-          },
-          isArchived,
-        },
-        orderBy: 'id_ASC',
-      },
-    };
-  }),
+  // withDeleteSalesOrderLine(),
+  // withInventories(({ type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-inventories') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
+  // withSalesOrderLines((props, type) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-saleOrderLines') {
+  //     isArchived = true;
+  //   }
+  //   const salesOrderId = idx(props, (_) => _.match.params.id);
+  //   return {
+  //     variables: {
+  //       where: {
+  //         salesOrder: {
+  //           id: salesOrderId,
+  //         },
+  //         isArchived,
+  //       },
+  //       orderBy: 'id_ASC',
+  //     },
+  //   };
+  // }),
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withStyles(styles)
+  withStyles(styles),
 )(CreateSalesOrder);

@@ -1,4 +1,4 @@
-export default theme => ({
+export default (theme) => ({
   '@global': {
     '@page': {
       margin: '0px 5px',
@@ -53,7 +53,7 @@ export default theme => ({
   },
 });
 
-export const timesheetRowStyles = theme => ({
+export const timesheetRowStyles = (theme) => ({
   wrapper: {
     flexDirection: 'row',
     display: 'flex',

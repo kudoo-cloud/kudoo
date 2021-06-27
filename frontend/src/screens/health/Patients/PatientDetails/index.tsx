@@ -1,27 +1,24 @@
-import React, { Component } from 'react';
+import {
+  Button,
+  Modal,
+  PatientForm,
+  Tabs,
+  ToggleButton,
+  withStyles,
+} from '@kudoo/components';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
 import cx from 'classnames';
+import { Formik } from 'formik';
 import idx from 'idx';
 import get from 'lodash/get';
-import { withI18n } from '@lingui/react';
-import {
-  withStyles,
-  Tabs,
-  Button,
-  PatientForm,
-  ToggleButton,
-  Modal,
-  withRouterProps,
-  withStylesProps,
-  helpers as utils,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import Grid from '@material-ui/core/Grid';
-import { Formik } from 'formik';
-import { connect } from 'react-redux';
+import React, { Component } from 'react';
 import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
 import * as Yup from 'yup';
-import { showToast } from '@client/helpers/toast';
-import SelectedCompany from '@client/helpers/SelectedCompany';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import DetailsTab from './DetailsTab';
 import InvoicesTab from './InvoicesTab';
 import styles from './styles';
@@ -69,7 +66,7 @@ class PatientDetails extends Component<Props, State> {
     };
   };
 
-  _getUpdatedAddressContactData = values => {
+  _getUpdatedAddressContactData = (values) => {
     const { patient } = this.props;
     const address = get(patient, 'data.addresses[0]') || {};
     const contact = get(patient, 'data.contacts[0]') || {};
@@ -129,12 +126,11 @@ class PatientDetails extends Component<Props, State> {
     };
   };
 
-  _submitBasicDetails = async values => {
+  _submitBasicDetails = async (values) => {
     const { patient } = this.props;
     try {
-      const updatedAddressContactData = this._getUpdatedAddressContactData(
-        values
-      );
+      const updatedAddressContactData =
+        this._getUpdatedAddressContactData(values);
       const res = await this.props.updatePatient({
         data: {
           name: values.patient_name,
@@ -142,7 +138,7 @@ class PatientDetails extends Component<Props, State> {
           ...updatedAddressContactData,
         },
         where: {
-          id: idx(patient, _ => _.data.id),
+          id: idx(patient, (_) => _.data.id),
         },
       });
       if (res.success) {
@@ -151,7 +147,7 @@ class PatientDetails extends Component<Props, State> {
         showToast(null, 'Patient updated');
         this.setState({ showModal: false });
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
@@ -173,7 +169,7 @@ class PatientDetails extends Component<Props, State> {
         actions.setSubmitting(false);
         patient.refetch();
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
         actions.setSubmitting(false);
       }
     } catch (e) {
@@ -253,7 +249,8 @@ class PatientDetails extends Component<Props, State> {
                   className={classes.editButton}
                   onClick={() => {
                     this.setState({ showModal: true });
-                  }}>
+                  }}
+                >
                   <i className='ion-edit' />
                 </div>
               </div>
@@ -354,17 +351,20 @@ class PatientDetails extends Component<Props, State> {
                 .required('Email is required')
                 .required('Invalid Email'),
             })}
-            onSubmit={this._submitBasicDetails}>
-            {formProps => {
+            onSubmit={this._submitBasicDetails}
+          >
+            {(formProps) => {
               const isDirty = formProps.dirty;
               return (
                 <form
                   className={classes.modalForm}
-                  onSubmit={formProps.handleSubmit}>
+                  onSubmit={formProps.handleSubmit}
+                >
                   <Grid
                     container
                     spacing={0}
-                    classes={{ container: classes.formFields }}>
+                    classes={{ container: classes.formFields }}
+                  >
                     <Grid item xs={12} sm={12}>
                       <PatientForm
                         keys={{
@@ -429,7 +429,8 @@ class PatientDetails extends Component<Props, State> {
       <SelectedCompany
         onChange={() => {
           this.props.history.push(URL.CUSTOMERS());
-        }}>
+        }}
+      >
         <div className={classes.page}>
           {this._renderSecondaryTabs()}
           <div className={classes.content}>
@@ -450,5 +451,5 @@ export default compose(
   withStyles(styles),
   connect((state: any) => ({
     profile: state.profile,
-  }))
+  })),
 )(PatientDetails);

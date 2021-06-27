@@ -136,7 +136,7 @@ export interface ISupplierEntity {
   name: string;
   address: IAddressesEntity[];
   termsOfPayment: SupplierTermsOfPayment;
-  bankAccount: object;
+  bankAccount: Record<string, unknown>;
   emailAddressForRemittance: string;
   company: ICompanyEntity;
   isArchived: boolean;

@@ -1,30 +1,21 @@
 {
   "compilerOptions": {
-    "allowJs": true,
-    "incremental": false,
-    "module": "esnext",
     "target": "es5",
-    "outDir": "dist",
-    "jsx": "react",
-    "strict": false,
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
     "skipLibCheck": true,
-    "sourceMap": true,
-    "strictNullChecks": false,
-    "esModuleInterop": false,
-    "noImplicitAny": false,
-    "lib": ["es2015", "dom", "esnext"],
-    "moduleResolution": "node",
+    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
-    "baseUrl": ".",
-    "paths": {
-      "@client/helpers/*": ["src/helpers/*"],
-      "@client/store/*": ["src/store/*"],
-      "@client/common_screens/*": ["src/screens/common/*"],
-      "@client/Widget/*": ["src/widgets/*"],
-      "@client/security/*": ["src/security/*"],
-      "@client/screens/*": ["src/screens/*"],
-      "src/*": ["src/*"]
-    }
+    "strict": false,
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react-jsx",
+    "baseUrl": "."
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "global.d.ts", "index.d.ts"]
+  "include": ["src", "index.d.ts", "global.d.ts"]
 }

@@ -1,4 +1,4 @@
-export default theme => ({
+export default () => ({
   page: {
     display: 'flex',
     flexDirection: 'column',
@@ -13,7 +13,7 @@ export default theme => ({
   },
 });
 
-export const LayoutTabStyles = theme => ({
+export const LayoutTabStyles = (theme) => ({
   tabContent: {
     flex: 1,
     display: 'flex',

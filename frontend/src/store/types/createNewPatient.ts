@@ -13,7 +13,7 @@ const types: ICreatePatientTypes = createTypes(
   'CP_MANUAL_STEP1',
   'CP_MANUAL_STEP2',
   'CP_RESET_MANUAL_DATA',
-  'CP_PATIENT_RESET_DATA'
+  'CP_PATIENT_RESET_DATA',
 );
 
 export type PatientCreationOption = 'BULK_UPLOAD' | 'SEARCH' | 'MANUAL' | '';

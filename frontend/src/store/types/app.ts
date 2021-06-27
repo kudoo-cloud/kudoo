@@ -15,7 +15,7 @@ const types: IAppActionsTypes = createTypes(
   'SHOW_ALERT_DIALOG',
   'CLOSE_ALERT_DIALOG',
   'SET_ACTIVE_LANGUAGE',
-  'SET_TEMPORARY_ACTIVE_LANGUAGE'
+  'SET_TEMPORARY_ACTIVE_LANGUAGE',
 );
 
 export default types;

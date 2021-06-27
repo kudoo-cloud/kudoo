@@ -1,17 +1,11 @@
-import React from 'react';
-import { compose, withState, withProps } from 'recompose';
+import { Button, SectionHeader, Table, withStyles } from '@kudoo/components';
 import { withI18n } from '@lingui/react';
-import get from 'lodash/get';
 import compact from 'lodash/compact';
+import get from 'lodash/get';
 import moment from 'moment';
-import {
-  withStyles,
-  Button,
-  Table,
-  SectionHeader,
-  withStylesProps,
-} from '@kudoo/components';
-import { any } from 'prop-types';
+
+import React from 'react';
+import { compose, withProps, withState } from 'recompose';
 import styles from './styles';
 
 type Props = {
@@ -41,7 +35,7 @@ class InvoicesTab extends React.Component<Props, any> {
       i18n,
     } = this.props;
     const invoicesRow = get(invoices, 'data', []);
-    let data = invoicesRow.map(invoice => {
+    let data = invoicesRow.map((invoice) => {
       if (
         showingInvoiceType === SHOWING_INVOICE_TYPE.PAID &&
         invoice.status !== 'FULLY_PAID'
@@ -120,6 +114,6 @@ export default compose<any, any>(
   withState(
     'showingInvoiceType',
     'setShowingInvoiceType',
-    SHOWING_INVOICE_TYPE.UNPAID
-  )
+    SHOWING_INVOICE_TYPE.UNPAID,
+  ),
 )(InvoicesTab);

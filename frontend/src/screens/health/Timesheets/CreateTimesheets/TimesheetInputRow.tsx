@@ -1,21 +1,20 @@
-import React, { Component } from 'react';
-import cx from 'classnames';
-import moment from 'moment';
-import isEqual from 'lodash/isEqual';
-import get from 'lodash/get';
-import findIndex from 'lodash/findIndex';
-import ceil from 'lodash/ceil';
-import forEach from 'lodash/forEach';
-import isEmpty from 'lodash/isEmpty';
 import {
-  withStyles,
   Dropdown,
   TextField,
-  withStylesProps,
   helpers as utils,
+  withStyles,
 } from '@kudoo/components';
-import { SERVICE_BILLING_TYPE } from '@client/helpers/constants';
-import { showToast } from '@client/helpers/toast';
+import cx from 'classnames';
+import ceil from 'lodash/ceil';
+import findIndex from 'lodash/findIndex';
+import forEach from 'lodash/forEach';
+import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
+import moment from 'moment';
+import React, { Component } from 'react';
+import { SERVICE_BILLING_TYPE } from 'src/helpers/constants';
+import { showToast } from 'src/helpers/toast';
 import { timesheetRowStyles } from './styles';
 
 type Props = {
@@ -67,7 +66,7 @@ class TimehsheetInputRow extends Component<Props, State> {
     ) {
       this._calculateRangeOfDates(
         this.props.startWeekDay,
-        this.props.endWeekDay
+        this.props.endWeekDay,
       );
     }
     if (!isEqual(initialData, prevProps.initialData)) {
@@ -75,7 +74,7 @@ class TimehsheetInputRow extends Component<Props, State> {
     }
   }
 
-  _updateUsingInitialData = initialData => {
+  _updateUsingInitialData = (initialData) => {
     if (!isEmpty(initialData)) {
       this.setState({
         selectedBtn: initialData.selectedBtn,
@@ -91,7 +90,7 @@ class TimehsheetInputRow extends Component<Props, State> {
     this.setState({ dates });
   };
 
-  _changeSelectedButton = index => e => {
+  _changeSelectedButton = (index) => () => {
     this.setState(
       {
         selectedBtn: index,
@@ -101,7 +100,7 @@ class TimehsheetInputRow extends Component<Props, State> {
       },
       () => {
         this._onChange();
-      }
+      },
     );
   };
 
@@ -152,7 +151,7 @@ class TimehsheetInputRow extends Component<Props, State> {
       if (parseFloat(hour) > MAX_UNIT) {
         // if value is more than MAX_UNIT , don't allow it
         showToast(
-          `You are trying to add the number ${hour}. The service you are using has been predefined as a '${serviceType}' unit. A ${serviceType.toLowerCase()} is represented as the number ${REPRESENT_NUMBER}. Please insert a number that results to below ${MAX_BELOW}.`
+          `You are trying to add the number ${hour}. The service you are using has been predefined as a '${serviceType}' unit. A ${serviceType.toLowerCase()} is represented as the number ${REPRESENT_NUMBER}. Please insert a number that results to below ${MAX_BELOW}.`,
         );
         dayHours[date] = hour.substr(0, hour.length - 1);
       } else {
@@ -167,7 +166,7 @@ class TimehsheetInputRow extends Component<Props, State> {
     });
   };
 
-  _onDayHourBlur = date => {
+  _onDayHourBlur = (date) => {
     const { dayHours }: any = this.state;
     const dateHour = dayHours[date];
     if (typeof dateHour === 'undefined' || dateHour === null) {
@@ -180,7 +179,7 @@ class TimehsheetInputRow extends Component<Props, State> {
     });
   };
 
-  _onSelectionChange = key => (item, index) => {
+  _onSelectionChange = (key) => (item) => {
     let newState: any = {
       [key]: item.value,
       dayHours: {},
@@ -211,7 +210,7 @@ class TimehsheetInputRow extends Component<Props, State> {
       unitToDisplay = 'd';
     }
     let totalHours = 0;
-    forEach(dayHours, (val, key) => {
+    forEach(dayHours, (val) => {
       totalHours += parseFloat(val) || 0;
     });
     totalHours = ceil(totalHours, 2);
@@ -244,10 +243,10 @@ class TimehsheetInputRow extends Component<Props, State> {
                     textInput: classes.dayInputField,
                   }}
                   value={`${dayHours[formattedDate] || ''}`}
-                  onChangeText={val => {
+                  onChangeText={(val) => {
                     this._onDayHourChange(formattedDate, val);
                   }}
-                  onBlur={e => {
+                  onBlur={() => {
                     this._onDayHourBlur(formattedDate);
                   }}
                   isReadOnly={!allowedToEdit}
@@ -261,7 +260,8 @@ class TimehsheetInputRow extends Component<Props, State> {
           <div className={classes.totalHoursWrapper}>
             <div
               className={classes.totalHours}
-              data-test={`total-hours-${totalHours}`}>
+              data-test={`total-hours-${totalHours}`}
+            >
               {totalHours}
             </div>
             <div className={classes.hoursSymbol}>{unitToDisplay}</div>
@@ -277,18 +277,10 @@ class TimehsheetInputRow extends Component<Props, State> {
   }
 
   render() {
-    const {
-      classes,
-      projects,
-      customers,
-      services,
-      allowedToEdit,
-    }: any = this.props;
-    const {
-      selectedBtn,
-      selectedProjectCustomer,
-      selectedService,
-    }: any = this.state;
+    const { classes, projects, customers, services, allowedToEdit }: any =
+      this.props;
+    const { selectedBtn, selectedProjectCustomer, selectedService }: any =
+      this.state;
     let firstDropdownData = [];
     let secondDropdownData = [];
     let firstDropdownPlaceholder = '';
@@ -296,7 +288,7 @@ class TimehsheetInputRow extends Component<Props, State> {
       // If user has selected project
       firstDropdownPlaceholder = 'Select a project';
       // prepare project items to show in first dropdown
-      firstDropdownData = projects.data.map(project => ({
+      firstDropdownData = projects.data.map((project) => ({
         label: project.name,
         value: project,
       }));
@@ -305,15 +297,15 @@ class TimehsheetInputRow extends Component<Props, State> {
         const projectServices = get(
           selectedProjectCustomer,
           'projectService',
-          []
+          [],
         );
         const filteredServices = projectServices.filter(
-          pService =>
+          (pService) =>
             get(pService, 'service.billingType') ===
-            SERVICE_BILLING_TYPE.TIME_BASED
+            SERVICE_BILLING_TYPE.TIME_BASED,
         );
         // prepare service items to show in 2nd dropdown
-        secondDropdownData = filteredServices.map(pService => ({
+        secondDropdownData = filteredServices.map((pService) => ({
           label: pService.service.name,
           value: pService.service,
         }));
@@ -322,12 +314,12 @@ class TimehsheetInputRow extends Component<Props, State> {
       // If user has selected customer option
       firstDropdownPlaceholder = 'Select a customer';
       // prepare customer items to show in first dropdown
-      firstDropdownData = customers.data.map(customer => ({
+      firstDropdownData = customers.data.map((customer) => ({
         label: customer.name,
         value: customer,
       }));
       // prepare service items to show in 2nd dropdown
-      secondDropdownData = services.data.map(service => ({
+      secondDropdownData = services.data.map((service) => ({
         label: service.name,
         value: service,
       }));
@@ -341,7 +333,8 @@ class TimehsheetInputRow extends Component<Props, State> {
             className={cx(classes.selectBtn, classes.projectBtn, {
               active: selectedBtn === 0,
               disabled: !allowedToEdit,
-            })}>
+            })}
+          >
             <i className='icon icon-projects' />
           </div>
           <div
@@ -349,7 +342,8 @@ class TimehsheetInputRow extends Component<Props, State> {
             className={cx(classes.selectBtn, classes.userBtn, {
               active: selectedBtn === 1,
               disabled: !allowedToEdit,
-            })}>
+            })}
+          >
             <i className='icon icon-user-account' />
           </div>
           <Dropdown

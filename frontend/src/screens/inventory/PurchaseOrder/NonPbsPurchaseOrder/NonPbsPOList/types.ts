@@ -1,6 +1,6 @@
-import { IProfileState } from '@client/store/reducers/profile';
-import { IPurchaseOrderEntity } from '@client/store/types';
-import { StyleKeys, POStyleKeys } from '../../PurchaseOrder/styles';
+import { IProfileState } from 'src/store/reducers/profile';
+import { IPurchaseOrderEntity } from 'src/store/types';
+import { POStyleKeys, StyleKeys } from '../../PurchaseOrder/styles';
 
 export type ColumnType = {
   id: string;

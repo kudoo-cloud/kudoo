@@ -1,22 +1,19 @@
-import React, { Component } from 'react';
+import {
+  Button,
+  ErrorBoundary,
+  Tabs,
+  helpers as utils,
+  withStyles,
+} from '@kudoo/components';
 import get from 'lodash/get';
 import moment from 'moment';
-import { Route, Switch } from 'react-router';
+import React, { Component } from 'react';
 import { compose } from 'react-apollo';
-import {
-  withStyles,
-  ErrorBoundary,
-  Button,
-  Tabs,
-  withRouterProps,
-  withStylesProps,
-  helpers as utils,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { withProject, withUpdateProject } from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
-import { PROJECT_STATUS } from '@client/helpers/constants';
-import SelectedCompany from '@client/helpers/SelectedCompany';
+import { Route, Switch } from 'react-router';
+import { PROJECT_STATUS } from 'src/helpers/constants';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import ProjectDetailsTab from './ProjectDetailsTab';
 import ServicesTab from './ServicesTab';
 import styles from './styles';
@@ -33,6 +30,15 @@ type Props = {
 type State = {};
 
 class ProjectDetails extends Component<Props, State> {
+  public static defaultProps = {
+    updateProject: () => ({}),
+    project: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+  };
+
   componentDidMount() {
     this.props.actions.updateHeaderTitle('Projects');
   }
@@ -61,7 +67,7 @@ class ProjectDetails extends Component<Props, State> {
       if (res.success) {
         showToast(null, 'Project marked as completed');
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
@@ -112,7 +118,7 @@ class ProjectDetails extends Component<Props, State> {
     const startsAt = get(project, 'data.startsAt');
     const endsAt = get(project, 'data.endsAt');
     const isTodayStartDate = moment(moment().format('YYYY-MM-DD')).isSame(
-      moment(startsAt).format('YYYY-MM-DD')
+      moment(startsAt).format('YYYY-MM-DD'),
     );
     if (startsAt && !isTodayStartDate && !endsAt) {
       return true;
@@ -160,7 +166,7 @@ class ProjectDetails extends Component<Props, State> {
     const startsAt = get(project, 'data.startsAt');
     const startDate = moment(startsAt).format('DD/MM/YYYY');
     const isTodayStartDate = moment(moment().format('YYYY-MM-DD')).isSame(
-      moment(startsAt).format('YYYY-MM-DD')
+      moment(startsAt).format('YYYY-MM-DD'),
     );
 
     const progressSteps = [
@@ -189,7 +195,8 @@ class ProjectDetails extends Component<Props, State> {
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.PROJECTS());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             {this._renderTabs()}
 
@@ -197,7 +204,7 @@ class ProjectDetails extends Component<Props, State> {
               <Route
                 path={URL.PROJECT_DETAILS({ path: true })}
                 exact
-                render={routeParams => (
+                render={(routeParams) => (
                   <ProjectDetailsTab
                     {...this.props}
                     {...routeParams}
@@ -209,7 +216,7 @@ class ProjectDetails extends Component<Props, State> {
               />
               <Route
                 path={URL.PROJECT_SERVICES({ path: true })}
-                render={routeParams => (
+                render={(routeParams) => (
                   <ServicesTab
                     {...this.props}
                     {...routeParams}
@@ -234,10 +241,10 @@ class ProjectDetails extends Component<Props, State> {
 
 export default compose(
   withStyles(styles),
-  withProject(props => ({
-    id: get(props, 'match.params.id', ''),
-  })),
-  withUpdateProject(() => ({
-    name: 'markProjectAsCompleted',
-  }))
+  // withProject((props) => ({
+  //   id: get(props, 'match.params.id', ''),
+  // })),
+  // withUpdateProject(() => ({
+  //   name: 'markProjectAsCompleted',
+  // })),
 )(ProjectDetails);

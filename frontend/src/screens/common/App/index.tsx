@@ -1,21 +1,20 @@
-import { bindActionCreators } from 'redux';
-import { connect } from 'react-redux';
-import get from 'lodash/get';
-import find from 'lodash/find';
-import isEqual from 'lodash/isEqual';
-import isEmpty from 'lodash/isEmpty';
-import unset from 'lodash/unset';
-import { compose, lifecycle, withHandlers } from 'recompose';
-import { withRouter, matchPath } from 'react-router';
-import { SecurityRole } from '@client/store/types/security';
-import { ProfileActions, AppActions } from '@client/store/actions';
 import { withStyles } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { withCompanies } from '@kudoo/graphql';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import isEqual from 'lodash/isEqual';
+import unset from 'lodash/unset';
+import { connect } from 'react-redux';
+import { matchPath, withRouter } from 'react-router';
+import { compose, lifecycle, withHandlers } from 'recompose';
+import { bindActionCreators } from 'redux';
 import {
-  SUPPORTED_COUNTRIES_COMPANY,
   DEFAULT_LOCALE,
-} from '@client/helpers/locale';
+  SUPPORTED_COUNTRIES_COMPANY,
+} from 'src/helpers/locale';
+import URL from 'src/helpers/urls';
+import { AppActions, ProfileActions } from 'src/store/actions';
+// import { SecurityRole } from 'src/store/types/security';
 import styles from './styles';
 import App, { IProps } from './view';
 
@@ -26,100 +25,114 @@ export default withRouter(
       (state: any) => ({
         profile: state.profile,
         app: state.app,
+        companies: {
+          data: [{ id: 1, name: 'Kudoo', owner: true }],
+          refetch: () => {},
+          loading: false,
+        },
       }),
-      dispatch => ({
+      (dispatch) => ({
         actions: bindActionCreators(
           {
             ...ProfileActions,
             ...AppActions,
           },
-          dispatch
+          dispatch,
         ),
-      })
-    ),
-    withCompanies(
-      ({ profile }) => ({
-        skip: !profile.isLoggedIn,
-        variables: {
-          joined: true,
-          created: true,
-        },
       }),
-      ({ data, ownProps }) => {
-        const companies = get(data, 'companies') || [];
-        const newCompanies: any = [];
-        for (const company of companies) {
-          const companyMember: any =
-            find(company.companyMembers, {
-              user: { id: get(ownProps, 'profile.id') },
-            }) || {};
-          let role = SecurityRole.user;
-          if (get(ownProps, 'profile.isRoot')) {
-            role = SecurityRole.root;
-          } else if (companyMember.role === 'OWNER') {
-            role = SecurityRole.owner;
-          } else if (companyMember.role === 'ADMIN') {
-            role = SecurityRole.admin;
-          }
-          if (
-            companyMember.role === 'OWNER' ||
-            companyMember.role === 'ADMIN'
-          ) {
-            newCompanies.push({ ...company, owner: true, role });
-          } else {
-            newCompanies.push({ ...company, role });
-          }
-        }
-        return {
-          data: newCompanies,
-        };
-      }
     ),
+    // withCompanies(
+    //   ({ profile }) => ({
+    //     skip: !profile.isLoggedIn,
+    //     variables: {
+    //       joined: true,
+    //       created: true,
+    //     },
+    //   }),
+    //   ({ data, ownProps }) => {
+    //     const companies = get(data, 'companies') || [];
+    //     const newCompanies: any = [];
+    //     for (const company of companies) {
+    //       const companyMember: any =
+    //         find(company.companyMembers, {
+    //           user: { id: get(ownProps, 'profile.id') },
+    //         }) || {};
+    //       let role = SecurityRole.user;
+    //       if (get(ownProps, 'profile.isRoot')) {
+    //         role = SecurityRole.root;
+    //       } else if (companyMember.role === 'OWNER') {
+    //         role = SecurityRole.owner;
+    //       } else if (companyMember.role === 'ADMIN') {
+    //         role = SecurityRole.admin;
+    //       }
+    //       if (
+    //         companyMember.role === 'OWNER' ||
+    //         companyMember.role === 'ADMIN'
+    //       ) {
+    //         newCompanies.push({ ...company, owner: true, role });
+    //       } else {
+    //         newCompanies.push({ ...company, role });
+    //       }
+    //     }
+    //     return {
+    //       data: newCompanies,
+    //     };
+    //   },
+    // ),
     withHandlers<any, any>({
-      checkActiveLanguage: ({ actions }) => props => {
-        const { profile, app } = props;
-        if (!profile.selectedCompany && app.activeLanguage !== DEFAULT_LOCALE) {
-          // if no company is selected then set DEFAULT_LOCALE
-          actions.setActiveLanguage(DEFAULT_LOCALE);
-        } else if (profile.selectedCompany) {
-          // if company is selected then get company country and set locale of country
-          const companyCountry: any =
-            find(SUPPORTED_COUNTRIES_COMPANY, {
-              value: get(profile, 'selectedCompany.country') || 'other',
-            }) || {};
-          if (app.activeLanguage !== companyCountry.locale) {
-            actions.setActiveLanguage(companyCountry.locale);
+      checkActiveLanguage:
+        ({ actions }) =>
+        (props) => {
+          const { profile, app } = props;
+          if (
+            !profile.selectedCompany &&
+            app.activeLanguage !== DEFAULT_LOCALE
+          ) {
+            // if no company is selected then set DEFAULT_LOCALE
+            actions.setActiveLanguage(DEFAULT_LOCALE);
+          } else if (profile.selectedCompany) {
+            // if company is selected then get company country and set locale of country
+            const companyCountry: any =
+              find(SUPPORTED_COUNTRIES_COMPANY, {
+                value: get(profile, 'selectedCompany.country') || 'other',
+              }) || {};
+            if (app.activeLanguage !== companyCountry.locale) {
+              actions.setActiveLanguage(companyCountry.locale);
+            }
           }
-        }
-      },
-      isPreviewRoute: ({ history }) => () => {
-        return (
-          matchPath(get(history, 'location.pathname'), {
-            path: '/preview/*',
-          }) ||
-          matchPath(get(history, 'location.pathname'), {
-            path: '/email/:type/*',
-          }) ||
-          matchPath(get(history, 'location.pathname'), {
-            path: '/integrations*',
-          })
-        );
-      },
-      shouldRedirectToManageCompany: ({ companies, history }) => () => {
-        return (
-          !get(companies, 'loading') &&
-          get(companies, 'data.length') === 0 &&
-          !matchPath(get(history, 'location.pathname'), {
-            path: URL.ACCOUNT_SETTINGS({ path: true }),
-          }) &&
-          !matchPath(get(history, 'location.pathname'), {
-            path: URL.MANAGE_COMPANIES({ path: true }),
-          }) &&
-          !matchPath(get(history, 'location.pathname'), {
-            path: URL.CREATE_COMPANY({ path: true }),
-          })
-        );
-      },
+        },
+      isPreviewRoute:
+        ({ history }) =>
+        () => {
+          return (
+            matchPath(get(history, 'location.pathname'), {
+              path: '/preview/*',
+            }) ||
+            matchPath(get(history, 'location.pathname'), {
+              path: '/email/:type/*',
+            }) ||
+            matchPath(get(history, 'location.pathname'), {
+              path: '/integrations*',
+            })
+          );
+        },
+      shouldRedirectToManageCompany:
+        ({ companies, history }) =>
+        () => {
+          return (
+            !get(companies, 'loading') &&
+            get(companies, 'data.length') === 0 &&
+            !matchPath(get(history, 'location.pathname'), {
+              path: URL.ACCOUNT_SETTINGS({ path: true }),
+            }) &&
+            !matchPath(get(history, 'location.pathname'), {
+              path: URL.MANAGE_COMPANIES({ path: true }),
+            }) &&
+            !matchPath(get(history, 'location.pathname'), {
+              path: URL.CREATE_COMPANY({ path: true }),
+            })
+          );
+        },
     }),
     lifecycle<IProps, {}>({
       componentDidMount() {
@@ -177,19 +190,19 @@ export default withRouter(
         const oldCompaniesId = get(
           prevProps,
           'profile.createdCompanies',
-          []
-        ).map(company => company.id);
+          [],
+        ).map((company) => company.id);
         const newCompaniesId = get(
           this.props,
           'profile.createdCompanies',
-          []
-        ).map(company => company.id);
+          [],
+        ).map((company) => company.id);
         if (!isEqual(oldCompaniesId, newCompaniesId)) {
           if (get(this.props, 'companies.refetch')) {
             this.props.companies.refetch();
           }
         }
       },
-    })
-  )(App as any) as any
+    }),
+  )(App as any) as any,
 );

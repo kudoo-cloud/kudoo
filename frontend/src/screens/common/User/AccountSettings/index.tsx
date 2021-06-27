@@ -1,10 +1,10 @@
+import { Tabs, helpers as utils, withStyles } from '@kudoo/components';
 import React, { Component } from 'react';
-import { Route, Redirect, Switch } from 'react-router';
-import { withStyles, Tabs, helpers as utils } from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import { Redirect, Route, Switch } from 'react-router';
+import URL from 'src/helpers/urls';
+import UserAccountHistory from '../UserAccountHistory/index';
 import UserDetails from '../UserDetails/index';
 import UserSecurity from '../UserSecurity/index';
-import UserAccountHistory from '../UserAccountHistory/index';
 import styles from './styles';
 
 interface IProps {
@@ -62,15 +62,15 @@ class AccountSettings extends Component<IProps, {}> {
         <Switch>
           <Route
             path={URL.ACCOUNT_BASIC_DETAILS({ path: true })}
-            render={props => <UserDetails {...props} actions={actions} />}
+            render={(props) => <UserDetails {...props} actions={actions} />}
           />
           <Route
             path={URL.ACCOUNT_USER_SECURITY({ path: true })}
-            render={props => <UserSecurity {...props} actions={actions} />}
+            render={(props) => <UserSecurity {...props} actions={actions} />}
           />
           <Route
             path={URL.ACCOUNT_USER_HISTORY({ path: true })}
-            render={props => (
+            render={(props) => (
               <UserAccountHistory {...props} actions={actions} />
             )}
           />

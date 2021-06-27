@@ -1,13 +1,7 @@
+import { Tabs, helpers as utils, withStyles } from '@kudoo/components';
 import React, { Component } from 'react';
-import { Route, Redirect, Switch } from 'react-router';
-import {
-  withStyles,
-  Tabs,
-  withRouterProps,
-  withStylesProps,
-  helpers as utils,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import { Redirect, Route, Switch } from 'react-router';
+import URL from 'src/helpers/urls';
 import ActiveWorkersTab from './ActiveWorkersTab';
 import ArchivedWorkersTab from './ArchivedWorkersTab';
 import styles from './styles';
@@ -67,11 +61,13 @@ class Workers extends Component<Props, State> {
         <Switch>
           <Route
             path={URL.ACTIVE_WORKERS()}
-            render={props => <ActiveWorkersTab {...props} actions={actions} />}
+            render={(props) => (
+              <ActiveWorkersTab {...props} actions={actions} />
+            )}
           />
           <Route
             path={URL.ARCHIVED_WORKERS()}
-            render={props => (
+            render={(props) => (
               <ArchivedWorkersTab {...props} actions={actions} />
             )}
           />

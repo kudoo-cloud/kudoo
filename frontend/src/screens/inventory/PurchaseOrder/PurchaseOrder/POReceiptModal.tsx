@@ -1,19 +1,14 @@
+import { Modal, withStyles } from '@kudoo/components';
+// import idx from 'idx';
 import React, { useState } from 'react';
 import { compose } from 'react-apollo';
-import { withStyles, Modal } from '@kudoo/components';
-import { showToast } from '@client/helpers/toast';
 import { connect } from 'react-redux';
-import {
-  withUpdatePurchaseOrder,
-  withCreateInventoryOnHand,
-  withPurchaseOrderLines,
-} from '@kudoo/graphql';
-import idx from 'idx';
-import { IProfileState } from '@client/store/reducers/profile';
-import { IReduxState } from '@client/store/reducers';
+import { showToast } from 'src/helpers/toast';
+import { IReduxState } from 'src/store/reducers';
+import { IProfileState } from 'src/store/reducers/profile';
 import { IPOResponse } from '../PbsPurchaseOrderTab/CreatePbsPO/PBSPOtypes';
-import { POSTATUS } from './types';
 import styles, { StyleKeys } from './styles';
+import { POSTATUS } from './types';
 
 type IProps = IRouteProps<StyleKeys> & {
   onClose: () => void;
@@ -31,7 +26,7 @@ type IProps = IRouteProps<StyleKeys> & {
         pbsDrug: string;
         qty: number;
         purchaseOrder: { id: string };
-      }
+      },
     ];
   };
   generateApInvoice: ({}) => {
@@ -44,7 +39,7 @@ type IProps = IRouteProps<StyleKeys> & {
   updatePurchaseOrder: ({}) => Promise<IPOResponse>;
 };
 
-const POInvoiceModal: React.FC<IProps> = props => {
+const POInvoiceModal: React.FC<IProps> = (props) => {
   const {
     onClose,
     visible,
@@ -61,7 +56,7 @@ const POInvoiceModal: React.FC<IProps> = props => {
     try {
       setSubmitting(true);
       let flag = 0;
-      purchaseOrderLines.data.forEach(async _ => {
+      purchaseOrderLines.data.forEach(async (_) => {
         const dataToSend = {
           date: _.date || new Date(),
           item:
@@ -92,7 +87,7 @@ const POInvoiceModal: React.FC<IProps> = props => {
           showToast(null, 'Status Updated.');
           onClose();
         } else {
-          res.error.forEach(err => showToast(err));
+          res.error.forEach((err) => showToast(err));
           onClose();
         }
       }
@@ -123,31 +118,34 @@ const POInvoiceModal: React.FC<IProps> = props => {
 
 POInvoiceModal.defaultProps = {
   onClose: () => {},
+  createInventoryOnHand: () => ({} as any),
+  updateApInvoice: () => ({} as any),
+  updatePurchaseOrder: () => ({} as any),
 };
 
 export default compose<IProps, IProps>(
   withStyles(styles),
-  withUpdatePurchaseOrder(),
-  withCreateInventoryOnHand(),
-  withPurchaseOrderLines((props, type) => {
-    let isArchived = false;
-    if (type === 'archived-purchaseOrderLines') {
-      isArchived = true;
-    }
-    const purchaseOrderId = idx(props, _ => _.purchaseOrder.id);
-    return {
-      variables: {
-        where: {
-          purchaseOrder: {
-            id: purchaseOrderId,
-          },
-          isArchived,
-        },
-        orderBy: 'id_ASC',
-      },
-    };
-  }),
+  // withUpdatePurchaseOrder(),
+  // withCreateInventoryOnHand(),
+  // withPurchaseOrderLines((props, type) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-purchaseOrderLines') {
+  //     isArchived = true;
+  //   }
+  //   const purchaseOrderId = idx(props, (_) => _.purchaseOrder.id);
+  //   return {
+  //     variables: {
+  //       where: {
+  //         purchaseOrder: {
+  //           id: purchaseOrderId,
+  //         },
+  //         isArchived,
+  //       },
+  //       orderBy: 'id_ASC',
+  //     },
+  //   };
+  // }),
   connect((state: IReduxState) => ({
     profile: state.profile,
-  }))
+  })),
 )(POInvoiceModal);

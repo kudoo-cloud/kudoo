@@ -1,9 +1,10 @@
-import * as React from 'react';
+import { Button, ErrorBoundary } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import { ErrorBoundary, Button } from '@kudoo/components';
+import * as React from 'react';
 import './index.scss';
 
 interface IProps {
+  actions?: any;
   history: any;
 }
 
@@ -18,7 +19,7 @@ class ResetPasswordEmail extends React.Component<IProps, {}> {
               <div className='middle-container'>
                 <img
                   className='mail-sent-icon'
-                  src={require('images/message-sent-icon.png')}
+                  src={require('@kudoo/components/build/assets/images/message-sent-icon.png')}
                 />
                 <div className='message-wrapper'>
                   <div className='message-title'>Your email is on it’s way</div>

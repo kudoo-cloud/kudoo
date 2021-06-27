@@ -1,18 +1,13 @@
-import React, { Component } from 'react';
+import { withStyles } from '@kudoo/components';
 import idx from 'idx';
 import isEqual from 'lodash/isEqual';
-import { Link } from 'react-router-dom';
+import React, { Component } from 'react';
 import { compose } from 'react-apollo';
-import { withStyles } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { showToast } from '@client/helpers/toast';
-import {
-  withPatients,
-  withUpdatePatient,
-  withDeletePatient,
-} from '@kudoo/graphql';
-import ListPage from '@client/common_screens/ListPage';
+import { Link } from 'react-router-dom';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
+import ListPage from 'src/screens/common/ListPage';
 import stylesFn, { StyleKeys } from './styles';
 
 type Props = IRouteProps<StyleKeys> & {
@@ -31,10 +26,21 @@ type State = {
 };
 
 class TabContainer extends Component<Props, State> {
+  public static defaultProps = {
+    archivePatient: () => ({}),
+    unArchivePatient: () => ({}),
+    deletePatient: () => ({}),
+    patients: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+  };
+
   constructor(props: Props) {
     super(props);
     this.state = {
-      displayedPatients: idx(props, _ => _.patients.data),
+      displayedPatients: idx(props, (_) => _.patients.data),
       columns: [],
     };
   }
@@ -51,7 +57,8 @@ class TabContainer extends Component<Props, State> {
             return (
               <Link
                 to={URL.PATIENT_DETAILS({ id: row.id })}
-                className={this.props.classes.patientNameCell}>
+                className={this.props.classes.patientNameCell}
+              >
                 {row[column.id]}
               </Link>
             );
@@ -64,8 +71,8 @@ class TabContainer extends Component<Props, State> {
   }
 
   componentDidUpdate(prevProps) {
-    const oldPatients = idx(prevProps, _ => _.patients.data) || [];
-    const newPatients = idx(this.props, _ => _.patients.data) || [];
+    const oldPatients = idx(prevProps, (_) => _.patients.data) || [];
+    const newPatients = idx(this.props, (_) => _.patients.data) || [];
     if (!isEqual(oldPatients, newPatients)) {
       this._updatePatients(newPatients);
     }
@@ -101,7 +108,7 @@ class TabContainer extends Component<Props, State> {
     });
   };
 
-  _onArchivePatient = async patient => {
+  _onArchivePatient = async (patient) => {
     try {
       const res = await this.props.archivePatient({
         where: { id: patient.id },
@@ -111,7 +118,7 @@ class TabContainer extends Component<Props, State> {
         showToast(null, 'Patient archived successfully');
         this.props.patients.refetch();
       } else {
-        res.error(err => showToast(err));
+        res.error((err) => showToast(err));
       }
     } catch (e) {
       showToast('Something went wrong');
@@ -119,7 +126,7 @@ class TabContainer extends Component<Props, State> {
     }
   };
 
-  _onUnArchivePatient = async patient => {
+  _onUnArchivePatient = async (patient) => {
     try {
       const res = await this.props.unArchivePatient({
         where: { id: patient.id },
@@ -129,7 +136,7 @@ class TabContainer extends Component<Props, State> {
         showToast(null, 'Patient activated successfully');
         this.props.patients.refetch();
       } else {
-        res.error(err => showToast(err));
+        res.error((err) => showToast(err));
       }
     } catch (e) {
       showToast('Something went wrong');
@@ -137,7 +144,7 @@ class TabContainer extends Component<Props, State> {
     }
   };
 
-  _onRemovePatient = async patient => {
+  _onRemovePatient = async (patient) => {
     try {
       const res = await this.props.deletePatient({
         where: { id: patient.id },
@@ -146,7 +153,7 @@ class TabContainer extends Component<Props, State> {
         showToast(null, 'Patient deleted successfully');
         this.props.patients.refetch();
       } else {
-        res.error(err => showToast(err));
+        res.error((err) => showToast(err));
       }
     } catch (e) {
       showToast('Something went wrong');
@@ -154,7 +161,7 @@ class TabContainer extends Component<Props, State> {
     }
   };
 
-  _searchPatient = async text => {
+  _searchPatient = async (text) => {
     this.props.patients.refetch({
       where: {
         title_contains: text ? text : undefined,
@@ -234,29 +241,29 @@ class TabContainer extends Component<Props, State> {
 
 export default compose<Props, Props>(
   withStyles(stylesFn),
-  withPatients(({ match }) => {
-    const path = match.path;
-    let isArchived = false;
-    if (path.indexOf('active') > -1) {
-      isArchived = false;
-    } else if (path.indexOf('archived') > -1) {
-      isArchived = true;
-    }
-    return {
-      name: 'patients',
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'title_ASC',
-      },
-    };
-  }),
-  withDeletePatient(),
-  withUpdatePatient(() => ({
-    name: 'archivePatient',
-  })),
-  withUpdatePatient(() => ({
-    name: 'unArchivePatient',
-  }))
+  // withPatients(({ match }) => {
+  //   const path = match.path;
+  //   let isArchived = false;
+  //   if (path.indexOf('active') > -1) {
+  //     isArchived = false;
+  //   } else if (path.indexOf('archived') > -1) {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     name: 'patients',
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'title_ASC',
+  //     },
+  //   };
+  // }),
+  // withDeletePatient(),
+  // withUpdatePatient(() => ({
+  //   name: 'archivePatient',
+  // })),
+  // withUpdatePatient(() => ({
+  //   name: 'unArchivePatient',
+  // })),
 )(TabContainer);

@@ -1,16 +1,10 @@
+import { Tabs, helpers as utils, withStyles } from '@kudoo/components';
 import React, { Component } from 'react';
-import { Switch, Redirect } from 'react-router';
-import {
-  withStyles,
-  Tabs,
-  withRouterProps,
-  withStylesProps,
-  helpers as utils,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import styles from './styles';
-import LayoutTab from './LayoutTab';
+import { Redirect, Switch } from 'react-router';
+import URL from 'src/helpers/urls';
 import AutomationTab from './AutomationTab';
+import LayoutTab from './LayoutTab';
+import styles from './styles';
 
 type Props = {
   actions: any;

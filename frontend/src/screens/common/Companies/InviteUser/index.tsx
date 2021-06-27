@@ -1,28 +1,26 @@
-import React, { Component } from 'react';
+import {
+  Button,
+  Dropdown,
+  ErrorBoundary,
+  SectionHeader,
+  TextField,
+  withStyles,
+} from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import { Tooltip } from 'react-tippy';
+import { Formik } from 'formik';
+import idx from 'idx';
+import isEqual from 'lodash/isEqual';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import { Router } from 'react-router';
 import { Link } from 'react-router-dom';
-import idx from 'idx';
-import * as Yup from 'yup';
-import isEqual from 'lodash/isEqual';
-import { Formik } from 'formik';
+import { Tooltip, Trigger } from 'react-tippy';
 import { compose } from 'recompose';
-import { connect } from 'react-redux';
-import {
-  withStyles,
-  TextField,
-  Dropdown,
-  Button,
-  SectionHeader,
-  ErrorBoundary,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { showToast } from '@client/helpers/toast';
-import { withInviteMember } from '@kudoo/graphql';
-import styles from '@client/common_screens/styles/styles';
+import * as Yup from 'yup';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
+import styles from 'src/screens/common/styles/styles';
+import { IReduxState } from 'src/store/reducers';
 
 interface IProps {
   actions: any;
@@ -35,6 +33,10 @@ interface IProps {
 }
 
 class InviteUser extends Component<IProps> {
+  static defaultProps = {
+    invite: () => ({}),
+  };
+
   _renderSectionHeader() {
     const { classes } = this.props;
     return (
@@ -67,13 +69,14 @@ class InviteUser extends Component<IProps> {
       isSubmitting,
     } = formProps;
     const { classes, theme, match } = this.props;
-    const companyId = idx(match, _ => _.params.companyId);
+    const companyId = idx(match, (_) => _.params.companyId);
     const isFormDirty = !isEqual(initialValues, values);
     return (
       <form
         autoComplete='off'
         className={classes.formWrapper}
-        onSubmit={handleSubmit}>
+        onSubmit={handleSubmit}
+      >
         <div className={classes.form}>
           <Grid container spacing={0}>
             <Grid item xs={12} sm={6}>
@@ -163,8 +166,9 @@ class InviteUser extends Component<IProps> {
                     animation='fade'
                     position='right'
                     arrow
-                    arrowType='round'
-                    trigger='mouseenter focus'>
+                    // arrowType={'round' as any}
+                    trigger={'mouseenter focus' as Trigger}
+                  >
                     <span className={classes.helpIcon}>
                       <i className='ion-ios-help-outline' />
                     </span>
@@ -213,7 +217,7 @@ class InviteUser extends Component<IProps> {
 
   _renderFormik() {
     const { history, match } = this.props;
-    const companyId = idx(match, _ => _.params.companyId);
+    const companyId = idx(match, (_) => _.params.companyId);
     return (
       <Formik
         initialValues={{
@@ -250,7 +254,8 @@ class InviteUser extends Component<IProps> {
             actions.setSubmitting(false);
             showToast(e.toString());
           }
-        }}>
+        }}
+      >
         {this._renderInviteForm.bind(this)}
       </Formik>
     );
@@ -271,8 +276,8 @@ class InviteUser extends Component<IProps> {
 
 export default compose<any, any>(
   withStyles(styles),
-  connect(state => ({
+  connect((state: IReduxState) => ({
     app: state.app,
   })),
-  withInviteMember()
+  // withInviteMember(),
 )(InviteUser);

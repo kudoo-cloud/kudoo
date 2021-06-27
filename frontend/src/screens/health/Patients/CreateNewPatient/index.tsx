@@ -1,15 +1,15 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { withStyles, ErrorBoundary } from '@kudoo/components';
+import { ErrorBoundary, withStyles } from '@kudoo/components';
+import idx from 'idx';
+import React, { useEffect, useRef, useState } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import WizardCreatePage from '@client/common_screens/WizardCreatePage';
-import idx from 'idx';
-import { IReduxState } from '@client/store/reducers';
-import SelectOptionStep from './Steps/SelectOption';
+import WizardCreatePage from 'src/screens/common/WizardCreatePage';
+import { IReduxState } from 'src/store/reducers';
 import BulkUpload from './Steps/BulkUpload';
-import PatientSearch from './Steps/PatientSearch';
 import ManualStepOne from './Steps/ManualStepOne';
 import ManualStepTwo from './Steps/ManualStepTwo';
+import PatientSearch from './Steps/PatientSearch';
+import SelectOptionStep from './Steps/SelectOption';
 import styles, { StyleKeys } from './styles';
 
 type Props = IRouteProps<StyleKeys> & {
@@ -25,14 +25,14 @@ type StepsRef = {
   };
 };
 
-const CreateNewPatient: React.FC<Props> = props => {
+const CreateNewPatient: React.FC<Props> = (props) => {
   const stepsRef: StepsRef = useRef(null);
   const goToNextStep = () => {
     stepsRef.current.goToNextStep();
   };
-  const goToPrevStep = () => {
-    stepsRef.current.goToPrevStep();
-  };
+  // const goToPrevStep = () => {
+  //   stepsRef.current.goToPrevStep();
+  // };
 
   const initialSteps = [
     {
@@ -79,6 +79,7 @@ const CreateNewPatient: React.FC<Props> = props => {
     setSteps([initialSteps[0], ...nextSteps]);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   useEffect(updateSteps, [props.patientCreationOption]);
 
   return (
@@ -93,7 +94,7 @@ export default compose<Props, Props>(
   connect((state: IReduxState) => ({
     patientCreationOption: idx(
       state,
-      x => x.sessionData.newPatient.patientCreationOption
+      (x) => x.sessionData.newPatient.patientCreationOption,
     ),
-  }))
+  })),
 )(CreateNewPatient);

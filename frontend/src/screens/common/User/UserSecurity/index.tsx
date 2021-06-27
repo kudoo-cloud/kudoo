@@ -1,34 +1,35 @@
-import * as React from 'react';
-import cx from 'classnames';
-import { Formik } from 'formik';
-import { compose } from 'recompose';
-import * as Yup from 'yup';
-import Grid from '@material-ui/core/Grid';
 import {
-  withStyles,
-  ErrorBoundary,
-  TextField,
   Button,
+  ErrorBoundary,
   Modal,
   SectionHeader,
-  withRouterProps,
-  withStylesProps,
+  TextField,
+  withStyles,
 } from '@kudoo/components';
-import { showToast } from '@client/helpers/toast';
-import { withUpdateUser } from '@kudoo/graphql';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+import { Formik } from 'formik';
+import * as React from 'react';
+import { compose } from 'recompose';
+import * as Yup from 'yup';
+import { showToast } from 'src/helpers/toast';
 import styles from './styles';
 
 interface IProps {
-  actions: object;
-  updatePassword: (data: object) => any;
-  classes: any;
-  theme: any;
+  actions?: object;
+  updatePassword?: (data: object) => any;
+  classes?: any;
+  theme?: any;
 }
 interface IState {
   updatePasswordModalVisible: boolean;
 }
 
 class UserSecurity extends React.Component<IProps, IState> {
+  static defaultProps = {
+    updatePassword: () => ({}),
+  };
+
   public state = {
     updatePasswordModalVisible: false,
   };
@@ -57,7 +58,7 @@ class UserSecurity extends React.Component<IProps, IState> {
         showToast(null, 'Password updated successfully!');
         this._closeUpdatePasswordModal();
       } else {
-        res.error.map(err => showToast(err, ''));
+        res.error.map((err) => showToast(err, ''));
       }
     } catch (e) {
       actions.setSubmitting(false);
@@ -87,13 +88,15 @@ class UserSecurity extends React.Component<IProps, IState> {
                 .oneOf([Yup.ref('password')], 'Passwords do not match')
                 .required('Repeat New Password is required'),
             })}
-            onSubmit={this._updatePassword}>
+            onSubmit={this._updatePassword}
+          >
             {(formProps: any) => {
               const { values, touched, errors } = formProps;
               return (
                 <form
                   className={classes.form}
-                  onSubmit={formProps.handleSubmit}>
+                  onSubmit={formProps.handleSubmit}
+                >
                   <div className={classes.formFields}>
                     <div>
                       <TextField
@@ -233,5 +236,5 @@ class UserSecurity extends React.Component<IProps, IState> {
 
 export default compose<IProps, IProps>(
   withStyles(styles),
-  withUpdateUser(() => ({ name: 'updatePassword' }))
+  // withUpdateUser(() => ({ name: 'updatePassword' })),
 )(UserSecurity as any);

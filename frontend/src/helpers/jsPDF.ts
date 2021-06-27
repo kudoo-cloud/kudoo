@@ -1,7 +1,7 @@
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
 
-export const generatePDF = async elementId => {
+export const generatePDF = async (elementId) => {
   const pdf = new jsPDF('p', 'pt', 'letter', true);
   const canvas = await html2canvas(document.getElementById(elementId) as any, {
     useCORS: true,

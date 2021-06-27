@@ -1,4 +1,4 @@
-export default theme => ({
+export default () => ({
   page: {
     display: 'flex',
     flexDirection: 'column',

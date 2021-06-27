@@ -1,21 +1,15 @@
-import React, { Component } from 'react';
+import { FileBlock, Table, withStyles } from '@kudoo/components';
+import { Trans, withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
 import cx from 'classnames';
 import get from 'lodash/get';
-import { withI18n, Trans } from '@lingui/react';
+import moment from 'moment';
 import queryString from 'query-string';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import moment from 'moment';
-import Grid from '@material-ui/core/Grid';
-import {
-  withStyles,
-  Table,
-  FileBlock,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
-import { withInvoice } from '@kudoo/graphql';
-import { INVOICE_TYPE, SERVICE_BILLING_TYPE } from '@client/helpers/constants';
+import { INVOICE_TYPE, SERVICE_BILLING_TYPE } from 'src/helpers/constants';
+import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
@@ -28,12 +22,16 @@ type Props = {
 type State = {};
 
 class PreviewInvoice extends Component<Props, State> {
+  static defaultProps = {
+    invoice: { data: {}, refetch: () => {} },
+  };
+
   componentDidMount() {
     const props = this.props;
     this.setCompanyAndUserData(props);
   }
 
-  setCompanyAndUserData = async props => {
+  setCompanyAndUserData = async (props) => {
     const query = queryString.parse(get(props, 'location.search', ''));
     if (query['company-token'] && query['user-token']) {
       await this.props.actions.setUserData({
@@ -99,7 +97,7 @@ class PreviewInvoice extends Component<Props, State> {
     let subtotal = 0;
     let gst = 0;
     let total = 0;
-    const tableData = data.map(row => {
+    const tableData = data.map((row) => {
       subtotal = subtotal + Number(row.quantity) * Number(row.price);
       gst = gst + Number(row.tax);
 
@@ -233,7 +231,7 @@ class PreviewInvoice extends Component<Props, State> {
     let subtotal = 0;
     let gst = 0;
     let total = 0;
-    const tableData = data.map(row => {
+    const tableData = data.map((row) => {
       subtotal = subtotal + Number(row.price);
       gst = gst + Number(row.tax);
 
@@ -384,7 +382,7 @@ class PreviewInvoice extends Component<Props, State> {
     let subtotal = 0;
     let gst = 0;
     let total = 0;
-    const tableData = data.map(row => {
+    const tableData = data.map((row) => {
       subtotal = subtotal + Number(row.quantity) * Number(row.price);
       gst = gst + Number(row.tax);
 
@@ -535,7 +533,8 @@ class PreviewInvoice extends Component<Props, State> {
               <Grid
                 item
                 xs={6}
-                classes={{ item: classes.invoiceTitleRightPart }}>
+                classes={{ item: classes.invoiceTitleRightPart }}
+              >
                 <div className={classes.invoiceNumber}>
                   <div>Invoice #{invoiceNumber}</div>
                 </div>
@@ -555,15 +554,15 @@ class PreviewInvoice extends Component<Props, State> {
             </div>
             <div
               className={classes.invoiceDateBlock}
-              style={{ textAlign: 'right' }}>
+              style={{ textAlign: 'right' }}
+            >
               <div className={classes.invoiceDateLabel}>Due Date</div>
               <div className={classes.invoiceDateValue}>
                 {moment(dueDate).format('DD MMM YYYY')}
               </div>
               <div
-                className={
-                  classes.invoiceDatePeriod
-                }>{`(${numberOfDays}days to pay)`}</div>
+                className={classes.invoiceDatePeriod}
+              >{`(${numberOfDays}days to pay)`}</div>
             </div>
           </div>
           {/* Invoice Bill Block */}
@@ -643,7 +642,8 @@ class PreviewInvoice extends Component<Props, State> {
                 <div className={classes.secureBtns}>
                   <div
                     className={classes.invoiceTextValue}
-                    style={{ marginRight: 10 }}>
+                    style={{ marginRight: 10 }}
+                  >
                     Please make payment into the following bank account
                   </div>
                 </div>
@@ -672,12 +672,12 @@ class PreviewInvoice extends Component<Props, State> {
 export default compose(
   withStyles(styles),
   withI18n(),
-  connect(state => ({
+  connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-  withInvoice(props => {
-    return {
-      id: get(props, 'match.params.id'),
-    };
-  })
+  // withInvoice((props) => {
+  //   return {
+  //     id: get(props, 'match.params.id'),
+  //   };
+  // }),
 )(PreviewInvoice);

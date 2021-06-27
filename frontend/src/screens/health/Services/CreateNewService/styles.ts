@@ -1,6 +1,6 @@
-import { Props, ClassesKeys } from './types';
+import { ClassesKeys, Props } from './types';
 
-export default (theme: Theme): StyleFnReturnType<ClassesKeys, Props> => ({
+export default (): StyleFnReturnType<ClassesKeys, Props> => ({
   formFields: {
     flex: 1,
     padding: '0px 20px',

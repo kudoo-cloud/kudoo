@@ -1,22 +1,26 @@
-import * as React from 'react';
+import { Button, ErrorBoundary, TextField } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import { compose } from 'recompose';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { ErrorBoundary, Button, TextField } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { showToast } from '@client/helpers/toast';
-import { withRememberPassword } from '@kudoo/graphql';
+import * as React from 'react';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import * as Yup from 'yup';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import './index.scss';
 
 interface IProps {
-  history: any;
-  remember: ({ email, baseURL }) => any;
-  app: any;
+  actions: any;
+  history?: any;
+  remember?: ({ email, baseURL }) => any;
+  app?: any;
 }
 
 class ForgotPassword extends React.Component<IProps> {
+  static defaultProps = {
+    remember: () => ({}),
+  };
+
   public _sendResetLink = async (values: any, actions: any) => {
     try {
       const res = await this.props.remember({
@@ -28,7 +32,7 @@ class ForgotPassword extends React.Component<IProps> {
         this.props.history.push(URL.RESET_PASSWORD_EMAIL());
       } else {
         actions.setSubmitting(false);
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       actions.setSubmitting(false);
@@ -47,7 +51,7 @@ class ForgotPassword extends React.Component<IProps> {
               <div className='middle-container'>
                 <img
                   className='mail-sent-icon'
-                  src={require('images/reset-password.png')}
+                  src={require('@kudoo/components/build/assets/images/reset-password.png')}
                 />
                 <div className='message-wrapper'>
                   <div className='message-title'>
@@ -76,12 +80,12 @@ class ForgotPassword extends React.Component<IProps> {
                     handleBlur,
                     handleSubmit,
                     isSubmitting,
-                    setSubmitting,
                   }: any) => (
                     <form
                       className='form'
                       autoComplete='off'
-                      onSubmit={handleSubmit}>
+                      onSubmit={handleSubmit}
+                    >
                       <TextField
                         type='email'
                         name='email'
@@ -134,9 +138,8 @@ class ForgotPassword extends React.Component<IProps> {
   }
 }
 
-export default compose(
-  withRememberPassword(),
+export default compose<IProps, IProps>(
   connect((state: any) => ({
     app: state.app,
-  }))
+  })),
 )(ForgotPassword as any);

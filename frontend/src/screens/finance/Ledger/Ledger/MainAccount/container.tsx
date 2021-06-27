@@ -1,13 +1,12 @@
+import { ErrorBoundary } from '@kudoo/components';
+import idx from 'idx';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import idx from 'idx';
-import get from 'lodash/get';
-import find from 'lodash/find';
-import isEqual from 'lodash/isEqual';
-import { ErrorBoundary, withRouterProps } from '@kudoo/components';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { withMainAccounts } from '@kudoo/graphql';
+import SelectedCompany from 'src/helpers/SelectedCompany';
 
 interface IProps {
   actions: any;
@@ -28,14 +27,14 @@ class MainAccountTabContainer extends Component<IProps, IState> {
     mainAccounts: {
       refetch: () => {},
       loadNextPage: () => {},
-      children: ({}) => {},
+      data: [],
     },
   };
 
   constructor(props: IProps) {
     super(props);
     this.state = {
-      displayedMainAccounts: idx(props, _ => _.mainAccounts.data),
+      displayedMainAccounts: idx(props, (_) => _.mainAccounts.data),
       columns: [
         {
           id: 'name',
@@ -56,8 +55,8 @@ class MainAccountTabContainer extends Component<IProps, IState> {
   }
 
   public componentDidUpdate(prevProps) {
-    const oldMainAccounts = idx(prevProps, _ => _.mainAccounts.data) || [];
-    const newMainAccounts = idx(this.props, _ => _.mainAccounts.data) || [];
+    const oldMainAccounts = idx(prevProps, (_) => _.mainAccounts.data) || [];
+    const newMainAccounts = idx(this.props, (_) => _.mainAccounts.data) || [];
     if (!isEqual(oldMainAccounts, newMainAccounts)) {
       this._updateMainAccounts(newMainAccounts);
     }
@@ -67,7 +66,7 @@ class MainAccountTabContainer extends Component<IProps, IState> {
     this.setState({ displayedMainAccounts: mainAccounts });
   }
 
-  public _onRequestSort = async column => {
+  public _onRequestSort = async (column) => {
     const columns = this.state.columns;
     const sortedColumn = find(columns, { sorted: true });
     const columnGoingToBeSorted = find(columns, { id: column.id });
@@ -119,18 +118,18 @@ export default compose<any, any>(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withMainAccounts(({ profile, type }) => {
-    let isArchived = false;
-    if (type === 'archived-mainAccounts') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  })
+  // withMainAccounts(({ type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-mainAccounts') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
 )(MainAccountTabContainer);

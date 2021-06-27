@@ -1,18 +1,16 @@
-import React, { Component } from 'react';
-import isEmpty from 'lodash/isEmpty';
 import {
-  withStyles,
-  composeStyles,
   Button,
-  SectionHeader,
-  ErrorBoundary,
-  Table,
-  withRouterProps,
-  withStylesProps,
   Checkbox,
+  ErrorBoundary,
+  SectionHeader,
+  Table,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
 import Grid from '@material-ui/core/Grid';
+import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
+import URL from 'src/helpers/urls';
 import styles, { LedgerStyles } from '../styles';
 import Container from './container';
 
@@ -141,7 +139,7 @@ const Styled = withStyles(composeStyles(styles, LedgerStyles))(LedgerJournals);
 
 const EnhancedComponent = (props: any) => (
   <Container {...props} type='active-journals'>
-    {childProps => <Styled {...childProps} />}
+    {(childProps) => <Styled {...childProps} />}
   </Container>
 );
 

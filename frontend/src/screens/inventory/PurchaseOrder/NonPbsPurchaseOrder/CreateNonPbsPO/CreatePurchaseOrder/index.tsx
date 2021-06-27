@@ -1,34 +1,44 @@
+import {
+  Button,
+  DatePicker,
+  Dropdown,
+  ErrorBoundary,
+  SectionHeader,
+  composeStyles,
+  withStyles,
+} from '@kudoo/components';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
+import idx from 'idx';
+import { isEqual } from 'lodash';
 import * as React from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import URL from 'src/helpers/urls';
 import styles, {
   createPurchaseOrderStyles,
 } from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/styles';
-import { connect } from 'react-redux';
-import { compose } from 'react-apollo';
-import {
-  withRouterProps,
-  withStyles,
-  withStylesProps,
-  DatePicker,
-  Dropdown,
-  SectionHeader,
-  Button,
-  ErrorBoundary,
-  composeStyles,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { withPurchaseOrder, withSuppliers } from '@kudoo/graphql';
-import Grid from '@material-ui/core/Grid';
-import idx from 'idx';
-import { isEqual } from 'lodash';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
 import { ICreatePOProps, ICreatePOState } from '../NonPBSPOtypes';
 
 class CreatePurchaseOrder extends React.Component<
   ICreatePOProps,
   ICreatePOState
 > {
+  public static defaultProps = {
+    initialData: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+    suppliers: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+  };
+
   public state = {
     suppliersList: [],
     isEditMode: false,
@@ -38,7 +48,7 @@ class CreatePurchaseOrder extends React.Component<
     this.props.actions.updateHeaderTitle('Purchase Order');
 
     this.setState({
-      isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+      isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
     });
   }
 
@@ -64,24 +74,24 @@ class CreatePurchaseOrder extends React.Component<
 
     if (isEditMode && !isEqual(initialData.id, prevProps.initialData.id)) {
       const data = {
-        id: idx(initialData, _ => _.id) || '',
+        id: idx(initialData, (_) => _.id) || '',
         date: defaultData.id
-          ? idx(defaultData, _ => _.date)
-          : idx(initialData, _ => _.date) || '',
+          ? idx(defaultData, (_) => _.date)
+          : idx(initialData, (_) => _.date) || '',
         supplier: defaultData.id
-          ? idx(defaultData, _ => _.supplier)
+          ? idx(defaultData, (_) => _.supplier)
           : {
-              key: idx(initialData, _ => _.supplier.name) || '',
-              value: idx(initialData, _ => _.supplier.id) || '',
+              key: idx(initialData, (_) => _.supplier.name) || '',
+              value: idx(initialData, (_) => _.supplier.id) || '',
             },
-        preview: idx(initialData, _ => _.preview) || '',
+        preview: idx(initialData, (_) => _.preview) || '',
       };
       this.props.setPurchaseOrderData({
         defaultData: data,
-        isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+        isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
       });
       this.setState({
-        isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+        isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
       });
     }
   }
@@ -118,7 +128,7 @@ class CreatePurchaseOrder extends React.Component<
           <Grid item xs={12}>
             <DatePicker
               label='Purchase Order Date'
-              onDateChange={date => setFieldValue('date', date)}
+              onDateChange={(date) => setFieldValue('date', date)}
               value={values.date}
               error={touched.date && errors.date}
             />
@@ -141,7 +151,7 @@ class CreatePurchaseOrder extends React.Component<
                     ]
               }
               value={values.supplier}
-              onChange={e => setFieldValue('supplier', e.value)}
+              onChange={(e) => setFieldValue('supplier', e.value)}
               onClose={() => setFieldTouched('supplier')}
               error={
                 touched.supplier &&
@@ -209,8 +219,8 @@ class CreatePurchaseOrder extends React.Component<
     return (
       <Formik
         initialValues={{
-          date: idx(defaultData, _ => _.date) || new Date(),
-          supplier: idx(defaultData, _ => _.supplier) || '',
+          date: idx(defaultData, (_) => _.date) || new Date(),
+          supplier: idx(defaultData, (_) => _.supplier) || '',
         }}
         validationSchema={Yup.object().shape({
           date: Yup.string().required('Purchase Order Date is required'),
@@ -219,7 +229,8 @@ class CreatePurchaseOrder extends React.Component<
           }),
         })}
         enableReinitialize
-        onSubmit={this._submitForm}>
+        onSubmit={this._submitForm}
+      >
         {({
           values,
           errors,
@@ -258,7 +269,8 @@ class CreatePurchaseOrder extends React.Component<
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.PURCHASE_ORDER());
-          }}>
+          }}
+        >
           {this._renderForm()}
         </SelectedCompany>
       </React.Fragment>
@@ -268,30 +280,30 @@ class CreatePurchaseOrder extends React.Component<
 
 export default compose(
   withStyles(composeStyles(styles, createPurchaseOrderStyles)),
-  withSuppliers(({ type }) => {
-    let isArchived = false;
-    if (type === 'archived-suppliers') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  }),
-  withPurchaseOrder(
-    props => {
-      const purchaseOrderId = idx(props, _ => _.match.params.id);
-      return {
-        id: purchaseOrderId,
-      };
-    },
-    ({ data }) => ({ initialData: idx(data, _ => _.purchaseOrder) || {} })
-  ),
+  // withSuppliers(({ type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-suppliers') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
+  // withPurchaseOrder(
+  //   (props) => {
+  //     const purchaseOrderId = idx(props, (_) => _.match.params.id);
+  //     return {
+  //       id: purchaseOrderId,
+  //     };
+  //   },
+  //   ({ data }) => ({ initialData: idx(data, (_) => _.purchaseOrder) || {} }),
+  // ),
   connect((state: { profile: object }) => ({
     profile: state.profile,
-  }))
+  })),
 )(CreatePurchaseOrder);

@@ -1,14 +1,14 @@
-import * as React from 'react';
+import { ErrorBoundary, withStyles } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import { withStyles, ErrorBoundary, withStylesProps } from '@kudoo/components';
-import ProfileStats from './ProfileStats';
-import RevenueBlock from './RevenueBlock';
+import * as React from 'react';
 import AverageStats from './AverageStats';
 import Invoices from './Invoices';
-import Timesheets from './Timesheets';
-import MostRecentProjects from './MostRecentProjects';
 import MostRecentCustomers from './MostRecentCustomers';
+import MostRecentProjects from './MostRecentProjects';
+import ProfileStats from './ProfileStats';
+import RevenueBlock from './RevenueBlock';
 import styles from './styles';
+import Timesheets from './Timesheets';
 
 type Props = {
   type:
@@ -68,7 +68,8 @@ class Widget extends React.Component<Props, State> {
           md={md}
           lg={lg}
           xl={xl}
-          classes={{ item: classes.widgetItem }}>
+          classes={{ item: classes.widgetItem }}
+        >
           <WidgetComponent contentHash={contentHash} />
         </Grid>
       </ErrorBoundary>

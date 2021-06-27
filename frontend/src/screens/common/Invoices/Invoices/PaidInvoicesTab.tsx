@@ -1,23 +1,21 @@
-import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import cx from 'classnames';
+import {
+  ErrorBoundary,
+  Loading,
+  SectionHeader,
+  Table,
+  withStyles,
+} from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import isEmpty from 'lodash/isEmpty';
+import cx from 'classnames';
 import clone from 'lodash/clone';
 import find from 'lodash/find';
+import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
 import { Tooltip } from 'react-tippy';
-import {
-  withStyles,
-  Table,
-  SectionHeader,
-  ErrorBoundary,
-  withRouterProps,
-  withStylesProps,
-  Loading,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import TabContainer from './TabContainer';
+import URL from 'src/helpers/urls';
 import { UnpaidInvoicesTabStyles } from './styles';
+import TabContainer from './TabContainer';
 
 type Props = {
   actions: any;
@@ -69,7 +67,7 @@ class PaidInvoicesTab extends Component<Props, State> {
     };
   }
 
-  _onRequestSort = column => {
+  _onRequestSort = (column) => {
     const { headerData } = this.state;
     const newHeaderData = clone(headerData);
     const sortedColumn = find(newHeaderData, { sorted: true });
@@ -88,7 +86,7 @@ class PaidInvoicesTab extends Component<Props, State> {
     this.props.onRequestSort(column, sortDirection);
   };
 
-  _showArchivedDialog = invoice => {
+  _showArchivedDialog = (invoice) => {
     const { theme } = this.props;
     const title = 'Archive Invoice?';
     const description = (
@@ -150,7 +148,8 @@ class PaidInvoicesTab extends Component<Props, State> {
           <Link
             to={URL.PREVIEW_INVOICE({ id: row.id })}
             target='_blank'
-            className={classes.invoiceLink}>
+            className={classes.invoiceLink}
+          >
             {row[column.id]}
           </Link>
         </div>
@@ -167,13 +166,15 @@ class PaidInvoicesTab extends Component<Props, State> {
               animation='fade'
               position='left'
               arrow
-              arrowType='round'
-              trigger='mouseenter focus'>
+              // arrowType='round'
+              trigger={'mouseenter focus' as any}
+            >
               <span
                 className={classes.dollarIcon}
                 onClick={() => {
                   showInvoiceEmailModal(row);
-                }}>
+                }}
+              >
                 <i className='fa fa-envelope-o' />
               </span>
             </Tooltip>
@@ -195,7 +196,7 @@ class PaidInvoicesTab extends Component<Props, State> {
             showRemoveIcon
             sortable
             cellRenderer={this._renderCell}
-            onRemoveClicked={item => {
+            onRemoveClicked={(item) => {
               this._showArchivedDialog(item);
             }}
             onRequestSort={this._onRequestSort}
@@ -233,7 +234,7 @@ const Styled = withStyles(UnpaidInvoicesTabStyles)(PaidInvoicesTab);
 
 const PaidTabContainer = (props: any) => (
   <TabContainer {...props} invoiceType='paid'>
-    {childProps => <Styled {...childProps} />}
+    {(childProps) => <Styled {...childProps} />}
   </TabContainer>
 );
 

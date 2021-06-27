@@ -1,19 +1,6 @@
-import React from 'react';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import get from 'lodash/get';
+import { SectionHeader, TextField, withStyles } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import {
-  withStyles,
-  Button,
-  AddressForm,
-  SectionHeader,
-  PhoneNumberField,
-  URL,
-  withStylesProps,
-  helpers as utils,
-  TextField,
-} from '@kudoo/components';
+import React from 'react';
 import styles from './styles';
 
 interface IProps {

@@ -1,15 +1,14 @@
-import React, { Component, useState } from 'react';
 import {
-  withStyles,
-  TextField,
   Button,
   SectionHeader,
+  TextField,
+  withStyles,
 } from '@kudoo/components';
+import clone from 'lodash/clone';
+import React, { useState } from 'react';
 import ReactDataSheet from 'react-datasheet';
 import { compose } from 'recompose';
-import { withUploadBulkPatients } from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
-import clone from 'lodash/clone';
+import { showToast } from 'src/helpers/toast';
 import styles, { StyleKeys } from '../styles';
 
 type Props = IComponentProps<StyleKeys> & {
@@ -83,7 +82,7 @@ const getInitialEmptyRow = () => {
   ];
 };
 
-const BulkUpload: React.FC<Props> = props => {
+const BulkUpload: React.FC<Props> = (props) => {
   const { classes, theme, uploadBulkPatients } = props;
   const [data, setData] = useState([
     columns,
@@ -92,11 +91,11 @@ const BulkUpload: React.FC<Props> = props => {
   const [isUploading, setIsUploading] = useState(false);
 
   const addRow = () => {
-    setData(prevData => [...prevData, getInitialEmptyRow()]);
+    setData((prevData) => [...prevData, getInitialEmptyRow()]);
   };
 
-  const removeRow = index => {
-    setData(prevData => {
+  const removeRow = (index) => {
+    setData((prevData) => {
       const newData = clone(prevData);
       newData.splice(index, 1);
       return newData;
@@ -138,7 +137,7 @@ const BulkUpload: React.FC<Props> = props => {
                 if (res.success) {
                   showToast(null, 'All patients are uploaded');
                 } else {
-                  res.error.map(err => showToast(err));
+                  res.error.map((err) => showToast(err));
                 }
               }}
             />
@@ -147,9 +146,9 @@ const BulkUpload: React.FC<Props> = props => {
       />
       <BulkDataSheet
         data={data}
-        valueRenderer={cell => cell.value}
+        valueRenderer={(cell) => cell.value}
         className={classes.dataSheet}
-        valueViewer={props => {
+        valueViewer={(props) => {
           if (props.cell.type === 'column') {
             return (
               <div className={classes.bulkUploadColumnHeading}>
@@ -179,7 +178,7 @@ const BulkUpload: React.FC<Props> = props => {
           }
           return <div className={classes.bulkUploadCell}>{props.value}</div>;
         }}
-        dataEditor={cell => {
+        dataEditor={(cell) => {
           return (
             <TextField
               value={cell.value}
@@ -188,7 +187,7 @@ const BulkUpload: React.FC<Props> = props => {
             />
           );
         }}
-        parsePaste={data => {
+        parsePaste={(data) => {
           const grid = [];
           const rows = data.split('\n');
           for (let index = 0; index < rows.length; index++) {
@@ -202,7 +201,7 @@ const BulkUpload: React.FC<Props> = props => {
           return grid;
         }}
         onCellsChanged={(changes, extraData) => {
-          const grid = data.map(row => [...row]);
+          const grid = data.map((row) => [...row]);
           changes.forEach(({ row, col, value }) => {
             grid[row][col] = { ...grid[row][col], value };
           });
@@ -226,7 +225,11 @@ const BulkUpload: React.FC<Props> = props => {
   );
 };
 
+BulkUpload.defaultProps = {
+  uploadBulkPatients: () => ({}),
+};
+
 export default compose(
   withStyles(styles),
-  withUploadBulkPatients()
+  // withUploadBulkPatients(),
 )(BulkUpload);

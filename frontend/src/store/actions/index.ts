@@ -1,8 +1,8 @@
-import ProfileActions from './profile';
 import AppActions from './app';
 import * as createNewInvoiceActions from './createNewInvoice';
-import * as createNewProjectActions from './createNewProject';
 import * as createNewPatientActions from './createNewPatient';
+import * as createNewProjectActions from './createNewProject';
+import ProfileActions from './profile';
 
 export {
   ProfileActions,

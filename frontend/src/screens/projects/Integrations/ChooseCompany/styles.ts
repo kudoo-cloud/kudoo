@@ -1,6 +1,6 @@
 const formMaxWidth = 400;
 
-export default theme => ({
+export default (theme) => ({
   page: {
     display: 'flex',
     flex: 1,
@@ -40,7 +40,8 @@ export default theme => ({
     width: 30,
     height: 30,
     borderRadius: '50%',
-    backgroundColor: props => props.borderColor || theme.palette.primary.color1,
+    backgroundColor: (props) =>
+      props.borderColor || theme.palette.primary.color1,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',

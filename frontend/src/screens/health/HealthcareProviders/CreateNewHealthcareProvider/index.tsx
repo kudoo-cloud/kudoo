@@ -1,22 +1,21 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import * as Yup from 'yup';
-import { compose } from 'react-apollo';
 import {
-  withStyles,
   AddressForm,
-  FormikTextField,
   FormikDatePicker,
   FormikDropdown,
+  FormikTextField,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { withCreateHealthcareProvider } from '@kudoo/graphql';
-import SimpleCreatePage from '@client/common_screens/SimpleCreatePage';
-import { showToast } from '@client/helpers/toast';
-import { Grid, FormControl } from '@material-ui/core';
-import { IReduxState } from '@client/store/reducers';
-import { IProfileState } from '@client/store/reducers/profile';
+import { FormControl, Grid } from '@material-ui/core';
 import get from 'lodash/get';
+import React from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
+import SimpleCreatePage from 'src/screens/common/SimpleCreatePage';
+import { IReduxState } from 'src/store/reducers';
+import { IProfileState } from 'src/store/reducers/profile';
 import styles, { ClassesKeys } from './styles';
 
 type Props = IRouteProps<ClassesKeys> & {
@@ -25,11 +24,11 @@ type Props = IRouteProps<ClassesKeys> & {
   updateTrader: Function;
 };
 
-const CreateNewHealthcareProvider: React.FC<Props> = props => {
+const CreateNewHealthcareProvider: React.FC<Props> = (props) => {
   const { classes, profile, history } = props;
   const selectedCompany = profile.selectedCompany;
 
-  const isAddressEmpty = address => {
+  const isAddressEmpty = (address) => {
     if (!address) {
       return true;
     }
@@ -45,7 +44,7 @@ const CreateNewHealthcareProvider: React.FC<Props> = props => {
     return true;
   };
 
-  const _submitForm = async values => {
+  const _submitForm = async (values) => {
     try {
       const res = await props.createHealthcareProvider({
         data: {
@@ -73,7 +72,7 @@ const CreateNewHealthcareProvider: React.FC<Props> = props => {
         showToast(null, 'HealthcareProvider created successfully');
         history.push(URL.HEALTH_CARE_PROVIDERS());
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
@@ -115,7 +114,8 @@ const CreateNewHealthcareProvider: React.FC<Props> = props => {
       onSubmit={_submitForm}
       onCancel={() => {
         history.push(URL.HEALTH_CARE_PROVIDERS());
-      }}>
+      }}
+    >
       <Grid container className={classes.formFields}>
         <Grid item xs={12} sm={6}>
           <FormControl fullWidth margin='dense'>
@@ -201,10 +201,14 @@ const CreateNewHealthcareProvider: React.FC<Props> = props => {
   );
 };
 
+CreateNewHealthcareProvider.defaultProps = {
+  createHealthcareProvider: () => ({}),
+};
+
 export default compose<Props, Props>(
   withStyles(styles),
-  withCreateHealthcareProvider(),
+  // withCreateHealthcareProvider(),
   connect((state: IReduxState) => ({
     profile: state.profile,
-  }))
+  })),
 )(CreateNewHealthcareProvider);

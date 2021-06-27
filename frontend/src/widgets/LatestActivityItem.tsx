@@ -1,6 +1,6 @@
-import * as React from 'react';
+import { ErrorBoundary, withStyles } from '@kudoo/components';
 import cx from 'classnames';
-import { withStyles, ErrorBoundary } from '@kudoo/components';
+import * as React from 'react';
 import { LatestActivityItemStyles } from './styles';
 
 type Props = {

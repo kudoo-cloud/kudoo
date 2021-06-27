@@ -1,19 +1,14 @@
-import React, { Component } from 'react';
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
-import get from 'lodash/get';
-import cx from 'classnames';
-import uuid from 'uuid/v4';
-import {
-  withStyles,
-  DatePicker,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
-import Grid from '@material-ui/core/Grid';
+import { DatePicker, withStyles } from '@kudoo/components';
 import ButtonBase from '@material-ui/core/ButtonBase';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import Widget from '@client/Widget';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+import get from 'lodash/get';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import uuid from 'uuid/v4';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import Widget from 'src/widgets/Widget';
 import styles from './styles';
 
 interface IProps {
@@ -52,7 +47,8 @@ class Dashboard extends Component<IProps, IState> {
           </ButtonBase>
           <ButtonBase
             focusRipple
-            classes={{ root: cx(classes.periodButton, 'active') }}>
+            classes={{ root: cx(classes.periodButton, 'active') }}
+          >
             Year
           </ButtonBase>
         </div>
@@ -79,7 +75,8 @@ class Dashboard extends Component<IProps, IState> {
             this.setState({
               contentHash: uuid(),
             });
-          }}>
+          }}
+        >
           <Grid container spacing={0}>
             <Grid item xs={12}>
               {/* {this._renderHeaderBar()} */}
@@ -131,5 +128,5 @@ export default compose<any, any>(
   withStyles(styles),
   connect((state: any) => ({
     profile: state.profile,
-  }))
+  })),
 )(Dashboard);

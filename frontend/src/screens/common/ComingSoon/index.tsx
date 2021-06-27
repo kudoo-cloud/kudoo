@@ -1,7 +1,5 @@
+import { ErrorBoundary, withStyles } from '@kudoo/components';
 import * as React from 'react';
-import { ErrorBoundary } from '@kudoo/components';
-// @ts-ignore
-import { withStyles } from '@kudoo/components';
 import comingSoon from './coming-soon.jpg';
 import Styles from './styles';
 interface IProps {

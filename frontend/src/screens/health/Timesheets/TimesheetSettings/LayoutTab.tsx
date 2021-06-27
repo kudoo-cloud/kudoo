@@ -1,22 +1,20 @@
-import React, { Component } from 'react';
-import cx from 'classnames';
-import { connect } from 'react-redux';
-import range from 'lodash/range';
-import isEqual from 'lodash/isEqual';
-import get from 'lodash/get';
-import { Formik } from 'formik';
-import { compose } from 'recompose';
-import Grid from '@material-ui/core/Grid';
 import {
-  withStyles,
   Button,
-  SectionHeader,
-  Dropdown,
   Checkbox,
+  Dropdown,
+  SectionHeader,
+  withStyles,
 } from '@kudoo/components';
-import { showToast } from '@client/helpers/toast';
-import { withCompany, withUpdateCompany } from '@kudoo/graphql';
-import SelectedCompany from '@client/helpers/SelectedCompany';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+import { Formik } from 'formik';
+import get from 'lodash/get';
+import range from 'lodash/range';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
 import { LayoutTabStyles } from './styles';
 
 type Props = {
@@ -30,6 +28,15 @@ type Props = {
 type State = {};
 
 class LayoutTab extends Component<Props, State> {
+  public static defaultProps = {
+    updateCompany: () => ({}),
+    company: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+  };
+
   _onSubmit = async (values, actions) => {
     try {
       const { company, profile } = this.props;
@@ -56,7 +63,7 @@ class LayoutTab extends Component<Props, State> {
           });
         }
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       actions.setSubmitting(false);
@@ -64,7 +71,7 @@ class LayoutTab extends Component<Props, State> {
     }
   };
 
-  _renderFormFields = formProps => {
+  _renderFormFields = (formProps) => {
     const { classes, theme } = this.props;
     const { values, setFieldValue, dirty } = formProps;
     const isFormDirty = dirty;
@@ -87,7 +94,7 @@ class LayoutTab extends Component<Props, State> {
                       { label: 'By Month', value: 'MONTHLY' },
                       { label: 'By Year', value: 'ANNUALLY' },
                     ]}
-                    onChange={item => {
+                    onChange={(item) => {
                       setFieldValue('groupEvery', item.value);
                     }}
                   />
@@ -96,7 +103,8 @@ class LayoutTab extends Component<Props, State> {
                   item
                   xs={12}
                   sm={3}
-                  classes={{ item: classes.defaultTextWrapper }}>
+                  classes={{ item: classes.defaultTextWrapper }}
+                >
                   <div>Default</div>
                 </Grid>
               </Grid>
@@ -128,12 +136,13 @@ class LayoutTab extends Component<Props, State> {
                 container
                 classes={{
                   container: cx(classes.field, classes.approvalField),
-                }}>
+                }}
+              >
                 <Grid item xs={12}>
                   <Checkbox
                     label='Approval Enabled'
                     value={values.approvalsEnabled}
-                    onChange={isChecked => {
+                    onChange={(isChecked) => {
                       setFieldValue('approvalsEnabled', isChecked);
                     }}
                   />
@@ -150,11 +159,11 @@ class LayoutTab extends Component<Props, State> {
                   <Dropdown
                     value={values.workingHours}
                     label='Work day Hours'
-                    items={range(1, 9).map(index => ({
+                    items={range(1, 9).map((index) => ({
                       label: `${index}`,
                       value: index,
                     }))}
-                    onChange={item => {
+                    onChange={(item) => {
                       setFieldValue('workingHours', item.value);
                     }}
                   />
@@ -163,7 +172,8 @@ class LayoutTab extends Component<Props, State> {
                   item
                   xs={12}
                   sm={3}
-                  classes={{ item: classes.defaultTextWrapper }}>
+                  classes={{ item: classes.defaultTextWrapper }}
+                >
                   <div>Default</div>
                 </Grid>
               </Grid>
@@ -203,9 +213,10 @@ class LayoutTab extends Component<Props, State> {
               approvalsEnabled: get(
                 timeSheetSettings,
                 'approvalsEnabled',
-                false
+                false,
               ),
-            }}>
+            }}
+          >
             {this._renderFormFields.bind(this)}
           </Formik>
         </SelectedCompany>
@@ -219,8 +230,8 @@ export default compose<any, any>(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withCompany(props => ({
-    id: get(props, 'profile.selectedCompany.id'),
-  })),
-  withUpdateCompany()
+  // withCompany((props) => ({
+  //   id: get(props, 'profile.selectedCompany.id'),
+  // })),
+  // withUpdateCompany(),
 )(LayoutTab);

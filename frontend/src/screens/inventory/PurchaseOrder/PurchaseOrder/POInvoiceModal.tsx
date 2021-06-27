@@ -1,25 +1,15 @@
-import React, { Component, useState } from 'react';
+import { Modal, TextField, withStyles } from '@kudoo/components';
+import React, { useState } from 'react';
 import { compose } from 'react-apollo';
-import {
-  withStyles,
-  Modal,
-  TextField,
-  withStylesProps,
-} from '@kudoo/components';
-import { showToast } from '@client/helpers/toast';
 import { connect } from 'react-redux';
-import {
-  withUpdateApInvoice,
-  withUpdatePurchaseOrder,
-  withCreateApInvoice,
-} from '@kudoo/graphql';
+import { showToast } from 'src/helpers/toast';
 import { IPOResponse } from 'src/screens/inventory/PurchaseOrder/PbsPurchaseOrderTab/CreatePbsPO/PBSPOtypes';
 import {
   APINVOICE,
   POSTATUS,
 } from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/types';
-import { IProfileState } from '@client/store/reducers/profile';
-import { IReduxState } from '@client/store/reducers';
+import { IReduxState } from 'src/store/reducers';
+import { IProfileState } from 'src/store/reducers/profile';
 import styles, { StyleKeys } from './styles';
 
 type IProps = IRouteProps<StyleKeys> & {
@@ -34,11 +24,10 @@ type IProps = IRouteProps<StyleKeys> & {
   updatePurchaseOrder: ({}) => Promise<IPOResponse>;
 };
 
-const POInvoiceModal: React.FC<IProps> = props => {
+const POInvoiceModal: React.FC<IProps> = (props) => {
   const {
     onClose,
     visible,
-    profile,
     purchaseOrder,
     createApInvoice,
     updatePurchaseOrder,
@@ -74,11 +63,11 @@ const POInvoiceModal: React.FC<IProps> = props => {
           showToast(null, 'Status Updated');
           onClose();
         } else {
-          res.error.forEach(err => showToast(err));
+          res.error.forEach((err) => showToast(err));
           onClose();
         }
       } else {
-        apInvoiceRes.error.forEach(err => showToast(err));
+        apInvoiceRes.error.forEach((err) => showToast(err));
         onClose();
       }
     } catch (e) {
@@ -102,7 +91,7 @@ const POInvoiceModal: React.FC<IProps> = props => {
             name='invoiceNumber'
             id='invoiceNumber'
             value={String(invoiceNumber)}
-            onChange={e => {
+            onChange={(e) => {
               setInvoiceNumber(e.target.value);
             }}
           />
@@ -123,14 +112,17 @@ const POInvoiceModal: React.FC<IProps> = props => {
 POInvoiceModal.defaultProps = {
   onClose: () => {},
   purchaseOrder: {},
+  createApInvoice: () => ({} as any),
+  updateApInvoice: () => ({} as any),
+  updatePurchaseOrder: () => ({} as any),
 };
 
 export default compose<IProps, IProps>(
   withStyles(styles),
-  withUpdatePurchaseOrder(),
-  withCreateApInvoice(),
-  withUpdateApInvoice(),
+  // withUpdatePurchaseOrder(),
+  // withCreateApInvoice(),
+  // withUpdateApInvoice(),
   connect((state: IReduxState) => ({
     profile: state.profile,
-  }))
+  })),
 )(POInvoiceModal);

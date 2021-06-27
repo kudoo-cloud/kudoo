@@ -1,13 +1,13 @@
-import * as React from 'react';
 import {
-  withStyles,
-  ErrorBoundary,
   Button,
+  ErrorBoundary,
   SectionHeader,
+  withStyles,
 } from '@kudoo/components';
-import SelectedCompany from '@client/helpers/SelectedCompany';
 import Grid from '@material-ui/core/Grid';
 import { Formik, FormikProps, FormikValues } from 'formik';
+import * as React from 'react';
+import SelectedCompany from 'src/helpers/SelectedCompany';
 import stylesFn from './styles';
 import { SimpleCreatePageProps } from './types';
 
@@ -15,7 +15,7 @@ export type SimpleCreatePageRenderPropFormTypes = FormikProps<FormikValues> & {
   isContentDirty: boolean;
 };
 
-const SimpleCreatePage: React.FC<SimpleCreatePageProps> = props => {
+const SimpleCreatePage: React.FC<SimpleCreatePageProps> = (props) => {
   const {
     classes,
     onCompanyChange,
@@ -55,8 +55,9 @@ const SimpleCreatePage: React.FC<SimpleCreatePageProps> = props => {
         initialValues={initialValues}
         enableReinitialize
         validationSchema={validationSchema}
-        onSubmit={onSubmit}>
-        {formProps => {
+        onSubmit={onSubmit}
+      >
+        {(formProps) => {
           const formDirty = formProps.dirty;
           const childrenProps: SimpleCreatePageRenderPropFormTypes = {
             ...formProps,
@@ -108,6 +109,6 @@ const SimpleCreatePage: React.FC<SimpleCreatePageProps> = props => {
   );
 };
 
-export default withStyles<SimpleCreatePageProps>(stylesFn)(
-  SimpleCreatePage
+export default withStyles(stylesFn)(
+  SimpleCreatePage,
 ) as React.FC<SimpleCreatePageProps>;

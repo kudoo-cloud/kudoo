@@ -1,22 +1,29 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'react-apollo';
+import { ErrorBoundary } from '@kudoo/components';
 import idx from 'idx';
-import { get, find, isEqual, filter, includes } from 'lodash';
-import { ErrorBoundary, withRouterProps } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { withPurchaseOrders } from '@kudoo/graphql';
+import { filter, find, get, includes, isEqual } from 'lodash';
 import moment from 'moment';
-import PONotificationModal from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/PONotificationModal';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import URL from 'src/helpers/urls';
 import POInvoiceModal from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/POInvoiceModal';
+import PONotificationModal from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/PONotificationModal';
 import POReceiptModal from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/POReceiptModal';
-import { IContainerState, IContainerProps } from './listTypes';
+import { IContainerProps, IContainerState } from './listTypes';
 
 class PurchaseOrderTabContainer extends Component<
   IContainerProps,
   IContainerState
 > {
+  public static defaultProps = {
+    purchaseOrders: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+  };
+
   constructor(props: IContainerProps) {
     super(props);
     this.state = {
@@ -52,8 +59,10 @@ class PurchaseOrderTabContainer extends Component<
   }
 
   public componentDidUpdate(prevProps) {
-    const oldPurchaseOrders = idx(prevProps, _ => _.purchaseOrders.data) || [];
-    const newPurchaseOrders = idx(this.props, _ => _.purchaseOrders.data) || [];
+    const oldPurchaseOrders =
+      idx(prevProps, (_) => _.purchaseOrders.data) || [];
+    const newPurchaseOrders =
+      idx(this.props, (_) => _.purchaseOrders.data) || [];
     if (!isEqual(oldPurchaseOrders, newPurchaseOrders)) {
       this._updatePurchaseOrders();
     }
@@ -66,7 +75,7 @@ class PurchaseOrderTabContainer extends Component<
     const purchaseOrderFilterData: any = [];
     // ===Filter Non PBS Purchase Order Data===/
 
-    filter(data, (_: any) => _.isPbsPO).forEach(po => {
+    filter(data, (_: any) => _.isPbsPO).forEach((po) => {
       purchaseOrderFilterData.push(po);
     });
 
@@ -79,16 +88,16 @@ class PurchaseOrderTabContainer extends Component<
           orderer:
             idx(
               purchaseOrder,
-              _ => _.orderer.firstName + ' ' + _.orderer.lastName
+              (_) => _.orderer.firstName + ' ' + _.orderer.lastName,
             ) || '',
           date: moment(purchaseOrder.date).format('DD MMM YYYY'),
         };
-      }
+      },
     );
     this.setState({ displayedPurchaseOrders: purchaseOrdersData });
   }
 
-  public _onRequestSort = async column => {
+  public _onRequestSort = async (column) => {
     const columns = this.state.columns;
     const sortedColumn: any = find(columns, { sorted: true });
     const columnGoingToBeSorted: any = find(columns, { id: column.id });
@@ -141,7 +150,8 @@ class PurchaseOrderTabContainer extends Component<
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.PURCHASE_ORDER());
-          }}>
+          }}
+        >
           {this.props.children({
             match,
             history,
@@ -180,18 +190,18 @@ export default compose(
   connect((state: { profile: object }) => ({
     profile: state.profile,
   })),
-  withPurchaseOrders(({ type }) => {
-    let isArchived = false;
-    if (type === 'archived-purchaseOrder') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'date_ASC',
-      },
-    };
-  })
+  // withPurchaseOrders(({ type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-purchaseOrder') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'date_ASC',
+  //     },
+  //   };
+  // }),
 )(PurchaseOrderTabContainer);

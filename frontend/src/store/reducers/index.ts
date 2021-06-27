@@ -1,3 +1,4 @@
+import { combineReducers } from 'redux';
 import AppReducer from './app';
 import ProfileReducer from './profile';
 import SessionDataReducer from './sessionData';
@@ -10,4 +11,6 @@ const reducers = {
 
 export type IReduxState = typeof reducers;
 
-export default reducers;
+const combinedReducer = combineReducers(reducers as any);
+
+export default combinedReducer;

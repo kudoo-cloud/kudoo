@@ -1,17 +1,14 @@
+import {
+  Checkbox,
+  EmailInputFields,
+  Modal,
+  withStyles,
+} from '@kudoo/components';
+import get from 'lodash/get';
 import React, { Component } from 'react';
 import { compose } from 'recompose';
-import get from 'lodash/get';
-import {
-  withStyles,
-  Modal,
-  EmailInputFields,
-  Checkbox,
-  withStylesProps,
-} from '@kudoo/components';
-import { withInvoiceNotify } from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
-import { INVOICE_TYPE } from '@client/helpers/constants';
-import { any } from 'prop-types';
+import { INVOICE_TYPE } from 'src/helpers/constants';
+import { showToast } from 'src/helpers/toast';
 import styles from './styles';
 
 type Props = {
@@ -38,6 +35,7 @@ class InvoiceNotificationModal extends Component<Props, State> {
   static defaultProps = {
     onClose: () => {},
     invoice: {},
+    invoiceNotify: () => ({}),
   };
 
   state = {
@@ -54,11 +52,8 @@ class InvoiceNotificationModal extends Component<Props, State> {
   _sendInvoiceNotificationEmail = async () => {
     try {
       const { invoice } = this.props;
-      const {
-        emails,
-        includeTimesheet,
-        includeTimesheetAttachments,
-      } = this.state;
+      const { emails, includeTimesheet, includeTimesheetAttachments } =
+        this.state;
       this.setState({ submitting: true });
       const res = await this.props.invoiceNotify({
         data: {
@@ -80,7 +75,7 @@ class InvoiceNotificationModal extends Component<Props, State> {
           includeTimesheetAttachments: false,
         });
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
@@ -108,8 +103,8 @@ class InvoiceNotificationModal extends Component<Props, State> {
           <div>
             <div>Please add emails</div>
             <EmailInputFields
-              onEmailChange={value => {
-                this.setState(prevState => ({
+              onEmailChange={(value) => {
+                this.setState((prevState) => ({
                   emails: {
                     ...prevState.emails,
                     ...value,
@@ -124,7 +119,7 @@ class InvoiceNotificationModal extends Component<Props, State> {
                   <Checkbox
                     label='Include Timesheets'
                     value={includeTimesheet}
-                    onChange={checked => {
+                    onChange={(checked) => {
                       this.setState({
                         includeTimesheet: checked,
                       });
@@ -140,7 +135,7 @@ class InvoiceNotificationModal extends Component<Props, State> {
                   <Checkbox
                     label='Include Timesheets Attachments'
                     value={includeTimesheetAttachments}
-                    onChange={checked => {
+                    onChange={(checked) => {
                       this.setState({
                         includeTimesheetAttachments: checked,
                       });
@@ -166,5 +161,5 @@ class InvoiceNotificationModal extends Component<Props, State> {
 
 export default compose<any, any>(
   withStyles(styles),
-  withInvoiceNotify()
+  // withInvoiceNotify(),
 )(InvoiceNotificationModal);

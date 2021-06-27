@@ -1,4 +1,4 @@
-export default theme => ({
+export default () => ({
   page: {
     flex: 1,
     display: 'flex',
@@ -6,7 +6,7 @@ export default theme => ({
   },
 });
 
-export const SalesOrderStyles = theme => ({
+export const SalesOrderStyles = (theme) => ({
   page: {
     padding: '40px 20px',
     flex: 1,

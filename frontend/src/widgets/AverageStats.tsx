@@ -1,21 +1,19 @@
-import * as React from 'react';
+import {
+  ErrorBoundary,
+  Loading,
+  composeStyles,
+  withStyles,
+} from '@kudoo/components';
+import { Trans } from '@lingui/react';
 import Grid from '@material-ui/core/Grid';
 import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
+// import isEqual from 'lodash/isEqual';
+import moment from 'moment';
+import numeral from 'numeral';
+import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import { Trans } from '@lingui/react';
-import numeral from 'numeral';
-import moment from 'moment';
-import {
-  withStyles,
-  composeStyles,
-  ErrorBoundary,
-  withStylesProps,
-  Loading,
-} from '@kudoo/components';
-import { INVOICE_STATUS } from '@client/helpers/constants';
-import { withProjects, withInvoices } from '@kudoo/graphql';
+// import { INVOICE_STATUS } from 'src/helpers/constants';
 import styles, { AverageStatsStyles as ASStyles } from './styles';
 
 type Props = {
@@ -31,18 +29,18 @@ type State = {};
 class AverageStats extends React.Component<Props, State> {
   state = {};
 
-  componentDidUpdate(prevProps) {
-    if (
-      !isEqual(get(this.props, 'contentHash'), get(prevProps, 'contentHash'))
-    ) {
-      if (get(this.props, 'projects.refetch')) {
-        this.props.projects.refetch();
-      }
-      if (get(this.props, 'invoices.refetch')) {
-        this.props.invoices.refetch();
-      }
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   if (
+  //     !isEqual(get(this.props, 'contentHash'), get(prevProps, 'contentHash'))
+  //   ) {
+  //     if (get(this.props, 'projects.refetch')) {
+  //       this.props.projects.refetch();
+  //     }
+  //     if (get(this.props, 'invoices.refetch')) {
+  //       this.props.invoices.refetch();
+  //     }
+  //   }
+  // }
 
   render() {
     const { classes, theme, invoices = {}, projects = {} } = this.props;
@@ -50,12 +48,12 @@ class AverageStats extends React.Component<Props, State> {
     const monthDifference =
       moment()
         .startOf('month')
-        .diff(moment(firstInvoice.invoiceDate).startOf('month'), 'months') + 1;
+        .diff(moment(firstInvoice?.invoiceDate).startOf('month'), 'months') + 1;
     const invoiceTotal = get(invoices, 'data', []).reduce(
       (acc, item) => acc + item.total,
-      0
+      0,
     );
-    const showLoader = invoices.loading || projects.loading;
+    const showLoader = invoices?.loading || projects?.loading;
 
     return (
       <ErrorBoundary>
@@ -84,7 +82,8 @@ class AverageStats extends React.Component<Props, State> {
                   className={classes.avgValBlock}
                   style={{
                     borderRight: `1px solid ${theme.palette.grey['200']}`,
-                  }}>
+                  }}
+                >
                   <div className={classes.avgValAmount}>{projects.count}</div>
                   <div className={classes.avgValText}>Projects</div>
                 </div>
@@ -108,19 +107,19 @@ export default compose<any, any>(
     profile: state.profile,
   })),
   withStyles(composeStyles(styles, ASStyles)),
-  withProjects(() => ({
-    variables: {
-      where: {
-        isArchived: false,
-      },
-    },
-  })),
-  withInvoices(() => ({
-    variables: {
-      where: {
-        status_not: INVOICE_STATUS.ARCHIVED,
-      },
-      orderBy: 'invoiceDate_ASC',
-    },
-  }))
+  // withProjects(() => ({
+  //   variables: {
+  //     where: {
+  //       isArchived: false,
+  //     },
+  //   },
+  // })),
+  // withInvoices(() => ({
+  //   variables: {
+  //     where: {
+  //       status_not: INVOICE_STATUS.ARCHIVED,
+  //     },
+  //     orderBy: 'invoiceDate_ASC',
+  //   },
+  // })),
 )(AverageStats);

@@ -1,6 +1,6 @@
-import * as React from 'react';
+import { ErrorBoundary, withStyles } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import { withStyles, ErrorBoundary, withStylesProps } from '@kudoo/components';
+import * as React from 'react';
 import PurchaseOrder from './PurchaseOrder';
 
 import styles from './styles';
@@ -42,7 +42,8 @@ class Widget extends React.Component<IProps> {
           md={md}
           lg={lg}
           xl={xl}
-          classes={{ item: classes.widgetItem }}>
+          classes={{ item: classes.widgetItem }}
+        >
           <WidgetComponent contentHash={contentHash} />
         </Grid>
       </ErrorBoundary>

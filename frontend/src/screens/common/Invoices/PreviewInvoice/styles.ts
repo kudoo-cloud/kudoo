@@ -1,4 +1,4 @@
-export default theme => ({
+export default (theme) => ({
   '@global': {
     '@page': {
       margin: '0px 5px',

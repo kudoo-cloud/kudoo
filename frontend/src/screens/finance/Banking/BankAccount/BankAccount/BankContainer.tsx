@@ -1,14 +1,12 @@
+import { ErrorBoundary } from '@kudoo/components';
+import idx from 'idx';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import moment from 'moment';
-import idx from 'idx';
-import get from 'lodash/get';
-import find from 'lodash/find';
-import isEqual from 'lodash/isEqual';
-import { ErrorBoundary, withRouterProps } from '@kudoo/components';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { withBanks } from '@kudoo/graphql';
+import SelectedCompany from 'src/helpers/SelectedCompany';
 
 interface IProps {
   actions: any;
@@ -29,14 +27,14 @@ class BankContainer extends Component<IProps, IState> {
     banks: {
       refetch: () => {},
       loadNextPage: () => {},
-      children: ({}) => {},
+      data: [],
     },
   };
 
   constructor(props: IProps) {
     super(props);
     this.state = {
-      displayedBanks: idx(props, _ => _.banks.data),
+      displayedBanks: idx(props, (_) => _.banks.data),
       columns: [
         {
           id: 'name',
@@ -57,21 +55,21 @@ class BankContainer extends Component<IProps, IState> {
   }
 
   public componentDidUpdate(prevProps) {
-    const oldBanks = idx(prevProps, _ => _.banks.data) || [];
-    const newBanks = idx(this.props, _ => _.banks.data) || [];
+    const oldBanks = idx(prevProps, (_) => _.banks.data) || [];
+    const newBanks = idx(this.props, (_) => _.banks.data) || [];
     if (!isEqual(oldBanks, newBanks)) {
       this._updateBanks(newBanks);
     }
   }
 
   public _updateBanks(banks) {
-    banks.forEach(data => {
+    banks.forEach(() => {
       //data.transactionDate = moment(data.transactionDate).format('DD MMM YYYY');
     });
     this.setState({ displayedBanks: banks });
   }
 
-  public _onRequestSort = async column => {
+  public _onRequestSort = async (column) => {
     const columns = this.state.columns;
     const sortedColumn = find(columns, { sorted: true });
     const columnGoingToBeSorted = find(columns, { id: column.id });
@@ -123,18 +121,18 @@ export default compose<any, any>(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withBanks(({ profile, type }) => {
-    let isArchived = false;
-    if (type === 'archived-banks') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  })
+  // withBanks(({ type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-banks') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
 )(BankContainer);

@@ -1,21 +1,18 @@
-import React, { Component } from 'react';
+import {
+  FieldLabel,
+  FileBlock,
+  TimesheetRowDisplay,
+  withStyles,
+} from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
 import get from 'lodash/get';
-import merge from 'lodash/merge';
 import isEmpty from 'lodash/isEmpty';
-import queryString from 'query-string';
+import merge from 'lodash/merge';
 import moment from 'moment';
+import queryString from 'query-string';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import {
-  withStyles,
-  FieldLabel,
-  TimesheetRowDisplay,
-  FileBlock,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
-import { withTimeSheet } from '@kudoo/graphql';
 import styles from './styles';
 
 type Props = {
@@ -26,6 +23,14 @@ type Props = {
 type State = {};
 
 class PreviewTimesheet extends Component<Props, State> {
+  static defaultProps = {
+    timeSheet: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+  };
+
   constructor(props) {
     super(props);
     this.setCompanyAndUserData(props);
@@ -36,7 +41,7 @@ class PreviewTimesheet extends Component<Props, State> {
     this.setCompanyAndUserData(props);
   }
 
-  setCompanyAndUserData = props => {
+  setCompanyAndUserData = (props) => {
     const query = queryString.parse(get(props, 'location.search', ''));
     if (query['company-token'] && query['user-token']) {
       this.props.actions.setUserData({
@@ -54,7 +59,7 @@ class PreviewTimesheet extends Component<Props, State> {
     const { timeSheet } = this.props;
     const entries = get(timeSheet, 'data.timeSheetEntries') || [];
     const timesheetRows = {};
-    entries.map(entry => {
+    entries.map((entry) => {
       const projectCustomerId =
         get(entry, 'project.id') || get(entry, 'customer.id');
       const serviceId = get(entry, 'service.id');
@@ -197,9 +202,9 @@ export default compose(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withTimeSheet(props => {
-    return {
-      id: get(props, 'match.params.id', ''),
-    };
-  })
+  // withTimeSheet((props) => {
+  //   return {
+  //     id: get(props, 'match.params.id', ''),
+  //   };
+  // }),
 )(PreviewTimesheet);

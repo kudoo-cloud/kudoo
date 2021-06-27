@@ -1,15 +1,13 @@
+import {
+  ErrorBoundary,
+  SectionHeader,
+  Tooltip,
+  withStyles,
+} from '@kudoo/components';
+import cx from 'classnames';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import cx from 'classnames';
-import {
-  withStyles,
-  Tooltip,
-  SectionHeader,
-  ErrorBoundary,
-  withStylesProps,
-  withRouterProps,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import URL from 'src/helpers/urls';
 import styles from './styles';
 
 type Props = {
@@ -63,10 +61,12 @@ class CreateInvoice extends Component<Props, State> {
             <div className={classes.ways}>
               <div
                 className={classes.invoiceWayWrapper}
-                data-test='free-text-invoice'>
+                data-test='free-text-invoice'
+              >
                 <Link
                   className={classes.invoiceWay}
-                  to={URL.CREATE_TEXT_INVOICES()}>
+                  to={URL.CREATE_TEXT_INVOICES()}
+                >
                   <i className={cx('icon icon-invoicing', classes.wayIcon)} />
                   <div className={classes.wayTitle}>
                     Free text <br /> invoice
@@ -74,15 +74,17 @@ class CreateInvoice extends Component<Props, State> {
                 </Link>
                 {this._renderTooltipIcon(
                   0,
-                  'A free text invoice is an invoice which has no predefined information.This type of invoice allows you to create an invoice from scratch or using templates provided.'
+                  'A free text invoice is an invoice which has no predefined information.This type of invoice allows you to create an invoice from scratch or using templates provided.',
                 )}
               </div>
               <div
                 className={classes.invoiceWayWrapper}
-                data-test='project-invoice'>
+                data-test='project-invoice'
+              >
                 <Link
                   className={classes.invoiceWay}
-                  to={URL.CREATE_PROJECT_TO_INVOICES()}>
+                  to={URL.CREATE_PROJECT_TO_INVOICES()}
+                >
                   <i className={cx('icon icon-invoicing', classes.wayIcon)} />
                   <div className={classes.wayTitle}>
                     Project <br /> invoice
@@ -90,15 +92,17 @@ class CreateInvoice extends Component<Props, State> {
                 </Link>
                 {this._renderTooltipIcon(
                   0,
-                  'A project invoice is an invoice which can be created using project'
+                  'A project invoice is an invoice which can be created using project',
                 )}
               </div>
               <div
                 className={classes.invoiceWayWrapper}
-                data-test='project-invoice'>
+                data-test='project-invoice'
+              >
                 <Link
                   className={classes.invoiceWay}
-                  to={URL.CREATE_TIMESHEETS_TO_INVOICES()}>
+                  to={URL.CREATE_TIMESHEETS_TO_INVOICES()}
+                >
                   <i className={cx('icon icon-invoicing', classes.wayIcon)} />
                   <div className={classes.wayTitle}>
                     Convert timesheet to <br /> invoice
@@ -106,7 +110,7 @@ class CreateInvoice extends Component<Props, State> {
                 </Link>
                 {this._renderTooltipIcon(
                   0,
-                  'You can convert timesheet into invoices.'
+                  'You can convert timesheet into invoices.',
                 )}
               </div>
             </div>

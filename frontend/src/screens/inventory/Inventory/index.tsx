@@ -1,16 +1,11 @@
-import React, { Component } from 'react';
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
-import uuid from 'uuid/v4';
-import {
-  withStyles,
-  DatePicker,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
+import { withStyles } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import InventoryTab from '@client/common_screens/Inventory/InventoryTab';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import uuid from 'uuid/v4';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import InventoryTab from 'src/screens/common/Inventory/InventoryTab';
 import styles from './styles';
 
 interface IProps {
@@ -41,7 +36,8 @@ class Inventory extends Component<IProps, IState> {
             this.setState({
               contentHash: uuid(),
             });
-          }}>
+          }}
+        >
           <Grid container spacing={0}>
             <Grid item xs={12}>
               <div className={classes.page}>
@@ -59,5 +55,5 @@ export default compose<any, any>(
   withStyles(styles),
   connect((state: any) => ({
     profile: state.profile,
-  }))
+  })),
 )(Inventory);

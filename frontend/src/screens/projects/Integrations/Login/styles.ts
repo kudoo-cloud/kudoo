@@ -1,6 +1,6 @@
 const formMaxWidth = 400;
 
-export default theme => ({
+export default (theme) => ({
   page: {
     display: 'flex',
     flex: 1,

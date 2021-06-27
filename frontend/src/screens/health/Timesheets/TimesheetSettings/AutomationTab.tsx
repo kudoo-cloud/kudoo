@@ -1,18 +1,11 @@
+import { RadioButton, SectionHeader, withStyles } from '@kudoo/components';
+import Grid from '@material-ui/core/Grid';
+import get from 'lodash/get';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import get from 'lodash/get';
-import Grid from '@material-ui/core/Grid';
-import {
-  withStyles,
-  SectionHeader,
-  RadioButton,
-  withRouterProps,
-  withStylesProps,
-} from '@kudoo/components';
-import { showToast } from '@client/helpers/toast';
-import { withCompany, withUpdateCompany } from '@kudoo/graphql';
-import SelectedCompany from '@client/helpers/SelectedCompany';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
 import styles from './styles';
 
 type Props = {
@@ -24,7 +17,16 @@ type Props = {
 type State = {};
 
 class AutomationTab extends Component<Props, State> {
-  _updateAutoSendInvoice = async autoSendInvoices => {
+  public static defaultProps = {
+    updateCompany: () => ({}),
+    company: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+  };
+
+  _updateAutoSendInvoice = async (autoSendInvoices) => {
     try {
       const { company } = this.props;
       const timeSheetSettings =
@@ -43,7 +45,7 @@ class AutomationTab extends Component<Props, State> {
       if (res.success) {
         showToast(null, 'Settings Updated');
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
@@ -55,7 +57,7 @@ class AutomationTab extends Component<Props, State> {
     const autoSendInvoices = get(
       company,
       'data.timeSheetSettings.autoSendInvoices',
-      false
+      false,
     );
     return (
       <div className={classes.tabContent}>
@@ -101,8 +103,8 @@ export default compose<any, any>(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withCompany(props => ({
-    id: get(props, 'profile.selectedCompany.id'),
-  })),
-  withUpdateCompany()
+  // withCompany((props) => ({
+  //   id: get(props, 'profile.selectedCompany.id'),
+  // })),
+  // withUpdateCompany(),
 )(AutomationTab);

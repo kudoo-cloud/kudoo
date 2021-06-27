@@ -1,6 +1,6 @@
-import * as React from 'react';
-import queryString from 'query-string';
 import get from 'lodash/get';
+import queryString from 'query-string';
+import * as React from 'react';
 import Common from './CommonTemplate';
 
 class Confirm extends React.Component {
@@ -17,7 +17,8 @@ class Confirm extends React.Component {
             cellPadding={0}
             border={0}
             align='center'
-            style={{ maxWidth: 600, width: '100%' }}>
+            style={{ maxWidth: 600, width: '100%' }}
+          >
             <tbody>
               <tr>
                 <td
@@ -29,7 +30,8 @@ class Confirm extends React.Component {
                     fontSize: 25,
                     fontWeight: 600,
                     color: '#434856',
-                  }}>
+                  }}
+                >
                   Please verify your email
                 </td>
               </tr>
@@ -37,13 +39,15 @@ class Confirm extends React.Component {
                 <td
                   align='left'
                   valign='top'
-                  style={{ paddingBottom: 10, color: '#434856' }}>
+                  style={{ paddingBottom: 10, color: '#434856' }}
+                >
                   <div
                     style={{
                       fontSize: 17,
                       marginBottom: 10,
                       fontFamily: '"Roboto", sans-serif',
-                    }}>
+                    }}
+                  >
                     Hi {query.first_name} {query.last_name},
                   </div>
                   <div
@@ -51,7 +55,8 @@ class Confirm extends React.Component {
                       fontSize: 17,
                       marginBottom: 10,
                       fontFamily: '"Roboto", sans-serif',
-                    }}>
+                    }}
+                  >
                     You are almost ready to access your account.
                   </div>
                   <div
@@ -59,7 +64,8 @@ class Confirm extends React.Component {
                       fontSize: 17,
                       marginBottom: 10,
                       fontFamily: '"Roboto", sans-serif',
-                    }}>
+                    }}
+                  >
                     Simply click the button below to verify your email address.
                   </div>
                 </td>
@@ -73,7 +79,8 @@ class Confirm extends React.Component {
                     cellSpacing={0}
                     border={0}
                     bgcolor='#29a9db'
-                    style={{ borderRadius: 200 }}>
+                    style={{ borderRadius: 200 }}
+                  >
                     <tbody>
                       <tr>
                         <td
@@ -83,7 +90,8 @@ class Confirm extends React.Component {
                             fontFamily: '"Roboto", sans-serif',
                             fontSize: 14,
                             fontWeight: 'bold',
-                          }}>
+                          }}
+                        >
                           <a
                             href={query.token_url}
                             target='_blank'
@@ -96,7 +104,8 @@ class Confirm extends React.Component {
                               lineHeight: '44px',
                               fontSize: '15px',
                               fontWeight: 'bold',
-                            }}>
+                            }}
+                          >
                             Verify your email
                           </a>
                         </td>

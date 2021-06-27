@@ -1,20 +1,14 @@
-import * as React from 'react';
-import { withStyles, WizardSteps } from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import { WizardSteps, withStyles } from '@kudoo/components';
+import { filter, get } from 'lodash';
 import findIndex from 'lodash/findIndex';
-import uuid from 'uuid/v4';
-import { showToast } from '@client/helpers/toast';
-import {
-  withCreateSalesOrder,
-  withCreateSalesOrderLine,
-  withUpdateSalesOrder,
-  withUpdateSalesOrderLine,
-} from '@kudoo/graphql';
+import * as React from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import { filter, get } from 'lodash';
-import CreateSalesOrderLine from './CreateSalesOrderLine';
+import uuid from 'uuid/v4';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import CreateSalesOrder from './CreateSalesOrder';
+import CreateSalesOrderLine from './CreateSalesOrderLine';
 import styles from './styles';
 
 interface IProps {
@@ -36,6 +30,13 @@ interface IState {
 }
 
 class SalesOrderWizard extends React.Component<IProps, IState> {
+  static defaultProps = {
+    createSalesOrder: () => ({}),
+    updateSalesOrder: () => ({}),
+    createSalesOrderLine: () => ({}),
+    updateSalesOrderLine: () => ({}),
+  };
+
   constructor(props) {
     super(props);
     this.state = {
@@ -55,14 +56,14 @@ class SalesOrderWizard extends React.Component<IProps, IState> {
     this.renderWizardStep = this.renderWizardStep.bind(this);
   }
 
-  public _setSalesOrderData = data => {
+  public _setSalesOrderData = (data) => {
     this.setState({
       salesOrderData: data,
     });
     return true;
   };
 
-  public _setSalesOrderLineData = data => {
+  public _setSalesOrderLineData = (data) => {
     this.setState({
       salesOrderLineData: [...data],
     });
@@ -165,9 +166,8 @@ class SalesOrderWizard extends React.Component<IProps, IState> {
       salesOrderData: { data = {}, isEditMode = false, actions },
       salesOrderLineData = {},
     } = this.state;
-    const {
-      profile: { selectedCompany: { currency = 'USD' } = {} } = {},
-    } = this.props;
+    const { profile: { selectedCompany: { currency = 'USD' } = {} } = {} } =
+      this.props;
     const dataToSend = {
       transactionDate: data.transactionDate,
       customer: {
@@ -179,14 +179,14 @@ class SalesOrderWizard extends React.Component<IProps, IState> {
     };
     const salesOrderLineFilterData = filter(
       salesOrderLineData,
-      filterData => filterData.qty >= 0 && filterData.inventory
+      (filterData) => filterData.qty >= 0 && filterData.inventory,
     );
     let flag = 0;
 
     if (!isEditMode) {
       const res = await this.props.createSalesOrder({ data: dataToSend });
       if (res.success) {
-        salesOrderLineFilterData.forEach(async _ => {
+        salesOrderLineFilterData.forEach(async (_) => {
           const salesOrderLineDataToSend = {
             salesOrder: {
               connect: {
@@ -205,7 +205,7 @@ class SalesOrderWizard extends React.Component<IProps, IState> {
           });
           if (!salesOrderLineResponse.success && flag === 0) {
             flag = 1;
-            res.error.map(err => showToast(err));
+            res.error.map((err) => showToast(err));
             actions.setSubmitting(false);
           }
         });
@@ -215,7 +215,7 @@ class SalesOrderWizard extends React.Component<IProps, IState> {
           this.props.history.push(URL.SALES_ORDER());
         }
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
         actions.setSubmitting(false);
       }
     } else {
@@ -225,7 +225,7 @@ class SalesOrderWizard extends React.Component<IProps, IState> {
       });
       if (res.success) {
         let salesOrderLineResponse = null;
-        salesOrderLineFilterData.forEach(async _ => {
+        salesOrderLineFilterData.forEach(async (_) => {
           let salesOrderLineDataToSend = {};
           if (_.id) {
             salesOrderLineDataToSend = {
@@ -265,7 +265,7 @@ class SalesOrderWizard extends React.Component<IProps, IState> {
           }
           if (!get(salesOrderLineResponse, 'success') && flag === 0) {
             flag = 1;
-            res.error.map(err => showToast(err));
+            res.error.map((err) => showToast(err));
             actions.setSubmitting(false);
           }
         });
@@ -275,7 +275,7 @@ class SalesOrderWizard extends React.Component<IProps, IState> {
           this.props.history.push(URL.SALES_ORDER());
         }
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
         actions.setSubmitting(false);
       }
     }
@@ -297,12 +297,12 @@ class SalesOrderWizard extends React.Component<IProps, IState> {
 }
 
 export default compose(
-  withCreateSalesOrder(),
-  withUpdateSalesOrder(),
-  withCreateSalesOrderLine(),
-  withUpdateSalesOrderLine(),
+  // withCreateSalesOrder(),
+  // withUpdateSalesOrder(),
+  // withCreateSalesOrderLine(),
+  // withUpdateSalesOrderLine(),
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withStyles(styles)
+  withStyles(styles),
 )(SalesOrderWizard);

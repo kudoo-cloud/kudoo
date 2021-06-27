@@ -1,10 +1,10 @@
-import React, { Component } from 'react';
+import { Table, Tooltip, withStyles } from '@kudoo/components';
+import Collapse from '@material-ui/core/Collapse';
 import cx from 'classnames';
 import findIndex from 'lodash/findIndex';
 import isEqual from 'lodash/isEqual';
 import moment from 'moment';
-import Collapse from '@material-ui/core/Collapse';
-import { withStyles, Table, Tooltip, withStylesProps } from '@kudoo/components';
+import React, { Component } from 'react';
 import { timesheetBlockStyles } from './styles';
 
 type Props = {
@@ -93,7 +93,7 @@ class TimesheetBlock extends Component<Props, State> {
     }
   }
 
-  _onRequestSort = column => {
+  _onRequestSort = (column) => {
     const { tableColumns, tableData }: any = this.state;
 
     // find request column index and column
@@ -203,7 +203,8 @@ class TimesheetBlock extends Component<Props, State> {
           })}
           onClick={() => {
             this.setState({ collapsed: !collapsed });
-          }}>
+          }}
+        >
           <div className={classes.title}>
             {type === 'project' ? project : 'Linked to Company'}
           </div>

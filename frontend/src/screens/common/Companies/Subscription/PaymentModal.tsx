@@ -1,11 +1,10 @@
-import React, { useState } from 'react';
-import { compose } from 'recompose';
-import { withStyles, Modal, Button } from '@kudoo/components';
-import { Elements, CardElement, injectStripe } from 'react-stripe-elements';
-import { withChangeSubscriptionPlan } from '@kudoo/graphql';
+import { Button, Modal, withStyles } from '@kudoo/components';
 import cx from 'classnames';
-import { showToast } from '@client/helpers/toast';
 import idx from 'idx';
+import React, { useState } from 'react';
+import { CardElement, Elements, injectStripe } from 'react-stripe-elements';
+import { compose } from 'recompose';
+import { showToast } from 'src/helpers/toast';
 import styles, { StylesKeys } from './styles';
 
 type Props = IComponentProps<StylesKeys> & {
@@ -38,7 +37,7 @@ const elementsStyle = {
   },
 };
 
-const PaymentForm: React.FC<Props & InternalProps> = props => {
+const PaymentForm: React.FC<Props & InternalProps> = (props) => {
   const {
     classes,
     onClose,
@@ -53,7 +52,7 @@ const PaymentForm: React.FC<Props & InternalProps> = props => {
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const handleChange = ({ error }) => {
+  const handleChange = ({ error }: any) => {
     if (error) {
       setErrorMessage(error.message);
     } else {
@@ -61,13 +60,13 @@ const PaymentForm: React.FC<Props & InternalProps> = props => {
     }
   };
 
-  const handleSubmit = async evt => {
+  const handleSubmit = async (evt) => {
     evt.preventDefault();
     try {
       if (stripe) {
         setSubmitting(true);
         const tokenRes = await stripe.createToken();
-        const token = idx(tokenRes, x => x.token.id);
+        const token = idx(tokenRes, (x) => x.token.id);
         const res = await changeSubscriptionPlan({
           sourceToken: token,
           toPlan: selectedPlanName,
@@ -76,7 +75,7 @@ const PaymentForm: React.FC<Props & InternalProps> = props => {
         if (res.success) {
           onPaymentComplete();
         } else {
-          (idx(res, x => x.error) || []).forEach(err => {
+          (idx(res, (x) => x.error) || []).forEach((err) => {
             showToast(err);
           });
         }
@@ -104,7 +103,8 @@ const PaymentForm: React.FC<Props & InternalProps> = props => {
             <div
               className={cx(classes.paymentFormElement, {
                 [classes.paymentFormElementError]: !!errorMessage,
-              })}>
+              })}
+            >
               <label>
                 <CardElement onChange={handleChange} {...elementsStyle} />
               </label>
@@ -132,15 +132,16 @@ const PaymentForm: React.FC<Props & InternalProps> = props => {
 
 PaymentForm.defaultProps = {
   onClose: () => {},
+  changeSubscriptionPlan: () => ({}),
 };
 
 const EnhancedPaymentForm = compose<Props, Props>(
   withStyles(styles),
-  withChangeSubscriptionPlan(),
-  injectStripe
+  // withChangeSubscriptionPlan(),
+  injectStripe,
 )(PaymentForm);
 
-const PaymentModal: React.FC<Props> = props => {
+const PaymentModal: React.FC<Props> = (props) => {
   return (
     <Elements>
       <EnhancedPaymentForm {...props}></EnhancedPaymentForm>

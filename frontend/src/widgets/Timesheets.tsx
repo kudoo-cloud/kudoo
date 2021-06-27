@@ -1,18 +1,16 @@
-import * as React from 'react';
-import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
-import { connect } from 'react-redux';
-import { compose } from 'recompose';
-import cx from 'classnames';
-import Grid from '@material-ui/core/Grid';
 import {
-  withStyles,
-  composeStyles,
   ErrorBoundary,
   Loading,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import { withTimeSheets } from '@kudoo/graphql';
-import { TIMESHEET_STATUS } from '@client/helpers/constants';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import styles, { InvoiceStyles as TimesheetStyles } from './styles';
 
 type Props = {
@@ -54,9 +52,9 @@ class Timesheets extends React.Component<Props, any> {
   render() {
     const {
       classes,
-      approvedTimesheets,
-      finalisedTimesheets,
-      draftTimesheets,
+      approvedTimesheets = { total: 0, count: 0 },
+      finalisedTimesheets = { total: 0, count: 0 },
+      draftTimesheets = { total: 0, count: 0 },
     } = this.props;
     const showLoader =
       get(approvedTimesheets, 'loading') ||
@@ -119,31 +117,4 @@ export default compose<any, any>(
     profile: state.profile,
   })),
   withStyles(composeStyles(styles, TimesheetStyles)),
-  withTimeSheets(() => ({
-    name: 'draftTimesheets',
-    variables: {
-      where: {
-        isArchived: false,
-        status: TIMESHEET_STATUS.DRAFT,
-      },
-    },
-  })),
-  withTimeSheets(() => ({
-    name: 'finalisedTimesheets',
-    variables: {
-      where: {
-        isArchived: false,
-        status: TIMESHEET_STATUS.FINALISED,
-      },
-    },
-  })),
-  withTimeSheets(() => ({
-    name: 'approvedTimesheets',
-    variables: {
-      where: {
-        isArchived: false,
-        status: TIMESHEET_STATUS.APPROVED,
-      },
-    },
-  }))
 )(Timesheets);

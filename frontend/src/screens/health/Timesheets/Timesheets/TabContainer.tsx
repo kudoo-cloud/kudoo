@@ -1,25 +1,20 @@
-import React, { Component } from 'react';
-import isEqual from 'lodash/isEqual';
-import get from 'lodash/get';
-import merge from 'lodash/merge';
+import { ErrorBoundary, withStyles } from '@kudoo/components';
 import filter from 'lodash/filter';
-import { connect } from 'react-redux';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+// import merge from 'lodash/merge';
 import moment from 'moment';
-import { withStateHandlers, compose } from 'recompose';
-import { ErrorBoundary, withStyles, withRouterProps } from '@kudoo/components';
-import {
-  withTimeSheets,
-  withUpdateTimeSheet,
-  withCompany,
-} from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { TIMESHEET_STATUS } from '@client/helpers/constants';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose, withStateHandlers } from 'recompose';
+// import { TIMESHEET_STATUS } from 'src/helpers/constants';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
 import styles from './styles';
 
 type Props = {
   actions: any;
-  children: Function;
+  children: (props: any) => any;
   users: any;
   timeSheets: any;
   updateTimeSheet: Function;
@@ -38,6 +33,20 @@ type State = {
 };
 
 class TabContainer extends Component<Props, State> {
+  public static defaultProps = {
+    updateTimeSheet: () => ({}),
+    users: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+    timeSheets: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+  };
+
   state = {
     timeSheetData: undefined,
     showViewEntriesModal: false,
@@ -60,7 +69,7 @@ class TabContainer extends Component<Props, State> {
     this.props.timeSheets && this.props.timeSheets.refetch();
   };
 
-  _updateTimesheetsData = props => {
+  _updateTimesheetsData = (props) => {
     const { timeSheets } = props;
     const data = {};
     const timeSheetsArr = get(timeSheets, 'data', []);
@@ -120,7 +129,7 @@ class TabContainer extends Component<Props, State> {
     });
   };
 
-  _archiveTimesheet = async timesheet => {
+  _archiveTimesheet = async (timesheet) => {
     try {
       const res = await this.props.updateTimeSheet({
         where: { id: timesheet.id },
@@ -130,14 +139,14 @@ class TabContainer extends Component<Props, State> {
         showToast(null, 'Timesheet archived successfully');
         this.props.timeSheets.refetch();
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast('Something went wrong: ' + e.toString());
     }
   };
 
-  _unArchiveTimesheet = async timesheet => {
+  _unArchiveTimesheet = async (timesheet) => {
     try {
       const res = await this.props.updateTimeSheet({
         where: { id: timesheet.id },
@@ -147,14 +156,14 @@ class TabContainer extends Component<Props, State> {
         showToast(null, 'Timesheet unarchived successfully');
         this.props.timeSheets.refetch();
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast('Something went wrong: ' + e.toString());
     }
   };
 
-  _showArchiveDialog = timesheet => {
+  _showArchiveDialog = (timesheet) => {
     const { theme, actions } = this.props;
     const title = `Archive timesheet?`;
     const description = (
@@ -187,7 +196,7 @@ class TabContainer extends Component<Props, State> {
     });
   };
 
-  _showUnarchiveDialog = timesheet => {
+  _showUnarchiveDialog = (timesheet) => {
     const { theme, actions } = this.props;
     const title = `Unarchive timesheet?`;
     const description = (
@@ -253,7 +262,7 @@ class TabContainer extends Component<Props, State> {
             addFilteredUser,
             removeFilteredUser,
             users: get(users, 'data', []).filter(
-              user => user.firstName && user.lastName
+              (user) => user.firstName && user.lastName,
             ),
             showArchiveDialog: this._showArchiveDialog,
             showUnarchiveDialog: this._showUnarchiveDialog,
@@ -273,90 +282,94 @@ export default compose<any, any>(
   withStateHandlers(
     { filteredUsers: [] },
     {
-      addFilteredUser: ({ filteredUsers }) => user => {
-        const nextUsers: any = [...filteredUsers];
-        nextUsers.push(user.id);
-        return { filteredUsers: nextUsers };
-      },
-      removeFilteredUser: ({ filteredUsers }) => user => {
-        const nextUsers: any = [...filteredUsers];
-        const pos = nextUsers.indexOf(user.id);
-        nextUsers.splice(pos, 1);
-        return { filteredUsers: nextUsers };
-      },
-    }
+      addFilteredUser:
+        ({ filteredUsers }) =>
+        (user) => {
+          const nextUsers: any = [...filteredUsers];
+          nextUsers.push(user.id);
+          return { filteredUsers: nextUsers };
+        },
+      removeFilteredUser:
+        ({ filteredUsers }) =>
+        (user) => {
+          const nextUsers: any = [...filteredUsers];
+          const pos = nextUsers.indexOf(user.id);
+          nextUsers.splice(pos, 1);
+          return { filteredUsers: nextUsers };
+        },
+    },
   ),
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withUpdateTimeSheet(),
-  withTimeSheets(props => {
-    const type = props.timesheet_type;
-    const profile = props.profile || {};
-    let variables: any = {
-      first: 10,
-      where: {},
-      orderBy: 'startsAt_DESC',
-    };
-    if (type === 'active') {
-      variables = merge(variables, {
-        where: {
-          isArchived: false,
-          status_not: TIMESHEET_STATUS.DRAFT,
-        },
-      });
-    } else if (type === 'draft') {
-      variables = merge(variables, {
-        where: {
-          isArchived: false,
-          status: TIMESHEET_STATUS.DRAFT,
-        },
-      });
-    } else if (type === 'archived') {
-      variables = merge(variables, {
-        where: {
-          isArchived: true,
-        },
-      });
-    }
-    if (props.onlyMyTimesheet) {
-      variables = merge(variables, {
-        where: {
-          user: {
-            id: profile.id,
-          },
-        },
-      });
-    }
-    if (props.filteredUsers && props.filteredUsers.length) {
-      variables = merge(variables, {
-        where: {
-          user: {
-            id_in: props.filteredUsers,
-          },
-        },
-      });
-    }
-    return {
-      variables,
-    };
-  }),
-  withCompany(
-    props => {
-      const company = get(props.profile, 'selectedCompany', '');
-      return {
-        id: company.id,
-      };
-    },
-    ({ data }) => {
-      const companyMembers = get(data, 'company.companyMembers') || [];
-      return {
-        users: {
-          data: companyMembers.map(cm => cm.user),
-          loading: data.loading,
-          refetch: data.refetch,
-        },
-      };
-    }
-  )
+  // withUpdateTimeSheet(),
+  // withTimeSheets((props) => {
+  //   const type = props.timesheet_type;
+  //   const profile = props.profile || {};
+  //   let variables: any = {
+  //     first: 10,
+  //     where: {},
+  //     orderBy: 'startsAt_DESC',
+  //   };
+  //   if (type === 'active') {
+  //     variables = merge(variables, {
+  //       where: {
+  //         isArchived: false,
+  //         status_not: TIMESHEET_STATUS.DRAFT,
+  //       },
+  //     });
+  //   } else if (type === 'draft') {
+  //     variables = merge(variables, {
+  //       where: {
+  //         isArchived: false,
+  //         status: TIMESHEET_STATUS.DRAFT,
+  //       },
+  //     });
+  //   } else if (type === 'archived') {
+  //     variables = merge(variables, {
+  //       where: {
+  //         isArchived: true,
+  //       },
+  //     });
+  //   }
+  //   if (props.onlyMyTimesheet) {
+  //     variables = merge(variables, {
+  //       where: {
+  //         user: {
+  //           id: profile.id,
+  //         },
+  //       },
+  //     });
+  //   }
+  //   if (props.filteredUsers && props.filteredUsers.length) {
+  //     variables = merge(variables, {
+  //       where: {
+  //         user: {
+  //           id_in: props.filteredUsers,
+  //         },
+  //       },
+  //     });
+  //   }
+  //   return {
+  //     variables,
+  //   };
+  // }),
+  // withCompany(
+  //   (props) => {
+  //     const company = get(props.profile, 'selectedCompany', '');
+  //     return {
+  //       id: company.id,
+  //     };
+  //   },
+  //   ({ data }) => {
+  //     const companyMembers = get(data, 'company.companyMembers') || [];
+  //     return {
+  //       users: {
+  //         data: companyMembers.map((cm) => cm.user),
+  //         loading: data.loading,
+  //         refetch: data.refetch,
+  //       },
+  //     };
+  //   },
+  // ),
 )(TabContainer);

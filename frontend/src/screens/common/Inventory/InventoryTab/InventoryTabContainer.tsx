@@ -1,14 +1,13 @@
+import { ErrorBoundary } from '@kudoo/components';
+import idx from 'idx';
+import find from 'lodash/find';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import idx from 'idx';
-import get from 'lodash/get';
-import find from 'lodash/find';
-import isEqual from 'lodash/isEqual';
-import { ErrorBoundary, withRouterProps } from '@kudoo/components';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { withInventories } from '@kudoo/graphql';
-import { any } from 'prop-types';
+import SelectedCompany from 'src/helpers/SelectedCompany';
 
 interface IProps {
   actions: any;
@@ -36,7 +35,7 @@ class InventoryTabContainer extends Component<IProps, IState> {
   constructor(props: IProps) {
     super(props);
     this.state = {
-      displayedInventories: idx(props, _ => _.inventories.data),
+      displayedInventories: idx(props, (_) => _.inventories.data),
       columns: [
         {
           id: 'name',
@@ -57,8 +56,8 @@ class InventoryTabContainer extends Component<IProps, IState> {
   }
 
   public componentDidUpdate(prevProps) {
-    const oldInventories = idx(prevProps, _ => _.inventories.data) || [];
-    const newInventories = idx(this.props, _ => _.inventories.data) || [];
+    const oldInventories = idx(prevProps, (_) => _.inventories.data) || [];
+    const newInventories = idx(this.props, (_) => _.inventories.data) || [];
     if (!isEqual(oldInventories, newInventories)) {
       this._updateInventories(newInventories);
     }
@@ -68,7 +67,7 @@ class InventoryTabContainer extends Component<IProps, IState> {
     this.setState({ displayedInventories: inventories });
   }
 
-  public _onRequestSort = async column => {
+  public _onRequestSort = async (column) => {
     const columns = this.state.columns;
     const sortedColumn = find(columns, { sorted: true });
     const columnGoingToBeSorted = find(columns, { id: column.id });
@@ -120,18 +119,18 @@ export default compose<any, any>(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withInventories(({ type }) => {
-    let isArchived = false;
-    if (type === 'archived-inventories') {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  })
+  // withInventories(({ type }) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-inventories') {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
 )(InventoryTabContainer);

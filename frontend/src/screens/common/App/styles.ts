@@ -1,4 +1,4 @@
-export default theme => ({
+export default (theme: Theme) => ({
   loggedInWrapper: {},
   drawerWrapper: {
     position: 'fixed',
@@ -20,6 +20,16 @@ export default theme => ({
     '&.is-drawer-hidden': {
       marginLeft: 0,
     },
+  },
+
+  noInternet: {
+    height: 50,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.palette.secondary.color2,
+    color: 'white',
+    fontWeight: 'bold',
   },
 
   drawerMenuItem: {
@@ -49,7 +59,7 @@ export default theme => ({
 
 export const toastStyle = {
   fontSize: 16,
-  fontWeight: '500',
+  fontWeight: 500,
   textAlign: 'center',
   minHeight: 50,
   fontFamily: "'montserrat', sans-serif",

@@ -1,0 +1,17 @@
+diff --git a/node_modules/redux-create-action-types/dist/redux-create-action-types.js b/node_modules/redux-create-action-types/dist/redux-create-action-types.js
+index eab72b4..0c570dd 100644
+--- a/node_modules/redux-create-action-types/dist/redux-create-action-types.js
++++ b/node_modules/redux-create-action-types/dist/redux-create-action-types.js
+@@ -41,9 +41,9 @@ module.exports = function createTypes() {
+ 
+       // Inspect appears to be a Node property that is checked when you try
+       // to log the object.
+-      if (key !== 'inspect' && !val) {
+-        throw new Error(key + ' is an invalid action type');
+-      }
++      // if (key !== 'inspect' && !val) {
++      //   throw new Error(key + ' is an invalid action type');
++      // }
+ 
+       return val;
+     }

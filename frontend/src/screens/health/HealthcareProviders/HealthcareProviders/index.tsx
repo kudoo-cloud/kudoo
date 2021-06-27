@@ -1,22 +1,17 @@
-import React, { Component, useState, useEffect } from 'react';
+import { withStyles } from '@kudoo/components';
 import idx from 'idx';
+import React, { useState } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import {
-  withHealthcareProviders,
-  withDeleteHealthcareProvider,
-  withUpdateHealthcareProvider,
-} from '@kudoo/graphql';
-import { withStyles } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { showToast } from '@client/helpers/toast';
-import ListPage from '@client/common_screens/ListPage';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
+import ListPage from 'src/screens/common/ListPage';
 import stylesFn, { ClassesKeys } from './styles';
 
 type Props = IRouteProps<ClassesKeys> & {
   healthcareProviders: {
-    refetch: Function;
+    refetch: (c?: any) => any;
     data: {
       firstName: string;
       lastName: string;
@@ -29,7 +24,7 @@ type Props = IRouteProps<ClassesKeys> & {
 
 type Variant = 'active' | 'archived';
 
-const HealthcareProviders: React.FC<Props> = props => {
+const HealthcareProviders: React.FC<Props> = (props) => {
   const { healthcareProviders, match, actions, history, theme } = props;
 
   const [columns, setColumns] = useState([
@@ -96,7 +91,7 @@ const HealthcareProviders: React.FC<Props> = props => {
     setColumns(newColumns);
   };
 
-  const onArchiveProvider = async item => {
+  const onArchiveProvider = async (item) => {
     try {
       const res = await props.archiveProvider({
         where: { id: item.id },
@@ -106,7 +101,7 @@ const HealthcareProviders: React.FC<Props> = props => {
         showToast(null, 'Healthcare Provider archived successfully');
         props.healthcareProviders.refetch();
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast('Something went wrong');
@@ -114,7 +109,7 @@ const HealthcareProviders: React.FC<Props> = props => {
     }
   };
 
-  const onUnArchiveProvider = async item => {
+  const onUnArchiveProvider = async (item) => {
     try {
       const res = await props.unArchiveProvider({
         where: { id: item.id },
@@ -124,7 +119,7 @@ const HealthcareProviders: React.FC<Props> = props => {
         showToast(null, 'Healthcare Provider activated successfully');
         healthcareProviders.refetch();
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast('Something went wrong');
@@ -132,7 +127,7 @@ const HealthcareProviders: React.FC<Props> = props => {
     }
   };
 
-  const onRemoveProvider = async item => {
+  const onRemoveProvider = async (item) => {
     try {
       const res = await props.deleteHealthcareProvider({
         where: { id: item.id },
@@ -141,7 +136,7 @@ const HealthcareProviders: React.FC<Props> = props => {
         showToast(null, 'Healthcare Provider deleted successfully');
         healthcareProviders.refetch();
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast('Something went wrong');
@@ -149,7 +144,7 @@ const HealthcareProviders: React.FC<Props> = props => {
     }
   };
 
-  const searchProvider = async text => {
+  const searchProvider = async (text) => {
     healthcareProviders.refetch({
       where: {
         firstName_contains: text ? text : undefined,
@@ -163,7 +158,7 @@ const HealthcareProviders: React.FC<Props> = props => {
     <SelectedCompany onChange={healthcareProviders.refetch}>
       <ListPage
         variant={getListType()}
-        items={idx(healthcareProviders, x => x.data)}
+        items={idx(healthcareProviders, (x) => x.data)}
         header={{
           title: listProps.title,
           subtitle: listProps.subtitle,
@@ -183,31 +178,38 @@ const HealthcareProviders: React.FC<Props> = props => {
   );
 };
 
+HealthcareProviders.defaultProps = {
+  healthcareProviders: { data: {} as any, refetch: () => {} },
+  unArchiveProvider: () => ({}),
+  archiveProvider: () => ({}),
+  deleteHealthcareProvider: () => ({}),
+};
+
 export default compose(
   withStyles(stylesFn),
   connect((state: any) => ({ profile: state.profile })),
-  withHealthcareProviders(({ match }) => {
-    const path = match.path;
-    let isArchived = false;
-    if (path.indexOf('active') > -1) {
-      isArchived = false;
-    } else if (path.indexOf('archived') > -1) {
-      isArchived = true;
-    }
-    return {
-      variables: {
-        where: {
-          isArchived,
-        },
-        orderBy: 'firstName_ASC',
-      },
-    };
-  }),
-  withDeleteHealthcareProvider(),
-  withUpdateHealthcareProvider(() => ({
-    name: 'archiveProvider',
-  })),
-  withUpdateHealthcareProvider(() => ({
-    name: 'unArchiveProvider',
-  }))
+  // withHealthcareProviders(({ match }) => {
+  //   const path = match.path;
+  //   let isArchived = false;
+  //   if (path.indexOf('active') > -1) {
+  //     isArchived = false;
+  //   } else if (path.indexOf('archived') > -1) {
+  //     isArchived = true;
+  //   }
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived,
+  //       },
+  //       orderBy: 'firstName_ASC',
+  //     },
+  //   };
+  // }),
+  // withDeleteHealthcareProvider(),
+  // withUpdateHealthcareProvider(() => ({
+  //   name: 'archiveProvider',
+  // })),
+  // withUpdateHealthcareProvider(() => ({
+  //   name: 'unArchiveProvider',
+  // })),
 )(HealthcareProviders);

@@ -1,8 +1,8 @@
+import { withStyles } from '@kudoo/components';
+import { withI18n } from '@lingui/react';
 import React, { Component } from 'react';
 import { compose } from 'recompose';
-import { withI18n } from '@lingui/react';
-import { withStyles } from '@kudoo/components';
-import { SERVICE_BILLING_TYPE } from '@client/helpers/constants';
+import { SERVICE_BILLING_TYPE } from 'src/helpers/constants';
 import { ServiceBlockStyles } from './styles';
 
 type Props = {
@@ -52,7 +52,8 @@ class ServiceBlock extends Component<Props, State> {
         </div>
         <div
           className={classes.serviceRemoveIcon}
-          onClick={onRemoveClick as any}>
+          onClick={onRemoveClick as any}
+        >
           <i className='ion-android-close' />
         </div>
       </div>
@@ -62,5 +63,5 @@ class ServiceBlock extends Component<Props, State> {
 
 export default compose<any, any>(
   withStyles(ServiceBlockStyles),
-  withI18n()
+  withI18n(),
 )(ServiceBlock);

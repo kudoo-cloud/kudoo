@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { compose } from 'recompose';
-import { withI18n } from '@lingui/react';
+import { Button, SectionHeader, Table, withStyles } from '@kudoo/components';
 import { I18n } from '@lingui/core';
-import get from 'lodash/get';
+import { withI18n } from '@lingui/react';
 import compact from 'lodash/compact';
+import get from 'lodash/get';
 import moment from 'moment';
-import { withStyles, Button, Table, SectionHeader } from '@kudoo/components';
+import React, { useEffect, useState } from 'react';
+import { compose } from 'recompose';
 import styles, { StyleKeys } from './styles';
 
 type Props = IRouteProps<StyleKeys> & {
@@ -26,17 +26,17 @@ const columns = [
   { id: 'total_amount', label: 'Total amount' },
 ];
 
-const InvoicesTab: React.FC<Props> = props => {
+const InvoicesTab: React.FC<Props> = (props) => {
   const { classes, theme, invoices, i18n } = props;
 
   const [showingInvoiceType, setShowingInvoiceType] = useState(
-    SHOWING_INVOICE_TYPE.UNPAID
+    SHOWING_INVOICE_TYPE.UNPAID,
   );
   const [data, setData] = useState([]);
 
   const updateDisplayData = () => {
     const invoicesRow = get(invoices, 'data', []);
-    let invoicesArr = invoicesRow.map(invoice => {
+    let invoicesArr = invoicesRow.map((invoice) => {
       if (
         showingInvoiceType === SHOWING_INVOICE_TYPE.PAID &&
         invoice.status !== 'FULLY_PAID'
@@ -65,6 +65,7 @@ const InvoicesTab: React.FC<Props> = props => {
 
   useEffect(() => {
     updateDisplayData();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showingInvoiceType]);
 
   return (
@@ -106,5 +107,5 @@ const InvoicesTab: React.FC<Props> = props => {
 
 export default compose<Props, Props>(
   withI18n(),
-  withStyles(styles)
+  withStyles(styles),
 )(InvoicesTab);

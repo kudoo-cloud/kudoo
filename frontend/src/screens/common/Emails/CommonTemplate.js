@@ -5,7 +5,7 @@ class Common extends React.Component {
     const newDoctype = document.implementation.createDocumentType(
       'html',
       '-//W3C//DTD XHTML 1.0 Strict//EN',
-      'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd'
+      'http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd',
     );
 
     document.doctype.parentNode.replaceChild(newDoctype, document.doctype);
@@ -73,7 +73,8 @@ class Common extends React.Component {
                 borderCollapse: 'collapse',
                 borderSpacing: 0,
               }}
-              bgcolor='#F2F2F2'>
+              bgcolor='#F2F2F2'
+            >
               <tbody>
                 <tr style={{ backgroundColor: '#f2f2f2' }} bgcolor='#F2F2F2'>
                   <td align='center' valign='top'>
@@ -83,25 +84,29 @@ class Common extends React.Component {
                       border='0'
                       align='center'
                       style={{ maxWidth: '640px', width: '100%' }}
-                      bgcolor='#434855'>
+                      bgcolor='#434855'
+                    >
                       <tbody>
                         <tr>
                           <td
                             align='center'
                             valign='top'
-                            style={{ padding: '60px' }}>
+                            style={{ padding: '60px' }}
+                          >
                             <table
                               cellSpacing='0'
                               cellPadding='0'
                               border='0'
                               align='center'
-                              style={{ maxWidth: '600px', width: '100%' }}>
+                              style={{ maxWidth: '600px', width: '100%' }}
+                            >
                               <tbody>
                                 <tr>
                                   <td
                                     align='center'
                                     valign='top'
-                                    style={{ padding: '40px' }}>
+                                    style={{ padding: '40px' }}
+                                  >
                                     <img
                                       width='390'
                                       height='90'
@@ -126,7 +131,8 @@ class Common extends React.Component {
                                       fontFamily: "'Roboto', sans-serif",
                                       color: 'white',
                                       fontSize: '30px',
-                                    }}>
+                                    }}
+                                  >
                                     Where big ideas grow
                                   </td>
                                 </tr>
@@ -146,19 +152,22 @@ class Common extends React.Component {
                       border='0'
                       align='center'
                       style={{ maxWidth: '640px', width: '100%' }}
-                      bgcolor='#2bc88f'>
+                      bgcolor='#2bc88f'
+                    >
                       <tbody>
                         <tr>
                           <td
                             align='center'
                             valign='top'
-                            style={{ padding: '30px' }}>
+                            style={{ padding: '30px' }}
+                          >
                             <table
                               cellSpacing='0'
                               cellPadding='0'
                               border='0'
                               align='center'
-                              style={{ maxWidth: '600px', width: '100%' }}>
+                              style={{ maxWidth: '600px', width: '100%' }}
+                            >
                               <tbody>
                                 <tr>
                                   <td
@@ -171,14 +180,16 @@ class Common extends React.Component {
                                       fontSize: '20px',
                                       fontWeight: 600,
                                       color: '#068c58',
-                                    }}>
+                                    }}
+                                  >
                                     Let’s get social
                                   </td>
                                   <td
                                     width='300'
                                     align='center'
                                     valign='top'
-                                    style={{ padding: '0px' }}>
+                                    style={{ padding: '0px' }}
+                                  >
                                     <table
                                       cellSpacing='0'
                                       cellPadding='0'
@@ -187,7 +198,8 @@ class Common extends React.Component {
                                       style={{
                                         maxWidth: '640px',
                                         width: '100%',
-                                      }}>
+                                      }}
+                                    >
                                       <tbody>
                                         <tr>
                                           <td align='center' valign='top'>
@@ -199,7 +211,8 @@ class Common extends React.Component {
                                               style={{
                                                 maxWidth: '600px',
                                                 width: '100%',
-                                              }}>
+                                              }}
+                                            >
                                               <tbody>
                                                 <tr>
                                                   <td
@@ -207,7 +220,8 @@ class Common extends React.Component {
                                                     valign='middle'
                                                     style={{
                                                       marginRight: '10px',
-                                                    }}>
+                                                    }}
+                                                  >
                                                     <a href='https://facebook.com/kudoocloud'>
                                                       <img
                                                         width='50'
@@ -230,7 +244,8 @@ class Common extends React.Component {
                                                     valign='middle'
                                                     style={{
                                                       marginRight: '10px',
-                                                    }}>
+                                                    }}
+                                                  >
                                                     <a href='https://twitter.com/kudoocloud'>
                                                       <img
                                                         width='50'
@@ -253,7 +268,8 @@ class Common extends React.Component {
                                                     valign='middle'
                                                     style={{
                                                       marginRight: '10px',
-                                                    }}>
+                                                    }}
+                                                  >
                                                     <a href='https://reddit.com/r/kudoo'>
                                                       <img
                                                         width='50'
@@ -276,7 +292,8 @@ class Common extends React.Component {
                                                     valign='middle'
                                                     style={{
                                                       marginRight: '10px',
-                                                    }}>
+                                                    }}
+                                                  >
                                                     <a href='https://github.com/kudoocloud'>
                                                       <img
                                                         width='50'
@@ -299,7 +316,8 @@ class Common extends React.Component {
                                                     valign='middle'
                                                     style={{
                                                       marginRight: '10px',
-                                                    }}>
+                                                    }}
+                                                  >
                                                     <a href='https://medium.com/kudoocloud'>
                                                       <img
                                                         width='50'
@@ -344,33 +362,38 @@ class Common extends React.Component {
                       border='0'
                       align='center'
                       style={{ maxWidth: '640px', width: '100%' }}
-                      bgcolor='#eaeaec'>
+                      bgcolor='#eaeaec'
+                    >
                       <tbody>
                         <tr>
                           <td
                             align='center'
                             valign='top'
-                            style={{ padding: '50px' }}>
+                            style={{ padding: '50px' }}
+                          >
                             <table
                               width='600'
                               cellSpacing='0'
                               cellPadding='0'
                               border='0'
                               align='center'
-                              style={{ maxWidth: '600px', width: '100%' }}>
+                              style={{ maxWidth: '600px', width: '100%' }}
+                            >
                               <tbody>
                                 <tr>
                                   <td
                                     align='left'
                                     valign='top'
-                                    style={{ fontSize: '20px' }}>
+                                    style={{ fontSize: '20px' }}
+                                  >
                                     <div
                                       style={{
                                         fontFamily: "'Roboto', sans-serif",
                                         color: '#b7b7b7',
                                         marginBottom: '10px',
                                         fontSize: '20px',
-                                      }}>
+                                      }}
+                                    >
                                       If you have any problems please contact us
                                       at{' '}
                                     </div>
@@ -379,7 +402,8 @@ class Common extends React.Component {
                                       style={{
                                         fontFamily: "'Roboto', sans-serif",
                                         fontSize: '20px',
-                                      }}>
+                                      }}
+                                    >
                                       support@kudoo.cloud
                                     </a>
                                   </td>

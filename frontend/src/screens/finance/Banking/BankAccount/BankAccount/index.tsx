@@ -1,19 +1,17 @@
-import React, { Component } from 'react';
-import isEmpty from 'lodash/isEmpty';
-import { Link } from 'react-router-dom';
 import {
-  withStyles,
-  composeStyles,
   Button,
-  SectionHeader,
   ErrorBoundary,
-  Table,
   Loading,
-  withRouterProps,
-  withStylesProps,
+  SectionHeader,
+  Table,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
 import Grid from '@material-ui/core/Grid';
+import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import URL from 'src/helpers/urls';
 import TabContainer from './BankContainer';
 import styles, { BankStyles } from './styles';
 
@@ -73,13 +71,8 @@ class Banks extends Component<IProps> {
   };
 
   public _renderBank() {
-    const {
-      banks,
-      banksLoading,
-      onLoadMore,
-      columns,
-      onSortRequested,
-    } = this.props;
+    const { banks, banksLoading, onLoadMore, columns, onSortRequested } =
+      this.props;
     return (
       <Grid container>
         <Grid item xs={12}>
@@ -123,7 +116,7 @@ const StyledBanks = withStyles(composeStyles(styles, BankStyles))(Banks);
 
 const EnhancedComponent = (props: any) => (
   <TabContainer {...props} type='active-banks'>
-    {childProps => <StyledBanks {...childProps} />}
+    {(childProps) => <StyledBanks {...childProps} />}
   </TabContainer>
 );
 

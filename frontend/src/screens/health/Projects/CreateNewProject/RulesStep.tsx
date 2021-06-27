@@ -1,27 +1,25 @@
-import React, { Component } from 'react';
-import cx from 'classnames';
-import idx from 'idx';
-import { withI18n } from '@lingui/react';
-import find from 'lodash/find';
-import isEmpty from 'lodash/isEmpty';
-import { Formik } from 'formik';
-import { compose } from 'react-apollo';
-import * as Yup from 'yup';
-import Grid from '@material-ui/core/Grid';
-import { connect } from 'react-redux';
 import {
-  withStyles,
   Button,
+  Dropdown,
   SectionHeader,
   TextField,
-  Checkbox,
-  Dropdown,
   ToggleButton,
-  withStylesProps,
+  withStyles,
 } from '@kudoo/components';
-import actions from '@client/store/actions/createNewProject';
-import { SERVICE_BILLING_TYPE } from '@client/helpers/constants';
-import { IReduxState } from '@client/store/reducers';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+import { Formik } from 'formik';
+import idx from 'idx';
+import find from 'lodash/find';
+import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import { SERVICE_BILLING_TYPE } from 'src/helpers/constants';
+import actions from 'src/store/actions/createNewProject';
+import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
@@ -55,7 +53,7 @@ class RulesStep extends Component<Props, State> {
     } = this.props;
     this.setState({
       selectedService: service.filter(
-        ser => ser.billingType === SERVICE_BILLING_TYPE.FIXED
+        (ser) => ser.billingType === SERVICE_BILLING_TYPE.FIXED,
       )[0],
     });
   }
@@ -141,7 +139,8 @@ class RulesStep extends Component<Props, State> {
                     key={index}
                     onClick={() => {
                       this.setState({ selectedService: ser });
-                    }}>
+                    }}
+                  >
                     <div className={classes.rulesServiceName}>{ser.name}</div>
                     <div className={classes.rulesServiceAssign}>
                       {i18n._('currency-symbol')}
@@ -158,7 +157,8 @@ class RulesStep extends Component<Props, State> {
                 </div>
                 <div
                   className={classes.alertRemoveIcon}
-                  onClick={() => this.setState({ alertVisible: false })}>
+                  onClick={() => this.setState({ alertVisible: false })}
+                >
                   <i className='ion-android-close' />
                 </div>
               </div>
@@ -176,7 +176,7 @@ class RulesStep extends Component<Props, State> {
                 period: Yup.string().required('Please select time'),
                 amount: Yup.string().required('Amount is required'),
               })}
-              onSubmit={values => {
+              onSubmit={(values) => {
                 const { selectedService } = this.state;
                 addPaymentRule({
                   serviceId: idx(selectedService, (_: any) => _.id),
@@ -185,7 +185,8 @@ class RulesStep extends Component<Props, State> {
                   amount: values.amount,
                   // sendInvoiceToCustomer: values.sendInvoiceToCustomer,
                 });
-              }}>
+              }}
+            >
               {({
                 values,
                 errors,
@@ -193,7 +194,7 @@ class RulesStep extends Component<Props, State> {
                 handleChange,
                 handleBlur,
                 handleSubmit,
-                isSubmitting,
+                // isSubmitting,
                 setFieldValue,
               }) => (
                 <Grid
@@ -201,7 +202,8 @@ class RulesStep extends Component<Props, State> {
                   component='form'
                   onSubmit={handleSubmit as any}
                   spacing={16}
-                  classes={{ container: classes.newRuleContainer }}>
+                  classes={{ container: classes.newRuleContainer }}
+                >
                   <Grid item xs={12}>
                     <SectionHeader title='Create a new Rule' />
                   </Grid>
@@ -225,7 +227,7 @@ class RulesStep extends Component<Props, State> {
                             ? 1
                             : null
                         }
-                        onChange={item => {
+                        onChange={(item) => {
                           setFieldValue('period', item.value);
                         }}
                       />
@@ -265,7 +267,7 @@ class RulesStep extends Component<Props, State> {
                         onChange={(item, index) => {
                           setFieldValue(
                             'fixedOrPercent',
-                            index === 0 ? 'fixed' : 'percentage'
+                            index === 0 ? 'fixed' : 'percentage',
                           );
                         }}
                       />
@@ -299,7 +301,8 @@ class RulesStep extends Component<Props, State> {
                             <div
                               className={classes.rule}
                               key={index}
-                              data-test='added-rules'>
+                              data-test='added-rules'
+                            >
                               <div className={classes.ruleDescription}>
                                 <div className={classes.ruleLabel}>
                                   <span className={classes.highlightRuleText}>
@@ -313,8 +316,9 @@ class RulesStep extends Component<Props, State> {
                                 <div
                                   className={cx(
                                     classes.rulePercentage,
-                                    classes.highlightRuleText
-                                  )}>
+                                    classes.highlightRuleText,
+                                  )}
+                                >
                                   {rule.percentage}%
                                 </div>
                                 <div className={classes.ruleAmount}>
@@ -352,11 +356,11 @@ export default compose(
   withStyles(styles),
   connect(
     (state: IReduxState) => ({
-      createNewProject: idx(state, x => x.sessionData.newProject),
+      createNewProject: idx(state, (x) => x.sessionData.newProject),
       profile: state.profile,
     }),
     {
       ...actions,
-    }
-  )
+    },
+  ),
 )(RulesStep);

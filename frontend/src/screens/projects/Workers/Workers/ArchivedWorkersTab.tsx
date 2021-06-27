@@ -1,28 +1,26 @@
-import React, { Component } from 'react';
 import {
-  Table,
-  withStyles,
-  composeStyles,
-  SectionHeader,
   ErrorBoundary,
-  withRouterProps,
-  withStylesProps,
+  SectionHeader,
+  Table,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import TabContainer from './TabContainer';
+import React, { Component } from 'react';
+import URL from 'src/helpers/urls';
 import styles, { ActiveWorkersStyles } from './styles';
+import TabContainer from './TabContainer';
 
 type Props = {
-  actions: any;
-  workers: Array<any>;
-  onSortRequested: Function;
-  onUnarchiveWorker: Function;
-  onRemoveWorker: Function;
-  workersLoading: boolean;
-  history: any;
-  theme: any;
-  classes: any;
-  columns: any;
+  actions?: any;
+  workers?: Array<any>;
+  onSortRequested?: Function;
+  onUnarchiveWorker?: Function;
+  onRemoveWorker?: Function;
+  workersLoading?: boolean;
+  history?: any;
+  theme?: any;
+  classes?: any;
+  columns?: any;
 };
 type State = {};
 
@@ -75,7 +73,7 @@ class ArchivedWorkers extends Component<Props, State> {
     });
   };
 
-  _showDeleteWorkerDialog = worker => {
+  _showDeleteWorkerDialog = (worker) => {
     const { theme } = this.props;
     const title = 'Permanently delete worker?';
     const description = (
@@ -114,7 +112,7 @@ class ArchivedWorkers extends Component<Props, State> {
     });
   };
 
-  _showActivateWorkerDialog = worker => {
+  _showActivateWorkerDialog = (worker) => {
     const { theme } = this.props;
     const title = 'Activate worker?';
     const description = (
@@ -153,13 +151,8 @@ class ArchivedWorkers extends Component<Props, State> {
   };
 
   _renderWorkers() {
-    const {
-      classes,
-      workers,
-      columns,
-      onSortRequested,
-      workersLoading,
-    } = this.props;
+    const { classes, workers, columns, onSortRequested, workersLoading } =
+      this.props;
     return (
       <div className={classes.workersContainer}>
         <Table
@@ -197,12 +190,12 @@ class ArchivedWorkers extends Component<Props, State> {
 }
 
 const ArchivedWorkersStyled = withStyles(
-  composeStyles(styles, ActiveWorkersStyles)
+  composeStyles(styles, ActiveWorkersStyles),
 )(ArchivedWorkers);
 
 const ArchivedWorkersTabContainer = (props: Props) => (
   <TabContainer {...props} type='archived-workers'>
-    {childProps => <ArchivedWorkersStyled {...childProps} />}
+    {(childProps) => <ArchivedWorkersStyled {...childProps} />}
   </TabContainer>
 );
 

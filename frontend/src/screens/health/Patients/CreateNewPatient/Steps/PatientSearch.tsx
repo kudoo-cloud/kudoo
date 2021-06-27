@@ -1,20 +1,20 @@
-import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
 import {
   Button,
-  SectionHeader,
   FormikTextField,
+  SectionHeader,
   withStyles,
 } from '@kudoo/components';
+import FormControl from '@material-ui/core/FormControl';
+import Grid from '@material-ui/core/Grid';
 import { Formik } from 'formik';
+import React from 'react';
 import styles, { StyleKeys } from '../styles';
 
 type Props = IComponentProps<StyleKeys> & {
   goToNextStep: Function;
 };
 
-const PatientSearch: React.FC<Props> = props => {
+const PatientSearch: React.FC<Props> = (props) => {
   const { classes, theme } = props;
   return (
     <Formik
@@ -23,10 +23,11 @@ const PatientSearch: React.FC<Props> = props => {
         healthCareIdentifier: '',
         medicareNumber: '',
       }}
-      onSubmit={values => {
+      onSubmit={(values) => {
         console.log(values);
-      }}>
-      {formProps => (
+      }}
+    >
+      {(formProps) => (
         <form onSubmit={formProps.handleSubmit}>
           <SectionHeader
             title='Search patients'

@@ -1,29 +1,39 @@
+import {
+  Button,
+  ErrorBoundary,
+  SectionHeader,
+  Table,
+  composeStyles,
+  withStyles,
+} from '@kudoo/components';
+import Grid from '@material-ui/core/Grid';
+// import idx from 'idx';
+import { get } from 'lodash';
+import moment from 'moment';
 import * as React from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import URL from 'src/helpers/urls';
 import styles, {
   reviewStyles,
 } from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/styles';
-import { connect } from 'react-redux';
-import { compose } from 'react-apollo';
-import Grid from '@material-ui/core/Grid';
-import idx from 'idx';
-import { get } from 'lodash';
-import moment from 'moment';
-import {
-  withRouterProps,
-  withStyles,
-  withStylesProps,
-  SectionHeader,
-  Button,
-  ErrorBoundary,
-  composeStyles,
-  Table,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { withPurchaseOrder, withPurchaseOrderLines } from '@kudoo/graphql';
-import SelectedCompany from '@client/helpers/SelectedCompany';
 import { IPurchaseOrderPreviewProps } from './purchaseOrderTypes';
 
 class PreviewPO extends React.Component<IPurchaseOrderPreviewProps> {
+  public static defaultProps = {
+    initialData: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+    purchaseOrderLines: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+  };
+
   public componentDidMount() {
     this.props.actions.updateHeaderTitle('Purchase Order');
   }
@@ -71,7 +81,7 @@ class PreviewPO extends React.Component<IPurchaseOrderPreviewProps> {
         title={'Cancel'}
         onClick={() => {
           this.props.history.replace(
-            isPbsPO ? URL.PBS_PURCHASE_ORDER() : URL.NON_PBS_PURCHASE_ORDER()
+            isPbsPO ? URL.PBS_PURCHASE_ORDER() : URL.NON_PBS_PURCHASE_ORDER(),
           );
         }}
         buttonColor={theme.palette.grey['200']}
@@ -201,7 +211,8 @@ class PreviewPO extends React.Component<IPurchaseOrderPreviewProps> {
           <SelectedCompany
             onChange={() => {
               this.props.history.push(URL.PURCHASE_ORDER());
-            }}>
+            }}
+          >
             <div className={classes.page}>
               {this._renderSectionHeading()}
               <div className={classes.content}>
@@ -213,7 +224,8 @@ class PreviewPO extends React.Component<IPurchaseOrderPreviewProps> {
                     <Grid
                       item
                       xs={6}
-                      classes={{ item: classes.purchaseOrderTitleRightPart }}>
+                      classes={{ item: classes.purchaseOrderTitleRightPart }}
+                    >
                       {logo && (
                         <div className={classes.purchaseOrderName}>
                           {companyName}
@@ -234,7 +246,8 @@ class PreviewPO extends React.Component<IPurchaseOrderPreviewProps> {
                   </div>
                   <div
                     className={classes.purchaseOrderDateBlock}
-                    style={{ textAlign: 'right' }}>
+                    style={{ textAlign: 'right' }}
+                  >
                     <div className={classes.purchaseOrderDateLabel}>
                       {isPbsPO ? 'PBS Organisation' : 'Supplier'}
                     </div>
@@ -260,34 +273,34 @@ class PreviewPO extends React.Component<IPurchaseOrderPreviewProps> {
 
 export default compose(
   withStyles(composeStyles(styles, reviewStyles)),
-  withPurchaseOrderLines((props, type) => {
-    let isArchived = false;
-    if (type === 'archived-purchaseOrderLines') {
-      isArchived = true;
-    }
-    const purchaseOrderId = idx(props, _ => _.match.params.id);
-    return {
-      variables: {
-        where: {
-          purchaseOrder: {
-            id: purchaseOrderId,
-          },
-          isArchived,
-        },
-        orderBy: 'id_ASC',
-      },
-    };
-  }),
-  withPurchaseOrder(
-    props => {
-      const purchaseOrderId = idx(props, _ => _.match.params.id);
-      return {
-        id: purchaseOrderId,
-      };
-    },
-    ({ data }) => ({ initialData: idx(data, _ => _.purchaseOrder) || {} })
-  ),
+  // withPurchaseOrderLines((props, type) => {
+  //   let isArchived = false;
+  //   if (type === 'archived-purchaseOrderLines') {
+  //     isArchived = true;
+  //   }
+  //   const purchaseOrderId = idx(props, (_) => _.match.params.id);
+  //   return {
+  //     variables: {
+  //       where: {
+  //         purchaseOrder: {
+  //           id: purchaseOrderId,
+  //         },
+  //         isArchived,
+  //       },
+  //       orderBy: 'id_ASC',
+  //     },
+  //   };
+  // }),
+  // withPurchaseOrder(
+  //   (props) => {
+  //     const purchaseOrderId = idx(props, (_) => _.match.params.id);
+  //     return {
+  //       id: purchaseOrderId,
+  //     };
+  //   },
+  //   ({ data }) => ({ initialData: idx(data, (_) => _.purchaseOrder) || {} }),
+  // ),
   connect((state: { profile: object }) => ({
     profile: state.profile,
-  }))
+  })),
 )(PreviewPO);

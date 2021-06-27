@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
-import { compose } from 'recompose';
+import { TextField, ToggleSwitch, withStyles } from '@kudoo/components';
 import { Trans } from '@lingui/react';
 import Grid from '@material-ui/core/Grid';
-import { withStyles, TextField, ToggleSwitch } from '@kudoo/components';
+import React, { Component } from 'react';
+import { compose } from 'recompose';
 import { ServiceInputRowStyles } from './styles';
 
 type Props = {

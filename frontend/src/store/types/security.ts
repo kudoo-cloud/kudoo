@@ -122,7 +122,7 @@ export type IRoute = IContentSecurity & {
    * new React component. This means theoretically, we can generate our entire application
    * by just configuring the Security Config
    */
-  component: React.ElementType;
+  component: any;
   /**
    * An array of the Tabs that need to appear when the Menu Item is clicked
    */
@@ -145,7 +145,7 @@ export type ITab = IContentSecurity & {
    * new React component. This means theoretically, we can generate our entire application
    * by just configuring the Security Config
    */
-  reactComponent: React.ReactNode | React.Component;
+  reactComponent: React.FC<any>;
   /**
    * Url associated to the tab, this will be used when user click on tab at that time we will
    * redirect that user to particular url. This will be helpful to assign one url per tab so user can
@@ -182,3 +182,5 @@ export enum LicensePlan {
   ENTERPRISE = 'ENTERPRISE',
   FREE = 'FREE',
 }
+
+export default {};

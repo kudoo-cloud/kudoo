@@ -1,6 +1,6 @@
-import * as React from 'react';
-import queryString from 'query-string';
 import get from 'lodash/get';
+import queryString from 'query-string';
+import * as React from 'react';
 import Common from './CommonTemplate';
 
 class TimesheetNotify extends React.Component {
@@ -17,7 +17,8 @@ class TimesheetNotify extends React.Component {
             cellPadding={0}
             border={0}
             align='center'
-            style={{ maxWidth: 600, width: '100%' }}>
+            style={{ maxWidth: 600, width: '100%' }}
+          >
             <tbody>
               <tr>
                 <td
@@ -29,7 +30,8 @@ class TimesheetNotify extends React.Component {
                     fontSize: 25,
                     fontWeight: 600,
                     color: '#434856',
-                  }}>
+                  }}
+                >
                   Timesheet
                 </td>
               </tr>
@@ -37,13 +39,15 @@ class TimesheetNotify extends React.Component {
                 <td
                   align='left'
                   valign='top'
-                  style={{ paddingBottom: 10, color: '#434856' }}>
+                  style={{ paddingBottom: 10, color: '#434856' }}
+                >
                   <div
                     style={{
                       fontSize: 17,
                       marginBottom: 10,
                       fontFamily: '"Roboto", sans-serif',
-                    }}>
+                    }}
+                  >
                     Please find attached the latest timesheet from{' '}
                     {query.first_name} {query.last_name}.
                   </div>

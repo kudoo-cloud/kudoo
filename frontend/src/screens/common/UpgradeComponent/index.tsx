@@ -1,11 +1,10 @@
-import React, { Component } from 'react';
-import { withStyles, ErrorBoundary, Button } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
+import { Button, ErrorBoundary, withStyles } from '@kudoo/components';
 import cx from 'classnames';
 import idx from 'idx';
-import * as H from 'history';
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import URL from 'src/helpers/urls';
 import styles, { ClassKeys } from './styles';
 
 type Props = IRouteProps<ClassKeys> & {
@@ -15,7 +14,7 @@ type Props = IRouteProps<ClassKeys> & {
 class UpgradeComponent extends Component<Props> {
   public render() {
     const { classes, theme, history, profile } = this.props;
-    const companyId = idx(profile, _ => _.selectedCompany.id) || '';
+    const companyId = idx(profile, (_) => _.selectedCompany.id) || '';
     return (
       <ErrorBoundary>
         <div className={classes.root}>
@@ -42,5 +41,5 @@ export default compose<Props, Props>(
   withStyles(styles),
   connect((state: any) => ({
     profile: state.profile,
-  }))
+  })),
 )(UpgradeComponent);

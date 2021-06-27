@@ -1,38 +1,44 @@
-import React, { Component } from 'react';
+import {
+  ErrorBoundary,
+  FormikCheckbox,
+  FormikDropdown,
+  FormikTextField,
+  withStyles,
+} from '@kudoo/components';
+import { withI18n } from '@lingui/react';
+import { FormControl, FormGroup, Grid } from '@material-ui/core';
 import idx from 'idx';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
-import { FormControl, Grid, FormGroup } from '@material-ui/core';
-import { connect } from 'react-redux';
-import { withI18n } from '@lingui/react';
+import React, { Component } from 'react';
 import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
 import * as Yup from 'yup';
-import {
-  withStyles,
-  FormikTextField,
-  FormikDropdown,
-  FormikCheckbox,
-  ErrorBoundary,
-} from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { showToast } from '@client/helpers/toast';
-import { SERVICE_BILLING_TYPE } from '@client/helpers/constants';
-import {
-  withCreateService,
-  withUpdateService,
-  withService,
-} from '@kudoo/graphql';
+import { SERVICE_BILLING_TYPE } from 'src/helpers/constants';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import SimpleCreatePage, {
   SimpleCreatePageRenderPropFormTypes,
-} from '@client/common_screens/SimpleCreatePage';
-import { Props } from './types';
+} from 'src/screens/common/SimpleCreatePage';
+import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
+import { Props } from './types';
 
 type State = {
   isEditMode: boolean;
 };
 
 class CreateNewService extends Component<Props, State> {
+  public static defaultProps = {
+    createService: () => ({}),
+    updateService: () => ({}),
+    initialData: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+  };
+
   state = {
     isEditMode: false,
   };
@@ -40,14 +46,14 @@ class CreateNewService extends Component<Props, State> {
   componentDidMount() {
     this.props.actions.updateHeaderTitle('Services');
     this.setState({
-      isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+      isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
     });
   }
 
   componentDidUpdate(prevProps: Props) {
     if (!isEqual(this.props.initialData, prevProps.initialData)) {
       this.setState({
-        isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+        isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
       });
     }
   }
@@ -62,8 +68,8 @@ class CreateNewService extends Component<Props, State> {
         billingType: values.billingType,
         includeConsTax: values.chargeGST,
         isTemplate:
-          typeof idx(initialData, _ => _.isTemplate) !== 'undefined'
-            ? idx(initialData, _ => _.isTemplate)
+          typeof idx(initialData, (_) => _.isTemplate) !== 'undefined'
+            ? idx(initialData, (_) => _.isTemplate)
             : true,
         timeBasedType: values.perUnit,
         totalAmount: Number(values.paymentTotal),
@@ -77,7 +83,7 @@ class CreateNewService extends Component<Props, State> {
           actions.setSubmitting(false);
           this.props.history.push(URL.SERVICES());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       } else {
@@ -91,7 +97,7 @@ class CreateNewService extends Component<Props, State> {
           actions.setSubmitting(false);
           this.props.history.push(URL.SERVICES());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       }
@@ -111,7 +117,8 @@ class CreateNewService extends Component<Props, State> {
         container
         xs={12}
         sm={5}
-        classes={{ container: classes.formFields }}>
+        classes={{ container: classes.formFields }}
+      >
         <Grid item xs={12}>
           <FormControl fullWidth margin='dense'>
             <FormikTextField
@@ -220,11 +227,11 @@ class CreateNewService extends Component<Props, State> {
             updateSubtitle: '',
           }}
           initialValues={{
-            name: idx(initialData, _ => _.name) || '',
-            billingType: idx(initialData, _ => _.billingType) || '',
-            paymentTotal: String(idx(initialData, _ => _.totalAmount) || ''),
-            chargeGST: idx(initialData, _ => _.includeConsTax) || false,
-            perUnit: idx(initialData, _ => _.timeBasedType),
+            name: idx(initialData, (_) => _.name) || '',
+            billingType: idx(initialData, (_) => _.billingType) || '',
+            paymentTotal: String(idx(initialData, (_) => _.totalAmount) || ''),
+            chargeGST: idx(initialData, (_) => _.includeConsTax) || false,
+            perUnit: idx(initialData, (_) => _.timeBasedType),
           }}
           validationSchema={Yup.object().shape({
             name: Yup.string().required('Service Name is required'),
@@ -239,8 +246,9 @@ class CreateNewService extends Component<Props, State> {
           onSubmit={this._submitForm}
           onCancel={() => {
             history.push(URL.SERVICES());
-          }}>
-          {formProps => this._renderForm(formProps)}
+          }}
+        >
+          {(formProps) => this._renderForm(formProps)}
         </SimpleCreatePage>
       </ErrorBoundary>
     );
@@ -249,15 +257,15 @@ class CreateNewService extends Component<Props, State> {
 
 export default compose(
   withI18n(),
-  withCreateService(),
-  withUpdateService(),
-  withService(
-    props => {
-      const serviceId = idx(props, _ => _.match.params.id);
-      return { id: serviceId };
-    },
-    ({ data }) => ({ initialData: idx(data, _ => _.service) || {} })
-  ),
-  connect(state => ({ profile: state.profile })),
-  withStyles(styles)
+  // withCreateService(),
+  // withUpdateService(),
+  // withService(
+  //   (props) => {
+  //     const serviceId = idx(props, (_) => _.match.params.id);
+  //     return { id: serviceId };
+  //   },
+  //   ({ data }) => ({ initialData: idx(data, (_) => _.service) || {} }),
+  // ),
+  connect((state: IReduxState) => ({ profile: state.profile })),
+  withStyles(styles),
 )(CreateNewService);

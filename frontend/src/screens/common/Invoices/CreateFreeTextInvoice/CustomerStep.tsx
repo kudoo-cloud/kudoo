@@ -1,27 +1,25 @@
-import React, { Component } from 'react';
-import cx from 'classnames';
+import {
+  Button,
+  SearchInput,
+  SectionHeader,
+  TextField,
+  withStyles,
+} from '@kudoo/components';
 import { withI18n } from '@lingui/react';
-import get from 'lodash/get';
-import debounce from 'lodash/debounce';
-import isEmpty from 'lodash/isEmpty';
 import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
 import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { withState } from 'recompose';
+import idx from 'idx';
+import debounce from 'lodash/debounce';
+import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import {
-  withStyles,
-  Button,
-  SectionHeader,
-  SearchInput,
-  TextField,
-  withStylesProps,
-} from '@kudoo/components';
-import { withCreateCustomer, withCustomers } from '@kudoo/graphql';
-import * as actions from '@client/store/actions/createNewInvoice';
-import { IReduxState } from '@client/store/reducers';
-import idx from 'idx';
+import { withState } from 'recompose';
+import * as Yup from 'yup';
+import * as actions from 'src/store/actions/createNewInvoice';
+import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
@@ -40,18 +38,22 @@ type Props = {
 type State = {};
 
 class CustomerStep extends Component<Props, State> {
+  static defaultProps = {
+    customers: { data: [] },
+  };
+
   submitForm: Function;
 
   state = {};
 
-  _onSearch = debounce(searchText => {
+  _onSearch = debounce((searchText) => {
     if (!searchText) {
       this.props.updateCustomerInfo('text', {});
     }
     this.props.setSearchText(searchText);
   }, 100);
 
-  _onItemClick = async item => {
+  _onItemClick = async (item) => {
     if (item) {
       this.props.updateCustomerInfo('text', {
         name: item.name,
@@ -81,7 +83,7 @@ class CustomerStep extends Component<Props, State> {
     }
   };
 
-  _onSubmitForm = values => {
+  _onSubmitForm = (values) => {
     this.props.updateCustomerInfo('text', {
       name: values.customerName,
       contactName: values.name,
@@ -219,7 +221,7 @@ class CustomerStep extends Component<Props, State> {
               <SearchInput
                 placeholder={'Search by typing a customer’s name or company '}
                 showClearIcon={false}
-                items={get(customers, 'data', []).map(customer => ({
+                items={get(customers, 'data', []).map((customer) => ({
                   ...customer,
                   label: customer.name,
                 }))}
@@ -241,19 +243,20 @@ class CustomerStep extends Component<Props, State> {
               initialValues={this._getInitialValues()}
               validationSchema={Yup.object().shape({
                 customerName: Yup.string().required(
-                  'Customer Name is required'
+                  'Customer Name is required',
                 ),
                 name: Yup.string().required('Contact Name is required'),
                 surname: Yup.string().required('Surname is required'),
                 govNumber: Yup.string().required(
-                  i18n._(`ABN`) + ' is required'
+                  i18n._(`ABN`) + ' is required',
                 ),
                 // .test('is-abn', 'ABN is not valid', utils.validateABN),
                 email: Yup.string()
                   .required('Email is required')
                   .email('Email is not valid'),
               })}
-              onSubmit={this._onSubmitForm}>
+              onSubmit={this._onSubmitForm}
+            >
               {this._renderCustomerForm.bind(this)}
             </Formik>
           </Grid>
@@ -270,27 +273,27 @@ export default compose(
   connect(
     (state: IReduxState) => ({
       profile: state.profile,
-      newInvoice: idx(state, x => x.sessionData.newInvoice),
+      newInvoice: idx(state, (x) => x.sessionData.newInvoice),
     }),
     {
       ...actions,
-    }
+    },
   ),
-  withCreateCustomer(),
-  withCustomers((props: any) => {
-    let where: any = {
-      isArchived: false,
-    };
-    if (props.searchText) {
-      where = {
-        ...where,
-        name_contains: props.searchText,
-      };
-    }
-    return {
-      variables: {
-        where,
-      },
-    };
-  })
+  // withCreateCustomer(),
+  // withCustomers((props: any) => {
+  //   let where: any = {
+  //     isArchived: false,
+  //   };
+  //   if (props.searchText) {
+  //     where = {
+  //       ...where,
+  //       name_contains: props.searchText,
+  //     };
+  //   }
+  //   return {
+  //     variables: {
+  //       where,
+  //     },
+  //   };
+  // }),
 )(CustomerStep);

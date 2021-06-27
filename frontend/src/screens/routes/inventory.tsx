@@ -1,13 +1,13 @@
-import URL from '@client/helpers/urls';
-import { IRoute } from '@client/store/types/security';
+import URL from 'src/helpers/urls';
+import { IRoute } from 'src/store/types/security';
 import * as Components from '../LoadableComponents';
 import {
+  inventoryTabs,
   pbsTabs,
   purchaseOrderTabs,
-  supplierTabs,
-  inventoryTabs,
-  warehouseTabs,
   salesTabs,
+  supplierTabs,
+  warehouseTabs,
 } from './tab';
 
 const paramsOptions = { path: true };

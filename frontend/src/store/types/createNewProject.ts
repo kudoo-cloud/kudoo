@@ -17,7 +17,7 @@ const types: ICreateProjectActionsTypes = createTypes(
   'CREATE_PROJECT__REMOVE_SERVICE',
   'CREATE_PROJECT__ADD_PAYMENT_RULE',
   'CREATE_PROJECT__REMOVE_PAYMENT_RULE',
-  'CREATE_PROJECT__RESET_DATA'
+  'CREATE_PROJECT__RESET_DATA',
 );
 
 export interface INewProjectState {

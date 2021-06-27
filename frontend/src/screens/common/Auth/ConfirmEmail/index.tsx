@@ -1,9 +1,9 @@
+import { Button, ErrorBoundary } from '@kudoo/components';
+import Grid from '@material-ui/core/Grid';
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import Grid from '@material-ui/core/Grid';
-import { ErrorBoundary, Button, withRouterProps } from '@kudoo/components';
-import ProfileActions from '@client/store/actions/profile';
+import ProfileActions from 'src/store/actions/profile';
 import './index.scss';
 
 interface IProps {
@@ -20,7 +20,7 @@ class ConfirmEmail extends React.Component<IProps, {}> {
             <div className='middle-container'>
               <img
                 className='mail-sent-icon'
-                src={require('images/message-sent-icon.png')}
+                src={require('@kudoo/components/build/assets/images/message-sent-icon.png')}
               />
               <div className='message-wrapper'>
                 <div className='message-title'>Verify your email</div>
@@ -54,7 +54,7 @@ class ConfirmEmail extends React.Component<IProps, {}> {
             <div className='middle-container'>
               <img
                 className='mail-sent-icon'
-                src={require('images/message-sent-icon.png')}
+                src={require('@kudoo/components/build/assets/images/message-sent-icon.png')}
               />
               <div className='message-wrapper'>
                 <div className='message-desc'>
@@ -87,7 +87,7 @@ class ConfirmEmail extends React.Component<IProps, {}> {
             <div className='middle-container'>
               <img
                 className='mail-sent-icon'
-                src={require('images/message-sent-icon.png')}
+                src={require('@kudoo/components/build/assets/images/message-sent-icon.png')}
               />
               <Button
                 href='/login'
@@ -120,11 +120,11 @@ class ConfirmEmail extends React.Component<IProps, {}> {
   }
 }
 
-const mapStateToProps = state => ({
+const mapStateToProps = (state) => ({
   profile: state.profile,
 });
 
-const mapDispatchToProps = dispatch => {
+const mapDispatchToProps = (dispatch) => {
   return {
     actions: bindActionCreators({ ...ProfileActions }, dispatch),
   };

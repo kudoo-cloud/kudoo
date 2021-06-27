@@ -1,17 +1,16 @@
-import * as React from 'react';
-import cx from 'classnames';
-import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
-import moment from 'moment';
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
 import {
-  withStyles,
-  composeStyles,
   ErrorBoundary,
   Loading,
+  composeStyles,
+  withStyles,
 } from '@kudoo/components';
-import { withProjects } from '@kudoo/graphql';
+import cx from 'classnames';
+import get from 'lodash/get';
+// import isEqual from 'lodash/isEqual';
+import moment from 'moment';
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import styles, { MostRecentBlockStyles } from './styles';
 
 type Props = {
@@ -22,17 +21,17 @@ type Props = {
 type State = {};
 
 class MostRecentProjects extends React.Component<Props, State> {
-  componentDidUpdate(prevProps) {
-    if (
-      !isEqual(get(this.props, 'contentHash'), get(prevProps, 'contentHash'))
-    ) {
-      if (get(this.props, 'projects.refetch')) {
-        this.props.projects.refetch();
-      }
-    }
-  }
+  // componentDidUpdate(prevProps) {
+  //   if (
+  //     !isEqual(get(this.props, 'contentHash'), get(prevProps, 'contentHash'))
+  //   ) {
+  //     if (get(this.props, 'projects.refetch')) {
+  //       this.props.projects.refetch();
+  //     }
+  //   }
+  // }
 
-  _isProjectInProgress = project => {
+  _isProjectInProgress = (project = {}) => {
     const startsAt = get(project, 'startsAt');
     const endsAt = get(project, 'endsAt');
     if (startsAt && !endsAt) {
@@ -41,7 +40,7 @@ class MostRecentProjects extends React.Component<Props, State> {
     return false;
   };
 
-  _isProjectCompleted = project => {
+  _isProjectCompleted = (project = {}) => {
     if (get(project, 'endsAt')) {
       const date = get(project, 'endsAt');
       return moment(date).format('DD/MM/YYYY');
@@ -49,7 +48,7 @@ class MostRecentProjects extends React.Component<Props, State> {
     return false;
   };
 
-  _getProjectStatus = project => {
+  _getProjectStatus = (project = {}) => {
     const isStarted = this._isProjectInProgress(project);
     const isCompleted = this._isProjectCompleted(project);
     if (isStarted) {
@@ -61,7 +60,7 @@ class MostRecentProjects extends React.Component<Props, State> {
   };
 
   render() {
-    const { classes, projects } = this.props;
+    const { classes, projects = {} } = this.props;
     const projectsList = get(projects, 'data', []);
     return (
       <ErrorBoundary>
@@ -78,7 +77,7 @@ class MostRecentProjects extends React.Component<Props, State> {
             <div className={classes.component}>
               {projectsList.length > 0 ? (
                 <div className={classes.list}>
-                  {projectsList.map(project => (
+                  {projectsList.map((project) => (
                     <div className={classes.listItem} key={project.id}>
                       <div className={classes.listItemPrimary}>
                         {project.name}
@@ -109,12 +108,12 @@ export default compose<any, any>(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withProjects(props => ({
-    variables: {
-      first: 3,
-      where: {
-        isArchived: false,
-      },
-    },
-  }))
+  // withProjects(() => ({
+  //   variables: {
+  //     first: 3,
+  //     where: {
+  //       isArchived: false,
+  //     },
+  //   },
+  // })),
 )(MostRecentProjects);

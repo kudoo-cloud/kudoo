@@ -1,24 +1,19 @@
-import React, { Component } from 'react';
-import queryString from 'query-string';
-import { withI18n } from '@lingui/react';
-import Grid from '@material-ui/core/Grid';
-import { compose } from 'recompose';
-import isEqual from 'lodash/isEqual';
-import get from 'lodash/get';
 import {
-  withStyles,
-  SectionHeader,
-  TextField,
   Button,
   ErrorBoundary,
-  withRouterProps,
-  withStylesProps,
+  SectionHeader,
+  TextField,
+  withStyles,
 } from '@kudoo/components';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
 import { Formik } from 'formik';
+import get from 'lodash/get';
+import queryString from 'query-string';
+import React, { Component } from 'react';
+import { compose } from 'recompose';
 import * as Yup from 'yup';
-import { showToast } from '@client/helpers/toast';
-import { withCompany, withUpdateCompany } from '@kudoo/graphql';
-import { any } from 'prop-types';
+import { showToast } from 'src/helpers/toast';
 import styles from './styles';
 
 interface IProps {
@@ -35,9 +30,14 @@ interface IProps {
 interface IState {}
 
 class Banking extends Component<IProps, IState> {
+  static defaultProps = {
+    updateCompany: () => ({}),
+    company: {},
+  };
+
   state = {};
 
-  _onSubmit = async (values, actions) => {
+  _onSubmit = async (values) => {
     try {
       const { company, location, history } = this.props;
       const res = await this.props.updateCompany({
@@ -60,7 +60,7 @@ class Banking extends Component<IProps, IState> {
           history.push(decodeURIComponent(parsedObj.redirect));
         }
       } else {
-        res.error.map(err => showToast(err));
+        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
@@ -170,10 +170,11 @@ class Banking extends Component<IProps, IState> {
           name: Yup.string().required(i18n._(`Bank Client`) + ' is required'),
           code: Yup.string().required(i18n._(`BSB`) + ' is required'),
           accountNumber: Yup.string().required(
-            i18n._(`Account Number`) + ' is required'
+            i18n._(`Account Number`) + ' is required',
           ),
           description: Yup.string().required('Description is required'),
-        })}>
+        })}
+      >
         {this._renderFormFields.bind(this)}
       </Formik>
     );
@@ -197,8 +198,8 @@ class Banking extends Component<IProps, IState> {
 export default compose<any, any>(
   withI18n(),
   withStyles(styles),
-  withCompany(props => ({
-    id: get(props, 'match.params.companyId'),
-  })),
-  withUpdateCompany()
+  // withCompany((props) => ({
+  //   id: get(props, 'match.params.companyId'),
+  // })),
+  // withUpdateCompany(),
 )(Banking);

@@ -1,18 +1,18 @@
-import React from 'react';
-import Grid from '@material-ui/core/Grid';
-import FormControl from '@material-ui/core/FormControl';
 import {
-  withStyles,
   Button,
-  SectionHeader,
   RadioButton,
+  SectionHeader,
+  withStyles,
 } from '@kudoo/components';
-import { compose } from 'recompose';
-import { connect } from 'react-redux';
-import { updatePatientCreationOption } from 'src/store/actions/createNewPatient';
-import { IReduxState } from '@client/store/reducers';
-import { PatientCreationOption } from '@client/store/types/createNewPatient';
+import FormControl from '@material-ui/core/FormControl';
+import Grid from '@material-ui/core/Grid';
 import idx from 'idx';
+import React from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import { updatePatientCreationOption } from 'src/store/actions/createNewPatient';
+import { IReduxState } from 'src/store/reducers';
+import { PatientCreationOption } from 'src/store/types/createNewPatient';
 import styles, { StyleKeys } from '../styles';
 
 type Props = IComponentProps<StyleKeys> & {
@@ -21,7 +21,7 @@ type Props = IComponentProps<StyleKeys> & {
   goToNextStep: Function;
 };
 
-const SelectOptionStep: React.FC<Props> = props => {
+const SelectOptionStep: React.FC<Props> = (props) => {
   const {
     classes,
     theme,
@@ -30,7 +30,7 @@ const SelectOptionStep: React.FC<Props> = props => {
     updatePatientCreationOption,
   } = props;
 
-  const onChange = value => () => {
+  const onChange = (value) => () => {
     updatePatientCreationOption(value);
   };
 
@@ -91,9 +91,9 @@ export default compose<Props, Props>(
     (state: IReduxState) => ({
       patientCreationOption: idx(
         state,
-        x => x.sessionData.newPatient.patientCreationOption
+        (x) => x.sessionData.newPatient.patientCreationOption,
       ),
     }),
-    { updatePatientCreationOption }
-  )
+    { updatePatientCreationOption },
+  ),
 )(SelectOptionStep);

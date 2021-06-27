@@ -1,31 +1,24 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import { withI18n } from '@lingui/react';
-import { connect } from 'react-redux';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { compose } from 'react-apollo';
 import {
-  Button,
-  ErrorBoundary,
-  TextField,
-  Dropdown,
-  SectionHeader,
-  withRouterProps,
-  withStyles,
-  withStylesProps,
   AddressForm,
+  Button,
+  Dropdown,
+  ErrorBoundary,
+  SectionHeader,
+  TextField,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
 import idx from 'idx';
 import isEqual from 'lodash/isEqual';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import {
-  withCreateSupplier,
-  withSupplier,
-  withUpdateSupplier,
-} from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import styles from './styles';
 import { TERMS_OF_PAYMENT } from './termsOfPaymentType';
 
@@ -45,6 +38,16 @@ interface IState {
 }
 
 class CreateNewSupplier extends Component<IProps, IState> {
+  public static defaultProps = {
+    initialData: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+    createSupplier: () => ({}),
+    updateSupplier: () => ({}),
+  };
+
   public state = {
     isEditMode: false,
   };
@@ -54,11 +57,11 @@ class CreateNewSupplier extends Component<IProps, IState> {
       const { initialData } = this.props;
       const { isEditMode } = this.state;
       const address = {
-        street: idx(values, _ => _.street),
-        city: idx(values, _ => _.city),
-        state: idx(values, _ => _.state),
-        country: idx(values, _ => _.country),
-        postCode: idx(values, _ => _.postcode),
+        street: idx(values, (_) => _.street),
+        city: idx(values, (_) => _.city),
+        state: idx(values, (_) => _.state),
+        country: idx(values, (_) => _.country),
+        postCode: idx(values, (_) => _.postcode),
       };
       const dataToSend = {
         name: values.name,
@@ -80,7 +83,7 @@ class CreateNewSupplier extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.SUPPLIERS());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       } else {
@@ -101,7 +104,7 @@ class CreateNewSupplier extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.SUPPLIERS());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       }
@@ -114,14 +117,14 @@ class CreateNewSupplier extends Component<IProps, IState> {
     this.props.actions.updateHeaderTitle('Supplier');
 
     this.setState({
-      isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+      isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
     });
   }
 
   public componentDidUpdate(prevProps) {
     if (!isEqual(this.props.initialData, prevProps.initialData)) {
       this.setState({
-        isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+        isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
       });
     }
   }
@@ -189,7 +192,7 @@ class CreateNewSupplier extends Component<IProps, IState> {
                 id={keys.termsOfPayment}
                 items={TERMS_OF_PAYMENT}
                 value={values[keys.termsOfPayment]}
-                onChange={e => setFieldValue(keys.termsOfPayment, e.value)}
+                onChange={(e) => setFieldValue(keys.termsOfPayment, e.value)}
                 onClose={() => setFieldTouched(keys.termsOfPayment)}
                 error={
                   touched[keys.termsOfPayment] && errors[keys.termsOfPayment]
@@ -248,22 +251,22 @@ class CreateNewSupplier extends Component<IProps, IState> {
     return (
       <Formik
         initialValues={{
-          name: idx(initialData, _ => _.name) || '',
-          termsOfPayment: idx(initialData, _ => _.termsOfPayment) || '',
+          name: idx(initialData, (_) => _.name) || '',
+          termsOfPayment: idx(initialData, (_) => _.termsOfPayment) || '',
           emailAddressForRemittance:
-            idx(initialData, _ => _.emailAddressForRemittance) || '',
-          street: idx(initialData, _ => _.address[0].street) || '',
-          city: idx(initialData, _ => _.address[0].city) || '',
-          state: idx(initialData, _ => _.address[0].state) || '',
-          country: idx(initialData, _ => _.address[0].country) || '',
-          postcode: idx(initialData, _ => _.address[0].postCode) || '',
+            idx(initialData, (_) => _.emailAddressForRemittance) || '',
+          street: idx(initialData, (_) => _.address[0].street) || '',
+          city: idx(initialData, (_) => _.address[0].city) || '',
+          state: idx(initialData, (_) => _.address[0].state) || '',
+          country: idx(initialData, (_) => _.address[0].country) || '',
+          postcode: idx(initialData, (_) => _.address[0].postCode) || '',
         }}
         enableReinitialize
         validationSchema={Yup.object().shape({
           name: Yup.string().required('Name is required'),
           termsOfPayment: Yup.string().required('Terms of payment is required'),
           emailAddressForRemittance: Yup.string().required(
-            'Email address is required'
+            'Email address is required',
           ),
           street: Yup.string().required('Street is required'),
           city: Yup.string().required('City is required'),
@@ -271,7 +274,8 @@ class CreateNewSupplier extends Component<IProps, IState> {
           country: Yup.string().required('Country is required'),
           postcode: Yup.string().required('Postcode is required'),
         })}
-        onSubmit={this._submitForm}>
+        onSubmit={this._submitForm}
+      >
         {({
           values,
           errors,
@@ -337,7 +341,8 @@ class CreateNewSupplier extends Component<IProps, IState> {
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.SUPPLIERS());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             {this._renderSectionHeading()}
             {this._renderForm()}
@@ -350,21 +355,21 @@ class CreateNewSupplier extends Component<IProps, IState> {
 
 export default compose(
   withI18n(),
-  withCreateSupplier(),
-  withUpdateSupplier(),
-  withSupplier(
-    props => {
-      const supplierId = idx(props, _ => _.match.params.id);
-      return {
-        id: supplierId,
-      };
-    },
-    ({ data }) => ({
-      initialData: idx(data, _ => _.supplier) || {},
-    })
-  ),
+  // withCreateSupplier(),
+  // withUpdateSupplier(),
+  // withSupplier(
+  //   (props) => {
+  //     const supplierId = idx(props, (_) => _.match.params.id);
+  //     return {
+  //       id: supplierId,
+  //     };
+  //   },
+  //   ({ data }) => ({
+  //     initialData: idx(data, (_) => _.supplier) || {},
+  //   }),
+  // ),
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withStyles(styles)
+  withStyles(styles),
 )(CreateNewSupplier);

@@ -1,28 +1,27 @@
-import * as React from 'react';
-import { connect } from 'react-redux';
-import { Redirect } from 'react-router';
-import { bindActionCreators } from 'redux';
-import { compose } from 'recompose';
-import Grid from '@material-ui/core/Grid';
-import { Formik } from 'formik';
-import idx from 'idx';
 import {
+  Button,
   ErrorBoundary,
   ToggleButton,
-  Button,
-  withStyles,
   helpers as utils,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import ProfileActions from '@client/store/actions/profile';
-import { withLogin, withRegister } from '@kudoo/graphql';
-import { clearStore } from '@client/helpers/apollo'; // eslint-disable-line
-import styles from './styles';
+import LogoImage from '@kudoo/components/build/assets/images/logo512px.png';
+import Grid from '@material-ui/core/Grid';
 import { InjectedConnector } from '@web3-react/injected-connector';
+import { Formik } from 'formik';
+import idx from 'idx';
+import * as React from 'react';
+import { connect } from 'react-redux';
+import { compose } from 'recompose';
+import { bindActionCreators } from 'redux';
 import {
   AVALANCHE_MAINNET_PARAMS,
   AVALANCHE_TESTNET_PARAMS,
-} from '@client/helpers/constants';
+} from 'src/helpers/constants';
+import URL from 'src/helpers/urls';
+import ProfileActions from 'src/store/actions/profile';
+import { clearStore } from 'src/helpers/apollo'; // eslint-disable-line
+import styles from './styles';
 
 interface ILoginParams {
   email: string;
@@ -57,6 +56,11 @@ class Login extends React.Component<IProps, IState> {
     isFormSubmitting: false,
   };
 
+  static defaultProps = {
+    login: () => ({}),
+    register: () => ({}),
+  };
+
   public componentDidMount() {
     const { profile } = this.props;
     if (!profile.isLoggedIn) {
@@ -66,7 +70,7 @@ class Login extends React.Component<IProps, IState> {
     this._observeRoute();
   }
 
-  public componentDidUpdate(prevProps, prevState) {
+  public componentDidUpdate() {
     if (
       (this.state.activeForm === 0 && utils.isURLMatching(URL.SIGNUP())) ||
       (this.state.activeForm === 1 && utils.isURLMatching(URL.LOGIN()))
@@ -89,7 +93,7 @@ class Login extends React.Component<IProps, IState> {
     });
   };
 
-  public _navigate = index => {
+  public _navigate = (index) => {
     if (index === 0) {
       this.props.history.push(URL.LOGIN());
     } else if (index === 1) {
@@ -98,7 +102,7 @@ class Login extends React.Component<IProps, IState> {
   };
 
   public connectWallet = async () => {
-    const useTestNet = process.env.USE_AVALANCHE_TESTNET === 'true';
+    const useTestNet = process.env.REACT_APP_USE_AVALANCHE_TESTNET === 'true';
     const injected = new InjectedConnector({});
     try {
       this.setState({ isFormSubmitting: true });
@@ -112,10 +116,11 @@ class Login extends React.Component<IProps, IState> {
       await provider.request({
         method: 'eth_requestAccounts',
       });
-      this.props.actions.setUserData({
-        isLoggedIn: true,
+      this.setState({ isFormSubmitting: false }, () => {
+        this.props.actions.setUserData({
+          isLoggedIn: true,
+        });
       });
-      this.setState({ isFormSubmitting: false });
     } catch (error) {
       console.log(error);
       this.setState({ isFormSubmitting: false });
@@ -133,12 +138,14 @@ class Login extends React.Component<IProps, IState> {
         }}
         onSubmit={() => {
           this.connectWallet();
-        }}>
+        }}
+      >
         {({ handleSubmit }) => (
           <form
             className={classes.form}
             autoComplete='off'
-            onSubmit={handleSubmit}>
+            onSubmit={handleSubmit}
+          >
             <Button
               type='submit'
               classes={{ component: classes.submitBtn }}
@@ -172,13 +179,15 @@ class Login extends React.Component<IProps, IState> {
           reTypePassword: '',
           tocCheckbox: false,
         }}
-        onSubmit={this.connectWallet}>
+        onSubmit={this.connectWallet}
+      >
         {({ handleSubmit }: any) => {
           return (
             <form
               className={classes.form}
               autoComplete='off'
-              onSubmit={handleSubmit}>
+              onSubmit={handleSubmit}
+            >
               <Button
                 type='submit'
                 classes={{ component: classes.submitBtn }}
@@ -202,21 +211,19 @@ class Login extends React.Component<IProps, IState> {
 
   public render() {
     const { activeForm } = this.state;
-    const { classes } = this.props;
-    const isLoggedIn = idx(this.props, _ => _.profile.isLoggedIn);
+    const { classes, history } = this.props;
+    const isLoggedIn = idx(this.props, (_) => _.profile.isLoggedIn);
+
     if (isLoggedIn) {
-      return <Redirect to={URL.DASHBOARD()} />;
+      history.replace(URL.DASHBOARD());
+      return <div />;
     }
     return (
       <ErrorBoundary>
         <div className={classes.page}>
           <div className={classes.title}>
             <a href='https://kudoo.io/'>
-              <img
-                src={require('images/logo512px.png')}
-                alt='Kudoo'
-                style={{ maxWidth: '160px' }}
-              />
+              <img src={LogoImage} alt='Kudoo' style={{ maxWidth: '160px' }} />
             </a>
           </div>
           {/* Segment */}
@@ -240,13 +247,15 @@ class Login extends React.Component<IProps, IState> {
             <Grid
               item
               xs={12}
-              classes={activeForm === 1 ? { item: classes.hideForm } : {}}>
+              classes={activeForm === 1 ? { item: classes.hideForm } : {}}
+            >
               {this._renderLoginForm()}
             </Grid>
             <Grid
               item
               xs={12}
-              classes={activeForm === 0 ? { item: classes.hideForm } : {}}>
+              classes={activeForm === 0 ? { item: classes.hideForm } : {}}
+            >
               {this._renderSignupForm()}
             </Grid>
           </Grid>
@@ -263,12 +272,10 @@ export default compose(
       profile: state.profile,
       app: state.app,
     }),
-    dispatch => {
+    (dispatch) => {
       return {
         actions: bindActionCreators({ ...ProfileActions }, dispatch),
       };
-    }
+    },
   ),
-  withLogin(),
-  withRegister()
 )(Login as any);

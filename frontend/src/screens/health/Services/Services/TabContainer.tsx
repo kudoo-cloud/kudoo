@@ -1,18 +1,12 @@
-import * as React from 'react';
 import _ from 'lodash';
 import get from 'lodash/get';
+import * as React from 'react';
 import { connect } from 'react-redux';
-import { withState, compose } from 'recompose';
-import { withRouterProps } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { showToast } from '@client/helpers/toast';
-import { SERVICE_BILLING_TYPE } from '@client/helpers/constants';
-import {
-  withServices,
-  withDeleteService,
-  withUpdateService,
-} from '@kudoo/graphql';
-import SelectedCompany from '@client/helpers/SelectedCompany';
+import { compose, withState } from 'recompose';
+import { SERVICE_BILLING_TYPE } from 'src/helpers/constants';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 
 // Container Component
 type ContainerProps = {
@@ -35,7 +29,11 @@ class TabContainer extends React.Component<ContainerProps, ContainerState> {
     services: {
       refetch: () => {},
       loadNextPage: () => {},
+      data: [],
     },
+    deleteService: () => ({}),
+    archiveService: () => ({}),
+    unArchiveService: () => ({}),
   };
 
   state = {
@@ -66,13 +64,13 @@ class TabContainer extends React.Component<ContainerProps, ContainerState> {
     }
   }
 
-  _updateServices = services => {
+  _updateServices = (services) => {
     this._transformServiceData(services);
   };
 
-  _transformServiceData = services => {
+  _transformServiceData = (services) => {
     if (services) {
-      const nextServices = get(services, 'data', []).map(node => {
+      const nextServices = get(services, 'data', []).map((node) => {
         const billingType =
           node.billingType === SERVICE_BILLING_TYPE.FIXED
             ? 'Fixed Billing'
@@ -93,7 +91,7 @@ class TabContainer extends React.Component<ContainerProps, ContainerState> {
     this.props.history.push(URL.CREATE_SERVICES());
   };
 
-  _goToEditService = id => {
+  _goToEditService = (id) => {
     this.props.history.push(URL.EDIT_SERVICE({ id }));
   };
 
@@ -108,7 +106,7 @@ class TabContainer extends React.Component<ContainerProps, ContainerState> {
     }
   };
 
-  _onSortRequested = async column => {
+  _onSortRequested = async (column) => {
     const columns = this.state.columns;
     const sortedColumn = _.find(columns, { sorted: true });
     const columnGoingToBeSorted = _.find(columns, { id: column.id });
@@ -133,7 +131,7 @@ class TabContainer extends React.Component<ContainerProps, ContainerState> {
     });
   };
 
-  _onArchiveServiceClicked = async service => {
+  _onArchiveServiceClicked = async (service) => {
     try {
       const res = await this.props.archiveService({
         where: { id: service.id },
@@ -143,7 +141,7 @@ class TabContainer extends React.Component<ContainerProps, ContainerState> {
         showToast(null, 'Service archived successfully');
         await this.props.services.refetch();
       } else {
-        res.error(err => showToast(err));
+        res.error((err) => showToast(err));
       }
     } catch (e) {
       showToast('Something went wrong');
@@ -151,7 +149,7 @@ class TabContainer extends React.Component<ContainerProps, ContainerState> {
     }
   };
 
-  _onUnarchiveServiceClicked = async service => {
+  _onUnarchiveServiceClicked = async (service) => {
     try {
       const res = await this.props.unArchiveService({
         where: { id: service.id },
@@ -161,7 +159,7 @@ class TabContainer extends React.Component<ContainerProps, ContainerState> {
         showToast(null, 'Service activated successfully');
         await this.props.services.refetch();
       } else {
-        res.error(err => showToast(err));
+        res.error((err) => showToast(err));
       }
     } catch (e) {
       showToast('Something went wrong');
@@ -169,14 +167,14 @@ class TabContainer extends React.Component<ContainerProps, ContainerState> {
     }
   };
 
-  _onRemoveServiceClicked = async service => {
+  _onRemoveServiceClicked = async (service) => {
     try {
       const res = await this.props.deleteService({ where: { id: service.id } });
       if (res.success) {
         showToast(null, 'Service deleted successfully');
         await this.props.services.refetch();
       } else {
-        res.error(err => showToast(err));
+        res.error((err) => showToast(err));
       }
     } catch (e) {
       throw new Error(e);
@@ -211,35 +209,35 @@ class TabContainer extends React.Component<ContainerProps, ContainerState> {
 const TabContainerWithGraphQL = compose<any, any>(
   connect((state: any) => ({ profile: state.profile })),
   withState('showingServicesType', 'setShowingServiceType', 'ALL'),
-  withServices(props => {
-    const { type } = props;
-    let isArchived;
-    if (type === 'active-services') {
-      isArchived = false;
-    } else if (type === 'archived-services') {
-      isArchived = true;
-    }
-    let billingType;
-    if (props.showingServicesType === SERVICE_BILLING_TYPE.FIXED) {
-      billingType = SERVICE_BILLING_TYPE.FIXED;
-    } else if (props.showingServicesType === SERVICE_BILLING_TYPE.TIME_BASED) {
-      billingType = SERVICE_BILLING_TYPE.TIME_BASED;
-    }
-    return {
-      variables: {
-        first: 20,
-        where: {
-          isArchived,
-          isTemplate: true,
-          billingType,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  }),
-  withDeleteService(),
-  withUpdateService(() => ({ name: 'archiveService' })),
-  withUpdateService(() => ({ name: 'unArchiveService' }))
+  // withServices((props) => {
+  //   const { type } = props;
+  //   let isArchived;
+  //   if (type === 'active-services') {
+  //     isArchived = false;
+  //   } else if (type === 'archived-services') {
+  //     isArchived = true;
+  //   }
+  //   let billingType;
+  //   if (props.showingServicesType === SERVICE_BILLING_TYPE.FIXED) {
+  //     billingType = SERVICE_BILLING_TYPE.FIXED;
+  //   } else if (props.showingServicesType === SERVICE_BILLING_TYPE.TIME_BASED) {
+  //     billingType = SERVICE_BILLING_TYPE.TIME_BASED;
+  //   }
+  //   return {
+  //     variables: {
+  //       first: 20,
+  //       where: {
+  //         isArchived,
+  //         isTemplate: true,
+  //         billingType,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
+  // withDeleteService(),
+  // withUpdateService(() => ({ name: 'archiveService' })),
+  // withUpdateService(() => ({ name: 'unArchiveService' })),
 )(TabContainer);
 
 export default (injectedProps: any) => (component: any) => {

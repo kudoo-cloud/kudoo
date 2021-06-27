@@ -1,6 +1,6 @@
+import { withStyles } from '@kudoo/components';
 import React from 'react';
-import { withStyles, withStylesProps } from '@kudoo/components';
-import ComingSoon from '@client/common_screens/ComingSoon';
+import ComingSoon from 'src/screens/common/ComingSoon';
 import styles from './styles';
 
 interface IProps {

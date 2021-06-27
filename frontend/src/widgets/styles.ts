@@ -1,4 +1,4 @@
-export default theme => ({
+export default (theme) => ({
   page: {
     // padding: 40,
   },
@@ -112,7 +112,7 @@ export default theme => ({
   },
 });
 
-export const ProfileStatsStyles = theme => ({
+export const ProfileStatsStyles = (theme) => ({
   comingSoonBlock: {
     position: 'absolute',
     top: 0,
@@ -165,7 +165,7 @@ export const ProfileStatsStyles = theme => ({
   },
 });
 
-export const RevenueStyles = theme => ({
+export const RevenueStyles = (theme) => ({
   revenueStatsBlock: {
     padding: 20,
     backgroundColor: theme.palette.grey['100'],
@@ -257,7 +257,7 @@ export const RevenueStyles = theme => ({
   },
 });
 
-export const AverageStatsStyles = theme => ({
+export const AverageStatsStyles = (theme) => ({
   avgSalesBlock: {
     backgroundColor: theme.palette.primary.color1,
     display: 'flex',
@@ -304,7 +304,7 @@ export const AverageStatsStyles = theme => ({
   },
 });
 
-export const InvoiceStyles = theme => ({
+export const InvoiceStyles = (theme) => ({
   invoiceBlock: {
     padding: 20,
     backgroundColor: theme.palette.grey['100'],
@@ -351,7 +351,7 @@ export const InvoiceStyles = theme => ({
   },
 });
 
-export const MostRecentBlockStyles = theme => ({
+export const MostRecentBlockStyles = (theme) => ({
   component: {
     padding: 20,
     backgroundColor: theme.palette.grey['100'],
@@ -389,7 +389,7 @@ export const MostRecentBlockStyles = theme => ({
   },
 });
 
-export const LatestActivityStyles = theme => ({
+export const LatestActivityStyles = (theme) => ({
   component: {},
   titleWrapper: {
     display: 'flex',
@@ -423,7 +423,7 @@ export const LatestActivityStyles = theme => ({
   },
 });
 
-export const LatestActivityItemStyles = theme => ({
+export const LatestActivityItemStyles = (theme) => ({
   component: {
     display: 'flex',
     alignItems: 'center',

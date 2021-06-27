@@ -1,23 +1,20 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import cx from 'classnames';
-import debounce from 'lodash/debounce';
-import queryString from 'query-string';
-import { Redirect } from 'react-router';
-import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
-import { graphql, compose } from 'react-apollo';
 import {
-  withStyles,
   Button,
   SearchInput,
-  withRouterProps,
-  withStylesProps,
   helpers as utils,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import * as accountQuery from '@kudoo/graphql/typedefs/account.gql';
-import withIntegrations from '@kudoo/graphql/hoc/integration/withIntegrations';
+import cx from 'classnames';
+import debounce from 'lodash/debounce';
+import get from 'lodash/get';
+import isEqual from 'lodash/isEqual';
+import queryString from 'query-string';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import { Redirect } from 'react-router';
+import URL from 'src/helpers/urls';
+import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
@@ -32,11 +29,24 @@ type Props = {
 type State = {
   isFormSubmitting: boolean;
   filteredCompanies: Array<any>;
-  loading: false;
+  loading: boolean;
   selectedCompanyId: string | null;
 };
 
 class ChooseCompany extends Component<Props, State> {
+  public static defaultProps = {
+    companies: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+    integrations: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: [],
+    },
+  };
+
   form: any;
 
   state = {
@@ -56,8 +66,8 @@ class ChooseCompany extends Component<Props, State> {
 
   filterCompany(company, type, value) {
     const list = this.props.integrations.data.filter(
-      integration =>
-        integration.company_id === company.id && integration.type === type
+      (integration) =>
+        integration.company_id === company.id && integration.type === type,
     );
     return (
       company.legalName.toLowerCase().includes(value.toLowerCase()) &&
@@ -94,20 +104,20 @@ class ChooseCompany extends Component<Props, State> {
   };
 
   _onCancelButtonClick = () => {
-    location.href = this._redirectTo();
+    location.href = this._redirectTo() as string;
   };
 
-  _onItemClick = async item => {
+  _onItemClick = async (item) => {
     this.setState({ selectedCompanyId: item.id });
   };
 
-  _onSearch = debounce(async value => {
+  _onSearch = debounce(async (value) => {
     this.setState({ loading: true });
     // const query = queryString.parse(get(this.props, 'location.search', ''));
     // const type = query.type;
     const type = 'SLACK';
-    const items = this.props.companies.filter(company =>
-      this.filterCompany(company, type, value)
+    const items = this.props.companies.filter((company) =>
+      this.filterCompany(company, type, value),
     );
     this.setState({ filteredCompanies: items });
     this.setState({ loading: false });
@@ -121,7 +131,7 @@ class ChooseCompany extends Component<Props, State> {
           labelKey='legalName'
           items={this.state.filteredCompanies}
           placeholder={'Choose company …'}
-          renderItem={item => (
+          renderItem={(item) => (
             <div style={{ display: 'flex', alignItems: 'center' }}>
               {!item.logo && (
                 <div className={cx(classes.letterImage)}>
@@ -189,30 +199,30 @@ class ChooseCompany extends Component<Props, State> {
 
 export default compose(
   withStyles(styles),
-  connect(state => ({
+  connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-  graphql(accountQuery.me, {
-    options: props => ({
-      fetchPolicy: 'network-only',
-    }),
-    props: ({ data }) => {
-      const userMembers = get(data, 'me.userMembers', []);
-      return {
-        companies: userMembers
-          .filter(({ company, role }) => role === 'OWNER' || role === 'ADMIN')
-          .map(({ company }) => company),
-      };
-    },
-  }),
-  withIntegrations(props => {
-    return {
-      name: 'integrations',
-      variables: {
-        filters: {
-          companyId: { anyOf: props.companies.map(company => company.id) },
-        },
-      },
-    };
-  })
+  // graphql(accountQuery.me, {
+  //   options: () => ({
+  //     fetchPolicy: 'network-only',
+  //   }),
+  //   props: ({ data }) => {
+  //     const userMembers = get(data, 'me.userMembers', []);
+  //     return {
+  //       companies: userMembers
+  //         .filter(({ role }) => role === 'OWNER' || role === 'ADMIN')
+  //         .map(({ company }) => company),
+  //     };
+  //   },
+  // }),
+  // withIntegrations((props) => {
+  //   return {
+  //     name: 'integrations',
+  //     variables: {
+  //       filters: {
+  //         companyId: { anyOf: props.companies.map((company) => company.id) },
+  //       },
+  //     },
+  //   };
+  // }),
 )(ChooseCompany);

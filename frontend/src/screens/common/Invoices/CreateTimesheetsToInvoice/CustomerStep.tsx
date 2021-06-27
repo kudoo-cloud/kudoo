@@ -1,24 +1,21 @@
-import React, { Component } from 'react';
-import cx from 'classnames';
+import {
+  Button,
+  SearchInput,
+  SectionHeader,
+  composeStyles,
+  withStyles,
+} from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+import idx from 'idx';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose, withState } from 'recompose';
-import {
-  withStyles,
-  composeStyles,
-  Button,
-  SectionHeader,
-  SearchInput,
-  withStylesProps,
-} from '@kudoo/components';
-import { withProjects, withCustomers } from '@kudoo/graphql';
-import * as actions from '@client/store/actions/createNewInvoice';
-import { showToast } from '@client/helpers/toast';
-import { any } from 'prop-types';
-import { IReduxState } from '@client/store/reducers';
-import idx from 'idx';
+import { showToast } from 'src/helpers/toast';
+import * as actions from 'src/store/actions/createNewInvoice';
+import { IReduxState } from 'src/store/reducers';
 import styles, { customerStepsStyle } from './styles';
 
 type Props = {
@@ -38,7 +35,12 @@ type Props = {
 type State = {};
 
 class CustomerStep extends Component<Props, State> {
-  _onSearchCustomer = searchText => {
+  static defaultProps = {
+    customers: { data: [] },
+    projects: { data: {} },
+  };
+
+  _onSearchCustomer = (searchText) => {
     this.props.setSearchCustomerText(searchText);
     if (!searchText) {
       this.props.updateCustomerInfo('timesheet', {});
@@ -52,19 +54,19 @@ class CustomerStep extends Component<Props, State> {
     markedVisited(0);
   };
 
-  _onSelectProject = async project => {
+  _onSelectProject = async (project) => {
     this.props.updateProjectInfo('timesheet', project);
     this._updateCustomer(project.customer || {});
     this._goToNextStep();
   };
 
-  _onSelectCustomer = async customer => {
+  _onSelectCustomer = async (customer) => {
     this.props.updateProjectInfo('timesheet', {});
     this._updateCustomer(customer);
     this._goToNextStep();
   };
 
-  _updateCustomer = customer => {
+  _updateCustomer = (customer) => {
     try {
       if (customer) {
         this.props.updateCustomerInfo('timesheet', {
@@ -113,7 +115,7 @@ class CustomerStep extends Component<Props, State> {
               />
               <SearchInput
                 placeholder='Search by typing the company name'
-                items={get(customers, 'data', []).map(customer => ({
+                items={get(customers, 'data', []).map((customer) => ({
                   ...customer,
                   label: customer.name,
                 }))}
@@ -129,7 +131,7 @@ class CustomerStep extends Component<Props, State> {
                 classes={{ component: classes.sectionHeading }}
               />
               <Grid container spacing={16}>
-                {get(projects, 'data', []).map(project => (
+                {get(projects, 'data', []).map((project) => (
                   <Grid
                     item
                     xs={12}
@@ -138,11 +140,13 @@ class CustomerStep extends Component<Props, State> {
                     onClick={() => {
                       this._onSelectProject(project);
                     }}
-                    data-test={`project-${project.name}`}>
+                    data-test={`project-${project.name}`}
+                  >
                     <div
                       className={cx(classes.project, {
                         selected: project.id === selectedProject.id,
-                      })}>
+                      })}
+                    >
                       {project.name}
                     </div>
                   </Grid>
@@ -162,31 +166,31 @@ export default compose<any, any>(
   connect(
     (state: IReduxState) => ({
       profile: state.profile,
-      newInvoice: idx(state, x => x.sessionData.newInvoice),
+      newInvoice: idx(state, (x) => x.sessionData.newInvoice),
     }),
     {
       ...actions,
-    }
+    },
   ),
-  withProjects((props: any) => {
-    return {
-      variables: {
-        where: {
-          isArchived: false,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  }),
-  withCustomers((props: any) => {
-    return {
-      variables: {
-        where: {
-          isArchived: false,
-          name_contains: props.searchCustomerText || undefined,
-        },
-        orderBy: 'name_ASC',
-      },
-    };
-  })
+  // withProjects(() => {
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived: false,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
+  // withCustomers((props: any) => {
+  //   return {
+  //     variables: {
+  //       where: {
+  //         isArchived: false,
+  //         name_contains: props.searchCustomerText || undefined,
+  //       },
+  //       orderBy: 'name_ASC',
+  //     },
+  //   };
+  // }),
 )(CustomerStep);

@@ -1,18 +1,17 @@
-import React, { Component } from 'react';
-import { isEmpty, get } from 'lodash/isEmpty';
-import Grid from '@material-ui/core/Grid';
 import {
-  withStyles,
-  SectionHeader,
-  ProjectCard,
   ErrorBoundary,
-  withRouterProps,
-  withStylesProps,
+  ProjectCard,
+  SectionHeader,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
-import { PROJECT_STATUS } from '@client/helpers/constants';
-import TabContainer from './TabContainer';
+import Grid from '@material-ui/core/Grid';
+import get from 'lodash/get';
+import isEmpty from 'lodash/isEmpty';
+import React, { Component } from 'react';
+import { PROJECT_STATUS } from 'src/helpers/constants';
+import URL from 'src/helpers/urls';
 import { ActiveProjectsStyles } from './styles';
+import TabContainer from './TabContainer';
 
 type Props = {
   actions: any;
@@ -93,7 +92,7 @@ const StyledActiveProjects = withStyles(ActiveProjectsStyles)(DraftProjects);
 
 const EnhancedComponent = (props: any) => (
   <TabContainer {...props} type='draft'>
-    {childProps => <StyledActiveProjects {...childProps} />}
+    {(childProps) => <StyledActiveProjects {...childProps} />}
   </TabContainer>
 );
 

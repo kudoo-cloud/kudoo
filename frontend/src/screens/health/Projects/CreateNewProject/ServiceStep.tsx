@@ -1,28 +1,26 @@
-import React, { Component } from 'react';
-import cx from 'classnames';
-import find from 'lodash/find';
-import Grid from '@material-ui/core/Grid';
-import { withI18n } from '@lingui/react';
-import { connect } from 'react-redux';
-import { compose } from 'react-apollo';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
 import {
-  withStyles,
   Button,
-  SectionHeader,
-  TextField,
   Checkbox,
   Dropdown,
-  withStylesProps,
+  SectionHeader,
+  TextField,
+  withStyles,
 } from '@kudoo/components';
-import actions from '@client/store/actions/createNewProject';
-import { withServices } from '@kudoo/graphql';
-import { SERVICE_BILLING_TYPE } from '@client/helpers/constants';
-import { IReduxState } from '@client/store/reducers';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import cx from 'classnames';
+import { Formik } from 'formik';
 import idx from 'idx';
-import styles from './styles';
+import find from 'lodash/find';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import { SERVICE_BILLING_TYPE } from 'src/helpers/constants';
+import actions from 'src/store/actions/createNewProject';
+import { IReduxState } from 'src/store/reducers';
 import ServiceBlock from './ServiceBlock';
+import styles from './styles';
 
 type Props = {
   makeStepActive: Function;
@@ -46,6 +44,14 @@ type State = {
 };
 
 class ServiceStep extends Component<Props, State> {
+  public static defaultProps = {
+    services: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+  };
+
   savedDropdownRef: any;
 
   state = {
@@ -58,7 +64,7 @@ class ServiceStep extends Component<Props, State> {
       createNewProject: { service },
     } = this.props;
     return Boolean(
-      find(service, { billingType: SERVICE_BILLING_TYPE.TIME_BASED })
+      find(service, { billingType: SERVICE_BILLING_TYPE.TIME_BASED }),
     );
   };
 
@@ -136,7 +142,7 @@ class ServiceStep extends Component<Props, State> {
               <Dropdown
                 label='Saved services'
                 placeholder={'Select a service'}
-                items={services.data.map(service => ({
+                items={services.data.map((service) => ({
                   label: service.name,
                   value: service,
                 }))}
@@ -176,10 +182,10 @@ class ServiceStep extends Component<Props, State> {
                 name: Yup.string().required('Service Name is required'),
                 billingType: Yup.string().required('Billing Type is required'),
                 paymentTotal: Yup.string().required(
-                  'Payment Total is required'
+                  'Payment Total is required',
                 ),
               })}
-              onSubmit={values => {
+              onSubmit={(values) => {
                 addService({
                   name: values.name,
                   billingType: values.billingType,
@@ -188,7 +194,8 @@ class ServiceStep extends Component<Props, State> {
                   perUnit: values.perUnit,
                   isTemplate: values.isTemplate,
                 });
-              }}>
+              }}
+            >
               {({
                 values,
                 errors,
@@ -196,7 +203,7 @@ class ServiceStep extends Component<Props, State> {
                 handleChange,
                 handleBlur,
                 handleSubmit,
-                isSubmitting,
+                // isSubmitting,
                 setFieldValue,
               }) => (
                 <form className={classes.form} onSubmit={handleSubmit}>
@@ -218,7 +225,7 @@ class ServiceStep extends Component<Props, State> {
                       id='billing-type'
                       label='Billing Type'
                       placeholder={'Select type'}
-                      onChange={item => {
+                      onChange={(item) => {
                         setFieldValue('billingType', item.value);
                       }}
                       items={[
@@ -249,7 +256,7 @@ class ServiceStep extends Component<Props, State> {
                         label={'Charge ' + i18n._(`GST`)}
                         value={values.chargeGST}
                         classes={{ component: classes.chargeGSTCheckbox }}
-                        onChange={checked =>
+                        onChange={(checked) =>
                           setFieldValue('chargeGST', checked)
                         }
                       />
@@ -275,7 +282,7 @@ class ServiceStep extends Component<Props, State> {
                           label={'Charge ' + i18n._(`GST`)}
                           value={values.chargeGST}
                           classes={{ component: classes.chargeGSTCheckbox }}
-                          onChange={checked =>
+                          onChange={(checked) =>
                             setFieldValue('chargeGST', checked)
                           }
                         />
@@ -290,7 +297,7 @@ class ServiceStep extends Component<Props, State> {
                             { label: 'Half Hour', value: 'HALFHOUR' },
                             { label: 'Quater Hour', value: 'QUARTERHOUR' },
                           ]}
-                          onChange={item => {
+                          onChange={(item) => {
                             setFieldValue('perUnit', item.value);
                           }}
                         />
@@ -302,7 +309,7 @@ class ServiceStep extends Component<Props, State> {
                       classes={{ wrapper: classes.checkbox }}
                       value={values.isTemplate}
                       label='Save this service to templates'
-                      onChange={checked => {
+                      onChange={(checked) => {
                         setFieldValue('isTemplate', checked);
                       }}
                     />
@@ -339,7 +346,8 @@ class ServiceStep extends Component<Props, State> {
                 {this.state.alertVisible && this._isThereTimeBasedService() && (
                   <div
                     className={classes.serviceAlert}
-                    data-test='timebased-service-message'>
+                    data-test='timebased-service-message'
+                  >
                     <div className={classes.serviceAlertText}>
                       Services based on time will be linked to timesheets.{' '}
                       <br />
@@ -349,7 +357,8 @@ class ServiceStep extends Component<Props, State> {
                       className={classes.alertRemoveIcon}
                       onClick={() => {
                         this.setState({ alertVisible: false });
-                      }}>
+                      }}
+                    >
                       <i className='ion-android-close' />
                     </div>
                   </div>
@@ -385,20 +394,20 @@ export default compose(
   withI18n(),
   connect(
     (state: IReduxState) => ({
-      createNewProject: idx(state, x => x.sessionData.newProject),
+      createNewProject: idx(state, (x) => x.sessionData.newProject),
       profile: state.profile,
     }),
     {
       ...actions,
-    }
-  ),
-  withServices(() => ({
-    variables: {
-      where: {
-        isArchived: false,
-        isTemplate: true,
-      },
-      orderBy: 'name_ASC',
     },
-  }))
+  ),
+  // withServices(() => ({
+  //   variables: {
+  //     where: {
+  //       isArchived: false,
+  //       isTemplate: true,
+  //     },
+  //     orderBy: 'name_ASC',
+  //   },
+  // })),
 )(ServiceStep);

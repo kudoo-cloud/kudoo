@@ -1,24 +1,22 @@
-import React, { Component } from 'react';
-import findIndex from 'lodash/findIndex';
-import queryString from 'query-string';
 import {
-  withStyles,
   Button,
   ErrorBoundary,
   WizardSteps,
-  withRouterProps,
-  withStylesProps,
+  withStyles,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import findIndex from 'lodash/findIndex';
+import queryString from 'query-string';
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import { resetInvoiceData } from '@client/store/actions/createNewInvoice';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import URL from 'src/helpers/urls';
+import { resetInvoiceData } from 'src/store/actions/createNewInvoice';
 import DetailStep from '../CreateInvoice/DetailStep';
 import ReviewStep from '../CreateInvoice/ReviewStep';
 import CustomerStep from './CustomerStep';
-import TimesheetsStep from './TimesheetsStep';
 import styles from './styles';
+import TimesheetsStep from './TimesheetsStep';
 
 type Props = {
   resetInvoiceData: Function;
@@ -130,7 +128,7 @@ class CreateTimesheetsToInvoice extends Component<Props, State> {
 
   _makeStepActive = (index: number) => {
     this.props.history.push(
-      URL.CREATE_TIMESHEETS_TO_INVOICES() + `?step=${index + 1}`
+      URL.CREATE_TIMESHEETS_TO_INVOICES() + `?step=${index + 1}`,
     );
   };
 
@@ -203,7 +201,8 @@ class CreateTimesheetsToInvoice extends Component<Props, State> {
           onChange={() => {
             this.props.resetInvoiceData('timesheet');
             this.props.history.push(URL.CREATE_INVOICES());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             <div className={classes.allSteps}>
               <WizardSteps
@@ -229,5 +228,5 @@ class CreateTimesheetsToInvoice extends Component<Props, State> {
 
 export default compose<any, any>(
   withStyles(styles),
-  connect(() => ({}), { resetInvoiceData })
+  connect(() => ({}), { resetInvoiceData }),
 )(CreateTimesheetsToInvoice);

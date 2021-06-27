@@ -1,32 +1,25 @@
-import React, { Component } from 'react';
-import Grid from '@material-ui/core/Grid';
-import { withI18n } from '@lingui/react';
-import { connect } from 'react-redux';
-import { Formik } from 'formik';
-import * as Yup from 'yup';
-import { compose } from 'react-apollo';
 import {
   Button,
-  ErrorBoundary,
-  TextField,
   Dropdown,
+  ErrorBoundary,
   SectionHeader,
-  withRouterProps,
+  TextField,
   withStyles,
-  withStylesProps,
 } from '@kudoo/components';
-import URL from '@client/helpers/urls';
+import { withI18n } from '@lingui/react';
+import Grid from '@material-ui/core/Grid';
+import { Formik } from 'formik';
 import idx from 'idx';
 import isEqual from 'lodash/isEqual';
-import SelectedCompany from '@client/helpers/SelectedCompany';
-import {
-  withCreateMainAccount,
-  withMainAccount,
-  withUpdateMainAccount,
-} from '@kudoo/graphql';
-import { showToast } from '@client/helpers/toast';
-import styles from './styles';
+import React, { Component } from 'react';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import * as Yup from 'yup';
+import SelectedCompany from 'src/helpers/SelectedCompany';
+import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import { MAIN_ACCOUNT_TYPES } from './mainAccountTypes';
+import styles from './styles';
 
 interface IProps {
   actions: any;
@@ -44,6 +37,16 @@ interface IState {
 }
 
 class CreateNewMainAccount extends Component<IProps, IState> {
+  public static defaultProps = {
+    createMainAccount: () => ({}),
+    updateMainAccount: () => ({}),
+    initialData: {
+      refetch: () => {},
+      loadNextPage: () => {},
+      data: {},
+    },
+  };
+
   public state = {
     isEditMode: false,
   };
@@ -66,7 +69,7 @@ class CreateNewMainAccount extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.LEDGER());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       } else {
@@ -79,7 +82,7 @@ class CreateNewMainAccount extends Component<IProps, IState> {
           actions.setSubmitting(false);
           this.props.history.push(URL.LEDGER());
         } else {
-          res.error.map(err => showToast(err));
+          res.error.map((err) => showToast(err));
           actions.setSubmitting(false);
         }
       }
@@ -92,14 +95,14 @@ class CreateNewMainAccount extends Component<IProps, IState> {
     this.props.actions.updateHeaderTitle('Main Account');
 
     this.setState({
-      isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+      isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
     });
   }
 
   public componentDidUpdate(prevProps) {
     if (!isEqual(this.props.initialData, prevProps.initialData)) {
       this.setState({
-        isEditMode: Boolean(idx(this.props, _ => _.initialData)),
+        isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
       });
     }
   }
@@ -168,7 +171,7 @@ class CreateNewMainAccount extends Component<IProps, IState> {
                 id={keys.mainAccount_type}
                 items={MAIN_ACCOUNT_TYPES}
                 value={values[keys.mainAccount_type]}
-                onChange={e => setFieldValue(keys.mainAccount_type, e.value)}
+                onChange={(e) => setFieldValue(keys.mainAccount_type, e.value)}
                 onClose={() => setFieldTouched(keys.mainAccount_type)}
                 error={
                   touched[keys.mainAccount_type] &&
@@ -204,9 +207,9 @@ class CreateNewMainAccount extends Component<IProps, IState> {
     return (
       <Formik
         initialValues={{
-          mainAccount_name: idx(initialData, _ => _.name) || '',
-          mainAccount_type: idx(initialData, _ => _.type) || '',
-          mainAccount_code: idx(initialData, _ => _.code) || '',
+          mainAccount_name: idx(initialData, (_) => _.name) || '',
+          mainAccount_type: idx(initialData, (_) => _.type) || '',
+          mainAccount_code: idx(initialData, (_) => _.code) || '',
         }}
         enableReinitialize
         validationSchema={Yup.object().shape({
@@ -214,7 +217,8 @@ class CreateNewMainAccount extends Component<IProps, IState> {
           mainAccount_type: Yup.string().required('Type is required'),
           mainAccount_code: Yup.string().required('Code is required'),
         })}
-        onSubmit={this._submitForm}>
+        onSubmit={this._submitForm}
+      >
         {({
           values,
           errors,
@@ -282,7 +286,8 @@ class CreateNewMainAccount extends Component<IProps, IState> {
         <SelectedCompany
           onChange={() => {
             this.props.history.push(URL.LEDGER());
-          }}>
+          }}
+        >
           <div className={classes.page}>
             {this._renderSectionHeading()}
             {this._renderForm()}
@@ -295,21 +300,21 @@ class CreateNewMainAccount extends Component<IProps, IState> {
 
 export default compose(
   withI18n(),
-  withCreateMainAccount(),
-  withUpdateMainAccount(),
-  withMainAccount(
-    props => {
-      const mainAccountId = idx(props, _ => _.match.params.id);
-      return {
-        id: mainAccountId,
-      };
-    },
-    ({ data }) => ({
-      initialData: idx(data, _ => _.mainAccount) || {},
-    })
-  ),
+  // withCreateMainAccount(),
+  // withUpdateMainAccount(),
+  // withMainAccount(
+  //   (props) => {
+  //     const mainAccountId = idx(props, (_) => _.match.params.id);
+  //     return {
+  //       id: mainAccountId,
+  //     };
+  //   },
+  //   ({ data }) => ({
+  //     initialData: idx(data, (_) => _.mainAccount) || {},
+  //   }),
+  // ),
   connect((state: any) => ({
     profile: state.profile,
   })),
-  withStyles(styles)
+  withStyles(styles),
 )(CreateNewMainAccount);
