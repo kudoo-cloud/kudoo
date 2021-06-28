@@ -184,16 +184,6 @@
               "security": ["ADMIN", "OWNER"]
             }
           ]
-        },
-        "warehouse": {
-          "icon": "icon icon-projects",
-          "name": "Warehouse",
-          "url": "/warehouse",
-          "availability": [
-            {
-              "security": ["ADMIN", "OWNER"]
-            }
-          ]
         }
       }
     },
