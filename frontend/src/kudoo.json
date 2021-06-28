@@ -60,7 +60,7 @@
       }
     },
     "health": {
-      "isAvailable": true,
+      "isAvailable": false,
       "key": "Health",
       "value": "health",
       "menu": {
@@ -198,7 +198,7 @@
       }
     },
     "manufacturing": {
-      "isAvailable": true,
+      "isAvailable": false,
       "key": "Manufacturing",
       "value": "manufacturing",
       "menu": {
