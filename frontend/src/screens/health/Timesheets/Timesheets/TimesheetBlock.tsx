@@ -8,9 +8,9 @@ import React, { Component } from 'react';
 import { timesheetBlockStyles } from './styles';
 
 type Props = {
-  type: 'project' | 'company';
+  type: 'project' | 'dao';
   serviceName: string;
-  companyName: string;
+  daoName: string;
   project?: string;
   rows: Array<Record<string, any>>;
   collapsed: boolean;
@@ -188,7 +188,7 @@ class TimesheetBlock extends Component<Props, State> {
       classes,
       type,
       serviceName,
-      companyName,
+      daoName,
       project,
       showRemoveIcon,
       showAddIcon,
@@ -198,7 +198,7 @@ class TimesheetBlock extends Component<Props, State> {
       <div className={classes.wrapper} data-test='timesheet-block'>
         <div
           className={cx(classes.titleWrapper, {
-            'is-company': type === 'company',
+            'is-dao': type === 'dao',
             'is-collapsed': collapsed,
           })}
           onClick={() => {
@@ -206,7 +206,7 @@ class TimesheetBlock extends Component<Props, State> {
           }}
         >
           <div className={classes.title}>
-            {type === 'project' ? project : 'Linked to Company'}
+            {type === 'project' ? project : 'Linked to DAO'}
           </div>
           {type === 'project' && <div className={classes.type}>Project</div>}
           <i
@@ -218,7 +218,7 @@ class TimesheetBlock extends Component<Props, State> {
         <Collapse in={!this.state.collapsed} timeout='auto' unmountOnExit>
           <div className={classes.serviceInfoWrapper}>
             <div className={classes.serviceName}>{serviceName}</div>
-            <div className={classes.companyName}>{companyName}</div>
+            <div className={classes.daoName}>{daoName}</div>
           </div>
           <Table
             columnData={this.state.tableColumns}

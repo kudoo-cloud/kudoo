@@ -17,7 +17,7 @@ import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import uuid from 'uuid/v4';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import styles from '../styles';
 interface IProps {
@@ -304,7 +304,7 @@ class CreateSalesOrder extends Component<IProps, IState> {
     const { classes } = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.props.history.push(URL.SALES_ORDER());
           }}
@@ -313,7 +313,7 @@ class CreateSalesOrder extends Component<IProps, IState> {
             {this._renderSectionHeading()}
             {this._renderForm()}
           </div>
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

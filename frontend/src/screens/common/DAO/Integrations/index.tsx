@@ -90,7 +90,7 @@ class Integrations extends Component<Props, State> {
     const type = row.type.toLowerCase();
     //url = baseUrl + 'integration/' + type + '/init',
     // params = {
-    //   'company-auth': 'Menshen ' + get(profile, 'selectedCompany.id'),
+    //   'dao-auth': 'Menshen ' + get(profile, 'selectedDAO.id'),
     //   'redirect-to': location.href.split('?')[0],
     //   'user-auth': 'Menshen ' + profile.token,
     // };
@@ -165,12 +165,12 @@ export default compose(
     profile: state.profile,
   })),
   // withIntegrations((props: any) => {
-  //   const companyId = idx(props, (_) => _.profile.selectedCompany.id);
+  //   const daoId = idx(props, (_) => _.profile.selectedDAO.id);
   //   return {
   //     name: 'integrations',
   //     variables: {
   //       filters: {
-  //         companyId: { eq: companyId },
+  //         daoId: { eq: daoId },
   //       },
   //     },
   //   };

@@ -16,7 +16,7 @@ import { connect } from 'react-redux';
 import { Tooltip } from 'react-tippy';
 import { compose } from 'recompose';
 import { TIMESHEET_STATUS } from 'src/helpers/constants';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import { IReduxState } from 'src/store/reducers';
@@ -342,7 +342,7 @@ class WorkerDetails extends Component<Props, State> {
   render() {
     const { classes } = this.props;
     return (
-      <SelectedCompany
+      <SelectedDAO
         onChange={() => {
           this.props.history.push(URL.WORKERS());
         }}
@@ -354,7 +354,7 @@ class WorkerDetails extends Component<Props, State> {
             {this._renderTimesheetSection()}
           </div>
         </div>
-      </SelectedCompany>
+      </SelectedDAO>
     );
   }
 }
@@ -364,14 +364,14 @@ export default compose(
   connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-  // withCompany(
+  // withDao(
   //   ({ profile }) => ({
-  //     id: get(profile, 'selectedCompany.id', ''),
+  //     id: get(profile, 'selectedDAO.id', ''),
   //   }),
   //   ({ data, ownProps }) => {
-  //     const companyMemebers = get(data, 'company.companyMembers') || [];
+  //     const daoMemebers = get(data, 'dao.daoMembers') || [];
   //     const userId = get(ownProps, 'match.params.id');
-  //     const member = find(companyMemebers, ({ user }) => user.id === userId);
+  //     const member = find(daoMemebers, ({ user }) => user.id === userId);
   //     return {
   //       user: {
   //         data: get(member, 'user', {}),

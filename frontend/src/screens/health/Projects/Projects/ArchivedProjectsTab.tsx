@@ -54,7 +54,7 @@ class ArchivedProjects extends Component<Props, State> {
               <ProjectCard
                 title={project.name}
                 titleColor='green'
-                companyName={get(project, 'customer.name') || ''}
+                daoName={get(project, 'customer.name') || ''}
                 projectStatus={
                   project.status === PROJECT_STATUS.STARTED
                     ? 'Project Started'

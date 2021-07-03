@@ -16,7 +16,7 @@ import {
   TIMESHEET_STATUS,
 } from 'src/helpers/constants';
 import { generatePDF } from 'src/helpers/jsPDF';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import Attachments from './Attachments';
@@ -310,7 +310,7 @@ class CreateTimesheets extends Component<Props, any> {
   _finaliseTimeSheet = async (isDraft = false) => {
     try {
       const { profile, isEditMode }: any = this.props;
-      const { selectedCompany } = profile;
+      const { selectedDAO } = profile;
       const { weekPeriodData }: any = this.state;
       const timeSheetsId: any = [];
       this.setState({ finalisingTimesheet: true });
@@ -463,7 +463,7 @@ class CreateTimesheets extends Component<Props, any> {
           null,
           `Timesheets ${isEditMode ? 'updated' : 'saved'} successfully`,
         );
-        if (get(selectedCompany, 'timeSheetSettings.approvalsEnabled')) {
+        if (get(selectedDAO, 'timeSheetSettings.approvalsEnabled')) {
           this._showApprovalModal(timeSheetsId);
         } else {
           this.props.history.push(URL.TIMESHEETS());
@@ -659,7 +659,7 @@ class CreateTimesheets extends Component<Props, any> {
     const { currentWeekPeriod }: any = this.state;
     const weekPeriod = this._getWeekPeriod();
     return (
-      <SelectedCompany
+      <SelectedDAO
         onChange={() => {
           this.props.history.push(URL.TIMESHEETS());
         }}
@@ -699,7 +699,7 @@ class CreateTimesheets extends Component<Props, any> {
           {this._renderFinaliseAlert()}
           {this._renderTimesheetApprovalModal()}
         </div>
-      </SelectedCompany>
+      </SelectedDAO>
     );
   }
 }

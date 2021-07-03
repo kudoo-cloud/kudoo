@@ -35,7 +35,7 @@ type Props = {
   unmarkedVisited: Function;
   updatePaymentInfo: Function;
   newInvoice: Record<string, any>;
-  company: Record<string, any>;
+  dao: Record<string, any>;
   profile: Record<string, any>;
   i18n: any;
   classes: any;
@@ -45,7 +45,7 @@ type State = {};
 
 class DetailStep extends Component<Props, State> {
   static defaultProps = {
-    company: { data: {} },
+    dao: { data: {} },
   };
 
   // form: any;
@@ -90,8 +90,8 @@ class DetailStep extends Component<Props, State> {
   };
 
   _onSubmitForm = (values) => {
-    const { createType, company } = this.props;
-    if (!get(company, 'data.bankAccount')) {
+    const { createType, dao } = this.props;
+    if (!get(dao, 'data.bankAccount')) {
       showToast('Please add bank account');
       return;
     }
@@ -149,9 +149,8 @@ class DetailStep extends Component<Props, State> {
     const { values, errors, touched, handleSubmit, handleBlur, setFieldValue } =
       formProps;
 
-    const { classes, company, profile, newInvoice, createType, i18n } =
-      this.props;
-    const companyId = get(profile, 'selectedCompany.id');
+    const { classes, dao, profile, newInvoice, createType, i18n } = this.props;
+    const daoId = get(profile, 'selectedDAO.id');
     const customer = get(newInvoice, `${createType}.customer`) || {};
     let attachments = get(newInvoice, `${createType}.payment.attachments`, []);
     attachments = attachments.filter((attch) => attch instanceof File);
@@ -159,14 +158,14 @@ class DetailStep extends Component<Props, State> {
       <form className={classes.form} onSubmit={handleSubmit}>
         <div className={classes.input}>
           <FieldLabel label='Customer Payment' />
-          {!get(company, 'data.bankAccount') ? (
+          {!get(dao, 'data.bankAccount') ? (
             <div className={classes.paymentOptions}>
               <div className={classes.addBankText}>
                 Please{' '}
                 <Link
                   data-test='bank-link'
                   to={
-                    URL.COMPANY_BANKING({ companyId }) +
+                    URL.DAO_BANKING({ daoId }) +
                     `?redirect=${encodeURIComponent(location.hash.substr(1))}`
                   }
                 >
@@ -179,21 +178,21 @@ class DetailStep extends Component<Props, State> {
             <div>
               <div className={classes.paymentTextValue}>{customer.name}</div>
               <div className={classes.paymentTextValue} data-test='bank-name'>
-                {get(company, 'data.bankAccount.name')}
+                {get(dao, 'data.bankAccount.name')}
               </div>
               <div className={classes.paymentTextValue}>
-                {i18n._(`BSB`)}: {get(company, 'data.bankAccount.code')}
+                {i18n._(`BSB`)}: {get(dao, 'data.bankAccount.code')}
               </div>
               <div className={classes.paymentTextValue}>
                 {i18n._(`Account Number`)}:{' '}
-                {get(company, 'data.bankAccount.accountNumber')}
+                {get(dao, 'data.bankAccount.accountNumber')}
               </div>
               <div className={classes.addBankText}>
                 <Link
                   data-test='bank-link'
                   style={{ margin: 0 }}
                   to={
-                    URL.COMPANY_BANKING({ companyId }) +
+                    URL.DAO_BANKING({ daoId }) +
                     `?redirect=${encodeURIComponent(location.hash.substr(1))}`
                   }
                 >
@@ -427,7 +426,7 @@ export default compose(
     }),
     { ...actions },
   ),
-  // withCompany((props) => ({
-  //   id: get(props, 'profile.selectedCompany.id'),
+  // withDAO((props) => ({
+  //   id: get(props, 'profile.selectedDAO.id'),
   // })),
 )(DetailStep);

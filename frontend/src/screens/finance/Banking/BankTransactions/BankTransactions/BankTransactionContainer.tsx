@@ -7,7 +7,7 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 
 interface IProps {
   actions: any;
@@ -108,7 +108,7 @@ class BankTransactionContainer extends Component<IProps, IState> {
     } = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany onChange={bankTransactions.refetch}>
+        <SelectedDAO onChange={bankTransactions.refetch}>
           {this.props.children({
             match,
             history,
@@ -123,7 +123,7 @@ class BankTransactionContainer extends Component<IProps, IState> {
             onSortRequested: this._onRequestSort,
             onLoadMore: get(this.props, 'bankTransactions.loadNextPage'),
           })}
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

@@ -4,7 +4,7 @@ import get from 'lodash/get';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import { IReduxState } from 'src/store/reducers';
 
@@ -12,8 +12,8 @@ type Props = {
   actions: any;
   children: any;
   workers: any;
-  updateCompanyMember: Function;
-  deleteCompanyMember: Function;
+  updateDaoMember: Function;
+  deleteDaoMember: Function;
   i18n: any;
   columns: any;
   profile: any;
@@ -24,8 +24,8 @@ type State = {
 
 class TabContainer extends Component<Props, State> {
   public static defaultProps = {
-    deleteCompanyMember: () => ({}),
-    updateCompanyMember: () => ({}),
+    deleteDaoMember: () => ({}),
+    updateDaoMember: () => ({}),
     workers: {
       refetch: () => {},
       loadNextPage: () => {},
@@ -59,9 +59,9 @@ class TabContainer extends Component<Props, State> {
   }
 
   componentDidUpdate(prevProps) {
-    const oldCompanyId = get(prevProps, 'profile.selectedCompany.id');
-    const newCompanyId = get(this.props, 'profile.selectedCompany.id');
-    if (oldCompanyId !== newCompanyId) {
+    const oldDaoId = get(prevProps, 'profile.selectedDAO.id');
+    const newDaoId = get(this.props, 'profile.selectedDAO.id');
+    if (oldDaoId !== newDaoId) {
       this.props.workers.refetch();
     }
   }
@@ -74,7 +74,7 @@ class TabContainer extends Component<Props, State> {
         showToast("Can't archive owner");
         return;
       }
-      const res = await this.props.updateCompanyMember({
+      const res = await this.props.updateDaoMember({
         where: { id: worker.memberId },
         data: {
           isArchived: true,
@@ -93,7 +93,7 @@ class TabContainer extends Component<Props, State> {
 
   _onUnarchiveWorker = async (worker) => {
     try {
-      const res = await this.props.updateCompanyMember({
+      const res = await this.props.updateDaoMember({
         where: { id: worker.memberId },
         data: {
           isArchived: false,
@@ -116,7 +116,7 @@ class TabContainer extends Component<Props, State> {
         showToast("Can't remove owner");
         return;
       }
-      const res = await this.props.deleteCompanyMember({ id: worker.memberId });
+      const res = await this.props.deleteDaoMember({ id: worker.memberId });
       if (res.success) {
         showToast(null, 'Worker removed successfully');
         this.props.workers.refetch();
@@ -141,7 +141,7 @@ class TabContainer extends Component<Props, State> {
       role: worker.role,
     }));
     return (
-      <SelectedCompany onChange={workers.refetch}>
+      <SelectedDAO onChange={workers.refetch}>
         {this.props.children({
           ...this.props,
           workers: workerRows,
@@ -152,7 +152,7 @@ class TabContainer extends Component<Props, State> {
           onRemoveWorker: this._onRemoveWorker,
           workersLoading: get(workers, 'loading'),
         })}
-      </SelectedCompany>
+      </SelectedDAO>
     );
   }
 }
@@ -160,18 +160,18 @@ class TabContainer extends Component<Props, State> {
 export default compose<any, any>(
   withI18n(),
   connect((state: IReduxState) => ({ profile: state.profile })),
-  // withCompany(
+  // withDao(
   //   (props) => {
-  //     const company = get(props, 'profile.selectedCompany') || {};
+  //     const dao = get(props, 'profile.selectedDAO') || {};
   //     return {
-  //       id: company.id,
+  //       id: dao.id,
   //     };
   //   },
   //   ({ data, ownProps }) => {
-  //     const companyMemebers = get(data, 'company.companyMembers') || [];
+  //     const daoMembers = get(data, 'dao.daoMembers') || [];
   //     let users = [];
-  //     if (companyMemebers) {
-  //       users = companyMemebers
+  //     if (daoMembers) {
+  //       users = daoMembers
   //         .filter(({ isDeleted }) => isDeleted === false)
   //         .map(({ id, user, role, isArchived }) => {
   //           if (ownProps.type === 'active-workers' && isArchived) {
@@ -193,6 +193,6 @@ export default compose<any, any>(
   //     };
   //   },
   // ),
-  // withUpdateCompanyMember(),
-  // withDeleteCompanyMember(),
+  // withUpdateDaoMember(),
+  // withDeleteDaoMember(),
 )(TabContainer);

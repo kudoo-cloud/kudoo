@@ -6,7 +6,7 @@ import isEqual from 'lodash/isEqual';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 
 interface IProps {
   actions: any;
@@ -114,7 +114,7 @@ class LedgerPostingTabContainer extends Component<IProps, IState> {
     } = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany onChange={ledgerPostings.refetch}>
+        <SelectedDAO onChange={ledgerPostings.refetch}>
           {this.props.children({
             match,
             history,
@@ -126,7 +126,7 @@ class LedgerPostingTabContainer extends Component<IProps, IState> {
             onSortRequested: this._onRequestSort,
             onLoadMore: get(this.props, 'ledgerPostings.loadNextPage'),
           })}
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }
@@ -146,8 +146,8 @@ export default compose<any, any>(
   //       where: {
   //         isArchived,
   //         mainAccount: {
-  //           company: {
-  //             id: profile.selectedCompany.id,
+  //           dao: {
+  //             id: profile.selectedDAO.id,
   //           },
   //         },
   //       },

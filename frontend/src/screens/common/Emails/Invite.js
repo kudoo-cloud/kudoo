@@ -32,7 +32,7 @@ class Invite extends React.Component {
                     color: '#434856',
                   }}
                 >
-                  Company Invitation
+                  DAO Invitation
                 </td>
               </tr>
               <tr>
@@ -49,7 +49,7 @@ class Invite extends React.Component {
                     }}
                   >
                     {query.first_name} {query.last_name} has invited you to join{' '}
-                    {query.company_name} company on the Kudoo platform.
+                    {query.dao_name} dao on the Kudoo platform.
                   </div>
                   {query.type === 'update' ? (
                     <div
@@ -61,8 +61,7 @@ class Invite extends React.Component {
                     >
                       To simplify the process we have automatically created your
                       account for this email, so all you need to do to finalise
-                      setup of your account is to join {query.company_name}{' '}
-                      company.
+                      setup of your account is to join {query.dao_name} dao.
                     </div>
                   ) : (
                     <div
@@ -79,8 +78,7 @@ class Invite extends React.Component {
                         </span>
                       ) : (
                         <span>
-                          To join {query.company_name} company select link
-                          below.
+                          To join {query.dao_name} dao select link below.
                         </span>
                       )}
                     </div>
@@ -144,12 +142,12 @@ class Invite extends React.Component {
       <React.Fragment>
         {`
 ${query.first_name} ${query.last_name} has invited you to join ${
-          query.company_name
-        } company in Kudoo platform.
+          query.dao_name
+        } dao in Kudoo platform.
 ${
   query.type === 'update'
     ? `To simplify the process we have automatically created an account for this email, so you only need to finalise setup of your account to join <%= @name %>. You can do that by selecting link below and entering your details.`
-    : `To join ${query.company_name} company select link below.`
+    : `To join ${query.dao_name} dao select link below.`
 }
 ${query.token_url}
         `}

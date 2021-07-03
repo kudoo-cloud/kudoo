@@ -24,8 +24,8 @@ import styles from './styles';
 
 type Props = {
   actions: any;
-  company: any;
-  updateCompany: Function;
+  dao: any;
+  updateDao: Function;
   classes: any;
   theme: any;
 };
@@ -33,20 +33,20 @@ type State = {};
 
 class DAOGeneralContact extends Component<Props, State> {
   static defaultProps = {
-    company: {},
-    updateCompany: () => ({}),
+    dao: {},
+    updateDao: () => ({}),
   };
 
   contactForm: any;
   state: any;
 
-  _isSameAsCompanyContact = () => {
-    const { company } = this.props;
-    if (get(company, 'data.contacts', []).length === 1) {
+  _isSameAsDAOContact = () => {
+    const { dao } = this.props;
+    if (get(dao, 'data.contacts', []).length === 1) {
       return true;
-    } else if (get(company, 'data.contacts', []).length === 2) {
-      const contact1 = get(company, 'data.contacts[0]', {});
-      const contact2 = get(company, 'data.contacts[1]', {});
+    } else if (get(dao, 'data.contacts', []).length === 2) {
+      const contact1 = get(dao, 'data.contacts[0]', {});
+      const contact2 = get(dao, 'data.contacts[1]', {});
       return isEqual(contact1, contact2);
     }
     return false;
@@ -54,15 +54,15 @@ class DAOGeneralContact extends Component<Props, State> {
 
   _submitForm = async (values, actions) => {
     try {
-      const companyContactData = get(values, 'companyContact') || {};
-      const companyContact = {
-        name: get(companyContactData, 'contact_name'),
-        surname: get(companyContactData, 'contact_surname'),
-        email: get(companyContactData, 'email'),
-        mobileCode: get(companyContactData, 'mobile.countryCode'),
-        mobileNumber: get(companyContactData, 'mobile.number'),
-        landlineCode: get(companyContactData, 'landline.countryCode'),
-        landlineNumber: get(companyContactData, 'landline.number'),
+      const daoContactData = get(values, 'daoContact') || {};
+      const daoContact = {
+        name: get(daoContactData, 'contact_name'),
+        surname: get(daoContactData, 'contact_surname'),
+        email: get(daoContactData, 'email'),
+        mobileCode: get(daoContactData, 'mobile.countryCode'),
+        mobileNumber: get(daoContactData, 'mobile.number'),
+        landlineCode: get(daoContactData, 'landline.countryCode'),
+        landlineNumber: get(daoContactData, 'landline.number'),
       };
 
       const supportContactData = get(values, 'supportContact') || {};
@@ -77,25 +77,25 @@ class DAOGeneralContact extends Component<Props, State> {
       };
 
       let contacts: any;
-      if (values.sameAsCompanyContact) {
-        // if company contact and support contact is same
+      if (values.sameAsDAOContact) {
+        // if dao contact and support contact is same
 
-        // check whether company contact already exist, if it exists then update that contact
+        // check whether dao contact already exist, if it exists then update that contact
         // or else create new contact
-        if (companyContactData.id) {
+        if (daoContactData.id) {
           contacts = contacts || {};
           // contact is already exist , we will need to update it
           contacts.update = contacts.update || [];
           contacts.update.push({
             where: {
-              id: companyContactData.id,
+              id: daoContactData.id,
             },
-            data: companyContact,
+            data: daoContact,
           });
         } else {
           // create new contact
           contacts = {
-            create: [companyContact],
+            create: [daoContact],
           };
         }
 
@@ -109,19 +109,19 @@ class DAOGeneralContact extends Component<Props, State> {
         }
       } else {
         contacts = contacts || {};
-        if (companyContactData.id) {
+        if (daoContactData.id) {
           // contact is already exist , we will need to update it
           contacts.update = contacts.update || [];
           contacts.update.push({
             where: {
-              id: companyContactData.id,
+              id: daoContactData.id,
             },
-            data: companyContact,
+            data: daoContact,
           });
         } else {
           // create new contact
           contacts.create = contacts.create || [];
-          contacts.create.push(companyContact);
+          contacts.create.push(daoContact);
         }
 
         if (supportContactData.id) {
@@ -140,9 +140,9 @@ class DAOGeneralContact extends Component<Props, State> {
         }
       }
 
-      const res = await this.props.updateCompany({
+      const res = await this.props.updateDao({
         where: {
-          id: get(this.props, 'match.params.companyId'),
+          id: get(this.props, 'match.params.daoId'),
         },
         data: {
           contacts,
@@ -151,7 +151,7 @@ class DAOGeneralContact extends Component<Props, State> {
       actions.setSubmitting(false);
       if (res.success) {
         showToast(null, 'Contact Updated');
-        this.props.company.refetch();
+        this.props.dao.refetch();
       } else {
         res.error.map((err) => showToast(err));
       }
@@ -186,64 +186,64 @@ class DAOGeneralContact extends Component<Props, State> {
             <Grid item xs={12} sm={6} classes={{ item: classes.formSection }}>
               <div className={classes.sectionHeadingWrapper}>
                 <SectionHeader
-                  title='Company Contact Details'
+                  title='DAO Contact Details'
                   classes={{ component: classes.sectionHeading }}
                 />
               </div>
               <TextField
-                name='companyContact.contact_name'
-                id='companyContact.contact_name'
+                name='daoContact.contact_name'
+                id='daoContact.contact_name'
                 label='Contact Name'
                 placeholder={'Contact Name'}
-                value={values.companyContact.contact_name}
+                value={values.daoContact.contact_name}
                 showClearIcon={false}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 error={
-                  get(touched, 'companyContact.contact_name') &&
-                  get(errors, 'companyContact.contact_name')
+                  get(touched, 'daoContact.contact_name') &&
+                  get(errors, 'daoContact.contact_name')
                 }
               />
               <TextField
-                name='companyContact.contact_surname'
-                id='companyContact.contact_surname'
+                name='daoContact.contact_surname'
+                id='daoContact.contact_surname'
                 label='Contact Surname'
                 placeholder={'Contact Surname'}
-                value={values.companyContact.contact_surname}
+                value={values.daoContact.contact_surname}
                 showClearIcon={false}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 error={
-                  get(touched, 'companyContact.contact_surname') &&
-                  get(errors, 'companyContact.contact_surname')
+                  get(touched, 'daoContact.contact_surname') &&
+                  get(errors, 'daoContact.contact_surname')
                 }
               />
               <PhoneNumberField
-                areaCodeFieldName='companyContact.mobile.countryCode'
-                phoneNumberFieldName='companyContact.mobile.number'
+                areaCodeFieldName='daoContact.mobile.countryCode'
+                phoneNumberFieldName='daoContact.mobile.number'
                 areaCodeLabel='Area Code'
                 phoneNumberLabel={'Mobile Number'}
                 showClearIcon={false}
               />
               <PhoneNumberField
-                areaCodeFieldName='companyContact.landline.countryCode'
-                phoneNumberFieldName='companyContact.landline.number'
+                areaCodeFieldName='daoContact.landline.countryCode'
+                phoneNumberFieldName='daoContact.landline.number'
                 areaCodeLabel='Area Code'
                 phoneNumberLabel={'Mobile Number'}
                 showClearIcon={false}
               />
               <TextField
-                name='companyContact.email'
-                id='companyContact.email'
+                name='daoContact.email'
+                id='daoContact.email'
                 label='Email'
                 placeholder={'Email'}
-                value={values.companyContact.email}
+                value={values.daoContact.email}
                 showClearIcon={false}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 error={
-                  get(touched, 'companyContact.email') &&
-                  get(errors, 'companyContact.email')
+                  get(touched, 'daoContact.email') &&
+                  get(errors, 'daoContact.email')
                 }
               />
             </Grid>
@@ -261,13 +261,13 @@ class DAOGeneralContact extends Component<Props, State> {
                 />
                 <Checkbox
                   label='Same as above'
-                  value={values.sameAsCompanyContact}
+                  value={values.sameAsDAOContact}
                   onChange={(checked) => {
-                    setFieldValue('sameAsCompanyContact', checked);
+                    setFieldValue('sameAsDAOContact', checked);
                   }}
                 />
               </div>
-              {!values.sameAsCompanyContact && (
+              {!values.sameAsDAOContact && (
                 <div>
                   <TextField
                     name='supportContact.contact_name'
@@ -348,20 +348,20 @@ class DAOGeneralContact extends Component<Props, State> {
   }
 
   _renderContactForm() {
-    const isSameAsCompanyContact = this._isSameAsCompanyContact();
-    const contact1 = get(this.props.company, 'data.contacts[0]', {});
+    const isSameAsDAOContact = this._isSameAsDAOContact();
+    const contact1 = get(this.props.dao, 'data.contacts[0]', {});
     let contact2;
-    if (isSameAsCompanyContact) {
+    if (isSameAsDAOContact) {
       contact2 = clone(contact1);
       contact2.id = '';
     } else {
-      contact2 = get(this.props.company, 'data.contacts[1]', {});
+      contact2 = get(this.props.dao, 'data.contacts[1]', {});
     }
     return (
       <Formik
         enableReinitialize
         initialValues={{
-          companyContact: {
+          daoContact: {
             contact_name: get(contact1, 'name', ''),
             contact_surname: get(contact1, 'surname', ''),
             mobile: {
@@ -375,7 +375,7 @@ class DAOGeneralContact extends Component<Props, State> {
             email: get(contact1, 'email', ''),
             id: get(contact1, 'id', ''),
           },
-          sameAsCompanyContact: isSameAsCompanyContact,
+          sameAsDAOContact: isSameAsDAOContact,
           supportContact: {
             contact_name: get(contact2, 'name', ''),
             contact_surname: get(contact2, 'surname', ''),
@@ -392,7 +392,7 @@ class DAOGeneralContact extends Component<Props, State> {
           },
         }}
         validationSchema={Yup.object({
-          companyContact: Yup.object({
+          daoContact: Yup.object({
             contact_name: Yup.string().required('Name is required'),
             contact_surname: Yup.string().required('Surname is required'),
             mobile: Yup.object({
@@ -407,11 +407,11 @@ class DAOGeneralContact extends Component<Props, State> {
               .required('Email is required')
               .email('Email is not valid'),
           }),
-          sameAsCompanyContact: Yup.boolean(),
+          sameAsDAOContact: Yup.boolean(),
           supportContact: Yup.mixed().when(
-            'sameAsCompanyContact',
-            (sameAsCompanyContact) => {
-              if (sameAsCompanyContact) {
+            'sameAsDAOContact',
+            (sameAsDAOContact) => {
+              if (sameAsDAOContact) {
                 return Yup.object();
               }
               return Yup.object({
@@ -454,8 +454,8 @@ export default compose<any, any>(
   connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-  // withCompany((props) => ({
-  //   id: idx(props, (_) => _.match.params.companyId),
+  // withDAO((props) => ({
+  //   id: idx(props, (_) => _.match.params.daoId),
   // })),
-  // withUpdateCompany(),
+  // withUpdateDAO(),
 )(DAOGeneralContact);

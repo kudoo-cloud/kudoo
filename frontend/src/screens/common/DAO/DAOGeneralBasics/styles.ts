@@ -93,7 +93,7 @@ export default (theme) => ({
   cancelButtonText: {
     color: theme.palette.primary.color3,
   },
-  deleteCompanyText: {
+  deleteDAOText: {
     color: theme.palette.secondary.color2,
     margin: '10px 0px',
     padding: [[10, 20]],
@@ -101,7 +101,7 @@ export default (theme) => ({
     textDecoration: 'underline',
     fontSize: 15,
   },
-  deleteCompanyName: {
+  deleteDaoName: {
     fontWeight: '500',
     color: theme.palette.primary.color3,
     fontSize: 16,

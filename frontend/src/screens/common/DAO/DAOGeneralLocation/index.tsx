@@ -23,8 +23,8 @@ import styles from './styles';
 type Props = {
   actions: Record<string, any>;
   initialData: Record<string, any>;
-  updateCompany: Function;
-  company: any;
+  updateDao: Function;
+  dao: any;
   classes: any;
   theme: any;
 };
@@ -32,20 +32,20 @@ type State = {};
 
 class DAOGeneralLocation extends Component<Props, State> {
   static defaultProps = {
-    company: {},
-    updateCompany: () => ({}),
+    dao: {},
+    updateDao: () => ({}),
   };
 
   addressForm: any;
   state = {};
 
   _isSameAsPrimary = () => {
-    const { company } = this.props;
-    if (get(company, 'data.addresses', []).length === 1) {
+    const { dao } = this.props;
+    if (get(dao, 'data.addresses', []).length === 1) {
       return true;
-    } else if (get(company, 'data.addresses', []).length === 2) {
-      const address1 = get(company, 'data.addresses[0]', {});
-      const address2 = get(company, 'data.addresses[1]', {});
+    } else if (get(dao, 'data.addresses', []).length === 2) {
+      const address1 = get(dao, 'data.addresses[0]', {});
+      const address2 = get(dao, 'data.addresses[1]', {});
       return isEqual(address1, address2);
     }
     return false;
@@ -132,9 +132,9 @@ class DAOGeneralLocation extends Component<Props, State> {
         }
       }
 
-      const res = await this.props.updateCompany({
+      const res = await this.props.updateDao({
         where: {
-          id: get(this.props, 'match.params.companyId'),
+          id: get(this.props, 'match.params.daoId'),
         },
         data: {
           addresses,
@@ -143,7 +143,7 @@ class DAOGeneralLocation extends Component<Props, State> {
       actions.setSubmitting(false);
       if (res.success) {
         showToast(null, 'Address Updated');
-        this.props.company.refetch();
+        this.props.dao.refetch();
       } else {
         res.error.map((err) => showToast(err));
       }
@@ -234,15 +234,15 @@ class DAOGeneralLocation extends Component<Props, State> {
   }
 
   _renderAddressForm() {
-    const { company } = this.props;
+    const { dao } = this.props;
     const isSameAsPrimary = this._isSameAsPrimary();
-    const address1 = get(company, 'data.addresses[0]', {});
+    const address1 = get(dao, 'data.addresses[0]', {});
     let address2;
     if (isSameAsPrimary) {
       address2 = clone(address1);
       address2.id = '';
     } else {
-      address2 = get(company, 'data.addresses[1]', {});
+      address2 = get(dao, 'data.addresses[1]', {});
     }
     return (
       <Formik

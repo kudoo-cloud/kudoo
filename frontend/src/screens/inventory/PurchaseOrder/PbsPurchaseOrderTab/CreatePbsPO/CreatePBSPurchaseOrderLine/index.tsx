@@ -20,7 +20,7 @@ import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import { withState } from 'recompose';
 import uuid from 'uuid/v4';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import { IPBSDrug } from 'src/screens/inventory/PurchaseOrder/NonPbsPurchaseOrder/CreateNonPbsPO/NonPBSPOtypes';
@@ -511,7 +511,7 @@ class CreatePBSPurchaseOrderLine extends React.Component<
     const { classes } = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.props.history.push(URL.PURCHASE_ORDER());
           }}
@@ -520,7 +520,7 @@ class CreatePBSPurchaseOrderLine extends React.Component<
             {this._renderSectionHeading()}
             {this._renderForm()}
           </div>
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

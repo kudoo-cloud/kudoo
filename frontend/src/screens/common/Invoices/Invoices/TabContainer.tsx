@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import { INVOICE_STATUS } from 'src/helpers/constants';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import InvoiceNotificationModal from './InvoiceNotificationModal';
 
@@ -163,7 +163,7 @@ class TabContainer extends Component<Props, State> {
     const { children, ...rest }: any = this.props; // eslint-disable-line
     return (
       <ErrorBoundary>
-        <SelectedCompany onChange={this.props.invoices.refetch}>
+        <SelectedDAO onChange={this.props.invoices.refetch}>
           {children({
             ...rest,
             ...this.state,
@@ -182,7 +182,7 @@ class TabContainer extends Component<Props, State> {
             invoice={this.state.notifiedInvoice}
             onClose={this._closeInvoiceEmailModal}
           />
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

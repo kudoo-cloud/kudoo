@@ -4,22 +4,22 @@ import get from 'lodash/get';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import styles from './styles';
 
 type Props = {
   actions: any;
-  company: any;
-  updateCompany: Function;
+  dao: any;
+  updateDao: Function;
   classes: any;
 };
 type State = {};
 
 class AutomationTab extends Component<Props, State> {
   public static defaultProps = {
-    updateCompany: () => ({}),
-    company: {
+    updateDao: () => ({}),
+    dao: {
       refetch: () => {},
       loadNextPage: () => {},
       data: {},
@@ -28,12 +28,11 @@ class AutomationTab extends Component<Props, State> {
 
   _updateAutoSendInvoice = async (autoSendInvoices) => {
     try {
-      const { company } = this.props;
-      const timeSheetSettings =
-        get(company, 'data.timeSheetSettings', {}) || {};
-      const res = await this.props.updateCompany({
+      const { dao } = this.props;
+      const timeSheetSettings = get(dao, 'data.timeSheetSettings', {}) || {};
+      const res = await this.props.updateDao({
         where: {
-          id: get(company, 'data.id'),
+          id: get(dao, 'data.id'),
         },
         data: {
           timeSheetSettings: {
@@ -53,15 +52,15 @@ class AutomationTab extends Component<Props, State> {
   };
 
   render() {
-    const { classes, company = {} } = this.props;
+    const { classes, dao = {} } = this.props;
     const autoSendInvoices = get(
-      company,
+      dao,
       'data.timeSheetSettings.autoSendInvoices',
       false,
     );
     return (
       <div className={classes.tabContent}>
-        <SelectedCompany onChange={company.refetch}>
+        <SelectedDAO onChange={dao.refetch}>
           <SectionHeader
             title='Automation settings'
             subtitle='These settings allow you to customise the automation of your timesheets in Kudoo. We have configured these options to our default. '
@@ -92,7 +91,7 @@ class AutomationTab extends Component<Props, State> {
               </Grid>
             </Grid>
           </div>
-        </SelectedCompany>
+        </SelectedDAO>
       </div>
     );
   }
@@ -103,8 +102,8 @@ export default compose<any, any>(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  // withCompany((props) => ({
-  //   id: get(props, 'profile.selectedCompany.id'),
+  // withDao((props) => ({
+  //   id: get(props, 'profile.selectedDAO.id'),
   // })),
-  // withUpdateCompany(),
+  // withUpdateDao(),
 )(AutomationTab);

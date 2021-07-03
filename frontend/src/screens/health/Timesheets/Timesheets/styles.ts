@@ -90,7 +90,7 @@ export const timesheetBlockStyles = (theme) => ({
     borderTopLeftRadius: 5,
     borderTopRightRadius: 5,
     cursor: 'pointer',
-    '&.is-company': {
+    '&.is-dao': {
       backgroundColor: theme.palette.primary.color3,
     },
     '&.is-collapsed': {
@@ -135,7 +135,7 @@ export const timesheetBlockStyles = (theme) => ({
     fontFamily: theme.typography.font.family2,
     flex: 1,
   },
-  companyName: {
+  daoName: {
     fontSize: 16,
     color: theme.palette.grey['400'],
     fontWeight: '500',

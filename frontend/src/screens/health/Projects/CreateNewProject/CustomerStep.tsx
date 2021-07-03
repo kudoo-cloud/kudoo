@@ -62,7 +62,7 @@ class CustomerStep extends Component<Props, ComponentState> {
     } = this.props;
     if (customer.isAlreadySaved) {
       return {
-        companyName: '',
+        daoName: '',
         name: '',
         surname: '',
         govNumber: '',
@@ -70,7 +70,7 @@ class CustomerStep extends Component<Props, ComponentState> {
       };
     }
     return {
-      companyName: customer.companyName || '',
+      daoName: customer.daoName || '',
       name: customer.contactName || '',
       surname: customer.contactSurname || '',
       govNumber: customer.govNumber || '',
@@ -135,7 +135,7 @@ class CustomerStep extends Component<Props, ComponentState> {
             />
             <form className={classes.form}>
               <SearchInput
-                placeholder={'Search by typing a customer’s name or company '}
+                placeholder={'Search by typing a customer’s name or dao '}
                 showClearIcon={false}
                 items={customers.map((item) => ({
                   ...item,
@@ -144,11 +144,11 @@ class CustomerStep extends Component<Props, ComponentState> {
                 onSearch={this._onSearch}
                 onInputChange={this._onSearch}
                 defaultInputValue={
-                  customer.isAlreadySaved ? customer.companyName : ''
+                  customer.isAlreadySaved ? customer.daoName : ''
                 }
                 onItemClick={(item) => {
                   updateCustomerInfo({
-                    companyName: get(item, 'name') || '',
+                    daoName: get(item, 'name') || '',
                     contactName: get(item, 'contacts[0].name') || '',
                     contactSurname: get(item, 'contacts[0].surname') || '',
                     govNumber: get(item, 'govNumber') || '',
@@ -166,7 +166,7 @@ class CustomerStep extends Component<Props, ComponentState> {
             <Formik
               initialValues={this._getInitialValue()}
               validationSchema={Yup.object().shape({
-                companyName: Yup.string().required('Company Name is required'),
+                daoName: Yup.string().required('DAO Name is required'),
                 name: Yup.string().required('Contact Name is required'),
                 surname: Yup.string().required('Surname is required'),
                 govNumber: Yup.string().required(
@@ -179,7 +179,7 @@ class CustomerStep extends Component<Props, ComponentState> {
               })}
               onSubmit={(values) => {
                 updateCustomerInfo({
-                  companyName: values.companyName,
+                  daoName: values.daoName,
                   contactName: values.name,
                   contactSurname: values.surname,
                   govNumber: String(values.govNumber.replace(/ /g, '')),
@@ -203,15 +203,15 @@ class CustomerStep extends Component<Props, ComponentState> {
                 >
                   <div className={classes.input}>
                     <TextField
-                      name='companyName'
-                      id='companyName'
-                      value={values.companyName}
-                      label={'Company name'}
+                      name='daoName'
+                      id='daoName'
+                      value={values.daoName}
+                      label={'DAO name'}
                       placeholder={'E.g: Google'}
                       showClearIcon={false}
                       onChange={handleChange}
                       onBlur={handleBlur}
-                      error={touched.companyName && errors.companyName}
+                      error={touched.daoName && errors.daoName}
                     />
                   </div>
                   <div className={cx(classes.halfFieldWRow, classes.input)}>

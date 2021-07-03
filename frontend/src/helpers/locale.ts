@@ -68,7 +68,7 @@ export default {
 
 export const DEFAULT_LOCALE = 'en_AU';
 
-export const SUPPORTED_COUNTRIES_COMPANY = [
+export const SUPPORTED_COUNTRIES_DAO = [
   { label: 'Australia', value: 'AU', locale: 'en_AU', currency: 'AUD' },
   { label: 'Brazil', value: 'BR', locale: 'pt_BR', currency: 'BRL' },
   { label: 'Canada', value: 'CA', locale: 'en_CA', currency: 'CAD' },

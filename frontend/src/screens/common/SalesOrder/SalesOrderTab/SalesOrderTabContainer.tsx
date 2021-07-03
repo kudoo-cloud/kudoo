@@ -8,7 +8,7 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 
 interface IProps {
   actions: any;
@@ -109,7 +109,7 @@ class SalesOrderTabContainer extends Component<IProps, IState> {
     const { match, history, location, actions, salesOrders = {} } = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany onChange={salesOrders.refetch}>
+        <SelectedDAO onChange={salesOrders.refetch}>
           {this.props.children({
             match,
             history,
@@ -121,7 +121,7 @@ class SalesOrderTabContainer extends Component<IProps, IState> {
             onSortRequested: this._onRequestSort,
             onLoadMore: get(this.props, 'salesOrders.loadNextPage'),
           })}
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

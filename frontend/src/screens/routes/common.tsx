@@ -27,20 +27,20 @@ export default [
     component: Components.ManageDAOs,
   },
   {
-    name: 'Company Settings',
-    path: URL.COMPANY_SETTINGS(paramsOptions),
-    component: Components.CompanySettings,
+    name: 'DAO Settings',
+    path: URL.DAO_SETTINGS(paramsOptions),
+    component: Components.DAOSettings,
   },
   {
-    name: 'Create Company',
-    path: URL.CREATE_COMPANY(paramsOptions),
-    component: Components.CreateCompany,
+    name: 'Create DAO',
+    path: URL.CREATE_DAO(paramsOptions),
+    component: Components.CreateDAO,
   },
   {
     name: 'Configuration',
     path: URL.CONFIGURATION(paramsOptions),
     component: Components.Config,
-    configToShow: ['UserAccountSettings', 'CompanySettings'],
+    configToShow: ['UserAccountSettings', 'DAOSettings'],
   },
   {
     name: 'Account Settings',

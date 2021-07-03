@@ -33,23 +33,23 @@ class PreviewTimesheet extends Component<Props, State> {
 
   constructor(props) {
     super(props);
-    this.setCompanyAndUserData(props);
+    this.setDaoAndUserData(props);
   }
 
   componentDidMount() {
     const props = this.props;
-    this.setCompanyAndUserData(props);
+    this.setDaoAndUserData(props);
   }
 
-  setCompanyAndUserData = (props) => {
+  setDaoAndUserData = (props) => {
     const query = queryString.parse(get(props, 'location.search', ''));
-    if (query['company-token'] && query['user-token']) {
+    if (query['dao-token'] && query['user-token']) {
       this.props.actions.setUserData({
         token: query['user-token'],
         isLoggedIn: true,
-        selectedCompany: {
-          ...get(props, 'profile.selectedCompany', {}),
-          id: query['company-token'],
+        selectedDAO: {
+          ...get(props, 'profile.selectedDAO', {}),
+          id: query['dao-token'],
         },
       });
     }

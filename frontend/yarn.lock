@@ -1684,7 +1684,7 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@kudoo/components@^2.2.7":
+"@kudoo/components@2.2.7":
   version "2.2.7"
   resolved "https://registry.yarnpkg.com/@kudoo/components/-/components-2.2.7.tgz#0098ef37328dac2baf35cbe3e38f058d0ecada28"
   integrity sha512-7dPC939j9nHCewKLoNG95reTV+7l9D1vCld9kDbgtDZt+PNWl+GgWNZKnbzuc/YTpZVJphtpUxWshCi101A+aA==

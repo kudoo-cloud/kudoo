@@ -34,15 +34,15 @@ export default (theme) => ({
     marginRight: 10,
     marginBottom: 10,
   },
-  companyCard: {
+  daoCard: {
     cursor: 'pointer',
   },
-  companyCardWrapper: {
+  daoCardWrapper: {
     position: 'relative',
     marginRight: 10,
     marginBottom: 10,
   },
-  deletedCompanyMsgWrapper: {
+  deletedDAOMsgWrapper: {
     position: 'absolute',
     top: 0,
     right: 0,
@@ -56,7 +56,7 @@ export default (theme) => ({
     flexDirection: 'column',
     justifyContent: 'space-between',
   },
-  deletedCompanyMsg: {
+  deletedDAOMsg: {
     color: 'white',
     textAlign: 'center',
     fontWeight: '500',
@@ -114,7 +114,7 @@ export const JoinModalStyles = (theme) => ({
     marginTop: 20,
     textAlign: 'center',
   },
-  joinCompanyFieldContent: {
+  joinDAOFieldContent: {
     marginTop: 20,
   },
   accessCodeField: {

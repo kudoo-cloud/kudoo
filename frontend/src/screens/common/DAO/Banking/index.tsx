@@ -18,8 +18,8 @@ import styles from './styles';
 
 interface IProps {
   actions: object;
-  updateCompany: (data: any) => any;
-  company: object;
+  updateDao: (data: any) => any;
+  dao: object;
   i18n: any;
   location: any;
   history: any;
@@ -31,16 +31,16 @@ interface IState {}
 
 class Banking extends Component<IProps, IState> {
   static defaultProps = {
-    updateCompany: () => ({}),
-    company: {},
+    updateDao: () => ({}),
+    dao: {},
   };
 
   state = {};
 
   _onSubmit = async (values) => {
     try {
-      const { company, location, history } = this.props;
-      const res = await this.props.updateCompany({
+      const { dao, location, history } = this.props;
+      const res = await this.props.updateDao({
         data: {
           bankAccount: {
             code: values.code,
@@ -50,7 +50,7 @@ class Banking extends Component<IProps, IState> {
           },
         },
         where: {
-          id: get(company, 'data.id'),
+          id: get(dao, 'data.id'),
         },
       });
       if (res.success) {
@@ -165,15 +165,15 @@ class Banking extends Component<IProps, IState> {
   }
 
   _renderForm() {
-    // const { company, i18n } = this.props;
+    // const { dao, i18n } = this.props;
     return (
       <Formik
         initialValues={{
           stripeApiKey: '',
-          // name: get(company, 'data.bankAccount.name', ''),
-          // code: get(company, 'data.bankAccount.code', ''),
-          // accountNumber: get(company, 'data.bankAccount.accountNumber', ''),
-          // description: get(company, 'data.bankAccount.description', ''),
+          // name: get(dao, 'data.bankAccount.name', ''),
+          // code: get(dao, 'data.bankAccount.code', ''),
+          // accountNumber: get(dao, 'data.bankAccount.accountNumber', ''),
+          // description: get(dao, 'data.bankAccount.description', ''),
         }}
         onSubmit={this._onSubmit}
         enableReinitialize
@@ -210,8 +210,8 @@ class Banking extends Component<IProps, IState> {
 export default compose<any, any>(
   withI18n(),
   withStyles(styles),
-  // withCompany((props) => ({
-  //   id: get(props, 'match.params.companyId'),
+  // withDao((props) => ({
+  //   id: get(props, 'match.params.daoId'),
   // })),
-  // withUpdateCompany(),
+  // withUpdateDao(),
 )(Banking);

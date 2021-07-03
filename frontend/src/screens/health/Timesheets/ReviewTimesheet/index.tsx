@@ -15,7 +15,7 @@ import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import { TIMESHEET_STATUS } from 'src/helpers/constants';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import styles from './styles';
@@ -123,7 +123,7 @@ class ReviewTimesheet extends Component<Props, State> {
 
   _renderSectionHeading() {
     const { theme, profile, timeSheet } = this.props;
-    const isOwner = get(profile, 'selectedCompany.owner');
+    const isOwner = get(profile, 'selectedDAO.owner');
     const isTimesheetApproved =
       get(timeSheet, 'data.status') === TIMESHEET_STATUS.APPROVED;
     let button = null;
@@ -292,7 +292,7 @@ class ReviewTimesheet extends Component<Props, State> {
 
   _renderBottomButtons = () => {
     const { classes, theme, profile } = this.props;
-    const isOwner = get(profile, 'selectedCompany.owner');
+    const isOwner = get(profile, 'selectedDAO.owner');
     return (
       <Grid container spacing={0}>
         <Grid item xs={12} sm={isOwner ? 6 : 12}>
@@ -319,7 +319,7 @@ class ReviewTimesheet extends Component<Props, State> {
   render() {
     const { classes } = this.props;
     return (
-      <SelectedCompany
+      <SelectedDAO
         onChange={() => {
           this.props.history.push(URL.TIMESHEETS());
         }}
@@ -333,7 +333,7 @@ class ReviewTimesheet extends Component<Props, State> {
           </div>
           {this._renderBottomButtons()}
         </div>
-      </SelectedCompany>
+      </SelectedDAO>
     );
   }
 }

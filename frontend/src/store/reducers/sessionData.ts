@@ -25,7 +25,7 @@ const initialState = {
   newProject: {
     name: '',
     customer: {
-      companyName: '',
+      daoName: '',
       contactName: '',
       contactSurname: '',
       govNumber: null,
@@ -112,7 +112,7 @@ export default handleActions(
           id: idx(action, (_) => _.payload.id),
           traderId: idx(action, (_) => _.payload.traderId),
           isAlreadySaved: idx(action, (_) => _.payload.isAlreadySaved),
-          companyName: idx(action, (_) => _.payload.companyName),
+          daoName: idx(action, (_) => _.payload.daoName),
           contactName: idx(action, (_) => _.payload.contactName),
           contactSurname: idx(action, (_) => _.payload.contactSurname),
           govNumber: idx(action, (_) => _.payload.govNumber),

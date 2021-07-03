@@ -26,7 +26,7 @@ type Props = {
 };
 
 type State = {
-  joinCompanyTab: number;
+  joinDAOTab: number;
   shouldJoinDAOsList: Array<any>;
   restDAOs: Array<any>;
   code: Record<string, any>;
@@ -36,7 +36,7 @@ type State = {
 class JoinModal extends React.Component<Props, State> {
   inputRefs: any = [];
   state = {
-    joinCompanyTab: 0,
+    joinDAOTab: 0,
     restDAOs: [],
     shouldJoinDAOsList: [],
     code: {},
@@ -68,25 +68,23 @@ class JoinModal extends React.Component<Props, State> {
 
   _updateShouldJoinDAOsList = (nextProps) => {
     const { joinedDAOs, createdDAOs, allDAOs } = nextProps;
-    let restDAOs = (idx(allDAOs, (_: any) => _.data) || []).filter(
-      (company) => {
-        let found = false;
-        if (!found) {
-          found = find(createdDAOs || [], {
-            id: company.id,
-          });
-        }
-        if (!found) {
-          found = find(joinedDAOs || [], {
-            id: company.id,
-          });
-        }
-        return !found;
-      },
-    );
-    restDAOs = restDAOs.map((company) => ({
-      ...company,
-      label: company.name,
+    let restDAOs = (idx(allDAOs, (_: any) => _.data) || []).filter((dao) => {
+      let found = false;
+      if (!found) {
+        found = find(createdDAOs || [], {
+          id: dao.id,
+        });
+      }
+      if (!found) {
+        found = find(joinedDAOs || [], {
+          id: dao.id,
+        });
+      }
+      return !found;
+    });
+    restDAOs = restDAOs.map((dao) => ({
+      ...dao,
+      label: dao.name,
     }));
     this.setState({
       shouldJoinDAOsList: restDAOs,
@@ -94,11 +92,10 @@ class JoinModal extends React.Component<Props, State> {
     });
   };
 
-  _onCompanySearch = (text) => {
+  _onDAOSearch = (text) => {
     const { restDAOs } = this.state;
     const arr = restDAOs.filter(
-      (company: any) =>
-        company.label.toLowerCase().indexOf(text.toLowerCase()) > -1,
+      (dao: any) => dao.label.toLowerCase().indexOf(text.toLowerCase()) > -1,
     );
     this.setState({ shouldJoinDAOsList: arr });
   };
@@ -146,24 +143,22 @@ class JoinModal extends React.Component<Props, State> {
 
   _renderContent = () => {
     const { theme, classes } = this.props;
-    const { joinCompanyTab, shouldJoinDAOsList, code } = this.state;
+    const { joinDAOTab, shouldJoinDAOsList, code } = this.state;
     return (
       <div className={classes.contentWrapper}>
         <ToggleButton
           labels={['I have an access code', 'Request access']}
-          selectedIndex={joinCompanyTab}
+          selectedIndex={joinDAOTab}
           onChange={(label, index) => {
-            this.setState({ joinCompanyTab: index });
+            this.setState({ joinDAOTab: index });
           }}
           activeColor={theme.palette.primary.color1}
         />
         <div className={classes.fieldTitle}>
-          {joinCompanyTab === 0
-            ? 'Please type your 6 digit number'
-            : 'Company name'}
+          {joinDAOTab === 0 ? 'Please type your 6 digit number' : 'DAO name'}
         </div>
-        <div className={classes.joinCompanyFieldContent}>
-          {joinCompanyTab === 0 ? (
+        <div className={classes.joinDAOFieldContent}>
+          {joinDAOTab === 0 ? (
             <Grid container spacing={8}>
               {range(0, 6).map((number) => (
                 <Grid item xs={2} key={number}>
@@ -186,10 +181,10 @@ class JoinModal extends React.Component<Props, State> {
             </Grid>
           ) : (
             <SearchInput
-              placeholder={'Search by typing company name'}
+              placeholder={'Search by typing dao name'}
               showClearIcon={false}
-              onSearch={this._onCompanySearch}
-              onInputChange={this._onCompanySearch}
+              onSearch={this._onDAOSearch}
+              onInputChange={this._onDAOSearch}
               onItemClick={() => {}}
               items={shouldJoinDAOsList}
             />
@@ -201,7 +196,7 @@ class JoinModal extends React.Component<Props, State> {
 
   _renderButtons = () => {
     const { theme, classes, onClose } = this.props;
-    const { joinCompanyTab } = this.state;
+    const { joinDAOTab } = this.state;
     return (
       <Grid container classes={{ container: classes.buttons }}>
         <Grid item xs={6}>
@@ -215,7 +210,7 @@ class JoinModal extends React.Component<Props, State> {
         <Grid item xs={6}>
           <Button
             buttonColor={theme.palette.primary.color2}
-            title={joinCompanyTab === 0 ? 'Join Company' : 'Request Access'}
+            title={joinDAOTab === 0 ? 'Join DAO' : 'Request Access'}
           />
         </Grid>
       </Grid>

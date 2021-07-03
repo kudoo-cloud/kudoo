@@ -4,7 +4,7 @@ import isEqual from 'lodash/isEqual';
 import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { Link } from 'react-router-dom';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import ListPage from 'src/screens/common/ListPage';
@@ -215,7 +215,7 @@ class TabContainer extends Component<Props, State> {
     const type = this._getType();
 
     return (
-      <SelectedCompany onChange={patients.refetch}>
+      <SelectedDAO onChange={patients.refetch}>
         <ListPage
           variant={type}
           items={displayedPatients}
@@ -234,7 +234,7 @@ class TabContainer extends Component<Props, State> {
           onRemoveItem={this._onRemovePatient}
           onSearch={this._searchPatient}
         />
-      </SelectedCompany>
+      </SelectedDAO>
     );
   }
 }

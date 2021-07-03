@@ -114,7 +114,7 @@ class CustomerStep extends Component<Props, State> {
                 classes={{ component: classes.sectionHeading }}
               />
               <SearchInput
-                placeholder='Search by typing the company name'
+                placeholder='Search by typing the DAO name'
                 items={get(customers, 'data', []).map((customer) => ({
                   ...customer,
                   label: customer.name,

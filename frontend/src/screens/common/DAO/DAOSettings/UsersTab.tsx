@@ -20,10 +20,10 @@ class UsersTab extends Component<Props, State> {
 
   _findActiveTertiaryTab = () => {
     let activeTab = 0;
-    if (utils.isURLMatching(URL.COMPANY_USERS_LIST({ path: true }))) {
+    if (utils.isURLMatching(URL.DAO_USERS_LIST({ path: true }))) {
       activeTab = 0;
     }
-    // else if (utils.isURLMatching(URL.COMPANY_USERS_ROLES({ path: true }))) {
+    // else if (utils.isURLMatching(URL.DAO_USERS_ROLES({ path: true }))) {
     //   activeTab = 1;
     // }
     return activeTab;
@@ -31,20 +31,20 @@ class UsersTab extends Component<Props, State> {
 
   _renderTertiaryTabs() {
     const { match } = this.props;
-    const companyId = idx(match, (_) => _.params.companyId);
+    const daoId = idx(match, (_) => _.params.daoId);
     return (
       <Tabs
         tabs={[
           {
             label: 'Users List',
             onClick: () => {
-              this.props.history.push(URL.COMPANY_USERS_LIST({ companyId }));
+              this.props.history.push(URL.DAO_USERS_LIST({ daoId }));
             },
           },
           // {
           //   label: 'User Roles',
           //   onClick: () => {
-          //     this.props.history.push(URL.COMPANY_USERS_ROLES({ companyId }));
+          //     this.props.history.push(URL.DAO_USERS_ROLES({ daoId }));
           //   },
           // },
         ]}
@@ -56,14 +56,14 @@ class UsersTab extends Component<Props, State> {
 
   render() {
     const { classes, actions, match } = this.props;
-    const companyId = idx(match, (_) => _.params.companyId);
+    const daoId = idx(match, (_) => _.params.daoId);
     return (
       <div className={classes.page}>
         {this._renderTertiaryTabs()}
 
         <Switch>
           <Route
-            path={URL.COMPANY_USERS_LIST({ path: true })}
+            path={URL.DAO_USERS_LIST({ path: true })}
             render={(props) => <DAOUsers {...props} actions={actions} />}
           />
           <Route
@@ -71,8 +71,8 @@ class UsersTab extends Component<Props, State> {
             render={(props) => <InviteUser {...props} actions={actions} />}
           />
           <Redirect
-            from={URL.COMPANY_USERS({ companyId })}
-            to={URL.COMPANY_USERS_LIST({ companyId })}
+            from={URL.DAO_USERS({ daoId })}
+            to={URL.DAO_USERS_LIST({ daoId })}
             exact
           />
         </Switch>

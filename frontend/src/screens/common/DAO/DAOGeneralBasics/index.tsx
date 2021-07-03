@@ -23,10 +23,7 @@ import Dropzone from 'react-dropzone';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import * as Yup from 'yup';
-import {
-  DEFAULT_LOCALE,
-  SUPPORTED_COUNTRIES_COMPANY,
-} from 'src/helpers/locale';
+import { DEFAULT_LOCALE, SUPPORTED_COUNTRIES_DAO } from 'src/helpers/locale';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import { IReduxState } from 'src/store/reducers';
@@ -34,9 +31,9 @@ import styles from './styles';
 
 interface IProps {
   actions: any;
-  isCreateNewCompany: boolean;
-  createCompany: (data: any) => any;
-  updateCompany: (data: any) => any;
+  isCreateNewDAO: boolean;
+  createDao: (data: any) => any;
+  updateDao: (data: any) => any;
   initialData: any;
   profile: any;
   refetch: () => any;
@@ -56,10 +53,10 @@ const AUSTRALIYA_COUNTRY_CODE = 'AU';
 
 class DAOGeneralBasics extends React.Component<IProps, IState> {
   static defaultProps = {
-    isCreateNewCompany: false,
+    isCreateNewDAO: false,
     initialData: {},
-    createCompany: () => ({}),
-    updateCompany: () => ({}),
+    createDao: () => ({}),
+    updateDao: () => ({}),
     refetch: () => ({}),
     removeLogo: () => ({}),
   };
@@ -82,18 +79,18 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
   _setTempLocale = (props) => {
     const { initialData, actions } = props;
     if (!isEmpty(initialData)) {
-      const companyCountry: any =
-        find(SUPPORTED_COUNTRIES_COMPANY, {
+      const daoCountry: any =
+        find(SUPPORTED_COUNTRIES_DAO, {
           value: initialData.country || 'other',
         }) || {};
-      actions.setTemporaryActiveLanguage(companyCountry.locale);
+      actions.setTemporaryActiveLanguage(daoCountry.locale);
     } else {
       actions.setTemporaryActiveLanguage(DEFAULT_LOCALE);
     }
   };
 
   _submitForm = async (values, actions) => {
-    const { isCreateNewCompany, initialData, profile } = this.props;
+    const { isCreateNewDAO, initialData, profile } = this.props;
     const {
       name,
       legalNameSameAsName,
@@ -130,36 +127,36 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
     }
 
     try {
-      if (isCreateNewCompany) {
-        // if create new company
-        const res = await this.props.createCompany({ data });
+      if (isCreateNewDAO) {
+        // if create new dao
+        const res = await this.props.createDao({ data });
         if (res.success) {
-          const companyRes = { ...res.result, owner: true };
+          const daoRes = { ...res.result, owner: true };
           await this.props.actions.setUserData({
-            selectedCompany: companyRes,
-            createdDAOs: [...(profile.createdDAOs || []), companyRes], // this is useful for updating company list when we go back to manage DAOs
+            selectedDAO: daoRes,
+            createdDAOs: [...(profile.createdDAOs || []), daoRes], // this is useful for updating dao list when we go back to manage DAOs
           });
           // await this.props.refetch();
           actions.setSubmitting(false);
-          showToast(null, 'Company created');
+          showToast(null, 'DAO created');
           this.props.actions.setTemporaryActiveLanguage(undefined);
           this.props.history.push(URL.MANAGE_DAOS());
         } else {
           res.error.map((err) => showToast(err));
         }
       } else {
-        // if update existing company
+        // if update existing dao
         data = {
           data,
           where: {
             id: initialData.id,
           },
         };
-        const res = await this.props.updateCompany(data);
+        const res = await this.props.updateDao(data);
         if (res.success) {
           await this.props.refetch();
           actions.setSubmitting(false);
-          showToast(null, 'Company Updated');
+          showToast(null, 'DAO Updated');
           this.props.actions.setTemporaryActiveLanguage(undefined);
           this.props.history.push(URL.MANAGE_DAOS());
         } else {
@@ -192,7 +189,7 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
     }
   };
 
-  _deleteCompany = async () => {
+  _deleteDAO = async () => {
     try {
       const { initialData, history } = this.props;
       const data = {
@@ -203,11 +200,11 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
           id: initialData.id,
         },
       };
-      const res = await this.props.updateCompany(data);
+      const res = await this.props.updateDao(data);
       if (res.success) {
-        showToast(null, 'Company archived successfully');
+        showToast(null, 'DAO archived successfully');
         this.props.actions.setUserData({
-          selectedCompany: {},
+          selectedDAO: {},
         });
         history.replace(URL.MANAGE_DAOS());
       } else {
@@ -218,14 +215,14 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
     }
   };
 
-  _showDeleteCompanyModal = async () => {
+  _showDeleteDAOModal = async () => {
     const { theme, initialData, classes } = this.props;
-    const title = 'Delete this company account?';
+    const title = 'Delete this DAO account?';
     const description = (
       <div>
         <div>
-          {`You are trying to delete the company `}
-          <span className={classes.deleteCompanyName}>
+          {`You are trying to delete the comDAOpany `}
+          <span className={classes.deleteDaoName}>
             {"'" + initialData.name + "'"}
           </span>
         </div>
@@ -233,9 +230,9 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
         <div>
           {`Please note that this is a permanent action and it can't be reversed.`}
         </div>
-        <div>All users linked to this company will be affected.</div>
+        <div>All users linked to this DAO will be affected.</div>
         <br />
-        <div>Are you sure you want to delete company ?</div>
+        <div>Are you sure you want to delete DAO ?</div>
       </div>
     );
     const buttons = [
@@ -247,11 +244,11 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
         },
       },
       {
-        title: 'Delete Company',
-        id: 'modal-delete-company',
+        title: 'Delete DAO',
+        id: 'modal-delete-dao',
         buttonColor: theme.palette.secondary.color2,
         onClick: () => {
-          this._deleteCompany();
+          this._deleteDAO();
           this.props.actions.closeAlertDialog();
         },
       },
@@ -265,7 +262,7 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
     });
   };
 
-  _renderCompanyLogoSection() {
+  _renderDAOLogoSection() {
     const { classes, initialData } = this.props;
     const { selectedLogo } = this.state;
     const dropzoneStyle = {
@@ -278,26 +275,24 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
       alignItems: 'center',
       justifyContent: 'center',
     };
-    const companyLogo = get(initialData, 'logo.url')
+    const daoLogo = get(initialData, 'logo.url')
       ? get(initialData, 'logo.url')
       : undefined;
     const selectedLogoPreview = get(selectedLogo, 'preview');
     return (
       <React.Fragment>
         <SectionHeader
-          title='Company Logo'
+          title='DAO Logo'
           classes={{ component: classes.sectionHeading }}
         />
         <div className={classes.logoImageWrapper}>
           <div className={classes.dropzoneAreaWrapper}>
             <div>
-              {selectedLogoPreview || companyLogo ? (
+              {selectedLogoPreview || daoLogo ? (
                 <div
                   className={classes.uploadedLogoPreview}
                   style={{
-                    backgroundImage: `url(${
-                      selectedLogoPreview || companyLogo
-                    })`,
+                    backgroundImage: `url(${selectedLogoPreview || daoLogo})`,
                   }}
                 >
                   <Dropzone
@@ -326,7 +321,7 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
                 </Dropzone>
               )}
             </div>
-            {Boolean(companyLogo) && (
+            {Boolean(daoLogo) && (
               <ButtonBase
                 classes={{ root: classes.deleteIcon }}
                 onClick={this._removeLogo}
@@ -336,7 +331,7 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
             )}
           </div>
           <div className={classes.imageNote}>
-            {`This logo appears on your company invoice.`}
+            {`This logo appears on your DAO invoice.`}
             <br />
             {`This logo file can't exceed 5mb`}
           </div>
@@ -346,7 +341,7 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
   }
 
   _renderForm(formProps) {
-    const { classes, theme, isCreateNewCompany, i18n, actions } = this.props;
+    const { classes, theme, isCreateNewDAO, i18n, actions } = this.props;
     const {
       values,
       errors,
@@ -372,8 +367,8 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
                   <TextField
                     name='name'
                     id='name'
-                    label='Company Name'
-                    placeholder={'Company Name'}
+                    label='DAO Name'
+                    placeholder={'DAO Name'}
                     value={values.name}
                     showClearIcon={false}
                     onChange={handleChange}
@@ -386,8 +381,8 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
                   <TextField
                     name='legalName'
                     id='legalName'
-                    label='Company Legal Name'
-                    placeholder={'Company Legal Name'}
+                    label='DAO Legal Name'
+                    placeholder={'DAO Legal Name'}
                     value={
                       values.legalNameSameAsName
                         ? values.name
@@ -411,7 +406,7 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
                 <div className={classes.fieldRow}>
                   <Dropdown
                     label='Country'
-                    items={SUPPORTED_COUNTRIES_COMPANY}
+                    items={SUPPORTED_COUNTRIES_DAO}
                     value={values.country}
                     onChange={(item) => {
                       setFieldValue('country', item.value);
@@ -519,19 +514,19 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
               </div>
             </Grid>
           </Grid>
-          {!isCreateNewCompany && (
+          {!isCreateNewDAO && (
             <ButtonBase
-              id='delete-company'
-              classes={{ root: classes.deleteCompanyText }}
-              onClick={this._showDeleteCompanyModal}
+              id='delete-dao'
+              classes={{ root: classes.deleteDAOText }}
+              onClick={this._showDeleteDAOModal}
             >
-              Delete this company account
+              Delete this DAO account
             </ButtonBase>
           )}
           <Grid container spacing={0}>
             <Grid item xs={12} md={dirty ? 6 : 12}>
               <Button
-                title={isCreateNewCompany ? 'Cancel' : 'Go Back'}
+                title={isCreateNewDAO ? 'Cancel' : 'Go Back'}
                 href={URL.MANAGE_DAOS()}
                 buttonColor={theme.palette.grey['200']}
                 classes={{ text: classes.cancelButtonText }}
@@ -542,7 +537,7 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
               <Grid item xs={12} md={6}>
                 <Button
                   id='submit-button'
-                  title={isCreateNewCompany ? 'Save' : 'Update'}
+                  title={isCreateNewDAO ? 'Save' : 'Update'}
                   buttonColor={theme.palette.primary.color2}
                   loading={isSubmitting}
                   type='submit'
@@ -626,7 +621,7 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
       <ErrorBoundary>
         <div className={classes.page}>
           <div className={classes.content}>
-            {this._renderCompanyLogoSection()}
+            {this._renderDAOLogoSection()}
             {this._renderFormSection()}
           </div>
         </div>
@@ -637,13 +632,13 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
 
 export default compose<any, any>(
   withI18n(),
-  // withCreateCompany(),
-  // withUpdateCompany(),
+  // withCreateDao(),
+  // withUpdateDao(),
   // withDeleteAttachment(() => ({ name: 'removeLogo' })),
-  // withCompany(
-  //   (props) => ({ id: get(props, 'match.params.companyId', '') }),
+  // withDao(
+  //   (props) => ({ id: get(props, 'match.params.daoId', '') }),
   //   ({ data }) => ({
-  //     initialData: get(data, 'company', {}),
+  //     initialData: get(data, 'dao', {}),
   //     refetch: data.refetch,
   //   }),
   // ),

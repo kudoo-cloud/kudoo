@@ -26,7 +26,7 @@ type Props = IRouteProps<ClassesKeys> & {
 
 const CreateNewHealthcareProvider: React.FC<Props> = (props) => {
   const { classes, profile, history } = props;
-  const selectedCompany = profile.selectedCompany;
+  const selectedDAO = profile.selectedDAO;
 
   const isAddressEmpty = (address) => {
     if (!address) {
@@ -81,7 +81,7 @@ const CreateNewHealthcareProvider: React.FC<Props> = (props) => {
 
   return (
     <SimpleCreatePage
-      onCompanyChange={() => {
+      onDAOChange={() => {
         history.push(URL.HEALTH_CARE_PROVIDERS());
       }}
       editMode={false}
@@ -174,7 +174,7 @@ const CreateNewHealthcareProvider: React.FC<Props> = (props) => {
             />
           </FormControl>
 
-          {get(selectedCompany, 'country') === 'au' && (
+          {get(selectedDAO, 'country') === 'au' && (
             <>
               <FormControl fullWidth margin='dense'>
                 <FormikTextField

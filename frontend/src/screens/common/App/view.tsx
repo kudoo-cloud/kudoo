@@ -35,7 +35,7 @@ export interface IProps {
   location: any;
   checkActiveLanguage: (props) => void;
   isPreviewRoute: () => boolean;
-  shouldRedirectToManageCompany: () => boolean;
+  shouldRedirectToManageDAO: () => boolean;
 }
 
 interface IState {
@@ -85,7 +85,7 @@ class App extends React.Component<IProps, IState> {
       actions,
       profile,
       DAOs,
-      profile: { selectedCompany = {} },
+      profile: { selectedDAO = {} },
     } = this.props;
     const totalDAOs = get(DAOs, 'data', []).length;
     const menuConfig: ISecurityConfig =
@@ -105,8 +105,7 @@ class App extends React.Component<IProps, IState> {
     let filteredItems: any = menuItems.filter(
       (menuItem) =>
         // TODO: for now make all items available
-        true ||
-        isFeatureAvailable(profile.selectedCompany, menuItem.availability),
+        true || isFeatureAvailable(profile.selectedDAO, menuItem.availability),
     );
     filteredItems = filteredItems.map((item) => {
       return {
@@ -132,12 +131,10 @@ class App extends React.Component<IProps, IState> {
         {totalDAOs > 0 && (
           <div className={classes.drawerWrapper}>
             <Drawer
-              companies={get(DAOs, 'data', []).filter(
-                (company) => !company.isArchived,
-              )}
+              companies={get(DAOs, 'data', []).filter((dao) => !dao.isArchived)}
               selectedCompany={
-                !isEmpty(selectedCompany)
-                  ? selectedCompany || { name: '' }
+                !isEmpty(selectedDAO)
+                  ? selectedDAO || { name: '' }
                   : DAOs?.data?.[0] || { name: '' }
               }
               onClose={() => {
@@ -146,8 +143,8 @@ class App extends React.Component<IProps, IState> {
               onOpen={() => {
                 this.setState({ isDrawerClosed: false });
               }}
-              onCompanyClick={(company) => {
-                this.props.actions.selectCompany(company);
+              onCompanyClick={(dao) => {
+                this.props.actions.selectDAO(dao);
               }}
               menuItems={filteredItems}
               renderMenuItem={this._renderDrawerMenuItem}
@@ -192,7 +189,7 @@ class App extends React.Component<IProps, IState> {
         </React.Fragment>
       );
     } else if (user) {
-      // if (this.props.shouldRedirectToManageCompany()) {
+      // if (this.props.shouldRedirectToManageDAO()) {
       //   return (
       //     <Switch>
       //       <Redirect to={URL.MANAGE_DAOS({ path: true })} />

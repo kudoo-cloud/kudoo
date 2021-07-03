@@ -5,7 +5,7 @@ import moment from 'moment';
 import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import POInvoiceModal from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/POInvoiceModal';
 import PONotificationModal from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/PONotificationModal';
@@ -147,7 +147,7 @@ class PurchaseOrderTabContainer extends Component<
     const { match, history, location, actions } = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.props.history.push(URL.PURCHASE_ORDER());
           }}
@@ -180,7 +180,7 @@ class PurchaseOrderTabContainer extends Component<
             purchaseOrder={this.state.notifiedPO}
             onClose={this._closePOModal}
           />
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

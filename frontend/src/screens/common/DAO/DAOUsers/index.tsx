@@ -18,16 +18,16 @@ import URL from 'src/helpers/urls';
 import useDeepCompareEffect from 'src/helpers/useDeepCompareEffect';
 import { IReduxState } from 'src/store/reducers';
 import { IProfileState } from 'src/store/reducers/profile';
-import { ICompanyEntity } from 'src/store/types';
+import { IDAOEntity } from 'src/store/types';
 import styles, { StyleKeys } from './styles';
 
 type Props = IRouteProps<StyleKeys> & {
-  company?: {
+  dao?: {
     refetch: Function;
-    data: ICompanyEntity;
+    data: IDAOEntity;
   };
   profile?: IProfileState;
-  deleteCompanyMember?: Function;
+  deleteDaoMember?: Function;
   resendInvite?: Function;
 };
 
@@ -35,14 +35,14 @@ const DAOUsers: React.FC<Props> = (props) => {
   const {
     classes,
     theme,
-    company,
+    dao,
     match,
     profile,
     resendInvite,
-    deleteCompanyMember,
+    deleteDaoMember,
     actions,
   } = props;
-  const companyId = get(match, 'params.companyId', '');
+  const daoId = get(match, 'params.daoId', '');
 
   const [displayedUser, setDisplayedUsers] = useState([]);
   const [columnData, setColumnsData] = useState([
@@ -55,8 +55,8 @@ const DAOUsers: React.FC<Props> = (props) => {
   ]);
 
   useDeepCompareEffect(() => {
-    updateDisplayedUsers(idx(company, (x) => x.data.companyMembers) || []);
-  }, [company.data]);
+    updateDisplayedUsers(idx(dao, (x) => x.data.daoMembers) || []);
+  }, [dao.data]);
 
   const renderCell = (row, column, ele) => {
     if (column.id === 'sendEmail' && row.status !== 'ACTIVE') {
@@ -74,7 +74,7 @@ const DAOUsers: React.FC<Props> = (props) => {
   const showRemoveAlert = (row) => {
     if (row.role === 'OWNER') {
       showToast(
-        "You can't remove owner of the company without transfering ownership",
+        "You can't remove owner of the dao without transfering ownership",
       );
       return;
     }
@@ -106,12 +106,12 @@ const DAOUsers: React.FC<Props> = (props) => {
 
   const removeMember = async (row) => {
     try {
-      const res = await deleteCompanyMember({
-        id: row.companyMemberId,
+      const res = await deleteDaoMember({
+        id: row.daoMemberId,
       });
       if (res.success) {
         showToast(null, 'Member removed successfully');
-        company.refetch();
+        dao.refetch();
       } else {
         res.error.map((err) => showToast(err));
       }
@@ -123,7 +123,7 @@ const DAOUsers: React.FC<Props> = (props) => {
   };
 
   const onRequestSort = (column) => {
-    const users = idx(company, (_) => _.data.companyMembers) || [];
+    const users = idx(dao, (_) => _.data.daoMembers) || [];
     const sortedColumn = find(columnData, { sorted: true });
     const columnGoingToBeSorted = find(columnData, {
       id: column.id,
@@ -163,7 +163,7 @@ const DAOUsers: React.FC<Props> = (props) => {
       ...member,
       ...member.user,
       access_level: member.role,
-      companyMemberId: member.id,
+      daoMemberId: member.id,
     }));
     setDisplayedUsers(newUsers);
   };
@@ -173,13 +173,13 @@ const DAOUsers: React.FC<Props> = (props) => {
       const res = await resendInvite({
         email: data.email,
         role: data.role,
-        companyMemberId: data.companyMemberId,
+        daoMemberId: data.daoMemberId,
         baseURL: `${window.location.origin}/#/`,
       });
       if (res.success) {
         showToast(null, 'User Invited successfully');
       } else {
-        showToast('User is already in the company');
+        showToast('User is already in the dao');
       }
     } catch (e) {
       showToast(e.toString());
@@ -214,7 +214,7 @@ const DAOUsers: React.FC<Props> = (props) => {
       <div className={classes.page}>
         <SectionHeader
           title='Users List'
-          subtitle='Below is a list of all Users who have access to this company account.'
+          subtitle='Below is a list of all Users who have access to this dao account.'
           classes={{ component: classes.sectionHeadingWrapper }}
           renderLeftPart={() => (
             <Button
@@ -222,7 +222,7 @@ const DAOUsers: React.FC<Props> = (props) => {
               title='Invite new user'
               applyBorderRadius
               width={260}
-              href={URL.INVITE_USER({ companyId })}
+              href={URL.INVITE_USER({ daoId })}
               target='_self'
               buttonColor={theme.palette.primary.color2}
             />
@@ -235,8 +235,8 @@ const DAOUsers: React.FC<Props> = (props) => {
 };
 
 DAOUsers.defaultProps = {
-  company: { data: {} as ICompanyEntity, refetch: () => {} },
-  deleteCompanyMember: () => ({}),
+  dao: { data: {} as IDAOEntity, refetch: () => {} },
+  deleteDaoMember: () => ({}),
   resendInvite: () => ({}),
 };
 
@@ -245,9 +245,9 @@ export default compose<Props, Props>(
   connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-  // withCompany((props) => ({
-  //   id: get(props, 'match.params.companyId'),
+  // withDAO((props) => ({
+  //   id: get(props, 'match.params.daoId'),
   // })),
-  // withDeleteCompanyMember(),
+  // withDeleteDaoMember(),
   // withResendInvite(),
 )(DAOUsers);

@@ -7,7 +7,7 @@ import {
 import Grid from '@material-ui/core/Grid';
 import { Formik, FormikProps, FormikValues } from 'formik';
 import * as React from 'react';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import stylesFn from './styles';
 import { SimpleCreatePageProps } from './types';
 
@@ -18,7 +18,7 @@ export type SimpleCreatePageRenderPropFormTypes = FormikProps<FormikValues> & {
 const SimpleCreatePage: React.FC<SimpleCreatePageProps> = (props) => {
   const {
     classes,
-    onCompanyChange,
+    onDAOChange,
     editMode,
     header,
     children,
@@ -99,12 +99,12 @@ const SimpleCreatePage: React.FC<SimpleCreatePageProps> = (props) => {
 
   return (
     <ErrorBoundary>
-      <SelectedCompany onChange={onCompanyChange}>
+      <SelectedDAO onChange={onDAOChange}>
         <div className={classes.page}>
           {renderSectionHeading()}
           {renderForm()}
         </div>
-      </SelectedCompany>
+      </SelectedDAO>
     </ErrorBoundary>
   );
 };

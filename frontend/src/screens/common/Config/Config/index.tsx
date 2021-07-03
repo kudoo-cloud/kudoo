@@ -23,8 +23,8 @@ class Config extends Component<IProps, {}> {
 
   public render() {
     const { classes, profile, configToShow } = this.props;
-    const companyId = idx(profile, (_) => _.selectedCompany.id) || '';
-    const isOwner = idx(profile, (_) => _.selectedCompany.owner) || '';
+    const daoId = idx(profile, (_) => _.selectedDAO.id) || '';
+    const isOwner = idx(profile, (_) => _.selectedDAO.owner) || '';
     return (
       <ErrorBoundary>
         <div className={classes.page}>
@@ -51,16 +51,16 @@ class Config extends Component<IProps, {}> {
                 </div>
               </Grid>
             )}
-            {isOwner && configToShow.includes('CompanySettings') && (
+            {isOwner && configToShow.includes('DAOSettings') && (
               <Grid item xs={12} sm={6}>
-                <div className={classes.greyHeading}>Company Settings</div>
+                <div className={classes.greyHeading}>DAO Settings</div>
                 <div className={classes.linksWrapper}>
                   <Link
                     className={classes.whiteLink}
                     to={
-                      companyId
-                        ? URL.COMPANY_GENERAL_BASICS({
-                            companyId,
+                      daoId
+                        ? URL.DAO_GENERAL_BASICS({
+                            daoId,
                           })
                         : ''
                     }
@@ -69,29 +69,25 @@ class Config extends Component<IProps, {}> {
                   </Link>
                   <Link
                     className={classes.whiteLink}
-                    to={companyId ? URL.COMPANY_USERS({ companyId }) : ''}
+                    to={daoId ? URL.DAO_USERS({ daoId }) : ''}
                   >
                     Users
                   </Link>
                   <Link
                     className={classes.whiteLink}
-                    to={companyId ? URL.COMPANY_BANKING({ companyId }) : ''}
+                    to={daoId ? URL.DAO_BANKING({ daoId }) : ''}
                   >
                     Banking
                   </Link>
                   <Link
                     className={classes.whiteLink}
-                    to={
-                      companyId ? URL.COMPANY_INTEGRATIONS({ companyId }) : ''
-                    }
+                    to={daoId ? URL.DAO_INTEGRATIONS({ daoId }) : ''}
                   >
                     Integrations
                   </Link>
                   <Link
                     className={classes.whiteLink}
-                    to={
-                      companyId ? URL.COMPANY_SUBSCRIPTION({ companyId }) : ''
-                    }
+                    to={daoId ? URL.DAO_SUBSCRIPTION({ daoId }) : ''}
                   >
                     Subscription
                   </Link>

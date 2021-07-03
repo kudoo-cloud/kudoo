@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import uuid from 'uuid/v4';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import ComingSoon from 'src/screens/common/ComingSoon';
 import styles from './styles';
 interface IProps {
@@ -18,7 +18,7 @@ interface IState {
 
 class ProfitAndLoss extends Component<IProps, IState> {
   public state = {
-    contentHash: uuid(), // this is used to refresh all widget when company change from sidebar
+    contentHash: uuid(), // this is used to refresh all widget when dao change from sidebar
   };
 
   public componentDidMount() {
@@ -30,7 +30,7 @@ class ProfitAndLoss extends Component<IProps, IState> {
 
     return (
       <div>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.setState({
               contentHash: uuid(),
@@ -44,7 +44,7 @@ class ProfitAndLoss extends Component<IProps, IState> {
               </div>
             </Grid>
           </Grid>
-        </SelectedCompany>
+        </SelectedDAO>
       </div>
     );
   }

@@ -219,7 +219,7 @@ class CustomerStep extends Component<Props, State> {
             />
             <div style={{ marginTop: 20 }}>
               <SearchInput
-                placeholder={'Search by typing a customer’s name or company '}
+                placeholder={'Search by typing a customer’s name or DAO '}
                 showClearIcon={false}
                 items={get(customers, 'data', []).map((customer) => ({
                   ...customer,

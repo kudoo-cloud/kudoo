@@ -44,31 +44,23 @@ export default {
   ACCOUNT_USER_SECURITY: abstractURL('/account-settings/user-security'),
   ACCOUNT_USER_HISTORY: abstractURL('/account-settings/user-history'),
 
-  // Company
+  // DAO
   MANAGE_DAOS: abstractURL('/daos/manage'),
-  CREATE_COMPANY: abstractURL('/daos/create'),
-  COMPANY_SETTINGS: abstractURL('/company/settings/:companyId'),
-  COMPANY_GENERAL: abstractURL('/company/settings/:companyId/general'),
-  COMPANY_GENERAL_BASICS: abstractURL(
-    '/company/settings/:companyId/general/basics',
+  CREATE_DAO: abstractURL('/daos/create'),
+  DAO_SETTINGS: abstractURL('/dao/settings/:daoId'),
+  DAO_GENERAL: abstractURL('/dao/settings/:daoId/general'),
+  DAO_GENERAL_BASICS: abstractURL('/dao/settings/:daoId/general/basics'),
+  DAO_GENERAL_CONTACT_DETAILS: abstractURL(
+    '/dao/settings/:daoId/general/contact',
   ),
-  COMPANY_GENERAL_CONTACT_DETAILS: abstractURL(
-    '/company/settings/:companyId/general/contact',
-  ),
-  COMPANY_GENERAL_LOCATION: abstractURL(
-    '/company/settings/:companyId/general/location',
-  ),
-  COMPANY_USERS: abstractURL('/company/settings/:companyId/users'),
-  COMPANY_USERS_LIST: abstractURL('/company/settings/:companyId/users/list'),
-  COMPANY_USERS_ROLES: abstractURL('/company/settings/:companyId/users/roles'),
-  INVITE_USER: abstractURL('/company/settings/:companyId/users/invite'),
-  COMPANY_BANKING: abstractURL('/company/settings/:companyId/banking'),
-  COMPANY_INTEGRATIONS: abstractURL(
-    '/company/settings/:companyId/integrations',
-  ),
-  COMPANY_SUBSCRIPTION: abstractURL(
-    '/company/settings/:companyId/subscription',
-  ),
+  DAO_GENERAL_LOCATION: abstractURL('/dao/settings/:daoId/general/location'),
+  DAO_USERS: abstractURL('/dao/settings/:daoId/users'),
+  DAO_USERS_LIST: abstractURL('/dao/settings/:daoId/users/list'),
+  DAO_USERS_ROLES: abstractURL('/dao/settings/:daoId/users/roles'),
+  INVITE_USER: abstractURL('/dao/settings/:daoId/users/invite'),
+  DAO_BANKING: abstractURL('/dao/settings/:daoId/banking'),
+  DAO_INTEGRATIONS: abstractURL('/dao/settings/:daoId/integrations'),
+  DAO_SUBSCRIPTION: abstractURL('/dao/settings/:daoId/subscription'),
 
   // Projects
   PROJECTS: abstractURL('/projects'),
@@ -154,7 +146,7 @@ export default {
   INVOICE_NOTIFY_EMAIL_PREVIEW: abstractURL('/email/:type/invoice_notify'),
 
   INTEGRATION_LOGIN: abstractURL('/integrations'),
-  INTEGRATION_CHOOSE_COMPANY: abstractURL('/integrations/:type/choose'),
+  INTEGRATION_CHOOSE_DAO: abstractURL('/integrations/:type/choose'),
 
   //Warehouse
   WAREHOUSE: abstractURL('/warehouse'),

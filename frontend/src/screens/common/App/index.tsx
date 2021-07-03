@@ -8,10 +8,7 @@ import { connect } from 'react-redux';
 import { matchPath, withRouter } from 'react-router';
 import { compose, lifecycle, withHandlers } from 'recompose';
 import { bindActionCreators } from 'redux';
-import {
-  DEFAULT_LOCALE,
-  SUPPORTED_COUNTRIES_COMPANY,
-} from 'src/helpers/locale';
+import { DEFAULT_LOCALE, SUPPORTED_COUNTRIES_DAO } from 'src/helpers/locale';
 import URL from 'src/helpers/urls';
 import { AppActions, ProfileActions } from 'src/store/actions';
 // import { SecurityRole } from 'src/store/types/security';
@@ -52,26 +49,26 @@ export default withRouter(
     //   ({ data, ownProps }) => {
     //     const DAOs = get(data, 'DAOs') || [];
     //     const newDAOs: any = [];
-    //     for (const company of DAOs) {
-    //       const companyMember: any =
-    //         find(company.companyMembers, {
+    //     for (const dao of DAOs) {
+    //       const daoMember: any =
+    //         find(dao.daoMembers, {
     //           user: { id: get(ownProps, 'profile.id') },
     //         }) || {};
     //       let role = SecurityRole.user;
     //       if (get(ownProps, 'profile.isRoot')) {
     //         role = SecurityRole.root;
-    //       } else if (companyMember.role === 'OWNER') {
+    //       } else if (daoMembers.role === 'OWNER') {
     //         role = SecurityRole.owner;
-    //       } else if (companyMember.role === 'ADMIN') {
+    //       } else if (daoMembers.role === 'ADMIN') {
     //         role = SecurityRole.admin;
     //       }
     //       if (
-    //         companyMember.role === 'OWNER' ||
-    //         companyMember.role === 'ADMIN'
+    //         daoMembers.role === 'OWNER' ||
+    //         daoMembers.role === 'ADMIN'
     //       ) {
-    //         newDAOs.push({ ...company, owner: true, role });
+    //         newDAOs.push({ ...dao, owner: true, role });
     //       } else {
-    //         newDAOs.push({ ...company, role });
+    //         newDAOs.push({ ...dao, role });
     //       }
     //     }
     //     return {
@@ -84,20 +81,17 @@ export default withRouter(
         ({ actions }) =>
         (props) => {
           const { profile, app } = props;
-          if (
-            !profile.selectedCompany &&
-            app.activeLanguage !== DEFAULT_LOCALE
-          ) {
-            // if no company is selected then set DEFAULT_LOCALE
+          if (!profile.selectedDAO && app.activeLanguage !== DEFAULT_LOCALE) {
+            // if no dao is selected then set DEFAULT_LOCALE
             actions.setActiveLanguage(DEFAULT_LOCALE);
-          } else if (profile.selectedCompany) {
-            // if company is selected then get company country and set locale of country
-            const companyCountry: any =
-              find(SUPPORTED_COUNTRIES_COMPANY, {
-                value: get(profile, 'selectedCompany.country') || 'other',
+          } else if (profile.selectedDAO) {
+            // if dao is selected then get dao country and set locale of country
+            const daoCountry: any =
+              find(SUPPORTED_COUNTRIES_DAO, {
+                value: get(profile, 'selectedDAO.country') || 'other',
               }) || {};
-            if (app.activeLanguage !== companyCountry.locale) {
-              actions.setActiveLanguage(companyCountry.locale);
+            if (app.activeLanguage !== daoCountry.locale) {
+              actions.setActiveLanguage(daoCountry.locale);
             }
           }
         },
@@ -116,7 +110,7 @@ export default withRouter(
             })
           );
         },
-      shouldRedirectToManageCompany:
+      shouldRedirectToManageDAO:
         ({ DAOs, history }) =>
         () => {
           return (
@@ -129,7 +123,7 @@ export default withRouter(
               path: URL.MANAGE_DAOS({ path: true }),
             }) &&
             !matchPath(get(history, 'location.pathname'), {
-              path: URL.CREATE_COMPANY({ path: true }),
+              path: URL.CREATE_DAO({ path: true }),
             })
           );
         },
@@ -149,37 +143,37 @@ export default withRouter(
 
         DAOs = get(DAOs, 'data', []);
         // DAOs data changes
-        if (isEmpty(profile.selectedCompany) && DAOs.length > 0) {
-          // if there is no company selected then select first company by default
+        if (isEmpty(profile.selectedDAO) && DAOs.length > 0) {
+          // if there is no dao selected then select first dao by default
           if (DAOs[0]) {
-            this.props.actions.selectCompany(DAOs[0]);
+            this.props.actions.selectDAO(DAOs[0]);
           }
         } else if (
-          !isEmpty(profile.selectedCompany) &&
-          !find(DAOs, { id: get(profile, 'selectedCompany.id', '') })
+          !isEmpty(profile.selectedDAO) &&
+          !find(DAOs, { id: get(profile, 'selectedDAO.id', '') })
         ) {
-          // if company is selected , but not able to find that company in DAOs array
-          // then select first company by default
+          // if dao is selected , but not able to find that dao in DAOs array
+          // then select first dao by default
           if (DAOs[0]) {
-            this.props.actions.selectCompany(DAOs[0]);
+            this.props.actions.selectDAO(DAOs[0]);
           }
         } else if (
-          !isEmpty(profile.selectedCompany) &&
-          find(DAOs, { id: get(profile, 'selectedCompany.id', '') })
+          !isEmpty(profile.selectedDAO) &&
+          find(DAOs, { id: get(profile, 'selectedDAO.id', '') })
         ) {
-          // if company is selected , and also find that company in DAOs array
-          const company = find(DAOs, {
-            id: get(profile, 'selectedCompany.id', ''),
+          // if dao is selected , and also find that dao in DAOs array
+          const dao = find(DAOs, {
+            id: get(profile, 'selectedDAO.id', ''),
           });
-          // clone company object
-          const c1 = { ...(company || {}) };
-          const c2 = { ...(prevPropsProfile.selectedCompany || {}) };
+          // clone dao object
+          const c1 = { ...(dao || {}) };
+          const c2 = { ...(prevPropsProfile.selectedDAO || {}) };
           // remove `logo.url` key from c1 and c2 because `logo.url` is alaways changed when requested so it will never be equal to previous
           unset(c1, 'logo.url');
           unset(c2, 'logo.url');
           if (!isEqual(c1, c2)) {
-            // if c1 and c2 is not equal i.e. company data is updated then update it in redux
-            this.props.actions.selectCompany(company);
+            // if c1 and c2 is not equal i.e. dao data is updated then update it in redux
+            this.props.actions.selectDAO(dao);
           }
           if (profile.isLoggedIn !== prevPropsLoggedIn && profile.isLoggedIn) {
             this.props.DAOs && this.props.DAOs.refetch();
@@ -188,10 +182,10 @@ export default withRouter(
 
         // update created DAOs
         const oldDAOsId = get(prevProps, 'profile.createdDAOs', []).map(
-          (company) => company.id,
+          (dao) => dao.id,
         );
         const newDAOsId = get(this.props, 'profile.createdDAOs', []).map(
-          (company) => company.id,
+          (dao) => dao.id,
         );
         if (!isEqual(oldDAOsId, newDAOsId)) {
           if (get(this.props, 'DAOs.refetch')) {

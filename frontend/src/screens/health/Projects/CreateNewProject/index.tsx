@@ -8,7 +8,7 @@ import findIndex from 'lodash/findIndex';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import actions from 'src/store/actions/createNewProject';
 import CustomerStep from './CustomerStep';
@@ -144,10 +144,10 @@ class CreateNewProject extends Component<Props, State> {
     const { classes, theme } = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             // clear new project data from reducer
-            // because new selected company will not have selected customer and services
+            // because new selected dao will not have selected customer and services
             this.props.resetNewProjectData();
             this.props.history.push(URL.PROJECTS());
           }}
@@ -171,7 +171,7 @@ class CreateNewProject extends Component<Props, State> {
               /> */}
             </div>
           </div>
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

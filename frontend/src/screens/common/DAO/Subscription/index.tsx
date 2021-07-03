@@ -16,12 +16,12 @@ import { compose } from 'recompose';
 import { showToast } from 'src/helpers/toast';
 import useDeepCompareEffect from 'src/helpers/useDeepCompareEffect';
 import { IReduxState } from 'src/store/reducers';
-import { ICompanyEntity } from 'src/store/types';
+import { IDAOEntity } from 'src/store/types';
 import PaymentModal from './PaymentModal';
 import styles, { StylesKeys } from './styles';
 
 type IProps = IRouteProps<StylesKeys> & {
-  company?: ICompanyEntity;
+  dao?: IDAOEntity;
   contentHash?: string;
   paidInvoices?: {
     total: number;
@@ -29,7 +29,7 @@ type IProps = IRouteProps<StylesKeys> & {
     refetch: () => void;
     loading: boolean;
   };
-  updateCompany?: Function;
+  updateDao?: Function;
 };
 
 type SelectedTierType = {
@@ -44,7 +44,7 @@ type SelectedTierType = {
 };
 
 const UserDetails: React.FC<IProps> = (props) => {
-  const { classes, theme, paidInvoices, company, updateCompany } = props;
+  const { classes, theme, paidInvoices, dao, updateDao } = props;
 
   const [selectedPlan, setSelectedPlan] = useState(0);
   const [initialSelectedPlan, setInitialSelectedPlan] = useState(0);
@@ -53,17 +53,17 @@ const UserDetails: React.FC<IProps> = (props) => {
   const isDirty = initialSelectedPlan !== selectedPlan;
 
   useEffect(() => {
-    const activePlanType = idx(company, (x) => x.activePlan.type);
+    const activePlanType = idx(dao, (x) => x.activePlan.type);
     getInitialData();
     selectPlan(activePlanType);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useDeepCompareEffect(() => {
-    const activePlanType = idx(company, (x) => x.activePlan.type);
+    const activePlanType = idx(dao, (x) => x.activePlan.type);
     getInitialData();
     selectPlan(activePlanType);
-  }, [company]);
+  }, [dao]);
 
   const selectPlan = (type) => {
     let selectedPlan = 0;
@@ -85,7 +85,7 @@ const UserDetails: React.FC<IProps> = (props) => {
 
   const onPaymentDone = async () => {
     closePaymentModal();
-    const res = await updateCompany({
+    const res = await updateDao({
       data: {
         activePlan: {
           update: {
@@ -96,7 +96,7 @@ const UserDetails: React.FC<IProps> = (props) => {
         },
       },
       where: {
-        id: company.id,
+        id: dao.id,
       },
     });
     if (res.success) {
@@ -134,11 +134,11 @@ const UserDetails: React.FC<IProps> = (props) => {
               label='Subscription Plan'
               isReadOnly
               disabled
-              value={idx(company, (x) => x.activePlan.type)}
+              value={idx(dao, (x) => x.activePlan.type)}
             />
           </Grid>
         </Grid>
-        {idx(company, (x) => x.role) === 'OWNER' && (
+        {idx(dao, (x) => x.role) === 'OWNER' && (
           <>
             <SectionHeader
               title='Available subscription plans'
@@ -222,12 +222,12 @@ UserDetails.defaultProps = {
     refetch: () => ({}),
     loading: false,
   },
-  updateCompany: () => ({}),
+  updateDao: () => ({}),
 };
 
 export default compose<IProps, IProps>(
   withStyles(styles),
-  connect((state: IReduxState) => ({ company: state.profile.selectedCompany })),
+  connect((state: IReduxState) => ({ dao: state.profile.selectedDAO })),
   // withInvoices(
   //   () => ({
   //     variables: {
@@ -253,5 +253,5 @@ export default compose<IProps, IProps>(
   //     };
   //   },
   // ),
-  // withUpdateCompany(),
+  // withUpdateDao(),
 )(UserDetails);

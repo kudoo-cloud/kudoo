@@ -5,7 +5,7 @@ export type StyleKeys = 'page' | 'sectionHeader' | 'form' | 'cancelButtonText';
 
 export type SimpleCreatePageProps<Values = FormikValues> =
   IComponentProps<StyleKeys> & {
-    onCompanyChange?: (company: any) => void;
+    onDAOChange?: (dao: any) => void;
     editMode?: boolean;
     header?: {
       createTitle?: ReactNode;

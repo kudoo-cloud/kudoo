@@ -124,7 +124,7 @@ class ActiveCustomers extends Component<Props, State> {
         <Grid item xs={12} sm={6}>
           <SearchInput
             classes={{ component: classes.searchInput }}
-            placeholder={'Search by typing a company name'}
+            placeholder={'Search by typing a dao name'}
             items={[]}
             onSearch={onSearchCustomer}
           />

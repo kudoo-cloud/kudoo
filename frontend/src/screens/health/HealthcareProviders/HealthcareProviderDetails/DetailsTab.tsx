@@ -85,7 +85,7 @@ class DetailsTab extends React.Component<Props, any> {
                   </Grid>
                   <Grid item xs={12} sm={6}>
                     <SectionHeader
-                      title='Company Contact Details'
+                      title='DAO Contact Details'
                       classes={{ component: classes.formHeading }}
                     />
                     <PhoneNumberField

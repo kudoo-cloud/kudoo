@@ -76,7 +76,7 @@ class CreateNewService extends Component<Props, State> {
       };
 
       if (!isEditMode) {
-        // If user is creating new company
+        // If user is creating new dao
         const res = await this.props.createService({ data: dataToSend });
         if (res.success) {
           showToast(null, 'Service created');
@@ -87,7 +87,7 @@ class CreateNewService extends Component<Props, State> {
           actions.setSubmitting(false);
         }
       } else {
-        // If user is updating company
+        // If user is updating dao
         const res = await this.props.updateService({
           data: dataToSend,
           where: { id: initialData.id },
@@ -109,7 +109,7 @@ class CreateNewService extends Component<Props, State> {
 
   _renderForm(formProps: SimpleCreatePageRenderPropFormTypes) {
     const { classes, profile, i18n } = this.props;
-    const showGST = get(profile, 'selectedCompany.salesTax');
+    const showGST = get(profile, 'selectedDAO.salesTax');
     const values = formProps.values;
 
     return (

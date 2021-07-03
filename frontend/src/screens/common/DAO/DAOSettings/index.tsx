@@ -2,7 +2,7 @@ import { Tabs, helpers as utils, withStyles } from '@kudoo/components';
 import idx from 'idx';
 import React, { Component } from 'react';
 import { Redirect, Switch } from 'react-router';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import Banking from '../Banking';
 import Integrations from '../Integrations';
@@ -19,24 +19,24 @@ type Props = {
 };
 type State = {};
 
-class CompanySettings extends Component<Props, State> {
+class DAOSettings extends Component<Props, State> {
   state = {};
 
   componentDidMount() {
-    this.props.actions.updateHeaderTitle('Company Settings');
+    this.props.actions.updateHeaderTitle('DAO Settings');
   }
 
   _findActiveSecondaryTab = () => {
     let activeTab = 0;
-    if (utils.isURLMatching(URL.COMPANY_GENERAL({ path: true }))) {
+    if (utils.isURLMatching(URL.DAO_GENERAL({ path: true }))) {
       activeTab = 0;
-    } else if (utils.isURLMatching(URL.COMPANY_USERS({ path: true }))) {
+    } else if (utils.isURLMatching(URL.DAO_USERS({ path: true }))) {
       activeTab = 1;
-    } else if (utils.isURLMatching(URL.COMPANY_BANKING({ path: true }))) {
+    } else if (utils.isURLMatching(URL.DAO_BANKING({ path: true }))) {
       activeTab = 2;
-    } else if (utils.isURLMatching(URL.COMPANY_INTEGRATIONS({ path: true }))) {
+    } else if (utils.isURLMatching(URL.DAO_INTEGRATIONS({ path: true }))) {
       activeTab = 3;
-    } else if (utils.isURLMatching(URL.COMPANY_SUBSCRIPTION({ path: true }))) {
+    } else if (utils.isURLMatching(URL.DAO_SUBSCRIPTION({ path: true }))) {
       activeTab = 4;
     }
     return activeTab;
@@ -44,40 +44,38 @@ class CompanySettings extends Component<Props, State> {
 
   _renderSecondaryTabs() {
     const { match } = this.props;
-    const companyId = idx(match, (_) => _.params.companyId);
+    const daoId = idx(match, (_) => _.params.daoId);
     return (
       <Tabs
         tabs={[
           {
             label: 'General',
             onClick: () => {
-              this.props.history.push(
-                URL.COMPANY_GENERAL_BASICS({ companyId }),
-              );
+              this.props.history.push(URL.DAO_GENERAL_BASICS({ daoId }));
             },
           },
           {
             label: 'Users',
             onClick: () => {
-              this.props.history.push(URL.COMPANY_USERS({ companyId }));
+              this.props.history.push(URL.DAO_USERS({ daoId }));
             },
           },
           {
             label: 'Banking',
             onClick: () => {
-              this.props.history.push(URL.COMPANY_BANKING({ companyId }));
+              this.props.history.push(URL.DAO_BANKING({ daoId }));
             },
           },
           {
             label: 'Integrations',
             onClick: () => {
-              this.props.history.push(URL.COMPANY_INTEGRATIONS({ companyId }));
+              this.props.history.push(URL.DAO_INTEGRATIONS({ daoId }));
             },
           },
           {
             label: 'Subscription',
             onClick: () => {
-              this.props.history.push(URL.COMPANY_SUBSCRIPTION({ companyId }));
+              this.props.history.push(URL.DAO_SUBSCRIPTION({ daoId }));
             },
           },
         ]}
@@ -90,13 +88,13 @@ class CompanySettings extends Component<Props, State> {
   render() {
     const { classes, actions, match } = this.props;
     const activeTab = this._findActiveSecondaryTab();
-    const companyId = idx(match, (_) => _.params.companyId) || '';
+    const daoId = idx(match, (_) => _.params.daoId) || '';
     return (
       <div className={classes.page}>
-        <SelectedCompany
+        <SelectedDAO
           onChange={({ id }) => {
             if (id) {
-              this.props.history.push(URL.COMPANY_SETTINGS({ companyId: id }));
+              this.props.history.push(URL.DAO_SETTINGS({ daoId: id }));
             }
           }}
         >
@@ -114,15 +112,15 @@ class CompanySettings extends Component<Props, State> {
             <Switch>
               <Redirect
                 exact
-                from={URL.COMPANY_SETTINGS({ companyId })}
-                to={URL.COMPANY_GENERAL({ companyId })}
+                from={URL.DAO_SETTINGS({ daoId })}
+                to={URL.DAO_GENERAL({ daoId })}
               />
             </Switch>
           )}
-        </SelectedCompany>
+        </SelectedDAO>
       </div>
     );
   }
 }
 
-export default withStyles(styles)(CompanySettings);
+export default withStyles(styles)(DAOSettings);

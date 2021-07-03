@@ -6,7 +6,7 @@ import {
 } from '@kudoo/components';
 import findIndex from 'lodash/findIndex';
 import React, { useImperativeHandle } from 'react';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import styles from './styles';
 import { WizardCreatePageProps as Props } from './types';
 
@@ -14,7 +14,7 @@ const WizardCreatePage: React.FC<Props> = (props) => {
   const {
     classes,
     theme,
-    onCompanyChange,
+    onDAOChange,
     onCancel,
     steps,
     onStepChange,
@@ -90,7 +90,7 @@ const WizardCreatePage: React.FC<Props> = (props) => {
 
   return (
     <ErrorBoundary>
-      <SelectedCompany onChange={onCompanyChange}>
+      <SelectedDAO onChange={onDAOChange}>
         <div className={classes.page}>
           <div className={classes.allSteps}>
             <WizardSteps steps={steps} />
@@ -104,7 +104,7 @@ const WizardCreatePage: React.FC<Props> = (props) => {
             />
           </div>
         </div>
-      </SelectedCompany>
+      </SelectedDAO>
     </ErrorBoundary>
   );
 };

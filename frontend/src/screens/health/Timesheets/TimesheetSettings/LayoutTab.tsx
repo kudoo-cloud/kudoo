@@ -13,15 +13,15 @@ import range from 'lodash/range';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import { LayoutTabStyles } from './styles';
 
 type Props = {
   actions: any;
-  company: any;
+  dao: any;
   profile: Record<string, any>;
-  updateCompany: Function;
+  updateDao: Function;
   classes: any;
   theme: any;
 };
@@ -29,8 +29,8 @@ type State = {};
 
 class LayoutTab extends Component<Props, State> {
   public static defaultProps = {
-    updateCompany: () => ({}),
-    company: {
+    updateDao: () => ({}),
+    dao: {
       refetch: () => {},
       loadNextPage: () => {},
       data: {},
@@ -39,11 +39,11 @@ class LayoutTab extends Component<Props, State> {
 
   _onSubmit = async (values, actions) => {
     try {
-      const { company, profile } = this.props;
-      const timeSheetSettings = get(company, 'data.timeSheetSettings') || {};
-      const res = await this.props.updateCompany({
+      const { dao, profile } = this.props;
+      const timeSheetSettings = get(dao, 'data.timeSheetSettings') || {};
+      const res = await this.props.updateDao({
         where: {
-          id: get(company, 'data.id'),
+          id: get(dao, 'data.id'),
         },
         data: {
           timeSheetSettings: {
@@ -57,9 +57,9 @@ class LayoutTab extends Component<Props, State> {
       actions.setSubmitting(false);
       if (res.success) {
         showToast(null, 'Settings Updated');
-        if (get(profile, 'selectedCompany.id') === res.result.id) {
+        if (get(profile, 'selectedDAO.id') === res.result.id) {
           this.props.actions.setUserData({
-            selectedCompany: { ...res.result, owner: true },
+            selectedDAO: { ...res.result, owner: true },
           });
         }
       } else {
@@ -198,11 +198,11 @@ class LayoutTab extends Component<Props, State> {
   };
 
   render() {
-    const { classes, company = {} } = this.props;
-    const timeSheetSettings = get(company, 'data.timeSheetSettings', {}) || {};
+    const { classes, dao = {} } = this.props;
+    const timeSheetSettings = get(dao, 'data.timeSheetSettings', {}) || {};
     return (
       <div className={classes.tabContent}>
-        <SelectedCompany onChange={company.refetch}>
+        <SelectedDAO onChange={dao.refetch}>
           <Formik
             onSubmit={this._onSubmit}
             enableReinitialize
@@ -219,7 +219,7 @@ class LayoutTab extends Component<Props, State> {
           >
             {this._renderFormFields.bind(this)}
           </Formik>
-        </SelectedCompany>
+        </SelectedDAO>
       </div>
     );
   }
@@ -230,8 +230,8 @@ export default compose<any, any>(
   connect((state: any) => ({
     profile: state.profile,
   })),
-  // withCompany((props) => ({
-  //   id: get(props, 'profile.selectedCompany.id'),
+  // withDao((props) => ({
+  //   id: get(props, 'profile.selectedDAO.id'),
   // })),
-  // withUpdateCompany(),
+  // withUpdateDao(),
 )(LayoutTab);

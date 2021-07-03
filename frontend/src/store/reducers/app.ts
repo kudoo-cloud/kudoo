@@ -36,7 +36,7 @@ const initialState = {
     classes: {},
   },
   activeLanguage: 'en_AU',
-  tempActiveLanguage: undefined, // this is mainly used for create/update company page , so that on dropdwon we can change temporary language
+  tempActiveLanguage: undefined, // this is mainly used for create/update dao page , so that on dropdwon we can change temporary language
 };
 
 export default handleActions(

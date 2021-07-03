@@ -2,7 +2,7 @@ import { ErrorBoundary } from '@kudoo/components';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 
 type Props = {
   actions: any;
@@ -26,9 +26,9 @@ class TabContainer extends Component<Props, State> {
     const { children, projects = {} }: any = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany onChange={projects.refetch}>
+        <SelectedDAO onChange={projects.refetch}>
           {children({ ...this.props, ...this.state })}
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

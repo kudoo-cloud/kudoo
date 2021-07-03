@@ -22,37 +22,37 @@ class UserAccountHistory extends Component<IProps, IState> {
     super(props);
     const data = [
       {
-        company: 'Ace Powder Coating',
+        dao: 'Ace Powder Coating',
         device: 'Mac using Chrome',
         when: 'Victoria, Australia',
         where: '12/06/2017 - 04:40 AEDT',
       },
       {
-        company: 'Bitesize Gear',
+        dao: 'Bitesize Gear',
         device: 'Mac using Chrome',
         when: 'Victoria, Australia',
         where: '05/11/2017 - 12:32 AEDT',
       },
       {
-        company: 'Ace Powder Coating',
+        dao: 'Ace Powder Coating',
         device: 'Mac using Chrome',
         when: 'Victoria, Australia',
         where: '12/06/2017 - 04:40 AEDT',
       },
       {
-        company: 'Bitesize Gear',
+        dao: 'Bitesize Gear',
         device: 'Mac using Chrome',
         when: 'Victoria, Australia',
         where: '05/11/2017 - 12:32 AEDT',
       },
       {
-        company: 'Ace Powder Coating',
+        dao: 'Ace Powder Coating',
         device: 'Mac using Chrome',
         when: 'Victoria, Australia',
         where: '12/06/2017 - 04:40 AEDT',
       },
       {
-        company: 'Bitesize Gear',
+        dao: 'Bitesize Gear',
         device: 'Mac using Chrome',
         when: 'Victoria, Australia',
         where: '05/11/2017 - 12:32 AEDT',
@@ -61,7 +61,7 @@ class UserAccountHistory extends Component<IProps, IState> {
 
     this.state = {
       headerData: [
-        { id: 'company', label: 'Company' },
+        { id: 'dao', label: 'DAO' },
         { id: 'device', label: 'Device' },
         { id: 'when', label: 'When' },
         { id: 'where', label: 'Where' },

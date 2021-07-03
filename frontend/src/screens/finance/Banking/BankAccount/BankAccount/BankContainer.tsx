@@ -6,7 +6,7 @@ import isEqual from 'lodash/isEqual';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 
 interface IProps {
   actions: any;
@@ -99,7 +99,7 @@ class BankContainer extends Component<IProps, IState> {
     const { match, history, location, actions, banks = {} } = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany onChange={banks.refetch}>
+        <SelectedDAO onChange={banks.refetch}>
           {this.props.children({
             match,
             history,
@@ -111,7 +111,7 @@ class BankContainer extends Component<IProps, IState> {
             onSortRequested: this._onRequestSort,
             onLoadMore: get(this.props, 'banks.loadNextPage'),
           })}
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

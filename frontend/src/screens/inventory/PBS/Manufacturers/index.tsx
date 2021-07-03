@@ -5,7 +5,7 @@ import find from 'lodash/find';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose, withState } from 'recompose';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 
 import styles from './styles';
@@ -99,7 +99,7 @@ class Manufacturers extends Component<IProps, {}> {
     } = this.props;
     const { columns } = this.state;
     return (
-      <SelectedCompany onChange={() => {}}>
+      <SelectedDAO onChange={() => {}}>
         <Grid container spacing={0}>
           <Grid item xs={12}>
             <div className={classes.searchBox}>
@@ -133,7 +133,7 @@ class Manufacturers extends Component<IProps, {}> {
             </div>
           </Grid>
         </Grid>
-      </SelectedCompany>
+      </SelectedDAO>
     );
   }
 }

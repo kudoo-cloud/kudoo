@@ -5,8 +5,8 @@ export const SecondaryTabs = React.lazy(() => import('src/screens/common/Seconda
 
 // daos Screens
 export const ManageDAOs = React.lazy(() => import('src/screens/common/DAO/ManageDAOs'));
-export const CompanySettings = React.lazy(() => import('src/screens/common/DAO/DAOSettings'));
-export const CreateCompany = React.lazy(() => import('src/screens/common/DAO/CreateDAO'));
+export const DAOSettings = React.lazy(() => import('src/screens/common/DAO/DAOSettings'));
+export const CreateDAO = React.lazy(() => import('src/screens/common/DAO/CreateDAO'));
 
 // Auth, User Configuration screens
 export const Config = React.lazy(() => import('src/screens/common/Config/Config'));

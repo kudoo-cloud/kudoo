@@ -28,18 +28,18 @@ class PreviewInvoice extends Component<Props, State> {
 
   componentDidMount() {
     const props = this.props;
-    this.setCompanyAndUserData(props);
+    this.setDAOAndUserData(props);
   }
 
-  setCompanyAndUserData = async (props) => {
+  setDAOAndUserData = async (props) => {
     const query = queryString.parse(get(props, 'location.search', ''));
-    if (query['company-token'] && query['user-token']) {
+    if (query['dao-token'] && query['user-token']) {
       await this.props.actions.setUserData({
         token: query['user-token'],
         isLoggedIn: true,
-        selectedCompany: {
-          ...get(props, 'profile.selectedCompany', {}),
-          id: query['company-token'],
+        selectedDAO: {
+          ...get(props, 'profile.selectedDAO', {}),
+          id: query['dao-token'],
         },
       });
       setTimeout(() => {
@@ -498,9 +498,9 @@ class PreviewInvoice extends Component<Props, State> {
   render() {
     const { classes, invoice, i18n } = this.props;
     const customer = get(invoice, 'data.buyer');
-    const sellerCompany = get(invoice, 'data.seller');
-    const companyLogo = get(invoice, 'data.seller.logo.url');
-    const companyName = get(invoice, 'data.seller.name');
+    const sellerDAO = get(invoice, 'data.seller');
+    const daoLogo = get(invoice, 'data.seller.logo.url');
+    const daoName = get(invoice, 'data.seller.name');
     const invoiceNumber = get(invoice, 'data.number');
     const issueDate = get(invoice, 'data.invoiceDate');
     const attachments = get(invoice, 'data.attachments', []);
@@ -518,15 +518,15 @@ class PreviewInvoice extends Component<Props, State> {
           <div className={classes.invoiceHeader}>
             <Grid container>
               <Grid item xs={6}>
-                {!companyLogo && (
+                {!daoLogo && (
                   <div className={classes.invoiceName} style={{ marginTop: 0 }}>
-                    {companyName}
+                    {daoName}
                   </div>
                 )}
-                {companyLogo && (
+                {daoLogo && (
                   <div
-                    className={classes.companyLogo}
-                    style={{ backgroundImage: `url(${companyLogo})` }}
+                    className={classes.daoLogo}
+                    style={{ backgroundImage: `url(${daoLogo})` }}
                   />
                 )}
               </Grid>
@@ -538,8 +538,8 @@ class PreviewInvoice extends Component<Props, State> {
                 <div className={classes.invoiceNumber}>
                   <div>Invoice #{invoiceNumber}</div>
                 </div>
-                {companyLogo && (
-                  <div className={classes.invoiceName}>{companyName}</div>
+                {daoLogo && (
+                  <div className={classes.invoiceName}>{daoName}</div>
                 )}
               </Grid>
             </Grid>
@@ -589,7 +589,7 @@ class PreviewInvoice extends Component<Props, State> {
                 </div>
               </Grid>
               <Grid item xs={6} sm={6} style={{ textAlign: 'right' }}>
-                <div className={classes.invoiceSectionTitle}>Company</div>
+                <div className={classes.invoiceSectionTitle}>DAO</div>
                 {sellerAddress && (
                   <div className={classes.invoiceTextValue}>
                     {sellerAddress.street} {sellerAddress.city}{' '}
@@ -597,9 +597,9 @@ class PreviewInvoice extends Component<Props, State> {
                     {sellerAddress.postCode}
                   </div>
                 )}
-                {Boolean(get(sellerCompany, 'govNumber')) && (
+                {Boolean(get(sellerDAO, 'govNumber')) && (
                   <div className={classes.invoiceTextValue}>
-                    {i18n._(`ABN`)} : {get(sellerCompany, 'govNumber')}
+                    {i18n._(`ABN`)} : {get(sellerDAO, 'govNumber')}
                   </div>
                 )}
               </Grid>
@@ -651,14 +651,14 @@ class PreviewInvoice extends Component<Props, State> {
               <div>
                 <div className={classes.invoiceSectionTitle}>EFT</div>
                 <div className={classes.invoiceTextValue}>
-                  {get(sellerCompany, 'bankAccount.name')}
+                  {get(sellerDAO, 'bankAccount.name')}
                 </div>
                 <div className={classes.invoiceTextValue}>
-                  {i18n._(`BSB`)} : {get(sellerCompany, 'bankAccount.code')}
+                  {i18n._(`BSB`)} : {get(sellerDAO, 'bankAccount.code')}
                 </div>
                 <div className={classes.invoiceTextValue}>
                   {i18n._(`Account Number`)} :{' '}
-                  {get(sellerCompany, 'bankAccount.accountNumber')}
+                  {get(sellerDAO, 'bankAccount.accountNumber')}
                 </div>
               </div>
             </div>

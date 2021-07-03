@@ -16,7 +16,7 @@ export interface ICustomer {
 export interface IProject {
   name: string;
   customerId: any;
-  companyId: any;
+  daoId: any;
   isAlreadySaved?: boolean;
   id?: string;
 }
@@ -127,7 +127,7 @@ const initialCustomer = {
 const initialProject = {
   name: '',
   customerId: '',
-  companyId: '',
+  daoId: '',
   isAlreadySaved: false,
   id: '',
 };

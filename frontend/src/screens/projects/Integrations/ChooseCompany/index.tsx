@@ -30,10 +30,10 @@ type State = {
   isFormSubmitting: boolean;
   filteredDAOs: Array<any>;
   loading: boolean;
-  selectedCompanyId: string | null;
+  selectedDAOId: string | null;
 };
 
-class ChooseCompany extends Component<Props, State> {
+class ChooseDAO extends Component<Props, State> {
   public static defaultProps = {
     DAOs: {
       refetch: () => {},
@@ -53,7 +53,7 @@ class ChooseCompany extends Component<Props, State> {
     isFormSubmitting: false,
     filteredDAOs: [],
     loading: false,
-    selectedCompanyId: null,
+    selectedDAOId: null,
   };
 
   componentDidCatch(prevProps) {
@@ -64,13 +64,13 @@ class ChooseCompany extends Component<Props, State> {
     }
   }
 
-  filterCompany(company, type, value) {
+  filterDAO(dao, type, value) {
     const list = this.props.integrations.data.filter(
       (integration) =>
-        integration.company_id === company.id && integration.type === type,
+        integration.dao_id === dao.id && integration.type === type,
     );
     return (
-      company.legalName.toLowerCase().includes(value.toLowerCase()) &&
+      dao.legalName.toLowerCase().includes(value.toLowerCase()) &&
       list.length === 0
     );
   }
@@ -85,7 +85,7 @@ class ChooseCompany extends Component<Props, State> {
   }
 
   _integrate = () => {
-    if (this.state.selectedCompanyId) {
+    if (this.state.selectedDAOId) {
       const baseUrl = process.env.SKELM_BASE_URL,
         url =
           baseUrl +
@@ -93,7 +93,7 @@ class ChooseCompany extends Component<Props, State> {
           this._integrationType().toLowerCase() +
           '/init',
         params = {
-          'company-auth': 'Menshen ' + this.state.selectedCompanyId,
+          'dao-auth': 'Menshen ' + this.state.selectedDAOId,
           'redirect-to': this._redirectTo(),
           'user-auth': 'Menshen ' + this.props.profile.token,
         },
@@ -108,7 +108,7 @@ class ChooseCompany extends Component<Props, State> {
   };
 
   _onItemClick = async (item) => {
-    this.setState({ selectedCompanyId: item.id });
+    this.setState({ selectedDAOId: item.id });
   };
 
   _onSearch = debounce(async (value) => {
@@ -116,8 +116,8 @@ class ChooseCompany extends Component<Props, State> {
     // const query = queryString.parse(get(this.props, 'location.search', ''));
     // const type = query.type;
     const type = 'SLACK';
-    const items = this.props.DAOs.filter((company) =>
-      this.filterCompany(company, type, value),
+    const items = this.props.DAOs.filter((dao) =>
+      this.filterDAO(dao, type, value),
     );
     this.setState({ filteredDAOs: items });
     this.setState({ loading: false });
@@ -130,7 +130,7 @@ class ChooseCompany extends Component<Props, State> {
         <SearchInput
           labelKey='legalName'
           items={this.state.filteredDAOs}
-          placeholder={'Choose company …'}
+          placeholder={'Choose DAO …'}
           renderItem={(item) => (
             <div style={{ display: 'flex', alignItems: 'center' }}>
               {!item.logo && (
@@ -184,7 +184,7 @@ class ChooseCompany extends Component<Props, State> {
     if (!get(profile, 'isLoggedIn')) {
       return (
         <Redirect
-          from={URL.INTEGRATION_CHOOSE_COMPANY({ path: true })}
+          from={URL.INTEGRATION_CHOOSE_DAO({ path: true })}
           to={
             URL.INTEGRATION_LOGIN({ path: true }) +
             `?redirect=${this._redirectTo()}` +
@@ -211,7 +211,7 @@ export default compose(
   //     return {
   //       DAOs: userMembers
   //         .filter(({ role }) => role === 'OWNER' || role === 'ADMIN')
-  //         .map(({ company }) => company),
+  //         .map(({ dao }) => dao),
   //     };
   //   },
   // }),
@@ -220,9 +220,9 @@ export default compose(
   //     name: 'integrations',
   //     variables: {
   //       filters: {
-  //         companyId: { anyOf: props.DAOs.map((company) => company.id) },
+  //         daoId: { anyOf: props.DAOs.map((dao) => dao.id) },
   //       },
   //     },
   //   };
   // }),
-)(ChooseCompany);
+)(ChooseDAO);

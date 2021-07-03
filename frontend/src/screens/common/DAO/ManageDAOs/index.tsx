@@ -28,30 +28,30 @@ type Props = {
     joinedDAOs: Array<any>;
   };
   allDAOs: Record<string, any>;
-  updateCompany: Function;
+  updateDao: Function;
   profile: Record<string, any>;
   theme: any;
   classes: any;
 };
 type State = {
-  isCreatedCompanyOpen: boolean;
-  isJoinedCompanyOpen: boolean;
-  joinCompanyModalVisible: boolean;
+  isCreatedDaoOpen: boolean;
+  isJoinedDaoOpen: boolean;
+  joinDaoModalVisible: boolean;
 };
 
 class ManageDAOs extends Component<Props, State> {
   static defaultProps = {
     DAOs: { createdDAOs: [], joinedDAOs: [] },
     allDAOs: {},
-    updateCompany: () => ({}),
+    updateDao: () => ({}),
   };
 
   constructor(props) {
     super(props);
     this.state = {
-      isCreatedCompanyOpen: true,
-      isJoinedCompanyOpen: true,
-      joinCompanyModalVisible: false,
+      isCreatedDaoOpen: true,
+      isJoinedDaoOpen: true,
+      joinDaoModalVisible: false,
     };
   }
 
@@ -64,12 +64,12 @@ class ManageDAOs extends Component<Props, State> {
     const profile = this.props.profile;
     if (
       !isEqual(
-        get(this.props, 'DAOs.createdDAOs', []).map((company) => company.id),
-        get(prevProps, 'DAOs.createdDAOs', []).map((company) => company.id),
+        get(this.props, 'DAOs.createdDAOs', []).map((dao) => dao.id),
+        get(prevProps, 'DAOs.createdDAOs', []).map((dao) => dao.id),
       ) ||
       !isEqual(
-        get(profile, 'createdDAOs', []).map((company) => company.id),
-        get(prevProps, 'DAOs.createdDAOs', []).map((company) => company.id),
+        get(profile, 'createdDAOs', []).map((dao) => dao.id),
+        get(prevProps, 'DAOs.createdDAOs', []).map((dao) => dao.id),
       )
     ) {
       this.props.actions.setUserData({
@@ -78,20 +78,20 @@ class ManageDAOs extends Component<Props, State> {
     }
   }
 
-  _reactivateCompany = (company) => async () => {
+  _reactivateDAO = (dao) => async () => {
     try {
-      this.props.actions.selectCompany({ ...company, owner: true });
-      const res = await this.props.updateCompany({
+      this.props.actions.selectDAO({ ...dao, owner: true });
+      const res = await this.props.updateDao({
         data: {
           isArchived: false,
         },
         where: {
-          id: company.id,
+          id: dao.id,
         },
       });
       if (res.success) {
-        showToast(null, 'Company Re-activated');
-        // Reloading page , as re-activation of company will affect sidebar also
+        showToast(null, 'DAO Re-activated');
+        // Reloading page , as re-activation of dao will affect sidebar also
         window.location.reload();
       } else {
         res.error.map((err) => showToast(err));
@@ -101,85 +101,82 @@ class ManageDAOs extends Component<Props, State> {
     }
   };
 
-  _openJoinCompanyModal = () => {
-    this.setState({ joinCompanyModalVisible: true });
+  _openJoinDAOModal = () => {
+    this.setState({ joinDaoModalVisible: true });
   };
 
-  _closeJoinCompanyModal = () => {
-    this.setState({ joinCompanyModalVisible: false });
+  _closeJoinDAOModal = () => {
+    this.setState({ joinDaoModalVisible: false });
   };
 
   _renderCreatedDAOs() {
     const { classes, DAOs, theme } = this.props;
-    const { isCreatedCompanyOpen } = this.state;
+    const { isCreatedDaoOpen } = this.state;
     return (
       <div className={classes.collapseRoot}>
         <div
           className={classes.collapseTitle}
           onClick={() => {
-            this.setState({ isCreatedCompanyOpen: !isCreatedCompanyOpen });
+            this.setState({ isCreatedDaoOpen: !isCreatedDaoOpen });
           }}
         >
           <div>Created DAOs</div>
           <i
             className={cx('icon icon-chevron-right', classes.collapseIcon, {
-              down: isCreatedCompanyOpen,
+              down: isCreatedDaoOpen,
             })}
           />
         </div>
         <Collapse
-          in={this.state.isCreatedCompanyOpen}
+          in={this.state.isCreatedDaoOpen}
           timeout='auto'
           unmountOnExit
-          data-test='create-company-wrapper'
+          data-test='create-dao-wrapper'
           classes={{
             wrapperInner: classes.collapseContent,
           }}
         >
-          <Link className={classes.cardComponent} to={URL.CREATE_COMPANY()}>
-            <DottedCreateButton id='create-company' text='Create new company' />
+          <Link className={classes.cardComponent} to={URL.CREATE_DAO()}>
+            <DottedCreateButton id='create-dao' text='Create new dao' />
           </Link>
-          {(idx(DAOs, (x) => x.createdDAOs) || []).map((company) => (
+          {(idx(DAOs, (x) => x.createdDAOs) || []).map((dao) => (
             <div
-              className={classes.companyCardWrapper}
-              key={company.id}
+              className={classes.daoCardWrapper}
+              key={dao.id}
               data-test={
-                !company.isArchived
-                  ? `created-company-${company.name}`
-                  : `created-archived-company-${company.name}`
+                !dao.isArchived
+                  ? `created-dao-${dao.name}`
+                  : `created-archived-dao-${dao.name}`
               }
             >
               <Link
-                className={classes.companyCard}
-                to={URL.COMPANY_SETTINGS({ companyId: company.id })}
+                className={classes.daoCard}
+                to={URL.DAO_SETTINGS({ daoId: dao.id })}
                 onClick={() => {
-                  this.props.actions.selectCompany({
-                    ...company,
+                  this.props.actions.selectDAO({
+                    ...dao,
                     owner: true,
                   });
                 }}
               >
                 <CompanyCard
                   imageUrl={
-                    get(company, 'logo.url')
-                      ? get(company, 'logo.url')
-                      : undefined
+                    get(dao, 'logo.url') ? get(dao, 'logo.url') : undefined
                   }
-                  primaryLabel={company.name}
+                  primaryLabel={dao.name}
                   secondaryLabel='Owner'
                 />
               </Link>
-              {company.isArchived && (
-                <div className={classes.deletedCompanyMsgWrapper}>
-                  <div className={classes.deletedCompanyMsg}>
-                    This company has been deleted and will disappear after 7
-                    days.
+              {dao.isArchived && (
+                <div className={classes.deletedDAOMsgWrapper}>
+                  <div className={classes.deletedDAOMsg}>
+                    This dao has been deleted and will disappear after 7 days.
                   </div>
                   <Button
                     title='Re-activate'
                     applyBorderRadius
                     buttonColor={theme.palette.primary.color2}
-                    onClick={this._reactivateCompany(company)}
+                    onClick={this._reactivateDAO(dao)}
                   />
                 </div>
               )}
@@ -192,61 +189,55 @@ class ManageDAOs extends Component<Props, State> {
 
   _renderJoinedDAOs() {
     const { classes, DAOs, theme } = this.props;
-    const { isJoinedCompanyOpen } = this.state;
+    const { isJoinedDaoOpen } = this.state;
     return (
       <div className={classes.collapseRoot}>
         <div
           className={classes.collapseTitle}
           onClick={() => {
-            this.setState({ isJoinedCompanyOpen: !isJoinedCompanyOpen });
+            this.setState({ isJoinedDaoOpen: !isJoinedDaoOpen });
           }}
         >
           <div>Joined DAOs</div>
           <i
             className={cx('icon icon-chevron-right', classes.collapseIcon, {
-              down: isJoinedCompanyOpen,
+              down: isJoinedDaoOpen,
             })}
           />
         </div>
         <Collapse
-          in={this.state.isJoinedCompanyOpen}
+          in={this.state.isJoinedDaoOpen}
           timeout='auto'
           unmountOnExit
           classes={{
             wrapperInner: classes.collapseContent,
           }}
         >
-          {(idx(DAOs, (x) => x.joinedDAOs) || []).map((company) => (
+          {(idx(DAOs, (x) => x.joinedDAOs) || []).map((dao) => (
             <div
-              className={classes.companyCardWrapper}
-              key={company.id}
+              className={classes.daoCardWrapper}
+              key={dao.id}
               data-test={
-                !company.isArchived
-                  ? `joined-company-${company.name}`
-                  : `joined-archived-company-${company.name}`
+                !dao.isArchived
+                  ? `joined-dao-${dao.name}`
+                  : `joined-archived-dao-${dao.name}`
               }
             >
-              <div
-                className={classes.companyCard}
-                style={{ cursor: 'initial' }}
-              >
+              <div className={classes.daoCard} style={{ cursor: 'initial' }}>
                 <CompanyCard
                   imageUrl={
-                    get(company, 'logo.url')
-                      ? get(company, 'logo.url')
-                      : undefined
+                    get(dao, 'logo.url') ? get(dao, 'logo.url') : undefined
                   }
-                  primaryLabel={company.name}
+                  primaryLabel={dao.name}
                   secondaryLabel='Employee'
                   borderColor={theme.palette.primary.color3}
                   isJoinedCompany
                 />
               </div>
-              {company.isArchived && (
-                <div className={classes.deletedCompanyMsgWrapper}>
-                  <div className={classes.deletedCompanyMsg}>
-                    This company has been deleted and will disappear after 7
-                    days.
+              {dao.isArchived && (
+                <div className={classes.deletedDAOMsgWrapper}>
+                  <div className={classes.deletedDAOMsg}>
+                    This dao has been deleted and will disappear after 7 days.
                   </div>
                 </div>
               )}
@@ -259,17 +250,17 @@ class ManageDAOs extends Component<Props, State> {
 
   render() {
     const { classes, DAOs, allDAOs } = this.props;
-    const { joinCompanyModalVisible } = this.state;
+    const { joinDaoModalVisible } = this.state;
     return (
       <div className={classes.page}>
         {this._renderCreatedDAOs()}
         {this._renderJoinedDAOs()}
         <JoinModal
-          visible={joinCompanyModalVisible}
+          visible={joinDaoModalVisible}
           createdDAOs={get(DAOs, 'createdDAOs', [])}
           joinedDAOs={get(DAOs, 'joinedDAOs', [])}
           allDAOs={allDAOs}
-          onClose={this._closeJoinCompanyModal}
+          onClose={this._closeJoinDAOModal}
         />
       </div>
     );
@@ -281,7 +272,7 @@ export default compose(
   connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-  // withUpdateCompany(),
+  // withUpdateDao(),
   // withDAOs(
   //   () => ({
   //     variables: {
@@ -294,22 +285,22 @@ export default compose(
   //     const createdDAOs: any = [];
   //     const joinedDAOs: any = [];
   //     for (let index = 0; index < daos.length; index++) {
-  //       const company = daos[index] || {};
-  //       const companyMember = find(company.companyMembers, {
+  //       const dao = daos[index] || {};
+  //       const daoMember = find(dao.daoMembers, {
   //         user: { id: get(ownProps, 'profile.id') },
   //       });
   //       let role = SecurityRole.user;
   //       if (get(ownProps, 'profile.isRoot')) {
   //         role = SecurityRole.root;
-  //       } else if (companyMember.role === 'OWNER') {
+  //       } else if (daoMember.role === 'OWNER') {
   //         role = SecurityRole.owner;
-  //       } else if (companyMember.role === 'ADMIN') {
+  //       } else if (daoMember.role === 'ADMIN') {
   //         role = SecurityRole.admin;
   //       }
-  //       if (companyMember.role === 'OWNER' || companyMember.role === 'ADMIN') {
-  //         createdDAOs.push({ ...company, role });
+  //       if (daoMember.role === 'OWNER' || daoMember.role === 'ADMIN') {
+  //         createdDAOs.push({ ...dao, role });
   //       } else {
-  //         joinedDAOs.push({ ...company, role });
+  //         joinedDAOs.push({ ...dao, role });
   //       }
   //     }
   //     return {

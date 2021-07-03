@@ -166,7 +166,7 @@ class SalesOrderWizard extends React.Component<IProps, IState> {
       salesOrderData: { data = {}, isEditMode = false, actions },
       salesOrderLineData = {},
     } = this.state;
-    const { profile: { selectedCompany: { currency = 'USD' } = {} } = {} } =
+    const { profile: { selectedDAO: { currency = 'USD' } = {} } = {} } =
       this.props;
     const dataToSend = {
       transactionDate: data.transactionDate,
