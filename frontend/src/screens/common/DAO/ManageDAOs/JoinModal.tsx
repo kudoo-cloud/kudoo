@@ -17,9 +17,9 @@ import { JoinModalStyles } from './styles';
 
 type Props = {
   visible: boolean;
-  createdCompanies: Array<any>;
-  joinedCompanies: Array<any>;
-  allCompanies: any;
+  createdDAOs: Array<any>;
+  joinedDAOs: Array<any>;
+  allDAOs: any;
   onClose: Function;
   theme: any;
   classes: any;
@@ -27,8 +27,8 @@ type Props = {
 
 type State = {
   joinCompanyTab: number;
-  shouldJoinCompaniesList: Array<any>;
-  restCompanies: Array<any>;
+  shouldJoinDAOsList: Array<any>;
+  restDAOs: Array<any>;
   code: Record<string, any>;
   currentFocusedInput: number;
 };
@@ -37,70 +37,70 @@ class JoinModal extends React.Component<Props, State> {
   inputRefs: any = [];
   state = {
     joinCompanyTab: 0,
-    restCompanies: [],
-    shouldJoinCompaniesList: [],
+    restDAOs: [],
+    shouldJoinDAOsList: [],
     code: {},
     currentFocusedInput: 0,
   };
 
   componentDidMount() {
-    this._updateShouldJoinCompaniesList(this.props);
+    this._updateShouldJoinDAOsList(this.props);
   }
 
   componentDidUpdate(prevProps) {
     if (
       !isEqual(
-        idx(this.props, (_) => _.createdCompanies),
-        idx(prevProps, (_) => _.createdCompanies),
+        idx(this.props, (_) => _.createdDAOs),
+        idx(prevProps, (_) => _.createdDAOs),
       ) ||
       !isEqual(
-        idx(this.props, (_) => _.joinedCompanies),
-        idx(prevProps, (_) => _.joinedCompanies),
+        idx(this.props, (_) => _.joinedDAOs),
+        idx(prevProps, (_) => _.joinedDAOs),
       ) ||
       !isEqual(
-        idx(this.props, (_) => _.allCompanies.data),
-        idx(prevProps, (_) => _.allCompanies.data),
+        idx(this.props, (_) => _.allDAOs.data),
+        idx(prevProps, (_) => _.allDAOs.data),
       )
     ) {
-      this._updateShouldJoinCompaniesList(this.props);
+      this._updateShouldJoinDAOsList(this.props);
     }
   }
 
-  _updateShouldJoinCompaniesList = (nextProps) => {
-    const { joinedCompanies, createdCompanies, allCompanies } = nextProps;
-    let restCompanies = (idx(allCompanies, (_: any) => _.data) || []).filter(
+  _updateShouldJoinDAOsList = (nextProps) => {
+    const { joinedDAOs, createdDAOs, allDAOs } = nextProps;
+    let restDAOs = (idx(allDAOs, (_: any) => _.data) || []).filter(
       (company) => {
         let found = false;
         if (!found) {
-          found = find(createdCompanies || [], {
+          found = find(createdDAOs || [], {
             id: company.id,
           });
         }
         if (!found) {
-          found = find(joinedCompanies || [], {
+          found = find(joinedDAOs || [], {
             id: company.id,
           });
         }
         return !found;
       },
     );
-    restCompanies = restCompanies.map((company) => ({
+    restDAOs = restDAOs.map((company) => ({
       ...company,
       label: company.name,
     }));
     this.setState({
-      shouldJoinCompaniesList: restCompanies,
-      restCompanies,
+      shouldJoinDAOsList: restDAOs,
+      restDAOs,
     });
   };
 
   _onCompanySearch = (text) => {
-    const { restCompanies } = this.state;
-    const arr = restCompanies.filter(
+    const { restDAOs } = this.state;
+    const arr = restDAOs.filter(
       (company: any) =>
         company.label.toLowerCase().indexOf(text.toLowerCase()) > -1,
     );
-    this.setState({ shouldJoinCompaniesList: arr });
+    this.setState({ shouldJoinDAOsList: arr });
   };
 
   _renderTitle = () => {
@@ -146,7 +146,7 @@ class JoinModal extends React.Component<Props, State> {
 
   _renderContent = () => {
     const { theme, classes } = this.props;
-    const { joinCompanyTab, shouldJoinCompaniesList, code } = this.state;
+    const { joinCompanyTab, shouldJoinDAOsList, code } = this.state;
     return (
       <div className={classes.contentWrapper}>
         <ToggleButton
@@ -191,7 +191,7 @@ class JoinModal extends React.Component<Props, State> {
               onSearch={this._onCompanySearch}
               onInputChange={this._onCompanySearch}
               onItemClick={() => {}}
-              items={shouldJoinCompaniesList}
+              items={shouldJoinDAOsList}
             />
           )}
         </div>

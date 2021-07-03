@@ -54,7 +54,7 @@ interface IState {
 
 const AUSTRALIYA_COUNTRY_CODE = 'AU';
 
-class CompaniesGeneralBasics extends React.Component<IProps, IState> {
+class DAOGeneralBasics extends React.Component<IProps, IState> {
   static defaultProps = {
     isCreateNewCompany: false,
     initialData: {},
@@ -137,13 +137,13 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
           const companyRes = { ...res.result, owner: true };
           await this.props.actions.setUserData({
             selectedCompany: companyRes,
-            createdCompanies: [...(profile.createdCompanies || []), companyRes], // this is useful for updating company list when we go back to manage companies
+            createdDAOs: [...(profile.createdDAOs || []), companyRes], // this is useful for updating company list when we go back to manage DAOs
           });
           // await this.props.refetch();
           actions.setSubmitting(false);
           showToast(null, 'Company created');
           this.props.actions.setTemporaryActiveLanguage(undefined);
-          this.props.history.push(URL.MANAGE_COMPANIES());
+          this.props.history.push(URL.MANAGE_DAOS());
         } else {
           res.error.map((err) => showToast(err));
         }
@@ -161,7 +161,7 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
           actions.setSubmitting(false);
           showToast(null, 'Company Updated');
           this.props.actions.setTemporaryActiveLanguage(undefined);
-          this.props.history.push(URL.MANAGE_COMPANIES());
+          this.props.history.push(URL.MANAGE_DAOS());
         } else {
           res.error.map((err) => showToast(err));
         }
@@ -209,7 +209,7 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
         this.props.actions.setUserData({
           selectedCompany: {},
         });
-        history.replace(URL.MANAGE_COMPANIES());
+        history.replace(URL.MANAGE_DAOS());
       } else {
         res.error.map((err) => showToast(err));
       }
@@ -532,7 +532,7 @@ class CompaniesGeneralBasics extends React.Component<IProps, IState> {
             <Grid item xs={12} md={dirty ? 6 : 12}>
               <Button
                 title={isCreateNewCompany ? 'Cancel' : 'Go Back'}
-                href={URL.MANAGE_COMPANIES()}
+                href={URL.MANAGE_DAOS()}
                 buttonColor={theme.palette.grey['200']}
                 classes={{ text: classes.cancelButtonText }}
                 target='_self'
@@ -651,4 +651,4 @@ export default compose<any, any>(
   connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-)(CompaniesGeneralBasics);
+)(DAOGeneralBasics);

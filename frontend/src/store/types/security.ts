@@ -53,7 +53,7 @@ export interface IAvailability {
    * rather than a code issue.
    */
   security?: Array<SecurityRole>;
-  /** Currently we can restrict menu items to Companies that are of a certain Business
+  /** Currently we can restrict menu items to DAOs that are of a certain Business
    * Type. Currently only "HEALTH" is a supported option.
    */
   businessType?: Array<string>;

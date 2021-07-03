@@ -31,7 +31,7 @@ type Props = {
 };
 type State = {};
 
-class CompaniesGeneralContact extends Component<Props, State> {
+class DAOGeneralContact extends Component<Props, State> {
   static defaultProps = {
     company: {},
     updateCompany: () => ({}),
@@ -458,4 +458,4 @@ export default compose<any, any>(
   //   id: idx(props, (_) => _.match.params.companyId),
   // })),
   // withUpdateCompany(),
-)(CompaniesGeneralContact);
+)(DAOGeneralContact);

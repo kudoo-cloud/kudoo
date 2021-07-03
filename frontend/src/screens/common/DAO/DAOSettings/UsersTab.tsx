@@ -3,7 +3,7 @@ import idx from 'idx';
 import React, { Component } from 'react';
 import { Redirect, Route, Switch } from 'react-router';
 import URL from 'src/helpers/urls';
-import CompaniesUsers from '../CompaniesUsers';
+import DAOUsers from '../DAOUsers';
 import InviteUser from '../InviteUser';
 import styles from './styles';
 
@@ -64,7 +64,7 @@ class UsersTab extends Component<Props, State> {
         <Switch>
           <Route
             path={URL.COMPANY_USERS_LIST({ path: true })}
-            render={(props) => <CompaniesUsers {...props} actions={actions} />}
+            render={(props) => <DAOUsers {...props} actions={actions} />}
           />
           <Route
             path={URL.INVITE_USER({ path: true })}

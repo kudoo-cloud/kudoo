@@ -1,8 +1,8 @@
 import { Tabs, withStyles } from '@kudoo/components';
 import React, { Component } from 'react';
-import CompaniesGeneralBasics from '../CompaniesGeneralBasics';
-import CompaniesGeneralContact from '../CompaniesGeneralContact';
-import CompaniesGeneralLocation from '../CompaniesGeneralLocation';
+import DAOGeneralBasics from '../DAOGeneralBasics';
+import DAOGeneralContact from '../DAOGeneralContact';
+import DAOGeneralLocation from '../DAOGeneralLocation';
 import styles from './styles';
 
 type Props = {
@@ -60,13 +60,13 @@ class CreateCompany extends Component<Props, State> {
         {this._renderSecondaryTabs()}
         {this._renderTertiaryTabs()}
         {activeTab === 0 && (
-          <CompaniesGeneralBasics {...this.props} isCreateNewCompany />
+          <DAOGeneralBasics {...this.props} isCreateNewCompany />
         )}
         {activeTab === 1 && (
-          <CompaniesGeneralContact {...this.props} isCreateNewCompany />
+          <DAOGeneralContact {...this.props} isCreateNewCompany />
         )}
         {activeTab === 2 && (
-          <CompaniesGeneralLocation {...this.props} isCreateNewCompany />
+          <DAOGeneralLocation {...this.props} isCreateNewCompany />
         )}
       </div>
     );

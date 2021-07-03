@@ -3,9 +3,9 @@ import idx from 'idx';
 import React, { Component } from 'react';
 import { Redirect, Route, Switch } from 'react-router';
 import URL from 'src/helpers/urls';
-import CompaniesGeneralBasics from '../CompaniesGeneralBasics';
-import CompaniesGeneralContact from '../CompaniesGeneralContact';
-import CompaniesGeneralLocation from '../CompaniesGeneralLocation';
+import DAOGeneralBasics from '../DAOGeneralBasics';
+import DAOGeneralContact from '../DAOGeneralContact';
+import DAOGeneralLocation from '../DAOGeneralLocation';
 import styles from './styles';
 
 type Props = {
@@ -83,19 +83,19 @@ class GeneralTab extends Component<Props, State> {
           <Route
             path={URL.COMPANY_GENERAL_BASICS({ path: true })}
             render={(props) => (
-              <CompaniesGeneralBasics actions={actions} {...props} />
+              <DAOGeneralBasics actions={actions} {...props} />
             )}
           />
           <Route
             path={URL.COMPANY_GENERAL_CONTACT_DETAILS({ path: true })}
             render={(props) => (
-              <CompaniesGeneralContact actions={actions} {...props} />
+              <DAOGeneralContact actions={actions} {...props} />
             )}
           />
           <Route
             path={URL.COMPANY_GENERAL_LOCATION({ path: true })}
             render={(props) => (
-              <CompaniesGeneralLocation actions={actions} {...props} />
+              <DAOGeneralLocation actions={actions} {...props} />
             )}
           />
           <Redirect

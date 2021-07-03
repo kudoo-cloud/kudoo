@@ -26,7 +26,7 @@ import {
 import { toastStyle } from './styles';
 
 export interface IProps {
-  companies: any;
+  DAOs: any;
   profile: any;
   app: any;
   classes: any;
@@ -84,10 +84,10 @@ class App extends React.Component<IProps, IState> {
       app,
       actions,
       profile,
-      companies,
+      DAOs,
       profile: { selectedCompany = {} },
     } = this.props;
-    const totalCompanies = get(companies, 'data', []).length;
+    const totalDAOs = get(DAOs, 'data', []).length;
     const menuConfig: ISecurityConfig =
       Configuration?.apps?.[
         (app?.kudoo_product || Product.inventory || '').toLowerCase()
@@ -129,16 +129,16 @@ class App extends React.Component<IProps, IState> {
     }
     return (
       <div className={classes.loggedInWrapper}>
-        {totalCompanies > 0 && (
+        {totalDAOs > 0 && (
           <div className={classes.drawerWrapper}>
             <Drawer
-              companies={get(companies, 'data', []).filter(
+              companies={get(DAOs, 'data', []).filter(
                 (company) => !company.isArchived,
               )}
               selectedCompany={
                 !isEmpty(selectedCompany)
                   ? selectedCompany || { name: '' }
-                  : companies?.data?.[0] || { name: '' }
+                  : DAOs?.data?.[0] || { name: '' }
               }
               onClose={() => {
                 this.setState({ isDrawerClosed: true });
@@ -157,7 +157,7 @@ class App extends React.Component<IProps, IState> {
         <div
           className={cx(classes.loggedInRightContent, {
             'is-drawer-closed': this.state.isDrawerClosed,
-            'is-drawer-hidden': totalCompanies === 0,
+            'is-drawer-hidden': totalDAOs === 0,
           })}
         >
           <div className={classes.noInternet}>
@@ -168,7 +168,7 @@ class App extends React.Component<IProps, IState> {
             actions={actions}
             logout={() => {}}
             profile={profile}
-            noOfCompanies={totalCompanies}
+            noOfCompanies={totalDAOs}
             onSelectProduct={(_, data: ProductType) => {
               this.props.history.push(URL.DASHBOARD());
               this.props.actions.setKudooProduct(data.value || '');
@@ -195,7 +195,7 @@ class App extends React.Component<IProps, IState> {
       // if (this.props.shouldRedirectToManageCompany()) {
       //   return (
       //     <Switch>
-      //       <Redirect to={URL.MANAGE_COMPANIES({ path: true })} />
+      //       <Redirect to={URL.MANAGE_DAOS({ path: true })} />
       //     </Switch>
       //   );
       // }

@@ -19,7 +19,7 @@ import styles from './styles';
 
 type Props = {
   actions: any;
-  companies: Array<any>;
+  DAOs: Array<any>;
   profile: any;
   integrations: any;
   classes: any;
@@ -28,14 +28,14 @@ type Props = {
 
 type State = {
   isFormSubmitting: boolean;
-  filteredCompanies: Array<any>;
+  filteredDAOs: Array<any>;
   loading: boolean;
   selectedCompanyId: string | null;
 };
 
 class ChooseCompany extends Component<Props, State> {
   public static defaultProps = {
-    companies: {
+    DAOs: {
       refetch: () => {},
       loadNextPage: () => {},
       data: [],
@@ -51,15 +51,15 @@ class ChooseCompany extends Component<Props, State> {
 
   state = {
     isFormSubmitting: false,
-    filteredCompanies: [],
+    filteredDAOs: [],
     loading: false,
     selectedCompanyId: null,
   };
 
   componentDidCatch(prevProps) {
-    if (!isEqual(get(this.props, 'companies'), get(prevProps, 'companies'))) {
+    if (!isEqual(get(this.props, 'DAOs'), get(prevProps, 'DAOs'))) {
       this.props.actions.setUserData({
-        companies: get(this.props, 'companies', []),
+        DAOs: get(this.props, 'DAOs', []),
       });
     }
   }
@@ -116,10 +116,10 @@ class ChooseCompany extends Component<Props, State> {
     // const query = queryString.parse(get(this.props, 'location.search', ''));
     // const type = query.type;
     const type = 'SLACK';
-    const items = this.props.companies.filter((company) =>
+    const items = this.props.DAOs.filter((company) =>
       this.filterCompany(company, type, value),
     );
-    this.setState({ filteredCompanies: items });
+    this.setState({ filteredDAOs: items });
     this.setState({ loading: false });
   }, 300);
 
@@ -129,7 +129,7 @@ class ChooseCompany extends Component<Props, State> {
       <div className={classes.form}>
         <SearchInput
           labelKey='legalName'
-          items={this.state.filteredCompanies}
+          items={this.state.filteredDAOs}
           placeholder={'Choose company …'}
           renderItem={(item) => (
             <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -209,7 +209,7 @@ export default compose(
   //   props: ({ data }) => {
   //     const userMembers = get(data, 'me.userMembers', []);
   //     return {
-  //       companies: userMembers
+  //       DAOs: userMembers
   //         .filter(({ role }) => role === 'OWNER' || role === 'ADMIN')
   //         .map(({ company }) => company),
   //     };
@@ -220,7 +220,7 @@ export default compose(
   //     name: 'integrations',
   //     variables: {
   //       filters: {
-  //         companyId: { anyOf: props.companies.map((company) => company.id) },
+  //         companyId: { anyOf: props.DAOs.map((company) => company.id) },
   //       },
   //     },
   //   };

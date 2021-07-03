@@ -23,11 +23,11 @@ import styles from './styles';
 
 type Props = {
   actions: any;
-  companies: {
-    createdCompanies: Array<any>;
-    joinedCompanies: Array<any>;
+  DAOs: {
+    createdDAOs: Array<any>;
+    joinedDAOs: Array<any>;
   };
-  allCompanies: Record<string, any>;
+  allDAOs: Record<string, any>;
   updateCompany: Function;
   profile: Record<string, any>;
   theme: any;
@@ -39,10 +39,10 @@ type State = {
   joinCompanyModalVisible: boolean;
 };
 
-class ManageCompanies extends Component<Props, State> {
+class ManageDAOs extends Component<Props, State> {
   static defaultProps = {
-    companies: { createdCompanies: [], joinedCompanies: [] },
-    allCompanies: {},
+    DAOs: { createdDAOs: [], joinedDAOs: [] },
+    allDAOs: {},
     updateCompany: () => ({}),
   };
 
@@ -56,7 +56,7 @@ class ManageCompanies extends Component<Props, State> {
   }
 
   componentDidMount() {
-    this.props.actions.updateHeaderTitle('Manage Companies');
+    this.props.actions.updateHeaderTitle('Manage DAOs');
     this.props.actions.setTemporaryActiveLanguage(undefined);
   }
 
@@ -64,22 +64,16 @@ class ManageCompanies extends Component<Props, State> {
     const profile = this.props.profile;
     if (
       !isEqual(
-        get(this.props, 'companies.createdCompanies', []).map(
-          (company) => company.id,
-        ),
-        get(prevProps, 'companies.createdCompanies', []).map(
-          (company) => company.id,
-        ),
+        get(this.props, 'DAOs.createdDAOs', []).map((company) => company.id),
+        get(prevProps, 'DAOs.createdDAOs', []).map((company) => company.id),
       ) ||
       !isEqual(
-        get(profile, 'createdCompanies', []).map((company) => company.id),
-        get(prevProps, 'companies.createdCompanies', []).map(
-          (company) => company.id,
-        ),
+        get(profile, 'createdDAOs', []).map((company) => company.id),
+        get(prevProps, 'DAOs.createdDAOs', []).map((company) => company.id),
       )
     ) {
       this.props.actions.setUserData({
-        createdCompanies: get(this.props, 'companies.createdCompanies', []),
+        createdDAOs: get(this.props, 'DAOs.createdDAOs', []),
       });
     }
   }
@@ -115,8 +109,8 @@ class ManageCompanies extends Component<Props, State> {
     this.setState({ joinCompanyModalVisible: false });
   };
 
-  _renderCreatedCompanies() {
-    const { classes, companies, theme } = this.props;
+  _renderCreatedDAOs() {
+    const { classes, DAOs, theme } = this.props;
     const { isCreatedCompanyOpen } = this.state;
     return (
       <div className={classes.collapseRoot}>
@@ -126,7 +120,7 @@ class ManageCompanies extends Component<Props, State> {
             this.setState({ isCreatedCompanyOpen: !isCreatedCompanyOpen });
           }}
         >
-          <div>Created Companies</div>
+          <div>Created DAOs</div>
           <i
             className={cx('icon icon-chevron-right', classes.collapseIcon, {
               down: isCreatedCompanyOpen,
@@ -145,7 +139,7 @@ class ManageCompanies extends Component<Props, State> {
           <Link className={classes.cardComponent} to={URL.CREATE_COMPANY()}>
             <DottedCreateButton id='create-company' text='Create new company' />
           </Link>
-          {(idx(companies, (x) => x.createdCompanies) || []).map((company) => (
+          {(idx(DAOs, (x) => x.createdDAOs) || []).map((company) => (
             <div
               className={classes.companyCardWrapper}
               key={company.id}
@@ -196,8 +190,8 @@ class ManageCompanies extends Component<Props, State> {
     );
   }
 
-  _renderJoinedCompanies() {
-    const { classes, companies, theme } = this.props;
+  _renderJoinedDAOs() {
+    const { classes, DAOs, theme } = this.props;
     const { isJoinedCompanyOpen } = this.state;
     return (
       <div className={classes.collapseRoot}>
@@ -207,7 +201,7 @@ class ManageCompanies extends Component<Props, State> {
             this.setState({ isJoinedCompanyOpen: !isJoinedCompanyOpen });
           }}
         >
-          <div>Joined Companies</div>
+          <div>Joined DAOs</div>
           <i
             className={cx('icon icon-chevron-right', classes.collapseIcon, {
               down: isJoinedCompanyOpen,
@@ -222,7 +216,7 @@ class ManageCompanies extends Component<Props, State> {
             wrapperInner: classes.collapseContent,
           }}
         >
-          {(idx(companies, (x) => x.joinedCompanies) || []).map((company) => (
+          {(idx(DAOs, (x) => x.joinedDAOs) || []).map((company) => (
             <div
               className={classes.companyCardWrapper}
               key={company.id}
@@ -264,17 +258,17 @@ class ManageCompanies extends Component<Props, State> {
   }
 
   render() {
-    const { classes, companies, allCompanies } = this.props;
+    const { classes, DAOs, allDAOs } = this.props;
     const { joinCompanyModalVisible } = this.state;
     return (
       <div className={classes.page}>
-        {this._renderCreatedCompanies()}
-        {this._renderJoinedCompanies()}
+        {this._renderCreatedDAOs()}
+        {this._renderJoinedDAOs()}
         <JoinModal
           visible={joinCompanyModalVisible}
-          createdCompanies={get(companies, 'createdCompanies', [])}
-          joinedCompanies={get(companies, 'joinedCompanies', [])}
-          allCompanies={allCompanies}
+          createdDAOs={get(DAOs, 'createdDAOs', [])}
+          joinedDAOs={get(DAOs, 'joinedDAOs', [])}
+          allDAOs={allDAOs}
           onClose={this._closeJoinCompanyModal}
         />
       </div>
@@ -288,7 +282,7 @@ export default compose(
     profile: state.profile,
   })),
   // withUpdateCompany(),
-  // withCompanies(
+  // withDAOs(
   //   () => ({
   //     variables: {
   //       joined: true,
@@ -296,11 +290,11 @@ export default compose(
   //     },
   //   }),
   //   ({ data, ownProps }) => {
-  //     const companies = get(data, 'companies') || [];
-  //     const createdCompanies: any = [];
-  //     const joinedCompanies: any = [];
-  //     for (let index = 0; index < companies.length; index++) {
-  //       const company = companies[index] || {};
+  //     const daos = get(data, 'daos') || [];
+  //     const createdDAOs: any = [];
+  //     const joinedDAOs: any = [];
+  //     for (let index = 0; index < daos.length; index++) {
+  //       const company = daos[index] || {};
   //       const companyMember = find(company.companyMembers, {
   //         user: { id: get(ownProps, 'profile.id') },
   //       });
@@ -313,22 +307,22 @@ export default compose(
   //         role = SecurityRole.admin;
   //       }
   //       if (companyMember.role === 'OWNER' || companyMember.role === 'ADMIN') {
-  //         createdCompanies.push({ ...company, role });
+  //         createdDAOs.push({ ...company, role });
   //       } else {
-  //         joinedCompanies.push({ ...company, role });
+  //         joinedDAOs.push({ ...company, role });
   //       }
   //     }
   //     return {
-  //       createdCompanies,
-  //       joinedCompanies,
+  //       createdDAOs,
+  //       joinedDAOs,
   //     };
   //   },
   // ),
-  // withCompanies(() => ({
-  //   name: 'allCompanies',
+  // withDAOs(() => ({
+  //   name: 'allDAOs',
   //   variables: {
   //     joined: true,
   //     created: true,
   //   },
   // })),
-)(ManageCompanies);
+)(ManageDAOs);

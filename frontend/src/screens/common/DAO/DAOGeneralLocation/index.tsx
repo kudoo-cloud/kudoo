@@ -30,7 +30,7 @@ type Props = {
 };
 type State = {};
 
-class CompaniesGeneralLocation extends Component<Props, State> {
+class DAOGeneralLocation extends Component<Props, State> {
   static defaultProps = {
     company: {},
     updateCompany: () => ({}),
@@ -310,4 +310,4 @@ export default compose<any, any>(
   connect((state: IReduxState) => ({
     profile: state.profile,
   })),
-)(CompaniesGeneralLocation);
+)(DAOGeneralLocation);

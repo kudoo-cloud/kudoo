@@ -22,9 +22,9 @@ export default [
     ],
   },
   {
-    name: 'Manage Companies',
-    path: URL.MANAGE_COMPANIES(paramsOptions),
-    component: Components.ManageCompanies,
+    name: 'Manage DAOs',
+    path: URL.MANAGE_DAOS(paramsOptions),
+    component: Components.ManageDAOs,
   },
   {
     name: 'Company Settings',

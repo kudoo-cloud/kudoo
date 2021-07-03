@@ -25,7 +25,7 @@ export default withRouter(
       (state: any) => ({
         profile: state.profile,
         app: state.app,
-        companies: {
+        DAOs: {
           data: [{ id: 1, name: 'Kudoo', owner: true }],
           refetch: () => {},
           loading: false,
@@ -41,7 +41,7 @@ export default withRouter(
         ),
       }),
     ),
-    // withCompanies(
+    // withDAOs(
     //   ({ profile }) => ({
     //     skip: !profile.isLoggedIn,
     //     variables: {
@@ -50,9 +50,9 @@ export default withRouter(
     //     },
     //   }),
     //   ({ data, ownProps }) => {
-    //     const companies = get(data, 'companies') || [];
-    //     const newCompanies: any = [];
-    //     for (const company of companies) {
+    //     const DAOs = get(data, 'DAOs') || [];
+    //     const newDAOs: any = [];
+    //     for (const company of DAOs) {
     //       const companyMember: any =
     //         find(company.companyMembers, {
     //           user: { id: get(ownProps, 'profile.id') },
@@ -69,13 +69,13 @@ export default withRouter(
     //         companyMember.role === 'OWNER' ||
     //         companyMember.role === 'ADMIN'
     //       ) {
-    //         newCompanies.push({ ...company, owner: true, role });
+    //         newDAOs.push({ ...company, owner: true, role });
     //       } else {
-    //         newCompanies.push({ ...company, role });
+    //         newDAOs.push({ ...company, role });
     //       }
     //     }
     //     return {
-    //       data: newCompanies,
+    //       data: newDAOs,
     //     };
     //   },
     // ),
@@ -117,16 +117,16 @@ export default withRouter(
           );
         },
       shouldRedirectToManageCompany:
-        ({ companies, history }) =>
+        ({ DAOs, history }) =>
         () => {
           return (
-            !get(companies, 'loading') &&
-            get(companies, 'data.length') === 0 &&
+            !get(DAOs, 'loading') &&
+            get(DAOs, 'data.length') === 0 &&
             !matchPath(get(history, 'location.pathname'), {
               path: URL.ACCOUNT_SETTINGS({ path: true }),
             }) &&
             !matchPath(get(history, 'location.pathname'), {
-              path: URL.MANAGE_COMPANIES({ path: true }),
+              path: URL.MANAGE_DAOS({ path: true }),
             }) &&
             !matchPath(get(history, 'location.pathname'), {
               path: URL.CREATE_COMPANY({ path: true }),
@@ -139,7 +139,7 @@ export default withRouter(
         this.props.checkActiveLanguage(this.props);
       },
       componentDidUpdate(prevProps: IProps) {
-        let { profile, companies } = this.props;
+        let { profile, DAOs } = this.props;
         const prevPropsLoggedIn = get(prevProps, 'profile.isLoggedIn');
         const prevPropsProfile = prevProps.profile || {};
         if (prevPropsLoggedIn && profile.isLoggedIn !== prevPropsLoggedIn) {
@@ -147,28 +147,28 @@ export default withRouter(
         }
         this.props.checkActiveLanguage(this.props);
 
-        companies = get(companies, 'data', []);
-        // companies data changes
-        if (isEmpty(profile.selectedCompany) && companies.length > 0) {
+        DAOs = get(DAOs, 'data', []);
+        // DAOs data changes
+        if (isEmpty(profile.selectedCompany) && DAOs.length > 0) {
           // if there is no company selected then select first company by default
-          if (companies[0]) {
-            this.props.actions.selectCompany(companies[0]);
+          if (DAOs[0]) {
+            this.props.actions.selectCompany(DAOs[0]);
           }
         } else if (
           !isEmpty(profile.selectedCompany) &&
-          !find(companies, { id: get(profile, 'selectedCompany.id', '') })
+          !find(DAOs, { id: get(profile, 'selectedCompany.id', '') })
         ) {
-          // if company is selected , but not able to find that company in companies array
+          // if company is selected , but not able to find that company in DAOs array
           // then select first company by default
-          if (companies[0]) {
-            this.props.actions.selectCompany(companies[0]);
+          if (DAOs[0]) {
+            this.props.actions.selectCompany(DAOs[0]);
           }
         } else if (
           !isEmpty(profile.selectedCompany) &&
-          find(companies, { id: get(profile, 'selectedCompany.id', '') })
+          find(DAOs, { id: get(profile, 'selectedCompany.id', '') })
         ) {
-          // if company is selected , and also find that company in companies array
-          const company = find(companies, {
+          // if company is selected , and also find that company in DAOs array
+          const company = find(DAOs, {
             id: get(profile, 'selectedCompany.id', ''),
           });
           // clone company object
@@ -182,24 +182,20 @@ export default withRouter(
             this.props.actions.selectCompany(company);
           }
           if (profile.isLoggedIn !== prevPropsLoggedIn && profile.isLoggedIn) {
-            this.props.companies && this.props.companies.refetch();
+            this.props.DAOs && this.props.DAOs.refetch();
           }
         }
 
-        // update created companies
-        const oldCompaniesId = get(
-          prevProps,
-          'profile.createdCompanies',
-          [],
-        ).map((company) => company.id);
-        const newCompaniesId = get(
-          this.props,
-          'profile.createdCompanies',
-          [],
-        ).map((company) => company.id);
-        if (!isEqual(oldCompaniesId, newCompaniesId)) {
-          if (get(this.props, 'companies.refetch')) {
-            this.props.companies.refetch();
+        // update created DAOs
+        const oldDAOsId = get(prevProps, 'profile.createdDAOs', []).map(
+          (company) => company.id,
+        );
+        const newDAOsId = get(this.props, 'profile.createdDAOs', []).map(
+          (company) => company.id,
+        );
+        if (!isEqual(oldDAOsId, newDAOsId)) {
+          if (get(this.props, 'DAOs.refetch')) {
+            this.props.DAOs.refetch();
           }
         }
       },

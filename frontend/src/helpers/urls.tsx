@@ -45,8 +45,8 @@ export default {
   ACCOUNT_USER_HISTORY: abstractURL('/account-settings/user-history'),
 
   // Company
-  MANAGE_COMPANIES: abstractURL('/companies/manage'),
-  CREATE_COMPANY: abstractURL('/companies/create'),
+  MANAGE_DAOS: abstractURL('/daos/manage'),
+  CREATE_COMPANY: abstractURL('/daos/create'),
   COMPANY_SETTINGS: abstractURL('/company/settings/:companyId'),
   COMPANY_GENERAL: abstractURL('/company/settings/:companyId/general'),
   COMPANY_GENERAL_BASICS: abstractURL(

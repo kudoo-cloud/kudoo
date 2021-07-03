@@ -31,7 +31,7 @@ type Props = IRouteProps<StyleKeys> & {
   resendInvite?: Function;
 };
 
-const CompaniesUsers: React.FC<Props> = (props) => {
+const DAOUsers: React.FC<Props> = (props) => {
   const {
     classes,
     theme,
@@ -234,7 +234,7 @@ const CompaniesUsers: React.FC<Props> = (props) => {
   );
 };
 
-CompaniesUsers.defaultProps = {
+DAOUsers.defaultProps = {
   company: { data: {} as ICompanyEntity, refetch: () => {} },
   deleteCompanyMember: () => ({}),
   resendInvite: () => ({}),
@@ -250,4 +250,4 @@ export default compose<Props, Props>(
   // })),
   // withDeleteCompanyMember(),
   // withResendInvite(),
-)(CompaniesUsers);
+)(DAOUsers);

@@ -14,8 +14,8 @@ export interface IProfileState {
   signedAt: string;
   userId: string;
   selectedCompany: ICompanyEntity;
-  joinedCompanies: ICompanyEntity[];
-  createdCompanies: ICompanyEntity[];
+  joinedDAOs: ICompanyEntity[];
+  createdDAOs: ICompanyEntity[];
 }
 
 interface IAction {
@@ -34,8 +34,8 @@ const initialState = {
   signedAt: '',
   userId: '',
   selectedCompany: {},
-  joinedCompanies: [],
-  createdCompanies: [],
+  joinedDAOs: [],
+  createdDAOs: [],
 };
 
 export default handleActions(
