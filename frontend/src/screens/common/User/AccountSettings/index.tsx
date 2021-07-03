@@ -2,9 +2,9 @@ import { Tabs, helpers as utils, withStyles } from '@kudoo/components';
 import React, { Component } from 'react';
 import { Redirect, Route, Switch } from 'react-router';
 import URL from 'src/helpers/urls';
-import UserAccountHistory from '../UserAccountHistory/index';
-import UserDetails from '../UserDetails/index';
-import UserSecurity from '../UserSecurity/index';
+import UserAccountHistory from '../UserAccountHistory';
+import UserDetails from '../UserDetails';
+import UserSecurity from '../UserSecurity';
 import styles from './styles';
 
 interface IProps {
@@ -40,12 +40,12 @@ class AccountSettings extends Component<IProps, {}> {
               this.props.history.push(URL.ACCOUNT_BASIC_DETAILS());
             },
           },
-          {
-            label: 'Security',
-            onClick: () => {
-              this.props.history.push(URL.ACCOUNT_USER_SECURITY());
-            },
-          },
+          // {
+          //   label: 'Security',
+          //   onClick: () => {
+          //     this.props.history.push(URL.ACCOUNT_USER_SECURITY());
+          //   },
+          // },
         ]}
         tabTheme='secondary'
         activeIndex={this._findActiveSecondaryTab()}
