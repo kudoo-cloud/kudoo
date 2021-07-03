@@ -105,6 +105,24 @@ class UserDetails extends React.Component<IProps, {}> {
                   showClearIcon={false}
                 />
               </div>
+              <div className={classes.fieldRow}>
+                <TextField
+                  label='Telegram ID'
+                  placeholder={'@telegram'}
+                  value={values.email || ''}
+                  isReadOnly
+                  showClearIcon={false}
+                />
+              </div>
+              <div className={classes.fieldRow}>
+                <TextField
+                  label='Discord Username'
+                  placeholder={'discord#1234'}
+                  value={values.email || ''}
+                  isReadOnly
+                  showClearIcon={false}
+                />
+              </div>
             </Grid>
           </Grid>
         </div>
