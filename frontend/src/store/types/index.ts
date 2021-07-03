@@ -1,4 +1,4 @@
-export interface ICompanyEntity {
+export interface IDAOEntity {
   id: string;
   bankAccount: IBankAccount;
   businessType: string;
@@ -17,7 +17,7 @@ export interface ICompanyEntity {
   websiteURL: string;
   addresses?: IAddressesEntity[] | null;
   contacts?: IContactsEntity[] | null;
-  companyMembers?: ICompanyMembersEntity[] | null;
+  daoMembers?: IDAOMembersEntity[] | null;
   role: string;
   owner: string;
   __typename: string;
@@ -36,7 +36,7 @@ export interface ITimeSheetSettings {
 }
 export interface IActivePlan {
   id: string;
-  company: IShortCompany;
+  dao: IShortDAO;
   isActive: boolean;
   isArchived: boolean;
   isDeleted: boolean;
@@ -44,7 +44,7 @@ export interface IActivePlan {
   type: string;
   __typename: string;
 }
-export interface IShortCompany {
+export interface IShortDAO {
   id: string;
   name: string;
   __typename: string;
@@ -71,9 +71,9 @@ export interface IContactsEntity {
   landlineNumber: string;
   __typename: string;
 }
-export interface ICompanyMembersEntity {
+export interface IDAOMembersEntity {
   id: string;
-  company: IShortCompany;
+  dao: IShortDAO;
   isArchived: boolean;
   isDeleted: boolean;
   role: string;
@@ -138,7 +138,7 @@ export interface ISupplierEntity {
   termsOfPayment: SupplierTermsOfPayment;
   bankAccount: Record<string, unknown>;
   emailAddressForRemittance: string;
-  company: ICompanyEntity;
+  dao: IDAOEntity;
   isArchived: boolean;
   isDeleted: boolean;
   createdAt: Date;
@@ -155,7 +155,7 @@ export interface IPurchaseOrderEntity {
   isPbsPO: boolean;
   poNumber: number;
   preview: IAttachmentEntity;
-  company: ICompanyEntity;
+  dao: IDAOEntity;
   isArchived: boolean;
   isDeleted: boolean;
   createdAt: Date;

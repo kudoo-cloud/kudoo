@@ -10,7 +10,7 @@ import queryString from 'query-string';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import { resetInvoiceData } from 'src/store/actions/createNewInvoice';
 import DetailStep from '../CreateInvoice/DetailStep';
@@ -197,7 +197,7 @@ class CreateFreeTextInvoice extends Component<Props, State> {
     const { classes } = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.props.resetInvoiceData('text');
             this.props.history.push(URL.CREATE_INVOICES());
@@ -219,7 +219,7 @@ class CreateFreeTextInvoice extends Component<Props, State> {
               />
             </div>
           </div>
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

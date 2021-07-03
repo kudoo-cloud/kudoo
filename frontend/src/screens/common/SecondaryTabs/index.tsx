@@ -29,7 +29,7 @@ class SecondaryTabs extends Component<IProps> {
     // TODO: For now we will hsow all tabs
     const filteredAvailableTabs = tabs.filter(
       (tab) =>
-        true || isFeatureAvailable(profile.selectedCompany, tab.availability!),
+        true || isFeatureAvailable(profile.selectedDAO, tab.availability!),
     );
     let activeTab = 0;
     filteredAvailableTabs.forEach((tab, index) => {
@@ -45,7 +45,7 @@ class SecondaryTabs extends Component<IProps> {
     // TODO: For now we will hsow all tabs
     const filteredAvailableTabs = tabs.filter(
       (tab) =>
-        true || isFeatureAvailable(profile.selectedCompany, tab.availability!),
+        true || isFeatureAvailable(profile.selectedDAO, tab.availability!),
     );
     return (
       <Tabs
@@ -67,7 +67,7 @@ class SecondaryTabs extends Component<IProps> {
     // TODO: For now we will hsow all tabs
     const filteredAvailableTabs = tabs.filter(
       (tab) =>
-        true || isFeatureAvailable(profile.selectedCompany, tab.availability!),
+        true || isFeatureAvailable(profile.selectedDAO, tab.availability!),
     );
 
     if (filteredAvailableTabs.length <= 0) {
@@ -98,7 +98,7 @@ class SecondaryTabs extends Component<IProps> {
                 path={url!({ path: true })}
                 render={(routeParams) => {
                   let requireLicenseUpgrade = needsLicenseUpgrade(
-                    profile.selectedCompany,
+                    profile.selectedDAO,
                     licenseRequired!,
                   );
                   // TODO: for now we will show content to user

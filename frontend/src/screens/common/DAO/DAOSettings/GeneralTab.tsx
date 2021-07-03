@@ -3,9 +3,9 @@ import idx from 'idx';
 import React, { Component } from 'react';
 import { Redirect, Route, Switch } from 'react-router';
 import URL from 'src/helpers/urls';
-import CompaniesGeneralBasics from '../CompaniesGeneralBasics';
-import CompaniesGeneralContact from '../CompaniesGeneralContact';
-import CompaniesGeneralLocation from '../CompaniesGeneralLocation';
+import DAOGeneralBasics from '../DAOGeneralBasics';
+import DAOGeneralContact from '../DAOGeneralContact';
+import DAOGeneralLocation from '../DAOGeneralLocation';
 import styles from './styles';
 
 type Props = {
@@ -21,15 +21,13 @@ class GeneralTab extends Component<Props, State> {
 
   _findActiveTertiaryTab = () => {
     let activeTab = 0;
-    if (utils.isURLMatching(URL.COMPANY_GENERAL_BASICS({ path: true }))) {
+    if (utils.isURLMatching(URL.DAO_GENERAL_BASICS({ path: true }))) {
       activeTab = 0;
     } else if (
-      utils.isURLMatching(URL.COMPANY_GENERAL_CONTACT_DETAILS({ path: true }))
+      utils.isURLMatching(URL.DAO_GENERAL_CONTACT_DETAILS({ path: true }))
     ) {
       activeTab = 1;
-    } else if (
-      utils.isURLMatching(URL.COMPANY_GENERAL_LOCATION({ path: true }))
-    ) {
+    } else if (utils.isURLMatching(URL.DAO_GENERAL_LOCATION({ path: true }))) {
       activeTab = 2;
     }
     return activeTab;
@@ -37,32 +35,28 @@ class GeneralTab extends Component<Props, State> {
 
   _renderTertiaryTabs() {
     const { match } = this.props;
-    const companyId = idx(match, (_) => _.params.companyId);
+    const daoId = idx(match, (_) => _.params.daoId);
     return (
       <Tabs
         tabs={[
           {
             label: 'Basic Details',
             onClick: () => {
-              this.props.history.push(
-                URL.COMPANY_GENERAL_BASICS({ companyId }),
-              );
+              this.props.history.push(URL.DAO_GENERAL_BASICS({ daoId }));
             },
           },
           {
             label: 'Contact Details',
             onClick: () => {
               this.props.history.push(
-                URL.COMPANY_GENERAL_CONTACT_DETAILS({ companyId }),
+                URL.DAO_GENERAL_CONTACT_DETAILS({ daoId }),
               );
             },
           },
           {
             label: 'Location Details',
             onClick: () => {
-              this.props.history.push(
-                URL.COMPANY_GENERAL_LOCATION({ companyId }),
-              );
+              this.props.history.push(URL.DAO_GENERAL_LOCATION({ daoId }));
             },
           },
         ]}
@@ -74,33 +68,33 @@ class GeneralTab extends Component<Props, State> {
 
   render() {
     const { classes, actions, match } = this.props;
-    const companyId = idx(match, (_) => _.params.companyId);
+    const daoId = idx(match, (_) => _.params.daoId);
     return (
       <div className={classes.page}>
         {this._renderTertiaryTabs()}
 
         <Switch>
           <Route
-            path={URL.COMPANY_GENERAL_BASICS({ path: true })}
+            path={URL.DAO_GENERAL_BASICS({ path: true })}
             render={(props) => (
-              <CompaniesGeneralBasics actions={actions} {...props} />
+              <DAOGeneralBasics actions={actions} {...props} />
             )}
           />
           <Route
-            path={URL.COMPANY_GENERAL_CONTACT_DETAILS({ path: true })}
+            path={URL.DAO_GENERAL_CONTACT_DETAILS({ path: true })}
             render={(props) => (
-              <CompaniesGeneralContact actions={actions} {...props} />
+              <DAOGeneralContact actions={actions} {...props} />
             )}
           />
           <Route
-            path={URL.COMPANY_GENERAL_LOCATION({ path: true })}
+            path={URL.DAO_GENERAL_LOCATION({ path: true })}
             render={(props) => (
-              <CompaniesGeneralLocation actions={actions} {...props} />
+              <DAOGeneralLocation actions={actions} {...props} />
             )}
           />
           <Redirect
-            from={URL.COMPANY_GENERAL({ companyId })}
-            to={URL.COMPANY_GENERAL_BASICS({ companyId })}
+            from={URL.DAO_GENERAL({ daoId })}
+            to={URL.DAO_GENERAL_BASICS({ daoId })}
             exact
           />
         </Switch>

@@ -11,7 +11,7 @@ import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { Route, Switch } from 'react-router';
 import { PROJECT_STATUS } from 'src/helpers/constants';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import ProjectDetailsTab from './ProjectDetailsTab';
@@ -192,7 +192,7 @@ class ProjectDetails extends Component<Props, State> {
 
     return (
       <ErrorBoundary>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.props.history.push(URL.PROJECTS());
           }}
@@ -233,7 +233,7 @@ class ProjectDetails extends Component<Props, State> {
               href={URL.PROJECTS()}
             />
           </div>
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

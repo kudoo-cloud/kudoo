@@ -20,13 +20,13 @@ const httpLink = createUploadLink({ uri });
 const middlewareLink = new ApolloLink((operation, forward) => {
   const state = store.getState() as IReduxState;
   const token = state.profile.token;
-  const companyId = idx(state, (_) => _.profile.selectedCompany.id);
+  const daoId = idx(state, (_) => _.profile.selectedDAO.id);
   const headers = {};
   if (token) {
     headers['x-user-auth'] = `${token}`;
   }
-  if (companyId) {
-    headers['x-company-auth'] = `${companyId}`;
+  if (daoId) {
+    headers['x-dao-auth'] = `${daoId}`;
   }
   const opName = operation.operationName;
   operation.setContext({

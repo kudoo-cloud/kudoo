@@ -9,7 +9,7 @@ import queryString from 'query-string';
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import { resetInvoiceData } from 'src/store/actions/createNewInvoice';
 import DetailStep from '../CreateInvoice/DetailStep';
@@ -198,7 +198,7 @@ class CreateProjectToInvoice extends Component<Props, State> {
     const { classes } = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.props.resetInvoiceData('project');
             this.props.history.push(URL.CREATE_INVOICES());
@@ -221,7 +221,7 @@ class CreateProjectToInvoice extends Component<Props, State> {
               <Button title='Save as draft' buttonColor='#29A9DB' />
             </div>
           </div>
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

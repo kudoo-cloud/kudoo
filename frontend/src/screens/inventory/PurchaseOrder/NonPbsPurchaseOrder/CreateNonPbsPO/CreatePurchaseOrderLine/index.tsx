@@ -16,7 +16,7 @@ import * as React from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import uuid from 'uuid/v4';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import styles, {
   createPurchaseOrderStyles,
@@ -502,7 +502,7 @@ class CreateNonPbsPO extends React.Component<
     const { classes } = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.props.history.push(URL.PURCHASE_ORDER());
           }}
@@ -511,7 +511,7 @@ class CreateNonPbsPO extends React.Component<
             {this._renderSectionHeading()}
             {this._renderForm()}
           </div>
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

@@ -13,7 +13,7 @@ export type StyleKeys =
   | 'formHeading'
   | 'invoiceTable'
   | 'detailsModal'
-  | 'editCompanyModalDescription'
+  | 'editDAOModalDescription'
   | 'modalForm'
   | 'formFields'
   | 'detailsModalContent'
@@ -125,7 +125,7 @@ export default (theme: Theme): StyleFnReturnType<StyleKeys> => ({
     justifyContent: 'center',
     zIndex: 10000,
   },
-  editCompanyModalDescription: {
+  editDAOModalDescription: {
     padding: 0,
   },
   modalForm: {

@@ -7,7 +7,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose } from 'recompose';
 import uuid from 'uuid/v4';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { IReduxState } from 'src/store/reducers';
 import Widget from 'src/widgets/Widget';
 import styles from './styles';
@@ -23,7 +23,7 @@ type State = {
 
 class Dashboard extends Component<Props, State> {
   state = {
-    contentHash: uuid(), // this is used to refresh all widget when company change from sidebar
+    contentHash: uuid(), // this is used to refresh all widget when dao change from sidebar
   };
 
   componentDidMount() {
@@ -68,11 +68,11 @@ class Dashboard extends Component<Props, State> {
   render() {
     const { classes, profile } = this.props;
     const { contentHash } = this.state;
-    const isCompanyOwner = get(profile, 'selectedCompany.owner');
+    const isDaoOwner = get(profile, 'selectedDAO.owner');
 
     return (
       <div className={classes.page}>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.setState({
               contentHash: uuid(),
@@ -84,7 +84,7 @@ class Dashboard extends Component<Props, State> {
               {/* {this._renderHeaderBar()} */}
               <div className={classes.widgets}>
                 {/* <Widget type="profile-stats" contentHash={contentHash} /> */}
-                {isCompanyOwner && (
+                {isDaoOwner && (
                   <Widget
                     type='revenue'
                     xs={12}
@@ -92,7 +92,7 @@ class Dashboard extends Component<Props, State> {
                     contentHash={contentHash}
                   />
                 )}
-                {isCompanyOwner && (
+                {isDaoOwner && (
                   <Widget
                     type='average-stats'
                     xs={12}
@@ -100,10 +100,10 @@ class Dashboard extends Component<Props, State> {
                     contentHash={contentHash}
                   />
                 )}
-                {isCompanyOwner && (
+                {isDaoOwner && (
                   <Widget type='invoices' contentHash={contentHash} />
                 )}
-                {!isCompanyOwner && (
+                {!isDaoOwner && (
                   <Widget type='timesheets' contentHash={contentHash} />
                 )}
                 <Widget
@@ -124,7 +124,7 @@ class Dashboard extends Component<Props, State> {
             <LatestActivity />
           </Grid> */}
           </Grid>
-        </SelectedCompany>
+        </SelectedDAO>
       </div>
     );
   }

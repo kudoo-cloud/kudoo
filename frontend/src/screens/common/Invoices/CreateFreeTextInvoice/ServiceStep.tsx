@@ -86,7 +86,7 @@ class ServiceStep extends Component<Props, State> {
 
   _onItemClick = async (item) => {
     const { profile } = this.props;
-    const country = get(profile, 'selectedCompany.country');
+    const country = get(profile, 'selectedDAO.country');
     const rate = Number(get(item, 'totalAmount', 0));
     const quantity = 0;
     const amount = rate * quantity;
@@ -138,7 +138,7 @@ class ServiceStep extends Component<Props, State> {
 
   _updateServiceInTable = (id, key) => (value) => {
     const { newInvoice, profile } = this.props;
-    const country = get(profile, 'selectedCompany.country');
+    const country = get(profile, 'selectedDAO.country');
     const tableData = get(newInvoice, 'text.tableData', []);
     const pos = findIndex(tableData, { id });
     if (tableData[pos]) {
@@ -223,7 +223,7 @@ class ServiceStep extends Component<Props, State> {
 
   _renderCell = (row, cell, ele) => {
     const { classes, theme, profile } = this.props;
-    const country = get(profile, 'selectedCompany.country');
+    const country = get(profile, 'selectedDAO.country');
 
     if (cell.id === 'service') {
       return (

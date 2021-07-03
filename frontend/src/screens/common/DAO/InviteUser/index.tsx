@@ -47,7 +47,7 @@ class InviteUser extends Component<IProps> {
             <div>Enter the new user&rsquo;s details below.</div>
             <div>
               This user will receive an email with your request to add them to
-              your company account.
+              your DAO account.
             </div>
           </div>
         }
@@ -69,7 +69,7 @@ class InviteUser extends Component<IProps> {
       isSubmitting,
     } = formProps;
     const { classes, theme, match } = this.props;
-    const companyId = idx(match, (_) => _.params.companyId);
+    const daoId = idx(match, (_) => _.params.daoId);
     const isFormDirty = !isEqual(initialValues, values);
     return (
       <form
@@ -194,7 +194,7 @@ class InviteUser extends Component<IProps> {
           <Grid item xs={12} sm={isFormDirty ? 6 : 12}>
             <Button
               title='Back to user list'
-              href={URL.COMPANY_USERS({ companyId })}
+              href={URL.DAO_USERS({ daoId })}
               buttonColor={theme.palette.grey['200']}
               classes={{ text: classes.cancelButtonText }}
             />
@@ -217,7 +217,7 @@ class InviteUser extends Component<IProps> {
 
   _renderFormik() {
     const { history, match } = this.props;
-    const companyId = idx(match, (_) => _.params.companyId);
+    const daoId = idx(match, (_) => _.params.daoId);
     return (
       <Formik
         initialValues={{
@@ -246,9 +246,9 @@ class InviteUser extends Component<IProps> {
             actions.setSubmitting(false);
             if (res.success) {
               showToast(null, 'User Invited successfully');
-              history.push(URL.COMPANY_USERS({ companyId }));
+              history.push(URL.DAO_USERS({ daoId }));
             } else {
-              showToast('User is already in the company');
+              showToast('User is already in the DAO');
             }
           } catch (e) {
             actions.setSubmitting(false);

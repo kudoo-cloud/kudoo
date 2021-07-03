@@ -37,12 +37,12 @@ export type ProductType = {
  * The Availability of the functionality. This is used in Menu Items, Tabs and SubTabs
  * in order to determine whether the User can access the functionality. One of every
  * condition will need to be true in order for the functionality to be avaialble.
- * For example, the Logged in Company must match one of the Countries, the Logged in
- * Users role must match one of the Security Roles, the Logged in Company must
+ * For example, the Logged in DAO must match one of the Countries, the Logged in
+ * Users role must match one of the Security Roles, the Logged in DAO must
  */
 export interface IAvailability {
   /**
-   * Some Menu Items will only appear when the logged in Company is from a specific
+   * Some Menu Items will only appear when the logged in DAO is from a specific
    * country. For example Australia has some features that are unique and therefore
    * shouldn't appear for the UK. The string must be a two letter ISO country code
    * to avoid type mismatches with the GraphQL API.
@@ -53,7 +53,7 @@ export interface IAvailability {
    * rather than a code issue.
    */
   security?: Array<SecurityRole>;
-  /** Currently we can restrict menu items to Companies that are of a certain Business
+  /** Currently we can restrict menu items to DAOs that are of a certain Business
    * Type. Currently only "HEALTH" is a supported option.
    */
   businessType?: Array<string>;
@@ -66,15 +66,15 @@ export interface IAvailability {
 export interface IContentSecurity {
   /**
    * Conditions to determine whether this Item is available to the User and
-   * the Company.
+   * the DAO.
    */
   availability?: Array<IAvailability>;
   /**
    * Conditions to determine whether user needs to upgrade his plan or not
-   * Some tabs/menu/routes will be restricted by the License that the company has. For example, a
-   * Company may be in the FREE plan, but the Tab is only available on the PRO or
+   * Some tabs/menu/routes will be restricted by the License that the dao has. For example, a
+   * DAO may be in the FREE plan, but the Tab is only available on the PRO or
    * ENTERPRISE license. In that instance the Tab should still appear, but a message
-   * will be displayed to the User to upgrade their Company plan
+   * will be displayed to the User to upgrade their DAO plan
    */
   licenseRequired?: LicensePlan[];
 }

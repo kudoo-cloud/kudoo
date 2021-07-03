@@ -15,7 +15,7 @@ import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import * as Yup from 'yup';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import styles from './styles';
@@ -275,7 +275,7 @@ class CreateNewBankTransaction extends Component<IProps, IState> {
     const { classes } = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.props.history.push(URL.BANKING_BANK_TRANSACTIONS());
           }}
@@ -284,7 +284,7 @@ class CreateNewBankTransaction extends Component<IProps, IState> {
             {this._renderSectionHeading()}
             {this._renderForm()}
           </div>
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

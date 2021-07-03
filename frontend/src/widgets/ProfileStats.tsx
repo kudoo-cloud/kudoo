@@ -37,7 +37,7 @@ class ProfileStats extends React.Component<Props, State> {
                   }}
                 />
                 <LinearProgressBar
-                  label='Company details'
+                  label='DAO details'
                   value={5}
                   classes={{
                     component: classes.progressBar,

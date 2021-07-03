@@ -5,7 +5,7 @@ import get from 'lodash/get';
 import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import DetailsTab from './DetailsTab';
 import InvoicesTab from './InvoicesTab';
@@ -162,7 +162,7 @@ class ManufacturerDetails extends Component<IProps, IState> {
   public render() {
     const { classes } = this.props;
     return (
-      <SelectedCompany
+      <SelectedDAO
         onChange={() => {
           this.props.history.push(URL.MANUFACTURERS());
         }}
@@ -175,7 +175,7 @@ class ManufacturerDetails extends Component<IProps, IState> {
             {this.state.activeSection === 1 && this._renderInvoiceSection()}
           </div>
         </div>
-      </SelectedCompany>
+      </SelectedDAO>
     );
   }
 }

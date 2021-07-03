@@ -42,7 +42,7 @@ type Props = {
   createCustomer?: Function;
   resetInvoiceData?: Function;
   invoiceNotify?: Function;
-  company?: Record<string, any>;
+  dao?: Record<string, any>;
   i18n?: any;
   updateProject?: Function;
   updateTimeSheet?: Function;
@@ -59,7 +59,7 @@ type State = {
 
 class ReviewStep extends Component<Props, State> {
   static defaultProps = {
-    company: {},
+    dao: {},
     createInvoice: () => ({}),
     createCustomer: () => ({}),
     updateTimeSheet: () => ({}),
@@ -83,8 +83,8 @@ class ReviewStep extends Component<Props, State> {
   }
 
   _loadBase64Image() {
-    const { company } = this.props;
-    const logoUrl = get(company, 'data.logo.url');
+    const { dao } = this.props;
+    const logoUrl = get(dao, 'data.logo.url');
     const self = this; // eslint-disable-line @typescript-eslint/no-this-alias
     if (logoUrl) {
       this.setState({
@@ -924,19 +924,19 @@ class ReviewStep extends Component<Props, State> {
   };
 
   _renderLogo = () => {
-    const { classes, profile, company } = this.props;
-    const logo = get(company, 'data.logo.url', '');
-    const companyName = get(profile, 'selectedCompany.name');
+    const { classes, profile, dao } = this.props;
+    const logo = get(dao, 'data.logo.url', '');
+    const daoName = get(profile, 'selectedDAO.name');
     if (!logo) {
       return (
         <div className={classes.invoiceName} style={{ marginTop: 0 }}>
-          {companyName}
+          {daoName}
         </div>
       );
     } else if (logo) {
       return (
         <div
-          className={classes.companyLogo}
+          className={classes.daoLogo}
           style={{ backgroundImage: `url(${logo})` }}
         />
       );
@@ -953,22 +953,22 @@ class ReviewStep extends Component<Props, State> {
       profile,
       makeStepActive,
       unmarkedVisited,
-      company,
+      dao,
       i18n,
     } = this.props;
     // const { logo, logoIsLoading } = this.state;
     const { title, subtitle } = this._getTitle();
-    // const companyLogo = get(profile, 'selectedCompany.logo.url');
-    const companyName = get(profile, 'selectedCompany.name');
+    // const daoLogo = get(profile, 'selectedDAO.logo.url');
+    const daoName = get(profile, 'selectedDAO.name');
     const data = idx(newInvoice, (_) => _[createType]);
     const payment = idx(data, (_) => _.payment) || {};
     const customer = idx(data, (_) => _.customer) || {};
     const attachments = get(data, 'payment.attachments', []).filter(
       (attch) => attch instanceof File,
     );
-    const sellerAddress = get(company, 'data.addresses.0', {});
-    const sellerABN = get(profile, 'selectedCompany.govNumber');
-    const logo = get(company, 'data.logo.url', '');
+    const sellerAddress = get(dao, 'data.addresses.0', {});
+    const sellerABN = get(profile, 'selectedDAO.govNumber');
+    const logo = get(dao, 'data.logo.url', '');
 
     return (
       <div>
@@ -1020,9 +1020,7 @@ class ReviewStep extends Component<Props, State> {
                 <div className={classes.invoiceNumber}>
                   <div>Invoice #{this.invoiceNumber}</div>
                 </div>
-                {logo && (
-                  <div className={classes.invoiceName}>{companyName}</div>
-                )}
+                {logo && <div className={classes.invoiceName}>{daoName}</div>}
               </Grid>
             </Grid>
           </div>
@@ -1086,7 +1084,7 @@ class ReviewStep extends Component<Props, State> {
                 </div>
               </Grid>
               <Grid item xs={12} sm={6} style={{ textAlign: 'right' }}>
-                <div className={classes.invoiceSectionTitle}>Company</div>
+                <div className={classes.invoiceSectionTitle}>DAO</div>
                 {sellerAddress && (
                   <div className={classes.invoiceTextValue}>
                     {sellerAddress.street}, {sellerAddress.city}{' '}
@@ -1159,17 +1157,17 @@ class ReviewStep extends Component<Props, State> {
               <div>
                 <div className={classes.invoiceSectionTitle}>EFT</div>
                 <div className={classes.invoiceTextValue} data-test='bank-name'>
-                  {get(company, 'data.bankAccount.name')}
+                  {get(dao, 'data.bankAccount.name')}
                 </div>
                 <div className={classes.invoiceTextValue} data-test='bsb'>
-                  {i18n._(`BSB`)} : {get(company, 'data.bankAccount.code')}
+                  {i18n._(`BSB`)} : {get(dao, 'data.bankAccount.code')}
                 </div>
                 <div
                   className={classes.invoiceTextValue}
                   data-test='accountNumber'
                 >
                   {i18n._(`Account Number`)} :{' '}
-                  {get(company, 'data.bankAccount.accountNumber')}
+                  {get(dao, 'data.bankAccount.accountNumber')}
                 </div>
               </div>
             </div>
@@ -1208,8 +1206,8 @@ export default compose<Props, Props>(
       ...actions,
     },
   ),
-  // withCompany((props) => ({
-  //   id: get(props, 'profile.selectedCompany.id'),
+  // withDAO((props) => ({
+  //   id: get(props, 'profile.selectedDAO.id'),
   // })),
   // withCreateInvoice(),
   // withCreateCustomer(),

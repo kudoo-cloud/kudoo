@@ -148,10 +148,10 @@ class DraftTimesheets extends Component<Props, State> {
             return (
               <div className={classes.timesheet} key={timesheet.id}>
                 <TimesheetBlock
-                  type={!isEmpty(timesheet.project) ? 'project' : 'company'}
+                  type={!isEmpty(timesheet.project) ? 'project' : 'dao'}
                   collapsed={allHide}
                   serviceName={service.name}
-                  companyName={customer.name}
+                  daoName={customer.name}
                   project={project.name}
                   showEmailIcon={false}
                   showRemoveIcon

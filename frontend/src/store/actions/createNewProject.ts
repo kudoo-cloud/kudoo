@@ -8,7 +8,7 @@ const updateProjectName = createAction(
 );
 
 interface IUpdateCustomerInfoParams {
-  companyName: string;
+  daoName: string;
   contactName: string;
   contactSurname: string;
   govNumber: string;

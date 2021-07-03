@@ -194,7 +194,7 @@ export const reviewStyles = (theme) => ({
     width: 200,
     margin: '0px 10px',
   },
-  companyLogo: {
+  daoLogo: {
     width: 250,
     height: 88,
     backgroundPosition: 'center',

@@ -23,7 +23,7 @@ const types: ICreateProjectActionsTypes = createTypes(
 export interface INewProjectState {
   name: string;
   customer: {
-    companyName: string;
+    daoName: string;
     contactName: string;
     contactSurname: string;
     govNumber?: number;

@@ -24,7 +24,7 @@ export interface IClasses {
   PurchaseOrderNameCell: string;
   cancelButtonComponent: string;
   purchaseOrderLineTable: string;
-  companyLogo: string;
+  daoLogo: string;
   purchaseOrderName: string;
   purchaseOrderHeader: string;
   purchaseOrderDateWrapper: string;
@@ -61,7 +61,7 @@ export interface IHistory {
 
 export interface IProfile {
   id: string;
-  selectedCompany: {
+  selectedDAO: {
     country: string;
     businessType: string;
     logo: {

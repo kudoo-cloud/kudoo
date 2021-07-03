@@ -320,7 +320,7 @@ export const purchaseOrderStyles = (
 export type ReviewStyleKeys =
   | 'content'
   | 'pbsContent'
-  | 'companyLogo'
+  | 'daoLogo'
   | 'purchaseOrderTitleRightPart'
   | 'purchaseOrderHeader'
   | 'purchaseOrderName'
@@ -367,7 +367,7 @@ export const reviewStyles = (
   pbsContent: {
     width: '100%',
   },
-  companyLogo: {
+  daoLogo: {
     width: 250,
     height: 88,
     backgroundPosition: 'center',

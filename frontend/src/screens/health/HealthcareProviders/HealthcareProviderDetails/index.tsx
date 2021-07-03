@@ -16,7 +16,7 @@ import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import * as Yup from 'yup';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import DetailsTab from './DetailsTab';
@@ -323,7 +323,7 @@ class HealthcareProviderDetails extends Component<Props, State> {
     return <InvoicesTab invoices={this.props.invoices} />;
   }
 
-  _renderEditCompanyDetailsModal() {
+  _renderEditDAODetailsModal() {
     const { classes, theme, i18n } = this.props;
     const { name, govNumber, contact } = this._getHealthcareProviderDetails();
     return (
@@ -332,7 +332,7 @@ class HealthcareProviderDetails extends Component<Props, State> {
         onClose={() => {
           this.setState({ showModal: false });
         }}
-        classes={{ description: classes.editCompanyModalDescription }}
+        classes={{ description: classes.editDaoModalDescription }}
         title='Edit HealthcareProvider Details'
         description={
           <Formik
@@ -430,7 +430,7 @@ class HealthcareProviderDetails extends Component<Props, State> {
   render() {
     const { classes } = this.props;
     return (
-      <SelectedCompany
+      <SelectedDAO
         onChange={() => {
           this.props.history.push(URL.CUSTOMERS());
         }}
@@ -443,9 +443,9 @@ class HealthcareProviderDetails extends Component<Props, State> {
             {this.state.activeSection === 0 && this._renderDetailsSection()}
             {this.state.activeSection === 1 && this._renderInvoiceSection()}
           </div>
-          {this._renderEditCompanyDetailsModal()}
+          {this._renderEditDAODetailsModal()}
         </div>
-      </SelectedCompany>
+      </SelectedDAO>
     );
   }
 }

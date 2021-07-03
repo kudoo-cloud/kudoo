@@ -14,7 +14,7 @@ import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import * as Yup from 'yup';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import { IReduxState } from 'src/store/reducers';
@@ -249,7 +249,7 @@ class CreateNewCustomer extends Component<Props, State> {
     const { classes } = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.props.history.push(URL.CUSTOMERS());
           }}
@@ -258,7 +258,7 @@ class CreateNewCustomer extends Component<Props, State> {
             {this._renderSectionHeading()}
             {this._renderForm()}
           </div>
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

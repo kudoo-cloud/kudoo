@@ -165,7 +165,7 @@ class TimesheetsStep extends Component<Props, State> {
 
   _updateTimesheetsData = (props, showTimesheetDetails) => {
     const { i18n, profile } = props;
-    const country = get(profile, 'selectedCompany.country');
+    const country = get(profile, 'selectedDAO.country');
     const timeSheets = get(props.timeSheets, 'data', []);
     const data = {};
     const entries = timeSheets.reduce(
@@ -420,7 +420,7 @@ class TimesheetsStep extends Component<Props, State> {
 
   _renderCell = (row, column, ele) => {
     const { classes, theme, profile } = this.props;
-    const country = get(profile, 'selectedCompany.country');
+    const country = get(profile, 'selectedDAO.country');
     if (column.id === 'service') {
       return (
         <div
@@ -668,15 +668,15 @@ export default compose<Props, Props>(
   //     },
   //   };
   // }),
-  // withCompany(
+  // withDAO(
   //   (props) => {
   //     return {
-  //       id: get(props, 'profile.selectedCompany.id'),
+  //       id: get(props, 'profile.selectedDAO.id'),
   //     };
   //   },
   //   ({ data }) => {
-  //     const companyMembers = get(data, 'company.companyMembers', []);
-  //     const users = companyMembers.map(({ user }) => user);
+  //     const daoMembers = get(data, 'dao.daoMembers', []);
+  //     const users = daoMembers.map(({ user }) => user);
   //     return {
   //       dropdownUsers: users
   //         .filter((user) => user.isActive && user.firstName && user.lastName)

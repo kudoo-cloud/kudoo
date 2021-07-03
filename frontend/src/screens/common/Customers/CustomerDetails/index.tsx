@@ -17,7 +17,7 @@ import React, { useState } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import * as Yup from 'yup';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import { IReduxState } from 'src/store/reducers';
@@ -302,7 +302,7 @@ const CustomerDetails: React.FC<Props> = (props) => {
     return <InvoicesTab invoices={invoices} />;
   };
 
-  const renderEditCompanyDetailsModal = () => {
+  const renderEditDAODetailsModal = () => {
     const { name, govNumber, contact } = getCustomerDetails();
     return (
       <Modal
@@ -310,7 +310,7 @@ const CustomerDetails: React.FC<Props> = (props) => {
         onClose={() => {
           setShowModal(false);
         }}
-        classes={{ description: classes.editCompanyModalDescription }}
+        classes={{ description: classes.editDAOModalDescription }}
         title='Edit Customer Details'
         description={
           <Formik
@@ -400,7 +400,7 @@ const CustomerDetails: React.FC<Props> = (props) => {
   };
 
   return (
-    <SelectedCompany
+    <SelectedDAO
       onChange={() => {
         history.push(URL.CUSTOMERS());
       }}
@@ -413,9 +413,9 @@ const CustomerDetails: React.FC<Props> = (props) => {
           {activeSection === 0 && renderDetailsSection()}
           {activeSection === 1 && renderInvoiceSection()}
         </div>
-        {renderEditCompanyDetailsModal()}
+        {renderEditDAODetailsModal()}
       </div>
-    </SelectedCompany>
+    </SelectedDAO>
   );
 };
 

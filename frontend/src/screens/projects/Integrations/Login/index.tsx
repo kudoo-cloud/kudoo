@@ -89,7 +89,7 @@ class Login extends Component<Props, State> {
         //   });
         //   setTimeout(() => {
         //     this.props.history.push(
-        //       URL.INTEGRATION_CHOOSE_COMPANY({
+        //       URL.INTEGRATION_CHOOSE_DAO({
         //         type: this._integrationType(),
         //       }) + `?redirect=${this._redirectTo()}`,
         //     );
@@ -224,7 +224,7 @@ class Login extends Component<Props, State> {
     //     <Redirect
     //       from={URL.INTEGRATION_LOGIN({ path: true })}
     //       to={
-    //         URL.INTEGRATION_CHOOSE_COMPANY({
+    //         URL.INTEGRATION_CHOOSE_DAO({
     //           type: this._integrationType(),
     //         }) + `?redirect=${this._redirectTo()}`
     //       }

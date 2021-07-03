@@ -4,7 +4,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { compose, withState } from 'recompose';
 import { SERVICE_BILLING_TYPE } from 'src/helpers/constants';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 
@@ -185,7 +185,7 @@ class TabContainer extends React.Component<ContainerProps, ContainerState> {
     const StyledComponent = this.props.styledComponent;
     const { services = {} } = this.props;
     return (
-      <SelectedCompany onChange={services.refetch}>
+      <SelectedDAO onChange={services.refetch}>
         <StyledComponent
           actions={this.props.actions}
           services={this.state.displayedServices}
@@ -201,7 +201,7 @@ class TabContainer extends React.Component<ContainerProps, ContainerState> {
           onSortRequested={this._onSortRequested}
           onLoadMore={this.props.services.loadNextPage}
         />
-      </SelectedCompany>
+      </SelectedDAO>
     );
   }
 }

@@ -1,6 +1,6 @@
 import idx from 'idx';
 import { handleActions } from 'redux-actions';
-import { ICompanyEntity } from '../types';
+import { IDAOEntity } from '../types';
 import Types from '../types/profile';
 
 export interface IProfileState {
@@ -13,9 +13,9 @@ export interface IProfileState {
   expiresAt: string;
   signedAt: string;
   userId: string;
-  selectedCompany: ICompanyEntity;
-  joinedCompanies: ICompanyEntity[];
-  createdCompanies: ICompanyEntity[];
+  selectedDAO: IDAOEntity;
+  joinedDAOs: IDAOEntity[];
+  createdDAOs: IDAOEntity[];
 }
 
 interface IAction {
@@ -33,9 +33,9 @@ const initialState = {
   expiresAt: '',
   signedAt: '',
   userId: '',
-  selectedCompany: {},
-  joinedCompanies: [],
-  createdCompanies: [],
+  selectedDAO: {},
+  joinedDAOs: [],
+  createdDAOs: [],
 };
 
 export default handleActions(
@@ -47,9 +47,9 @@ export default handleActions(
     [Types.RESET_USER_DATA]: () => ({
       ...initialState,
     }),
-    [Types.SELECT_COMPANY]: (state: IProfileState, action: IAction) => ({
+    [Types.SELECT_DAO]: (state: IProfileState, action: IAction) => ({
       ...state,
-      selectedCompany: action.payload,
+      selectedDAO: action.payload,
     }),
     [Types.SET_ONLY_TOKEN]: (state: IProfileState, action: IAction) => ({
       token: idx(action, (_) => _.payload.token),

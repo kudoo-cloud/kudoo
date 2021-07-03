@@ -12,7 +12,7 @@ import isEmpty from 'lodash/isEmpty';
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import uuid from 'uuid/v4';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import TabContainer from './SalesOrderTabContainer';
 import styles, { SalesOrderStyles } from './styles';
@@ -34,7 +34,7 @@ interface IState {
 
 class SalesOrder extends Component<IProps, IState> {
   public state = {
-    contentHash: uuid(), // this is used to refresh all widget when company change from sidebar
+    contentHash: uuid(), // this is used to refresh all widget when dao change from sidebar
   };
 
   public _renderSectionHeading() {
@@ -123,7 +123,7 @@ class SalesOrder extends Component<IProps, IState> {
     const { classes, salesOrders, salesOrdersLoading } = this.props;
     return (
       <div>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.setState({
               contentHash: uuid(),
@@ -142,7 +142,7 @@ class SalesOrder extends Component<IProps, IState> {
               </div>
             </div>
           </ErrorBoundary>
-        </SelectedCompany>
+        </SelectedDAO>
       </div>
     );
   }

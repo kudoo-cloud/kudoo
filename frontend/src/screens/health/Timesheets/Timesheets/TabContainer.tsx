@@ -8,7 +8,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { compose, withStateHandlers } from 'recompose';
 // import { TIMESHEET_STATUS } from 'src/helpers/constants';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import styles from './styles';
 
@@ -64,7 +64,7 @@ class TabContainer extends Component<Props, State> {
     }
   }
 
-  _onCompanyChange = () => {
+  _onDaoChange = () => {
     this.props.users && this.props.users.refetch();
     this.props.timeSheets && this.props.timeSheets.refetch();
   };
@@ -252,7 +252,7 @@ class TabContainer extends Component<Props, State> {
     const timeSheetsLoading = get(timeSheets, 'loading');
     return (
       <ErrorBoundary>
-        <SelectedCompany onChange={this._onCompanyChange}>
+        <SelectedDAO onChange={this._onDaoChange}>
           {children({
             ...this.state,
             actions,
@@ -271,7 +271,7 @@ class TabContainer extends Component<Props, State> {
             timeSheetsLoading,
             loadMore: get(timeSheets, 'loadNextPage'),
           })}
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }
@@ -354,18 +354,18 @@ export default compose<any, any>(
   //     variables,
   //   };
   // }),
-  // withCompany(
+  // withDao(
   //   (props) => {
-  //     const company = get(props.profile, 'selectedCompany', '');
+  //     const dao = get(props.profile, 'selectedDAO', '');
   //     return {
-  //       id: company.id,
+  //       id: dao.id,
   //     };
   //   },
   //   ({ data }) => {
-  //     const companyMembers = get(data, 'company.companyMembers') || [];
+  //     const daoMembers = get(data, 'dao.daoMembers') || [];
   //     return {
   //       users: {
-  //         data: companyMembers.map((cm) => cm.user),
+  //         data: daoMembers.map((cm) => cm.user),
   //         loading: data.loading,
   //         refetch: data.refetch,
   //       },

@@ -15,7 +15,7 @@ import * as React from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import * as Yup from 'yup';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import styles, {
   createPurchaseOrderStyles,
@@ -266,13 +266,13 @@ class CreatePurchaseOrder extends React.Component<
   public render() {
     return (
       <React.Fragment>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.props.history.push(URL.PURCHASE_ORDER());
           }}
         >
           {this._renderForm()}
-        </SelectedCompany>
+        </SelectedDAO>
       </React.Fragment>
     );
   }

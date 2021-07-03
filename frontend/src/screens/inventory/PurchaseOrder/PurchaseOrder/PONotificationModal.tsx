@@ -56,7 +56,7 @@ const PONotificationModal: React.FC<IProps> = (props) => {
             ? JSON.parse(purchaseOrder.pbsOrganisation).key
             : idx(purchaseOrder, (x) => x.supplier.name),
           preview: purchaseOrder.preview,
-          companyName: name,
+          daoName: name,
           to: (emails.to || []).map(({ email }) => email),
           bcc: (emails.bcc || []).map(({ email }) => email),
           cc: (emails.cc || []).map(({ email }) => email),

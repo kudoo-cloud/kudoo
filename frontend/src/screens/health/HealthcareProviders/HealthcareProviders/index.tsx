@@ -3,7 +3,7 @@ import idx from 'idx';
 import React, { useState } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import ListPage from 'src/screens/common/ListPage';
@@ -155,7 +155,7 @@ const HealthcareProviders: React.FC<Props> = (props) => {
   const listProps = getListPageProps();
 
   return (
-    <SelectedCompany onChange={healthcareProviders.refetch}>
+    <SelectedDAO onChange={healthcareProviders.refetch}>
       <ListPage
         variant={getListType()}
         items={idx(healthcareProviders, (x) => x.data)}
@@ -174,7 +174,7 @@ const HealthcareProviders: React.FC<Props> = (props) => {
         onRemoveItem={onRemoveProvider}
         onSearch={searchProvider}
       />
-    </SelectedCompany>
+    </SelectedDAO>
   );
 };
 

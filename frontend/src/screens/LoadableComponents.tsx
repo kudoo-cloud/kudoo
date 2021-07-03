@@ -3,10 +3,10 @@ import React from 'react';
 export const NotFound = React.lazy(() => import('@kudoo/components/build/atoms/NotFound'));
 export const SecondaryTabs = React.lazy(() => import('src/screens/common/SecondaryTabs'));
 
-// Companies Screens
-export const ManageCompanies = React.lazy(() => import('src/screens/common/Companies/ManageCompanies'));
-export const CompanySettings = React.lazy(() => import('src/screens/common/Companies/CompanySettings'));
-export const CreateCompany = React.lazy(() => import('src/screens/common/Companies/CreateCompany'));
+// daos Screens
+export const ManageDAOs = React.lazy(() => import('src/screens/common/DAO/ManageDAOs'));
+export const DAOSettings = React.lazy(() => import('src/screens/common/DAO/DAOSettings'));
+export const CreateDAO = React.lazy(() => import('src/screens/common/DAO/CreateDAO'));
 
 // Auth, User Configuration screens
 export const Config = React.lazy(() => import('src/screens/common/Config/Config'));

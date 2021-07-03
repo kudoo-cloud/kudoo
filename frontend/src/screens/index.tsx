@@ -49,18 +49,18 @@ class Screens extends Component<any> {
           const { path, component, ...rest } = route;
           const RouteComponent = component;
           let isAvailable = isFeatureAvailable(
-            profile.selectedCompany,
+            profile.selectedDAO,
             route.availability as IAvailability[],
           );
           let needsUpgrade = needsLicenseUpgrade(
-            profile.selectedCompany,
+            profile.selectedDAO,
             route.licenseRequired as LicensePlan[],
           );
           // TODO: For now making isAvailable = true and needsUpgrade = false;
           isAvailable = true;
           needsUpgrade = false;
           if (!isAvailable) {
-            // if feature/route is not available to current selected company and current logged in user
+            // if feature/route is not available to current selected dao and current logged in user
             // then don't render the route
             return null;
           }

@@ -4,7 +4,7 @@ import isEqual from 'lodash/isEqual';
 import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import { IReduxState } from 'src/store/reducers';
 
@@ -164,7 +164,7 @@ class TabContainer extends Component<Props, State> {
     const { displayedCustomers, columns } = this.state;
     const { match, history, location, actions, customers = {} } = this.props;
     return (
-      <SelectedCompany onChange={customers.refetch}>
+      <SelectedDAO onChange={customers.refetch}>
         {this.props.children({
           match,
           history,
@@ -178,7 +178,7 @@ class TabContainer extends Component<Props, State> {
           onRemoveCustomer: this._onRemoveCustomer,
           onSearchCustomer: this._searchCustomer,
         })}
-      </SelectedCompany>
+      </SelectedDAO>
     );
   }
 }

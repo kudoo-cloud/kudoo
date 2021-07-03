@@ -72,7 +72,7 @@ class ReviewStep extends Component<Props, State> {
       } else {
         customerObj = {
           create: {
-            name: customer.companyName,
+            name: customer.daoName,
             govNumber: customer.govNumber,
             contacts: {
               create: [
@@ -215,9 +215,7 @@ class ReviewStep extends Component<Props, State> {
         <div className={classes.reviewSectionContent}>
           <Grid container spacing={16}>
             <Grid item xs={6}>
-              <div className={classes.customerValue}>
-                {customer.companyName}
-              </div>
+              <div className={classes.customerValue}>{customer.daoName}</div>
               <div className={classes.customerValue}>
                 {customer.contactName} {customer.contactSurname}
               </div>
@@ -230,7 +228,7 @@ class ReviewStep extends Component<Props, State> {
               </div>
             </Grid>
             <Grid item xs={6}>
-              <div className={classes.customerKey}>Company name</div>
+              <div className={classes.customerKey}>DAO name</div>
               <div className={classes.customerKey}>Contact name</div>
               <div className={classes.customerKey}>{i18n._(`ABN`)}</div>
               <div className={classes.customerKey} style={{ marginBottom: 0 }}>

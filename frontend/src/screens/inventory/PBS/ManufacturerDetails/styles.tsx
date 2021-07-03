@@ -103,7 +103,7 @@ export default (theme) => ({
     justifyContent: 'center',
     zIndex: 10000,
   },
-  editCompanyModalDescription: {
+  editDaoModalDescription: {
     padding: 0,
   },
   modalForm: {

@@ -1,6 +1,6 @@
 import { DataImports, ErrorBoundary, withStyles } from '@kudoo/components';
 import React, { Component } from 'react';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import styles from './styles';
 
@@ -23,7 +23,7 @@ class DataImportFile extends Component<IProps, {}> {
     const { classes } = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.props.history.push(URL.DATAIMPORT());
           }}
@@ -31,7 +31,7 @@ class DataImportFile extends Component<IProps, {}> {
           <div className={classes.dataImportPage}>
             <DataImports />
           </div>
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

@@ -15,7 +15,7 @@ import React, { Component } from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import * as Yup from 'yup';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import styles from 'src/screens/common/SalesOrder/SalesOrderWizard/styles';
 
@@ -43,7 +43,7 @@ class CreateSalesOrder extends Component<IProps, IState> {
   static defaultProps = {
     customers: { data: [] },
     initialData: { data: [] },
-    updateCompany: () => ({}),
+    updateDao: () => ({}),
   };
 
   public state = {
@@ -266,13 +266,13 @@ class CreateSalesOrder extends Component<IProps, IState> {
     const { classes } = this.props;
     return (
       <ErrorBoundary>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.props.history.push(URL.SALES_ORDER());
           }}
         >
           <div className={classes.page}>{this._renderForm()}</div>
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

@@ -14,7 +14,7 @@ type Props = IRouteProps<ClassKeys> & {
 class UpgradeComponent extends Component<Props> {
   public render() {
     const { classes, theme, history, profile } = this.props;
-    const companyId = idx(profile, (_) => _.selectedCompany.id) || '';
+    const daoId = idx(profile, (_) => _.selectedDAO.id) || '';
     return (
       <ErrorBoundary>
         <div className={classes.root}>
@@ -28,7 +28,7 @@ class UpgradeComponent extends Component<Props> {
             applyBorderRadius
             width={300}
             onClick={() => {
-              history.push(URL.COMPANY_SUBSCRIPTION({ companyId }));
+              history.push(URL.DAO_SUBSCRIPTION({ daoId }));
             }}
           />
         </div>

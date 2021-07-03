@@ -21,7 +21,7 @@ import * as React from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import { generatePDF } from 'src/helpers/jsPDF';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import styles, {
@@ -348,18 +348,18 @@ class PreviewPurchaseOrder extends React.Component<
 
   public _renderLogo = () => {
     const { classes, profile } = this.props;
-    const logo = get(profile, 'selectedCompany.logo.url', '');
-    const companyName = get(profile, 'selectedCompany.name');
+    const logo = get(profile, 'selectedDAO.logo.url', '');
+    const daoName = get(profile, 'selectedDAO.name');
     if (!logo) {
       return (
         <div className={classes.purchaseOrderName} style={{ marginTop: 0 }}>
-          {companyName}
+          {daoName}
         </div>
       );
     } else if (logo) {
       return (
         <div
-          className={classes.companyLogo}
+          className={classes.daoLogo}
           style={{ backgroundImage: `url(${logo})` }}
         />
       );
@@ -462,8 +462,8 @@ class PreviewPurchaseOrder extends React.Component<
       purchaseOrderLineData,
     } = this.props;
     const { expanded, confirmPO } = this.state;
-    const companyName = get(profile, 'selectedCompany.name');
-    const logo = get(profile, 'selectedCompany.logo.url', '');
+    const daoName = get(profile, 'selectedDAO.name');
+    const logo = get(profile, 'selectedDAO.logo.url', '');
     const purchaseOrderLineFilterData = filter(
       purchaseOrderLineData,
       (filterData) => filterData.qty >= 0 && filterData.pbsDrug.key,
@@ -471,7 +471,7 @@ class PreviewPurchaseOrder extends React.Component<
     const uniqPO = uniqBy(purchaseOrderLineFilterData, 'pbsOrganisation.value');
     return (
       <ErrorBoundary>
-        <SelectedCompany
+        <SelectedDAO
           onChange={() => {
             this.props.history.push(URL.PURCHASE_ORDER());
           }}
@@ -527,7 +527,7 @@ class PreviewPurchaseOrder extends React.Component<
                           >
                             {logo && (
                               <div className={classes.purchaseOrderName}>
-                                {companyName}
+                                {daoName}
                               </div>
                             )}
                           </Grid>
@@ -575,7 +575,7 @@ class PreviewPurchaseOrder extends React.Component<
             </div>
           </div>
           {this._renderCancelButton()}
-        </SelectedCompany>
+        </SelectedDAO>
       </ErrorBoundary>
     );
   }

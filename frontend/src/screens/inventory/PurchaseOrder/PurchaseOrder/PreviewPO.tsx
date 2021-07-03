@@ -13,7 +13,7 @@ import moment from 'moment';
 import * as React from 'react';
 import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import SelectedCompany from 'src/helpers/SelectedCompany';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import styles, {
   reviewStyles,
@@ -51,18 +51,18 @@ class PreviewPO extends React.Component<IPurchaseOrderPreviewProps> {
 
   public _renderLogo = () => {
     const { classes, profile } = this.props;
-    const logo = get(profile, 'selectedCompany.logo.url', '');
-    const companyName = get(profile, 'selectedCompany.name');
+    const logo = get(profile, 'selectedDAO.logo.url', '');
+    const daoName = get(profile, 'selectedDAO.name');
     if (!logo) {
       return (
         <div className={classes.purchaseOrderName} style={{ marginTop: 0 }}>
-          {companyName}
+          {daoName}
         </div>
       );
     } else if (logo) {
       return (
         <div
-          className={classes.companyLogo}
+          className={classes.daoLogo}
           style={{ backgroundImage: `url(${logo})` }}
         />
       );
@@ -201,14 +201,14 @@ class PreviewPO extends React.Component<IPurchaseOrderPreviewProps> {
         supplier = { name: '' },
       } = {},
     } = this.props;
-    const companyName = get(profile, 'selectedCompany.name');
-    const logo = get(profile, 'selectedCompany.logo.url', '');
+    const daoName = get(profile, 'selectedDAO.name');
+    const logo = get(profile, 'selectedDAO.logo.url', '');
     const { name: supplierName = '' } = supplier || {};
     const name = isPbsPO ? JSON.parse(pbsOrganisation).key : supplierName;
     return (
       <ErrorBoundary>
         <ErrorBoundary>
-          <SelectedCompany
+          <SelectedDAO
             onChange={() => {
               this.props.history.push(URL.PURCHASE_ORDER());
             }}
@@ -228,7 +228,7 @@ class PreviewPO extends React.Component<IPurchaseOrderPreviewProps> {
                     >
                       {logo && (
                         <div className={classes.purchaseOrderName}>
-                          {companyName}
+                          {daoName}
                         </div>
                       )}
                     </Grid>
@@ -264,7 +264,7 @@ class PreviewPO extends React.Component<IPurchaseOrderPreviewProps> {
               </div>
             </div>
             {this._renderCancelButton()}
-          </SelectedCompany>
+          </SelectedDAO>
         </ErrorBoundary>
       </ErrorBoundary>
     );

@@ -1,26 +1,26 @@
 import { Tabs, withStyles } from '@kudoo/components';
 import React, { Component } from 'react';
-import CompaniesGeneralBasics from '../CompaniesGeneralBasics';
-import CompaniesGeneralContact from '../CompaniesGeneralContact';
-import CompaniesGeneralLocation from '../CompaniesGeneralLocation';
+import DAOGeneralBasics from '../DAOGeneralBasics';
+import DAOGeneralContact from '../DAOGeneralContact';
+import DAOGeneralLocation from '../DAOGeneralLocation';
 import styles from './styles';
 
 type Props = {
   actions: any;
-  createCompany: Function;
+  createDao: Function;
   classes: any;
 };
 type State = {
   activeTab: 0;
 };
 
-class CreateCompany extends Component<Props, State> {
+class CreateDAO extends Component<Props, State> {
   state: any = {
     activeTab: 0,
   };
 
   componentDidMount() {
-    this.props.actions.updateHeaderTitle('Create Company');
+    this.props.actions.updateHeaderTitle('Create DAO');
   }
 
   _renderSecondaryTabs() {
@@ -59,18 +59,16 @@ class CreateCompany extends Component<Props, State> {
       <div className={classes.page}>
         {this._renderSecondaryTabs()}
         {this._renderTertiaryTabs()}
-        {activeTab === 0 && (
-          <CompaniesGeneralBasics {...this.props} isCreateNewCompany />
-        )}
+        {activeTab === 0 && <DAOGeneralBasics {...this.props} isCreateNewDAO />}
         {activeTab === 1 && (
-          <CompaniesGeneralContact {...this.props} isCreateNewCompany />
+          <DAOGeneralContact {...this.props} isCreateNewDAO />
         )}
         {activeTab === 2 && (
-          <CompaniesGeneralLocation {...this.props} isCreateNewCompany />
+          <DAOGeneralLocation {...this.props} isCreateNewDAO />
         )}
       </div>
     );
   }
 }
 
-export default withStyles(styles)(CreateCompany);
+export default withStyles(styles)(CreateDAO);
