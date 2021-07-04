@@ -66,7 +66,7 @@ class MostRecentProjects extends React.Component<Props, State> {
       <ErrorBoundary>
         <div className={classes.blockWrapper}>
           <div className={classes.blockTitle}>
-            <span>Most recent projects</span>
+            <span>Most recent pay runs</span>
             {get(projects, 'loading') && (
               <span>
                 <Loading size={20} color='white' />

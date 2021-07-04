@@ -19,8 +19,38 @@
         },
         "assets": {
           "icon": "icon icon-projects",
-          "name": "Assets",
+          "name": "Treasury",
           "url": "/assets",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "timesheets": {
+          "icon": "icon icon-projects",
+          "name": "Timesheets",
+          "url": "/timesheets",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "suppliers": {
+          "icon": "icon icon-projects",
+          "name": "Suppliers",
+          "url": "/suppliers",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
+        "customers": {
+          "icon": "icon icon-projects",
+          "name": "Customers",
+          "url": "/customers",
           "availability": [
             {
               "security": ["ADMIN", "OWNER"]
@@ -72,16 +102,6 @@
             {
               "businessType": "HEALTH",
               "country": "AU",
-              "security": ["ADMIN", "OWNER"]
-            }
-          ]
-        },
-        "customers": {
-          "icon": "icon icon-projects",
-          "name": "Customers",
-          "url": "/customers",
-          "availability": [
-            {
               "security": ["ADMIN", "OWNER"]
             }
           ]
@@ -174,16 +194,6 @@
               "security": ["ADMIN", "OWNER"]
             }
           ]
-        },
-        "suppliers": {
-          "icon": "icon icon-projects",
-          "name": "Suppliers",
-          "url": "/suppliers",
-          "availability": [
-            {
-              "security": ["ADMIN", "OWNER"]
-            }
-          ]
         }
       }
     },
@@ -247,7 +257,7 @@
       }
     },
     "projects": {
-      "isAvailable": true,
+      "isAvailable": false,
       "key": "Projects",
       "value": "projects",
       "menu": {
@@ -297,16 +307,6 @@
           "icon": "icon icon-projects",
           "name": "Services",
           "url": "/services",
-          "availability": [
-            {
-              "security": ["ADMIN", "OWNER"]
-            }
-          ]
-        },
-        "timesheets": {
-          "icon": "icon icon-projects",
-          "name": "Timesheets",
-          "url": "/timesheets",
           "availability": [
             {
               "security": ["ADMIN", "OWNER"]

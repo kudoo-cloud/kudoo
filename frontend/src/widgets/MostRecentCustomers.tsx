@@ -39,7 +39,7 @@ class MostRecentCustomers extends React.Component<Props, State> {
       <ErrorBoundary>
         <div className={classes.blockWrapper}>
           <div className={classes.blockTitle}>
-            <span>Most recent patients</span>
+            <span>Top customers by swap fees</span>
             {get(customers, 'loading') && (
               <span>
                 <Loading size={20} color='white' />
@@ -62,7 +62,7 @@ class MostRecentCustomers extends React.Component<Props, State> {
               ) : (
                 <div className={cx(classes.listItem, classes.noRecentItem)}>
                   <div className={classes.listItemPrimary}>
-                    No recent patients
+                    No recent customers
                   </div>
                 </div>
               )}
