@@ -475,7 +475,7 @@ export const timesheetTabs: Array<ITab> = [
     url: URL.MY_TIMESHEETS,
   },
   {
-    name: 'Worker Timesheets',
+    name: 'Supplier Timesheets',
     reactComponent: SecondaryTabs,
     isTertiaryTab: true,
     tabs: workerTimesheetSubTabs,
