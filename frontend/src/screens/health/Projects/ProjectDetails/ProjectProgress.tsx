@@ -15,7 +15,7 @@ type ProgressFlowTypes = Array<{
 
 type Props = {
   steps: ProgressFlowTypes;
-  classes: any;
+  classes?: any;
 };
 
 type State = {};
@@ -53,4 +53,4 @@ class ProjectProgress extends Component<Props, State> {
   }
 }
 
-export default withStyles(ProjectProgressStyles)(ProjectProgress);
+export default withStyles<Props>(ProjectProgressStyles)(ProjectProgress);

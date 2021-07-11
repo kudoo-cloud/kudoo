@@ -11,8 +11,8 @@ import Grid from '@material-ui/core/Grid';
 import { get } from 'lodash';
 import moment from 'moment';
 import * as React from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import styles, {

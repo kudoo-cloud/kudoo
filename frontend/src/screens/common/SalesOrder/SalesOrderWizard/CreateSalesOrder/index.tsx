@@ -12,26 +12,26 @@ import { Formik } from 'formik';
 import idx from 'idx';
 import isEqual from 'lodash/isEqual';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import * as Yup from 'yup';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import styles from 'src/screens/common/SalesOrder/SalesOrderWizard/styles';
 
 interface IProps {
-  actions: any;
-  profile: any;
-  initialData: any;
-  i18n: any;
-  history: any;
-  classes: any;
-  theme: any;
-  customers: any;
+  actions?: any;
+  profile?: any;
+  initialData?: any;
+  i18n?: any;
+  history?: any;
+  classes?: any;
+  theme?: any;
+  customers?: any;
   makeStepActive: (data: any) => any;
   markedVisited: (data: any) => any;
-  setSalesOrderData: (data: any) => any;
-  salesOrderData: any;
+  setSalesOrderData?: (data: any) => any;
+  salesOrderData?: any;
 }
 interface IState {
   isEditMode: boolean;
@@ -278,7 +278,7 @@ class CreateSalesOrder extends Component<IProps, IState> {
   }
 }
 
-export default compose(
+export default compose<IProps, IProps>(
   withI18n(),
   // withCreateSalesOrder(),
   // withUpdateSalesOrder(),

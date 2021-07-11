@@ -15,7 +15,7 @@ import { CustomerObject } from './types';
 
 type Props = IRouteProps<StyleKeys> & {
   customer: CustomerObject;
-  onSubmit: (values: Record<string, any>) => void;
+  onSubmit?: (values: Record<string, any>) => void;
 };
 
 const DetailsTab: React.FC<Props> = (props) => {
@@ -123,4 +123,4 @@ const DetailsTab: React.FC<Props> = (props) => {
   );
 };
 
-export default withStyles(styles)(DetailsTab);
+export default withStyles<Props>(styles)(DetailsTab);

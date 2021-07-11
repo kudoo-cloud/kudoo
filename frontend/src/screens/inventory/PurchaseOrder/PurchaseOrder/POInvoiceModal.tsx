@@ -1,7 +1,7 @@
 import { Modal, TextField, withStyles } from '@kudoo/components';
 import React, { useState } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import { showToast } from 'src/helpers/toast';
 import { IPOResponse } from 'src/screens/inventory/PurchaseOrder/PbsPurchaseOrderTab/CreatePbsPO/PBSPOtypes';
 import {
@@ -18,10 +18,10 @@ type IProps = IRouteProps<StyleKeys> & {
   purchaseOrder: {
     id?: string;
   };
-  profile: IProfileState;
-  createApInvoice: ({}) => Promise<IPOResponse>;
-  updateApInvoice: ({}) => Promise<IPOResponse>;
-  updatePurchaseOrder: ({}) => Promise<IPOResponse>;
+  profile?: IProfileState;
+  createApInvoice?: ({}) => Promise<IPOResponse>;
+  updateApInvoice?: ({}) => Promise<IPOResponse>;
+  updatePurchaseOrder?: ({}) => Promise<IPOResponse>;
 };
 
 const POInvoiceModal: React.FC<IProps> = (props) => {

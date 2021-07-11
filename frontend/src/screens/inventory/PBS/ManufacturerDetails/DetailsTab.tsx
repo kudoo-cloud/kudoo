@@ -73,4 +73,4 @@ class DetailsTab extends React.Component<IProps, any> {
   }
 }
 
-export default withStyles(styles)(DetailsTab);
+export default withStyles<IProps>(styles)(DetailsTab);

@@ -13,8 +13,8 @@ import Grid from '@material-ui/core/Grid';
 // import idx from 'idx';
 import { filter, find, findIndex, isEqual } from 'lodash';
 import * as React from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import uuid from 'uuid/v4';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
@@ -517,7 +517,7 @@ class CreateNonPbsPO extends React.Component<
   }
 }
 
-export default compose(
+export default compose<any, any>(
   withI18n(),
   // withDeletePurchaseOrderLine(),
   // withInventories(({ type }) => {

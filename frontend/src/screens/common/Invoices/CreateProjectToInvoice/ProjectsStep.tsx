@@ -4,24 +4,24 @@ import idx from 'idx';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import { showToast } from 'src/helpers/toast';
 import * as actions from 'src/store/actions/createNewInvoice';
 import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
-  actions: any;
-  projects: any;
-  newInvoice: any;
+  actions?: any;
+  projects?: any;
+  newInvoice?: any;
   makeStepActive: Function;
   markedVisited: Function;
   unmarkedVisited: Function;
-  updateProjectInfo: Function;
-  updateCustomerInfo: Function;
-  classes: any;
-  theme: any;
+  updateProjectInfo?: Function;
+  updateCustomerInfo?: Function;
+  classes?: any;
+  theme?: any;
 };
 type State = {};
 
@@ -104,7 +104,7 @@ class ProjectsStep extends Component<Props, State> {
   }
 }
 
-export default compose(
+export default compose<Props, Props>(
   withStyles(styles),
   connect(
     (state: IReduxState) => ({

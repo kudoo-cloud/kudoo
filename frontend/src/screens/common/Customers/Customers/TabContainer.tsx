@@ -2,8 +2,8 @@ import idx from 'idx';
 import find from 'lodash/find';
 import isEqual from 'lodash/isEqual';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import { IReduxState } from 'src/store/reducers';
@@ -12,13 +12,14 @@ type Props = {
   actions: any;
   children: any;
   customers: any;
-  archiveCustomer: Function;
-  unArchiveCustomer: Function;
-  deleteCustomer: Function;
+  archiveCustomer?: Function;
+  unArchiveCustomer?: Function;
+  deleteCustomer?: Function;
   columns: any;
-  match: any;
-  history: any;
-  location: any;
+  match?: any;
+  history?: any;
+  location?: any;
+  type?: string;
 };
 type State = {
   displayedCustomers: any;
@@ -183,7 +184,7 @@ class TabContainer extends Component<Props, State> {
   }
 }
 
-export default compose(
+export default compose<Props, Props>(
   connect((state: IReduxState) => ({ profile: state.profile })),
   // withCustomers(({ type }) => {
   //   let isArchived = false;

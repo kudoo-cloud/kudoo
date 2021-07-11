@@ -1,8 +1,8 @@
 import { withStyles } from '@kudoo/components';
 import idx from 'idx';
 import React, { useState } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';

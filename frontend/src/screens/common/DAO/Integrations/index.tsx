@@ -7,18 +7,18 @@ import {
 // import idx from 'idx';
 import queryString from 'query-string';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { compose } from 'recompose';
 import URL from 'src/helpers/urls';
 import ComingSoon from 'src/screens/common/ComingSoon';
 import styles from './styles';
 
 type Props = {
   actions: Record<string, any>;
-  integrations: Record<string, any>;
-  profile: any;
-  location: any;
+  integrations?: Record<string, any>;
+  profile?: any;
+  location?: any;
   classes: any;
 };
 type State = {};
@@ -159,7 +159,7 @@ class Integrations extends Component<Props, State> {
   }
 }
 
-export default compose(
+export default compose<Props, Props>(
   withStyles(styles),
   connect((state: any) => ({
     profile: state.profile,

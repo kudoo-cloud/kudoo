@@ -16,10 +16,10 @@ import styles from './styles';
 type Props = {
   makeStepActive: Function;
   markedVisited: Function;
-  updateProjectName: Function;
-  createNewProject: any;
-  classes: any;
-  theme: any;
+  updateProjectName?: Function;
+  createNewProject?: any;
+  classes?: any;
+  theme?: any;
 };
 
 class ProjectStep extends Component<Props, {}> {
@@ -72,4 +72,4 @@ const connected = connect(
   { ...actions },
 )(ProjectStep);
 
-export default withStyles(styles)(connected);
+export default withStyles<Props>(styles)(connected);

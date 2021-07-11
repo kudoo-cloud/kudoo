@@ -7,14 +7,14 @@ import styles from './styles';
 
 interface IProps {
   type: 'purchase-order';
-  data: any;
+  data?: any;
   xs?: any;
   sm?: any;
   md?: any;
   lg?: any;
   xl?: any;
   contentHash: any;
-  classes: any;
+  classes?: any;
 }
 
 class Widget extends React.Component<IProps> {
@@ -51,4 +51,4 @@ class Widget extends React.Component<IProps> {
   }
 }
 
-export default withStyles(styles)(Widget);
+export default withStyles<IProps>(styles)(Widget);

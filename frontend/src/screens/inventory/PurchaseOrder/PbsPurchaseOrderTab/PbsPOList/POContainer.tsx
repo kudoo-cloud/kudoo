@@ -3,8 +3,8 @@ import idx from 'idx';
 import { filter, find, get, includes, isEqual } from 'lodash';
 import moment from 'moment';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import POInvoiceModal from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/POInvoiceModal';
@@ -167,7 +167,7 @@ class PurchaseOrderTabContainer extends Component<
           })}
           <PONotificationModal
             visible={includes(isShowingPOModal, 'sendEmail')}
-            purchaseOrder={this.state.notifiedPO}
+            purchaseOrder={this.state.notifiedPO as any}
             onClose={this._closePOModal}
           />
           <POInvoiceModal
@@ -177,7 +177,7 @@ class PurchaseOrderTabContainer extends Component<
           />
           <POReceiptModal
             visible={includes(isShowingPOModal, 'receipted')}
-            purchaseOrder={this.state.notifiedPO}
+            purchaseOrder={this.state.notifiedPO as any}
             onClose={this._closePOModal}
           />
         </SelectedDAO>
@@ -186,7 +186,7 @@ class PurchaseOrderTabContainer extends Component<
   }
 }
 
-export default compose(
+export default compose<any, any>(
   connect((state: { profile: object }) => ({
     profile: state.profile,
   })),

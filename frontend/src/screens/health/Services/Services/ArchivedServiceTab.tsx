@@ -20,7 +20,7 @@ type Props = {
   fetchingServices: boolean;
   totalServices: number;
   onSortRequested: Function;
-  goToCreateService: Function;
+  goToCreateService: () => void;
   onRemoveServiceClicked: Function;
   onUnarchiveServiceClicked: Function;
   onTypeChange: Function;

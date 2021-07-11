@@ -1,8 +1,8 @@
 import { WizardSteps, withStyles } from '@kudoo/components';
 import { findIndex } from 'lodash';
 import * as React from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import uuid from 'uuid/v4';
 import { IProfile } from 'src/screens/inventory/PurchaseOrder/PurchaseOrder/purchaseOrderTypes';
 import styles from '../../PurchaseOrder/styles';

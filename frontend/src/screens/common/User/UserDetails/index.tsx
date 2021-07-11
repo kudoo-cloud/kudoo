@@ -19,7 +19,7 @@ import { showToast } from 'src/helpers/toast';
 import styles from './styles';
 
 interface IProps {
-  actions: any;
+  actions?: any;
   profile?: object;
   updateAccount?: (data: object) => any;
   classes?: any;
@@ -212,4 +212,4 @@ class UserDetails extends React.Component<IProps, {}> {
 export default compose<IProps, IProps>(
   connect((state: any) => ({ profile: state.profile })),
   // withUpdateUser(() => ({ name: 'updateAccount' })),
-)(withStyles(styles)(UserDetails));
+)(withStyles<IProps>(styles)(UserDetails));

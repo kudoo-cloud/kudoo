@@ -8,8 +8,8 @@ import {
 import get from 'lodash/get';
 import moment from 'moment';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { Route, Switch } from 'react-router';
+import { compose } from 'recompose';
 import { PROJECT_STATUS } from 'src/helpers/constants';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';

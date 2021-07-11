@@ -8,7 +8,7 @@ import { showToast } from 'src/helpers/toast';
 import styles, { StylesKeys } from './styles';
 
 type Props = IComponentProps<StylesKeys> & {
-  onClose?: Function;
+  onClose?: () => void;
   visible: boolean;
   onPaymentComplete: Function;
   selectedPlanName: string;

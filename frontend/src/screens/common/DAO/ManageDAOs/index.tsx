@@ -1,6 +1,6 @@
 import {
   Button,
-  CompanyCard,
+  DAOCard,
   DottedCreateButton,
   withStyles,
 } from '@kudoo/components';
@@ -11,9 +11,9 @@ import idx from 'idx';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { compose } from 'recompose';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import { IReduxState } from 'src/store/reducers';
@@ -159,7 +159,7 @@ class ManageDAOs extends Component<Props, State> {
                   });
                 }}
               >
-                <CompanyCard
+                <DAOCard
                   imageUrl={
                     get(dao, 'logo.url') ? get(dao, 'logo.url') : undefined
                   }
@@ -224,14 +224,14 @@ class ManageDAOs extends Component<Props, State> {
               }
             >
               <div className={classes.daoCard} style={{ cursor: 'initial' }}>
-                <CompanyCard
+                <DAOCard
                   imageUrl={
                     get(dao, 'logo.url') ? get(dao, 'logo.url') : undefined
                   }
                   primaryLabel={dao.name}
                   secondaryLabel='Employee'
                   borderColor={theme.palette.primary.color3}
-                  isJoinedCompany
+                  isJoinedDAO
                 />
               </div>
               {dao.isArchived && (

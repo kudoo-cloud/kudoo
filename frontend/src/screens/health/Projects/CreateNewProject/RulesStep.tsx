@@ -14,8 +14,8 @@ import idx from 'idx';
 import find from 'lodash/find';
 import isEmpty from 'lodash/isEmpty';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import * as Yup from 'yup';
 import { SERVICE_BILLING_TYPE } from 'src/helpers/constants';
 import actions from 'src/store/actions/createNewProject';
@@ -23,16 +23,16 @@ import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
-  profile: any;
-  makeStepActive: Function;
-  markedVisited: Function;
-  unmarkedVisited: Function;
-  addPaymentRule: Function;
-  createNewProject: any;
-  history: Record<string, any>;
-  i18n: any;
-  classes: any;
-  theme: any;
+  profile?: any;
+  makeStepActive?: Function;
+  markedVisited?: Function;
+  unmarkedVisited?: Function;
+  addPaymentRule?: Function;
+  createNewProject?: any;
+  history?: Record<string, any>;
+  i18n?: any;
+  classes?: any;
+  theme?: any;
 };
 type State = {
   rules: Array<any> | null;
@@ -351,7 +351,7 @@ class RulesStep extends Component<Props, State> {
   }
 }
 
-export default compose(
+export default compose<Props, Props>(
   withI18n(),
   withStyles(styles),
   connect(

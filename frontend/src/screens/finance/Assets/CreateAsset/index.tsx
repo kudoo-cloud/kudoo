@@ -1,6 +1,6 @@
 import {
   Button,
-  DatePicker,
+  // DatePicker,
   Dropdown,
   ErrorBoundary,
   SectionHeader,
@@ -14,8 +14,8 @@ import * as H from 'history';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import * as Yup from 'yup';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
@@ -170,6 +170,32 @@ class CreateAsset extends Component<IProps, IState> {
               />
             </Grid>
             <Grid item xs={12}>
+              <TextField
+                label={'X Chain Address'}
+                placeholder={'X Chain Address'}
+                name={'xChainAddress'}
+                id={'xChainAddress'}
+                value={values.xChainAddress}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.xChainAddress && errors.xChainAddress}
+                showClearIcon={false}
+              />
+            </Grid>
+            <Grid item xs={12}>
+              <TextField
+                label={'C Chain Address'}
+                placeholder={'C Chain Address'}
+                name={'cChainAddress'}
+                id={'cChainAddress'}
+                value={values.cChainAddress}
+                onChange={handleChange}
+                onBlur={handleBlur}
+                error={touched.cChainAddress && errors.cChainAddress}
+                showClearIcon={false}
+              />
+            </Grid>
+            <Grid item xs={12}>
               <Dropdown
                 label={'Asset Group'}
                 placeholder={'Select Asset Group'}
@@ -185,7 +211,7 @@ class CreateAsset extends Component<IProps, IState> {
                 error={touched.assetGroup && errors.assetGroup}
               />
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <DatePicker
                 label='Date Of Aquisition'
                 value={values.dateOfAquisition}
@@ -250,7 +276,7 @@ class CreateAsset extends Component<IProps, IState> {
                 showClearIcon={false}
                 isNumber
               />
-            </Grid>
+            </Grid> */}
           </Grid>
         </div>
       </ErrorBoundary>
@@ -264,11 +290,13 @@ class CreateAsset extends Component<IProps, IState> {
       <Formik
         initialValues={{
           name: initialData.name || '',
-          dateOfAquisition: initialData.dateOfAquisition || '',
-          aquisitionPrice: initialData.aquisitionPrice || '',
-          netBookValue: initialData.netBookValue || '',
-          depreciation: initialData.depreciation || '',
-          salvageValue: initialData.salvageValue || '',
+          xChainAddress: '',
+          cChainAddress: '',
+          // dateOfAquisition: initialData.dateOfAquisition || '',
+          // aquisitionPrice: initialData.aquisitionPrice || '',
+          // netBookValue: initialData.netBookValue || '',
+          // depreciation: initialData.depreciation || '',
+          // salvageValue: initialData.salvageValue || '',
           assetGroup: get(initialData, 'assetGroup.id') || '',
         }}
         enableReinitialize

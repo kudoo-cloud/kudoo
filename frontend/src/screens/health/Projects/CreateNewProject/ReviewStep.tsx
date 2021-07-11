@@ -12,8 +12,8 @@ import find from 'lodash/find';
 import get from 'lodash/get';
 import moment from 'moment';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import {
   PROJECT_SERVICE_RULES_TYPE,
   PROJECT_STATUS,
@@ -26,18 +26,18 @@ import { IReduxState } from 'src/store/reducers';
 import styles, { ReviewStepStyles } from './styles';
 
 type Props = {
-  profile: any;
-  history: any;
-  makeStepActive: Function;
-  markedVisited: Function;
-  unmarkedVisited: Function;
-  createNewProject: any;
-  createCustomer: Function;
-  createProject: Function;
-  resetNewProjectData: Function;
-  i18n: any;
-  classes: any;
-  theme: any;
+  profile?: any;
+  history?: any;
+  makeStepActive?: Function;
+  markedVisited?: Function;
+  unmarkedVisited?: Function;
+  createNewProject?: any;
+  createCustomer?: Function;
+  createProject?: Function;
+  resetNewProjectData?: Function;
+  i18n?: any;
+  classes?: any;
+  theme?: any;
 };
 
 type State = {};
@@ -398,7 +398,7 @@ class ReviewStep extends Component<Props, State> {
   }
 }
 
-export default compose(
+export default compose<Props, Props>(
   withI18n(),
   withStyles(composeStyles(styles, ReviewStepStyles)),
   connect(

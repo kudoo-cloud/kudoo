@@ -14,11 +14,11 @@ import URL from 'src/helpers/urls';
 import styles from './styles';
 
 type Props = {
-  actions: any;
-  healthcareProvider: any;
-  onSubmit: any;
-  classes: any;
-  theme: any;
+  actions?: any;
+  healthcareProvider?: any;
+  onSubmit?: any;
+  classes?: any;
+  theme?: any;
 };
 
 class DetailsTab extends React.Component<Props, any> {
@@ -161,4 +161,4 @@ class DetailsTab extends React.Component<Props, any> {
   }
 }
 
-export default withStyles(styles)(DetailsTab);
+export default withStyles<Props>(styles)(DetailsTab);

@@ -19,14 +19,14 @@ type Props = {
     | 'timesheets'
     | 'recent-projects'
     | 'recent-customers';
-  data: any;
+  data?: any;
   xs?: any;
   sm?: any;
   md?: any;
   lg?: any;
   xl?: any;
   contentHash: string;
-  classes: any;
+  classes?: any;
 };
 
 type State = {};
@@ -77,4 +77,4 @@ class Widget extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(Widget);
+export default withStyles<Props>(styles)(Widget);

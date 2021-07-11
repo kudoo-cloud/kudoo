@@ -11,8 +11,8 @@ import { Formik } from 'formik';
 import idx from 'idx';
 import { isEqual } from 'lodash';
 import * as React from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import * as Yup from 'yup';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
@@ -220,7 +220,7 @@ class CreatePBSPurchaseOrder extends React.Component<
   }
 }
 
-export default compose(
+export default compose<any, any>(
   withStyles(composeStyles(styles, createPurchaseOrderStyles)),
   // withPurchaseOrder(
   //   (props) => {

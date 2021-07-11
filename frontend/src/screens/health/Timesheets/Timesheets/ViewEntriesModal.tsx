@@ -7,7 +7,7 @@ import { compose } from 'recompose';
 import { ViewEntriesModalStyles } from './styles';
 
 type Props = {
-  onClose: Function;
+  onClose?: any;
   visible: boolean;
   entries: Array<any>;
   classes: any;

@@ -4,7 +4,7 @@ import { compose } from 'recompose';
 import { TimesheetApproveModalStyles } from './styles';
 
 type Props = {
-  onClose: Function;
+  onClose: () => void;
   visible: boolean;
   timesheets: Array<any>;
   timeSheetApprove: Function;

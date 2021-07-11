@@ -13,8 +13,8 @@ import { Formik } from 'formik';
 import idx from 'idx';
 import find from 'lodash/find';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import * as Yup from 'yup';
 import { SERVICE_BILLING_TYPE } from 'src/helpers/constants';
 import actions from 'src/store/actions/createNewProject';
@@ -23,19 +23,19 @@ import ServiceBlock from './ServiceBlock';
 import styles from './styles';
 
 type Props = {
-  makeStepActive: Function;
-  markedVisited: Function;
-  unmarkedVisited: Function;
-  addService: Function;
-  removeService: Function;
-  i18n: any;
-  services: {
+  makeStepActive?: Function;
+  markedVisited?: Function;
+  unmarkedVisited?: Function;
+  addService?: Function;
+  removeService?: Function;
+  i18n?: any;
+  services?: {
     data: Array<any>;
     loading: boolean;
   };
-  createNewProject: any;
-  classes: any;
-  theme: any;
+  createNewProject?: any;
+  classes?: any;
+  theme?: any;
 };
 
 type State = {
@@ -48,7 +48,8 @@ class ServiceStep extends Component<Props, State> {
     services: {
       refetch: () => {},
       loadNextPage: () => {},
-      data: {},
+      data: [],
+      loading: false,
     },
   };
 
@@ -389,7 +390,7 @@ class ServiceStep extends Component<Props, State> {
   }
 }
 
-export default compose(
+export default compose<Props, Props>(
   withStyles(styles),
   withI18n(),
   connect(

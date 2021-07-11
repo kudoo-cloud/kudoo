@@ -16,9 +16,9 @@ import Grid from '@material-ui/core/Grid';
 import { debounce, filter, find, findIndex } from 'lodash';
 import isEqual from 'lodash/isEqual';
 import * as React from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import { withState } from 'recompose';
+import { compose, withState } from 'recompose';
+
 import uuid from 'uuid/v4';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
@@ -526,7 +526,7 @@ class CreatePBSPurchaseOrderLine extends React.Component<
   }
 }
 
-export default compose(
+export default compose<any, any>(
   withI18n(),
   withState('searchText', 'setSearchText', ''),
   // withDeletePurchaseOrderLine(),

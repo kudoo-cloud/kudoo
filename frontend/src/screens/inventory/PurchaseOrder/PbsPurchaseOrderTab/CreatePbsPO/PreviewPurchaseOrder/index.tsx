@@ -18,8 +18,8 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import { filter, find, findIndex, get, includes, uniqBy } from 'lodash';
 import moment from 'moment';
 import * as React from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import { generatePDF } from 'src/helpers/jsPDF';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
@@ -581,7 +581,7 @@ class PreviewPurchaseOrder extends React.Component<
   }
 }
 
-export default compose(
+export default compose<any, any>(
   withI18n(),
   // withPurchaseOrders(),
   // withCreatePurchaseOrder(),

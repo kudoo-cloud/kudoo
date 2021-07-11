@@ -109,7 +109,7 @@ const WizardCreatePage: React.FC<Props> = (props) => {
   );
 };
 
-const StyledWizard = withStyles(styles)(WizardCreatePage) as React.FC<Props>;
+const StyledWizard = withStyles<Props>(styles)(WizardCreatePage);
 
 export default React.forwardRef((props: Props, ref) => (
   <StyledWizard {...props} forwardedRef={ref} />

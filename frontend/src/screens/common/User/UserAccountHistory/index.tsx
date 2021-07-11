@@ -9,8 +9,8 @@ import React, { Component } from 'react';
 import styles from './styles';
 
 interface IProps {
-  actions: object;
-  classes: any;
+  actions?: object;
+  classes?: any;
 }
 interface IState {
   headerData: object[];
@@ -99,4 +99,4 @@ class UserAccountHistory extends Component<IProps, IState> {
   }
 }
 
-export default withStyles(styles)(UserAccountHistory);
+export default withStyles<IProps>(styles)(UserAccountHistory);

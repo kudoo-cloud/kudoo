@@ -16,13 +16,13 @@ import * as React from 'react';
 import { JoinModalStyles } from './styles';
 
 type Props = {
-  visible: boolean;
-  createdDAOs: Array<any>;
-  joinedDAOs: Array<any>;
-  allDAOs: any;
-  onClose: Function;
-  theme: any;
-  classes: any;
+  visible?: boolean;
+  createdDAOs?: Array<any>;
+  joinedDAOs?: Array<any>;
+  allDAOs?: any;
+  onClose?: () => void;
+  theme?: any;
+  classes?: any;
 };
 
 type State = {
@@ -238,4 +238,4 @@ class JoinModal extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(JoinModalStyles)(JoinModal);
+export default withStyles<Props>(JoinModalStyles)(JoinModal);

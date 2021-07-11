@@ -3,7 +3,7 @@ import * as React from 'react';
 import comingSoon from './coming-soon.jpg';
 import Styles from './styles';
 interface IProps {
-  classes: any;
+  classes?: any;
 }
 
 class ComingSoon extends React.Component<IProps, {}> {
@@ -22,4 +22,4 @@ class ComingSoon extends React.Component<IProps, {}> {
     );
   }
 }
-export default withStyles(Styles)(ComingSoon);
+export default withStyles<IProps>(Styles)(ComingSoon);

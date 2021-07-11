@@ -18,7 +18,7 @@ import styles, { StyleKeys } from '../styles';
 type Props = IComponentProps<StyleKeys> & {
   updatePatientCreationOption?: Function;
   patientCreationOption?: PatientCreationOption;
-  goToNextStep: Function;
+  goToNextStep: () => void;
 };
 
 const SelectOptionStep: React.FC<Props> = (props) => {
