@@ -7,9 +7,9 @@ type Props = {
   label: string;
   time: string;
   icon: any;
-  topBar: boolean;
-  bottomBar: boolean;
-  classes: any;
+  topBar?: boolean;
+  bottomBar?: boolean;
+  classes?: any;
 };
 
 type State = {};
@@ -40,4 +40,4 @@ class LatestActivityItem extends React.Component<Props, State> {
   }
 }
 
-export default withStyles(LatestActivityItemStyles)(LatestActivityItem);
+export default withStyles<Props>(LatestActivityItemStyles)(LatestActivityItem);

@@ -3,9 +3,9 @@ import Grid from '@material-ui/core/Grid';
 import cx from 'classnames';
 import idx from 'idx';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { compose } from 'recompose';
 import URL from 'src/helpers/urls';
 import styles from './styles';
 

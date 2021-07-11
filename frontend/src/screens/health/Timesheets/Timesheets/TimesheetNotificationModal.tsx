@@ -5,7 +5,7 @@ import { showToast } from 'src/helpers/toast';
 import { TimesheetNotificationModalStyles } from './styles';
 
 type Props = {
-  onClose: Function;
+  onClose: () => void;
   visible: boolean;
   timesheetId: string;
   timeSheetNotify: Function;

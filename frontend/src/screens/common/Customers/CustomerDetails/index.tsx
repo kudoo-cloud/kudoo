@@ -14,8 +14,8 @@ import { Formik } from 'formik';
 import idx from 'idx';
 import get from 'lodash/get';
 import React, { useState } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import * as Yup from 'yup';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
@@ -295,7 +295,9 @@ const CustomerDetails: React.FC<Props> = (props) => {
 
   const renderDetailsSection = () => {
     const customer = getCustomerDetails();
-    return <DetailsTab customer={customer} onSubmit={submitAddressContact} />;
+    return (
+      <DetailsTab customer={customer} onSubmit={submitAddressContact as any} />
+    );
   };
 
   const renderInvoiceSection = () => {

@@ -1,6 +1,6 @@
 import {
   Button,
-  HealthcareProviderForm,
+  // HealthcareProviderForm,
   Modal,
   Tabs,
   ToggleButton,
@@ -13,8 +13,8 @@ import { Formik } from 'formik';
 import idx from 'idx';
 import get from 'lodash/get';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import * as Yup from 'yup';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
@@ -370,7 +370,7 @@ class HealthcareProviderDetails extends Component<Props, State> {
                     classes={{ container: classes.formFields }}
                   >
                     <Grid item xs={12} sm={12}>
-                      <HealthcareProviderForm
+                      {/* <HealthcareProviderForm
                         keys={{
                           healthcareProvider_name: 'healthcareProvider_name',
                           contact_name: 'contact_name',
@@ -390,7 +390,7 @@ class HealthcareProviderDetails extends Component<Props, State> {
                         touched={formProps.touched}
                         handleChange={formProps.handleChange}
                         handleBlur={formProps.handleBlur}
-                      />
+                      /> */}
                     </Grid>
                   </Grid>
                   <Grid container spacing={0}>

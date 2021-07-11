@@ -8,8 +8,8 @@ import {
 import { FormControl, Grid } from '@material-ui/core';
 import get from 'lodash/get';
 import React from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import * as Yup from 'yup';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';

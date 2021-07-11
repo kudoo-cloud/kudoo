@@ -6,16 +6,16 @@ import {
 } from '@kudoo/components';
 import idx from 'idx';
 import React, { useState } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import { showToast } from 'src/helpers/toast';
 import { IProfileState } from 'src/store/reducers/profile';
 import styles, { StyleKeys } from './styles';
 
 type IProps = IComponentProps<StyleKeys> & {
   onClose: () => void;
-  visible: boolean;
-  purchaseOrder: {
+  visible?: boolean;
+  purchaseOrder?: {
     supplier: {
       id: string;
       name: string;
@@ -25,11 +25,11 @@ type IProps = IComponentProps<StyleKeys> & {
     isPbsPO: boolean;
     poNumber: number;
   };
-  sendPurchaseOrderMail: ({}) => {
+  sendPurchaseOrderMail?: ({}) => {
     success: object;
     error: [];
   };
-  profile: IProfileState;
+  profile?: IProfileState;
 };
 
 const PONotificationModal: React.FC<IProps> = (props) => {

@@ -14,27 +14,27 @@ import debounce from 'lodash/debounce';
 import findIndex from 'lodash/findIndex';
 import get from 'lodash/get';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import { withState } from 'recompose';
+import { compose, withState } from 'recompose';
+
 import uuid from 'uuid/v4';
 import * as actions from 'src/store/actions/createNewInvoice';
 import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
-  actions: any;
-  services: any;
-  newInvoice: any;
+  actions?: any;
+  services?: any;
+  newInvoice?: any;
   makeStepActive: Function;
   markedVisited: Function;
   unmarkedVisited: Function;
-  setSearchText: Function;
-  updateTableData: Function;
-  i18n: any;
-  classes: any;
-  profile: any;
-  theme: any;
+  setSearchText?: Function;
+  updateTableData?: Function;
+  i18n?: any;
+  classes?: any;
+  profile?: any;
+  theme?: any;
 };
 type State = {
   columnData: any;
@@ -452,7 +452,7 @@ class ServiceStep extends Component<Props, State> {
   }
 }
 
-export default compose(
+export default compose<Props, Props>(
   withStyles(styles),
   withI18n(),
   withState('searchText', 'setSearchText', ''),

@@ -16,5 +16,5 @@ export type SimpleCreatePageProps<Values = FormikValues> =
     initialValues: Values;
     validationSchema?: any;
     onSubmit?: (values: Values, actions: FormikHelpers<Values>) => void;
-    onCancel?: Function;
+    onCancel?: () => void;
   };

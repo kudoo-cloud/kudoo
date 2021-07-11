@@ -115,35 +115,36 @@ class App extends React.Component<IProps, IState> {
       };
     });
     let initialSelectedProductIndex = 0;
-    if (app.kudoo_product === Product.projects) {
-      initialSelectedProductIndex = 0;
-    } else if (app.kudoo_product === Product.finance) {
-      initialSelectedProductIndex = 1;
-    } else if (app.kudoo_product === Product.inventory) {
-      initialSelectedProductIndex = 2;
-    } else if (app.kudoo_product === Product.health) {
-      initialSelectedProductIndex = 3;
-    } else if (app.kudoo_product === Product.manufacturing) {
-      initialSelectedProductIndex = 4;
-    }
+    // if (app.kudoo_product === Product.projects) {
+    //   initialSelectedProductIndex = 0;
+    // } else if (app.kudoo_product === Product.finance) {
+    //   initialSelectedProductIndex = 1;
+    // } else if (app.kudoo_product === Product.inventory) {
+    //   initialSelectedProductIndex = 2;
+    // } else if (app.kudoo_product === Product.health) {
+    //   initialSelectedProductIndex = 3;
+    // } else if (app.kudoo_product === Product.manufacturing) {
+    //   initialSelectedProductIndex = 4;
+    // }
     return (
       <div className={classes.loggedInWrapper}>
         {totalDAOs > 0 && (
           <div className={classes.drawerWrapper}>
             <Drawer
-              companies={get(DAOs, 'data', []).filter((dao) => !dao.isArchived)}
-              selectedCompany={
+              daos={get(DAOs, 'data', []).filter((dao) => !dao.isArchived)}
+              selectedDAO={
                 !isEmpty(selectedDAO)
                   ? selectedDAO || { name: '' }
                   : DAOs?.data?.[0] || { name: '' }
               }
+              manageDAOUrl={URL.MANAGE_DAOS()}
               onClose={() => {
                 this.setState({ isDrawerClosed: true });
               }}
               onOpen={() => {
                 this.setState({ isDrawerClosed: false });
               }}
-              onCompanyClick={(dao) => {
+              onDAOClick={(dao) => {
                 this.props.actions.selectDAO(dao);
               }}
               menuItems={filteredItems}
@@ -165,13 +166,16 @@ class App extends React.Component<IProps, IState> {
             actions={actions}
             logout={() => {}}
             profile={profile}
-            noOfCompanies={totalDAOs}
+            noOfDAOs={totalDAOs}
             onSelectProduct={(_, data: ProductType) => {
               this.props.history.push(URL.DASHBOARD());
               this.props.actions.setKudooProduct(data.value || '');
             }}
             products={filteredProducts}
             initialSelectedProductIndex={initialSelectedProductIndex}
+            accountSettingsUrl={URL.ACCOUNT_SETTINGS()}
+            loginUrl={URL.LOGIN()}
+            configurationUrl={URL.CONFIGURATION()}
           />
           <Screen />
         </div>

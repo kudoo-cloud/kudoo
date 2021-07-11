@@ -74,4 +74,4 @@ const PatientSearch: React.FC<Props> = (props) => {
   );
 };
 
-export default withStyles(styles)(PatientSearch);
+export default withStyles<Props>(styles)(PatientSearch);

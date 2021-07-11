@@ -1,8 +1,8 @@
 import { Modal, withStyles } from '@kudoo/components';
 // import idx from 'idx';
 import React, { useState } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import { showToast } from 'src/helpers/toast';
 import { IReduxState } from 'src/store/reducers';
 import { IProfileState } from 'src/store/reducers/profile';
@@ -11,13 +11,13 @@ import styles, { StyleKeys } from './styles';
 import { POSTATUS } from './types';
 
 type IProps = IRouteProps<StyleKeys> & {
-  onClose: () => void;
-  visible: boolean;
-  purchaseOrder: {
+  onClose?: () => void;
+  visible?: boolean;
+  purchaseOrder?: {
     id: string;
     isPbsPO: boolean;
   };
-  purchaseOrderLines: {
+  purchaseOrderLines?: {
     data: [
       {
         date: string;
@@ -29,14 +29,14 @@ type IProps = IRouteProps<StyleKeys> & {
       },
     ];
   };
-  generateApInvoice: ({}) => {
+  generateApInvoice?: ({}) => {
     success: object;
     error: [];
   };
-  profile: IProfileState;
-  createInventoryOnHand: ({}) => Promise<IPOResponse>;
-  updateApInvoice: ({}) => Promise<IPOResponse>;
-  updatePurchaseOrder: ({}) => Promise<IPOResponse>;
+  profile?: IProfileState;
+  createInventoryOnHand?: ({}) => Promise<IPOResponse>;
+  updateApInvoice?: ({}) => Promise<IPOResponse>;
+  updatePurchaseOrder?: ({}) => Promise<IPOResponse>;
 };
 
 const POInvoiceModal: React.FC<IProps> = (props) => {

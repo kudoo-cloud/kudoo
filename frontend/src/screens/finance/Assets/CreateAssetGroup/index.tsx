@@ -1,6 +1,6 @@
 import {
   Button,
-  Dropdown,
+  // Dropdown,
   ErrorBoundary,
   SectionHeader,
   TextField,
@@ -13,8 +13,8 @@ import * as H from 'history';
 import get from 'lodash/get';
 import isEqual from 'lodash/isEqual';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import * as Yup from 'yup';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
@@ -123,8 +123,8 @@ class CreateAssetGroup extends Component<IProps, IState> {
     touched,
     handleChange,
     handleBlur,
-    setFieldValue,
-    setFieldTouched,
+    // setFieldValue,
+    // setFieldTouched,
   }) {
     const { classes } = this.props;
     return (
@@ -144,7 +144,7 @@ class CreateAssetGroup extends Component<IProps, IState> {
                 showClearIcon={false}
               />
             </Grid>
-            <Grid item xs={12}>
+            {/* <Grid item xs={12}>
               <Dropdown
                 label={'Depreciation Type'}
                 placeholder={'Select Depreciation Type'}
@@ -179,7 +179,7 @@ class CreateAssetGroup extends Component<IProps, IState> {
                 showClearIcon={false}
                 isNumber
               />
-            </Grid>
+            </Grid> */}
           </Grid>
         </div>
       </ErrorBoundary>
@@ -199,8 +199,8 @@ class CreateAssetGroup extends Component<IProps, IState> {
         enableReinitialize
         validationSchema={Yup.object().shape({
           name: Yup.string().required('Name is required'),
-          depreciationType: Yup.string().required('Depreciation Type required'),
-          usefulLife: Yup.number().required('Useful Life required'),
+          // depreciationType: Yup.string().required('Depreciation Type required'),
+          // usefulLife: Yup.number().required('Useful Life required'),
         })}
         onSubmit={this._submitForm}
       >
@@ -212,8 +212,8 @@ class CreateAssetGroup extends Component<IProps, IState> {
           handleBlur,
           handleSubmit,
           isSubmitting,
-          setFieldValue,
-          setFieldTouched,
+          // setFieldValue,
+          // setFieldTouched,
           dirty,
         }) => {
           const isFormDirty = dirty;
@@ -227,8 +227,8 @@ class CreateAssetGroup extends Component<IProps, IState> {
                     touched,
                     handleChange,
                     handleBlur,
-                    setFieldValue,
-                    setFieldTouched,
+                    // setFieldValue,
+                    // setFieldTouched,
                   })}
                 </Grid>
               </Grid>

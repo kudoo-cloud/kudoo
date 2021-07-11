@@ -16,10 +16,10 @@ import get from 'lodash/get';
 import uniq from 'lodash/uniq';
 import moment from 'moment';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import Dropzone from 'react-dropzone';
 import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
+import { compose } from 'recompose';
 import * as Yup from 'yup';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
@@ -28,18 +28,18 @@ import { IReduxState } from 'src/store/reducers';
 import styles, { detailStepStyles } from './styles';
 
 type Props = {
-  actions: Record<string, any>;
-  createType: 'timesheet' | 'project' | 'text';
+  actions?: Record<string, any>;
+  createType?: 'timesheet' | 'project' | 'text';
   makeStepActive: Function;
   markedVisited: Function;
   unmarkedVisited: Function;
-  updatePaymentInfo: Function;
-  newInvoice: Record<string, any>;
-  dao: Record<string, any>;
-  profile: Record<string, any>;
-  i18n: any;
-  classes: any;
-  theme: any;
+  updatePaymentInfo?: Function;
+  newInvoice?: Record<string, any>;
+  dao?: Record<string, any>;
+  profile?: Record<string, any>;
+  i18n?: any;
+  classes?: any;
+  theme?: any;
 };
 type State = {};
 
@@ -416,7 +416,7 @@ class DetailStep extends Component<Props, State> {
   }
 }
 
-export default compose(
+export default compose<Props, Props>(
   withI18n(),
   withStyles(composeStyles(styles, detailStepStyles)),
   connect(

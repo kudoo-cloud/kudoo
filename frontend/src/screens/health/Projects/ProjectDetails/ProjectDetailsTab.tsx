@@ -10,8 +10,8 @@ import ButtonBase from '@material-ui/core/ButtonBase';
 import Grid from '@material-ui/core/Grid';
 import get from 'lodash/get';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import ProjectProgress from './ProjectProgress';
@@ -19,12 +19,12 @@ import styles from './styles';
 
 type Props = {
   actions: any;
-  archiveProject: Function;
-  onMarkAsComplete: Function;
+  archiveProject?: Function;
+  onMarkAsComplete: () => void;
   projectCompleted: boolean;
   progressSteps: Array<any>;
   project: Record<string, any>;
-  i18n: any;
+  i18n?: any;
   history: any;
   match: any;
   theme: any;
@@ -223,7 +223,7 @@ class ProjectDetailsTab extends Component<Props, State> {
   }
 }
 
-export default compose(
+export default compose<Props, Props>(
   withI18n(),
   withStyles(styles),
   connect((state: any) => ({

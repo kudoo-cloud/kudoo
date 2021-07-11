@@ -59,13 +59,13 @@ export interface ICreatePOProps {
   };
   isPbsPO: boolean;
   initialData: {
-    id: string;
-    date: Date;
-    supplier: {
+    id?: string;
+    date?: Date;
+    supplier?: {
       id: string;
       name: string;
     };
-    preview: object;
+    preview?: object;
   };
   purchaseOrderData: IPurchaseOrderData;
   markedVisited: (data: number) => {};

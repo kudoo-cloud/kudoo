@@ -175,6 +175,7 @@ class PreviewTimesheet extends Component<Props, State> {
                 file={{ ...file, name: file.fileName }}
                 showRemoveButton={false}
                 variant='link'
+                onRemoveClick={() => {}}
               />
             ))}
           </div>

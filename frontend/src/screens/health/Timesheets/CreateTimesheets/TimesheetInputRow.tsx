@@ -22,6 +22,14 @@ type Props = {
   startWeekDay: any;
   endWeekDay: any;
   onChange: any;
+  hideRemoveIcon?: boolean;
+  hideDaysLabel?: boolean;
+  projects?: any[];
+
+  customers?: any[];
+  services?: any[];
+  onRemoveClick: () => void;
+  allowedToEdit: boolean;
 };
 
 type State = {};
@@ -395,4 +403,4 @@ class TimehsheetInputRow extends Component<Props, State> {
   }
 }
 
-export default withStyles(timesheetRowStyles)(TimehsheetInputRow);
+export default withStyles<Props>(timesheetRowStyles)(TimehsheetInputRow);

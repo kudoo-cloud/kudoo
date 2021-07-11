@@ -14,8 +14,8 @@ import { Formik } from 'formik';
 import get from 'lodash/get';
 import queryString from 'query-string';
 import React, { Component } from 'react';
-import { compose, withApollo } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 // import { Redirect } from 'react-router';
 import { bindActionCreators } from 'redux';
 import * as Yup from 'yup';
@@ -249,7 +249,6 @@ class Login extends Component<Props, State> {
 export default compose(
   withI18n(),
   withStyles(styles),
-  withApollo,
   connect(
     (state: IReduxState) => ({
       profile: state.profile,

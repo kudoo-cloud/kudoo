@@ -109,6 +109,4 @@ const SimpleCreatePage: React.FC<SimpleCreatePageProps> = (props) => {
   );
 };
 
-export default withStyles(stylesFn)(
-  SimpleCreatePage,
-) as React.FC<SimpleCreatePageProps>;
+export default withStyles<SimpleCreatePageProps>(stylesFn)(SimpleCreatePage);

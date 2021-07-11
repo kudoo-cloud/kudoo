@@ -14,27 +14,27 @@ import { filter } from 'lodash';
 import findIndex from 'lodash/findIndex';
 import isEqual from 'lodash/isEqual';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import uuid from 'uuid/v4';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import styles from '../styles';
 interface IProps {
-  classes: any;
-  history: any;
-  i18n: any;
-  makeStepActive: any;
-  markedVisited: any;
-  unmarkedVisited: any;
-  theme: any;
-  inventories: any;
-  salesOrderData: any;
-  salesOrderLines: any; // Query response
-  salesOrderLineData: any;
-  setSalesOrderLineData: (data: any) => any;
-  submitForm: () => any;
-  deleteSalesOrderLine: (data: any) => any;
+  classes?: any;
+  history?: any;
+  i18n?: any;
+  makeStepActive?: any;
+  markedVisited?: any;
+  unmarkedVisited?: any;
+  theme?: any;
+  inventories?: any;
+  salesOrderData?: any;
+  salesOrderLines?: any; // Query response
+  salesOrderLineData?: any;
+  setSalesOrderLineData?: (data: any) => any;
+  submitForm?: () => any;
+  deleteSalesOrderLine?: (data: any) => any;
 }
 
 interface IState {
@@ -319,7 +319,7 @@ class CreateSalesOrder extends Component<IProps, IState> {
   }
 }
 
-export default compose(
+export default compose<IProps, IProps>(
   withI18n(),
   // withDeleteSalesOrderLine(),
   // withInventories(({ type }) => {

@@ -22,4 +22,4 @@ class InvoicesTab extends React.Component<IProps, any> {
   }
 }
 
-export default withStyles(styles)(InvoicesTab);
+export default withStyles<IProps>(styles)(InvoicesTab);

@@ -103,4 +103,4 @@ class GeneralTab extends Component<Props, State> {
   }
 }
 
-export default withStyles(styles)(GeneralTab);
+export default withStyles<Props>(styles)(GeneralTab);

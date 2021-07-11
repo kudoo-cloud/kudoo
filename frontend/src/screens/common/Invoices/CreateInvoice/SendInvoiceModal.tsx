@@ -3,11 +3,11 @@ import React, { Component } from 'react';
 import { sendInvoiceModalStyles } from './styles';
 
 type Props = {
-  onClose: Function;
+  onClose?: () => void;
   onSubmit: Function;
-  visible: boolean;
-  submitting: boolean;
-  classes: any;
+  visible?: boolean;
+  submitting?: boolean;
+  classes?: any;
 };
 type State = {
   emails: {
@@ -82,4 +82,4 @@ class SendInvoiceModal extends Component<Props, State> {
   }
 }
 
-export default withStyles(sendInvoiceModalStyles)(SendInvoiceModal);
+export default withStyles<Props>(sendInvoiceModalStyles)(SendInvoiceModal);

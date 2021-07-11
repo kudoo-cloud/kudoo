@@ -12,7 +12,7 @@ import { showToast } from 'src/helpers/toast';
 import styles from './styles';
 
 type Props = {
-  onClose: Function;
+  onClose: () => void;
   visible: boolean;
   invoice: any;
   invoiceNotify: Function;

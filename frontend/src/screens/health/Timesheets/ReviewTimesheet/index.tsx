@@ -12,8 +12,8 @@ import isEmpty from 'lodash/isEmpty';
 import merge from 'lodash/merge';
 import moment from 'moment';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import { TIMESHEET_STATUS } from 'src/helpers/constants';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
@@ -282,6 +282,7 @@ class ReviewTimesheet extends Component<Props, State> {
                 file={{ ...file, name: file.fileName }}
                 showRemoveButton={false}
                 variant='interactive'
+                onRemoveClick={() => {}}
               />
             ))}
           </div>

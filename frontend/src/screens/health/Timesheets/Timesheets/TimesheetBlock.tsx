@@ -13,15 +13,15 @@ type Props = {
   daoName: string;
   project?: string;
   rows: Array<Record<string, any>>;
-  collapsed: boolean;
-  onCellClick: Function;
-  showEmailIcon: boolean;
-  showViewIcon: boolean;
-  showRemoveIcon: boolean;
-  showAddIcon: boolean;
-  onRemoveClicked: Function;
-  onAddClicked: Function;
-  classes: any;
+  collapsed?: boolean;
+  onCellClick?: Function;
+  showEmailIcon?: boolean;
+  showViewIcon?: boolean;
+  showRemoveIcon?: boolean;
+  showAddIcon?: boolean;
+  onRemoveClicked?: Function;
+  onAddClicked?: Function;
+  classes?: any;
 };
 type State = {
   collapsed: boolean;
@@ -242,4 +242,4 @@ class TimesheetBlock extends Component<Props, State> {
   }
 }
 
-export default withStyles(timesheetBlockStyles)(TimesheetBlock);
+export default withStyles<Props>(timesheetBlockStyles)(TimesheetBlock as any);

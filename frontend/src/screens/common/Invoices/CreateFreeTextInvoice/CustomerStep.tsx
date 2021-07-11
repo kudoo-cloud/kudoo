@@ -14,26 +14,26 @@ import debounce from 'lodash/debounce';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import { withState } from 'recompose';
+import { compose, withState } from 'recompose';
+
 import * as Yup from 'yup';
 import * as actions from 'src/store/actions/createNewInvoice';
 import { IReduxState } from 'src/store/reducers';
 import styles from './styles';
 
 type Props = {
-  actions: Record<string, any>;
-  customers: Record<string, any>;
-  newInvoice: Record<string, any>;
+  actions?: Record<string, any>;
+  customers?: Record<string, any>;
+  newInvoice?: Record<string, any>;
   makeStepActive: Function;
   markedVisited: Function;
   unmarkedVisited: Function;
-  setSearchText: Function;
-  updateCustomerInfo: Function;
-  i18n: any;
-  classes: any;
-  theme: any;
+  setSearchText?: Function;
+  updateCustomerInfo?: Function;
+  i18n?: any;
+  classes?: any;
+  theme?: any;
 };
 type State = {};
 
@@ -266,7 +266,7 @@ class CustomerStep extends Component<Props, State> {
   }
 }
 
-export default compose(
+export default compose<Props, Props>(
   withI18n(),
   withStyles(styles),
   withState('searchText', 'setSearchText', ''),

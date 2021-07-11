@@ -14,8 +14,8 @@ import find from 'lodash/find';
 import get from 'lodash/get';
 import moment from 'moment';
 import React, { Component } from 'react';
-import { compose } from 'react-apollo';
 import { connect } from 'react-redux';
+import { compose } from 'recompose';
 import {
   PROJECT_SERVICE_RULES_TYPE,
   SERVICE_BILLING_TYPE,
@@ -25,12 +25,12 @@ import ProjectProgress from './ProjectProgress';
 import styles, { ServiceListItemStyles } from './styles';
 
 type Props = {
-  onMarkAsComplete: Function;
+  onMarkAsComplete: () => void;
   projectCompleted: boolean;
   project: Record<string, any>;
   progressSteps: Array<any>;
-  client: Record<string, any>;
-  i18n: any;
+  client?: Record<string, any>;
+  i18n?: any;
   history: any;
   classes: any;
   theme: any;
@@ -168,7 +168,7 @@ class ServicesTab extends Component<Props, State> {
   }
 }
 
-export default compose(
+export default compose<Props, Props>(
   withI18n(),
   withStyles(styles),
   connect((state: any) => ({
@@ -188,16 +188,16 @@ type RowFlowType = {
 };
 
 type ServiceItemProps = {
-  classes: any;
+  classes?: any;
   type: any;
   data: Array<RowFlowType>;
-  isClosed: boolean;
+  isClosed?: boolean;
   name: string;
   price: string;
   id: string;
   includeConsTax: boolean;
   onEditClick: Function;
-  i18n: any;
+  i18n?: any;
 };
 
 type ServiceItemState = {
@@ -329,7 +329,7 @@ class ServiceListItem extends Component<ServiceItemProps, ServiceItemState> {
     );
   }
 }
-const ServiceItem = compose(
+const ServiceItem = compose<ServiceItemProps, ServiceItemProps>(
   withStyles(ServiceListItemStyles),
   withI18n(),
 )(ServiceListItem);
