@@ -1,0 +1,7 @@
+#import './fragments.graphql'
+
+mutation createDao($createDaoInput: CreateDaoInput!) {
+  createDao(createDaoInput: $createDaoInput) {
+    ...Dao
+  }
+}
