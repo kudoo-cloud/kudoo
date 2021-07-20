@@ -23,3 +23,9 @@ query daos {
     ...Dao
   }
 }
+
+query dao($id: String!) {
+  dao(id: $id) {
+    ...Dao
+  }
+}

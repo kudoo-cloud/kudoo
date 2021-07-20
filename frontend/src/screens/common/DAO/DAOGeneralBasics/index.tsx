@@ -13,30 +13,30 @@ import ButtonBase from '@material-ui/core/ButtonBase';
 import Grid from '@material-ui/core/Grid';
 import cx from 'classnames';
 import { Formik } from 'formik';
-import find from 'lodash/find';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import * as React from 'react';
 import { useState } from 'react';
 import Dropzone from 'react-dropzone';
+import { useHistory, useRouteMatch } from 'react-router';
 import { compose } from 'recompose';
 import * as Yup from 'yup';
 import {
   Currency,
+  DaoFragment,
   useCreateDaoMutation,
+  useDaoQuery,
   useDeleteDaoMutation,
   useUpdateDaoMutation,
 } from 'src/generated/graphql';
-import { DEFAULT_LOCALE, SUPPORTED_COUNTRIES_DAO } from 'src/helpers/locale';
+import { SUPPORTED_COUNTRIES_DAO } from 'src/helpers/locale';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import styles from './styles';
 import { useActions, useData } from './useData';
 
 interface IProps {
-  initialData: any;
   i18n: any;
-  history: any;
   theme: any;
   classes: any;
 }
@@ -44,29 +44,25 @@ interface IProps {
 const AUSTRALIYA_COUNTRY_CODE = 'AU';
 
 const DAOGeneralBasics: React.FC<IProps> = (props) => {
-  const { initialData = {}, history, theme, classes, i18n } = props;
+  const { theme, classes, i18n } = props;
 
   const [selectedLogo, setSelectedLogo] = useState(null);
-  const isCreateNewDAO = !initialData?.id;
 
+  const match = useRouteMatch<any>();
+  const history = useHistory();
   const [createDao] = useCreateDaoMutation();
   const [updateDao] = useUpdateDaoMutation();
   const [deleteDao] = useDeleteDaoMutation();
+  const { data } = useDaoQuery({
+    variables: {
+      id: match?.params?.daoId,
+    },
+  });
   const { createdDAOs } = useData();
   const actions = useActions();
 
-  React.useEffect(() => {
-    if (!isEmpty(initialData)) {
-      const daoCountry: any =
-        find(SUPPORTED_COUNTRIES_DAO, {
-          value: initialData.country || 'other',
-        }) || {};
-      actions.setTemporaryActiveLanguage(daoCountry.locale);
-    } else {
-      actions.setTemporaryActiveLanguage(DEFAULT_LOCALE);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [initialData]);
+  const initialData = data?.dao || ({} as DaoFragment);
+  const isCreateNewDAO = !initialData?.id;
 
   const _submitForm = async (values, formActions) => {
     const {
@@ -198,9 +194,9 @@ const DAOGeneralBasics: React.FC<IProps> = (props) => {
     const description = (
       <div>
         <div>
-          {`You are trying to delete the comDAOpany `}
+          {`You are trying to delete the DAO `}
           <span className={classes.deleteDaoName}>
-            {"'" + initialData.name + "'"}
+            {" '" + initialData.name + "' "}
           </span>
         </div>
         <br />
@@ -533,19 +529,19 @@ const DAOGeneralBasics: React.FC<IProps> = (props) => {
         enableReinitialize
         initialValues={{
           name: initialData.name || '',
-          legalNameSameAsName: initialData.name === initialData.legalName,
-          legalName: initialData.legalName || '',
-          country: !isEmpty(initialData)
-            ? initialData.country || 'other'
-            : AUSTRALIYA_COUNTRY_CODE,
+          // legalNameSameAsName: initialData.name === initialData.legalName,
+          // legalName: initialData.legalName || '',
+          // country: !isEmpty(initialData)
+          //   ? initialData.country || 'other'
+          //   : AUSTRALIYA_COUNTRY_CODE,
           currency: !isEmpty(initialData.currency)
             ? initialData.currency
             : Currency.Png,
-          govNumber: `${initialData.govNumber ? initialData.govNumber : ''}`,
-          businessType: initialData.businessType || '',
-          url: initialData.websiteURL || '',
-          isGSTRegistered: initialData.salesTax || false,
-          hpio: initialData.HPIO || '',
+          // govNumber: `${initialData.govNumber ? initialData.govNumber : ''}`,
+          // businessType: initialData.businessType || '',
+          url: initialData.websiteUrl || '',
+          isGSTRegistered: false,
+          // hpio: initialData.HPIO || '',
           cChainAddress: initialData?.cChainAddress || '',
         }}
         onSubmit={_submitForm}
