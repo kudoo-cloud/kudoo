@@ -1,6 +1,6 @@
 import idx from 'idx';
 import { handleActions } from 'redux-actions';
-import { IDAOEntity } from '../types';
+import { DaoFragment } from 'src/generated/graphql';
 import Types from '../types/profile';
 
 export interface IProfileState {
@@ -13,9 +13,9 @@ export interface IProfileState {
   expiresAt: string;
   signedAt: string;
   userId: string;
-  selectedDAO: IDAOEntity;
-  joinedDAOs: IDAOEntity[];
-  createdDAOs: IDAOEntity[];
+  selectedDAO: DaoFragment;
+  joinedDAOs: DaoFragment[];
+  createdDAOs: DaoFragment[];
 }
 
 interface IAction {

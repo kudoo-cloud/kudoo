@@ -5,3 +5,21 @@ mutation createDao($createDaoInput: CreateDaoInput!) {
     ...Dao
   }
 }
+
+mutation updateDao($updateDaoInput: UpdateDaoInput!) {
+  updateDao(updateDaoInput: $updateDaoInput) {
+    ...Dao
+  }
+}
+
+mutation deleteDao($id: ID!) {
+  deleteDao(id: $id) {
+    ...Dao
+  }
+}
+
+query daos {
+  daos {
+    ...Dao
+  }
+}
