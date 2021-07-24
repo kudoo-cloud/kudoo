@@ -1,17 +1,14 @@
 import {
   Button,
-  Checkbox,
   Dropdown,
   ErrorBoundary,
-  RadioButton,
   SectionHeader,
   TextField,
   withStyles,
 } from '@kudoo/components';
-import { Trans, withI18n } from '@lingui/react';
+import { withI18n } from '@lingui/react';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Grid from '@material-ui/core/Grid';
-import cx from 'classnames';
 import { Formik } from 'formik';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
@@ -29,7 +26,6 @@ import {
   useDeleteDaoMutation,
   useUpdateDaoMutation,
 } from 'src/generated/graphql';
-import { SUPPORTED_COUNTRIES_DAO } from 'src/helpers/locale';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import styles from './styles';
@@ -41,10 +37,8 @@ interface IProps {
   classes: any;
 }
 
-const AUSTRALIYA_COUNTRY_CODE = 'AU';
-
 const DAOGeneralBasics: React.FC<IProps> = (props) => {
-  const { theme, classes, i18n } = props;
+  const { theme, classes } = props;
 
   const [selectedLogo, setSelectedLogo] = useState(null);
 
@@ -65,41 +59,7 @@ const DAOGeneralBasics: React.FC<IProps> = (props) => {
   const isCreateNewDAO = !initialData?.id;
 
   const _submitForm = async (values, formActions) => {
-    const {
-      name,
-      // legalNameSameAsName,
-      // legalName,
-      // govNumber,
-      // businessType,
-      url,
-      // isGSTRegistered,
-      // country,
-      currency,
-      cChainAddress,
-      // hpio,
-    } = values;
-    // let data: any = {
-    //   businessType,
-    //   legalName: legalNameSameAsName ? name : legalName,
-    //   name: name,
-    //   salesTax: isGSTRegistered,
-    //   websiteURL: url,
-    //   country: country === 'other' ? null : country,
-    //   currency: currency === '' ? 'AUD' : currency,
-    //   logo: selectedLogo,
-    //   HPIO: hpio,
-    // };
-    // if (govNumber && country === AUSTRALIYA_COUNTRY_CODE) {
-    //   data = {
-    //     ...data,
-    //     govNumber: govNumber.replace('/[^d]/', ''),
-    //   };
-    // } else if (govNumber) {
-    //   data = {
-    //     ...data,
-    //     govNumber: govNumber.replace(/ /g, ''),
-    //   };
-    // }
+    const { name, url, currency, cChainAddress } = values;
 
     const data = {
       name,
@@ -348,45 +308,6 @@ const DAOGeneralBasics: React.FC<IProps> = (props) => {
                 </div>
 
                 <div className={classes.fieldRow}>
-                  <TextField
-                    name='legalName'
-                    id='legalName'
-                    label='DAO Legal Name'
-                    placeholder={'DAO Legal Name'}
-                    value={
-                      values.legalNameSameAsName
-                        ? values.name
-                        : values.legalName
-                    }
-                    isReadOnly={values.legalNameSameAsName}
-                    showClearIcon={false}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.legalName && errors.legalName}
-                  />
-                  <Checkbox
-                    label={'Same as above'}
-                    classes={{ component: classes.sameAsAboveCheckbox }}
-                    value={values.legalNameSameAsName}
-                    onChange={(checked) => {
-                      setFieldValue('legalNameSameAsName', checked);
-                    }}
-                  />
-                </div>
-                <div className={classes.fieldRow}>
-                  <Dropdown
-                    label='Country'
-                    items={SUPPORTED_COUNTRIES_DAO}
-                    value={values.country}
-                    onChange={(item) => {
-                      setFieldValue('country', item.value);
-                      actions.setTemporaryActiveLanguage(item.locale);
-                      setFieldValue('currency', item.currency);
-                    }}
-                    error={touched.country && errors.country}
-                  />
-                </div>
-                <div className={classes.fieldRow}>
                   <Dropdown
                     label='Currency'
                     items={[
@@ -400,51 +321,7 @@ const DAOGeneralBasics: React.FC<IProps> = (props) => {
                     error={touched.currency && errors.currency}
                   />
                 </div>
-                <div className={cx(classes.fieldRow, classes.halfFieldWrapper)}>
-                  <TextField
-                    name='govNumber'
-                    id='govNumber'
-                    label={i18n._(`ABN`)}
-                    placeholder={i18n._(`ABN`)}
-                    showClearIcon={false}
-                    value={(values.govNumber || '').replace(/ /g, '')}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    classes={{
-                      component: classes.abnInput,
-                    }}
-                    error={touched.govNumber && errors.govNumber}
-                  />
-                  <Dropdown
-                    label='Business Type'
-                    id='business-type'
-                    items={[
-                      { label: 'Health', value: 'HEALTH' },
-                      { label: 'Other', value: 'OTHER' },
-                    ]}
-                    value={values.businessType}
-                    onChange={(item) => {
-                      setFieldValue('businessType', item.value);
-                    }}
-                    error={touched.businessType && errors.businessType}
-                  />
-                </div>
-                {values.country === AUSTRALIYA_COUNTRY_CODE &&
-                  values.businessType === 'HEALTH' && (
-                    <div className={classes.fieldRow}>
-                      <TextField
-                        name='hpio'
-                        id='hpio'
-                        label='HPIO'
-                        placeholder={'HPIO'}
-                        value={values.hpio}
-                        showClearIcon={false}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={touched.hpio && errors.hpio}
-                      />
-                    </div>
-                  )}
+
                 <div className={classes.fieldRow}>
                   <TextField
                     name='url'
@@ -455,33 +332,6 @@ const DAOGeneralBasics: React.FC<IProps> = (props) => {
                     value={values.url}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                  />
-                </div>
-                <SectionHeader
-                  title={i18n._(`GST`) + ' Settings'}
-                  classes={{
-                    component: cx(classes.sectionHeading, classes.gstHeading),
-                  }}
-                />
-                <div className={classes.gstLabel}>
-                  Are you registered for <Trans id='GST'>GST</Trans>?
-                </div>
-                <div className={classes.halfFieldWrapper}>
-                  <RadioButton
-                    id='gst-yes'
-                    label='Yes I am registered'
-                    value={values.isGSTRegistered === true}
-                    onChange={() => {
-                      setFieldValue('isGSTRegistered', true);
-                    }}
-                  />
-                  <RadioButton
-                    id='gst-no'
-                    label='No I am not registered'
-                    value={values.isGSTRegistered === false}
-                    onChange={() => {
-                      setFieldValue('isGSTRegistered', false);
-                    }}
                   />
                 </div>
               </div>
@@ -529,58 +379,15 @@ const DAOGeneralBasics: React.FC<IProps> = (props) => {
         enableReinitialize
         initialValues={{
           name: initialData.name || '',
-          // legalNameSameAsName: initialData.name === initialData.legalName,
-          // legalName: initialData.legalName || '',
-          // country: !isEmpty(initialData)
-          //   ? initialData.country || 'other'
-          //   : AUSTRALIYA_COUNTRY_CODE,
           currency: !isEmpty(initialData.currency)
             ? initialData.currency
             : Currency.Png,
-          // govNumber: `${initialData.govNumber ? initialData.govNumber : ''}`,
-          // businessType: initialData.businessType || '',
           url: initialData.websiteUrl || '',
-          isGSTRegistered: false,
-          // hpio: initialData.HPIO || '',
           cChainAddress: initialData?.cChainAddress || '',
         }}
         onSubmit={_submitForm}
         validationSchema={Yup.object().shape({
           name: Yup.string().required('Name is required'),
-          country: Yup.mixed().nullable(),
-          legalName: Yup.mixed().when('legalNameSameAsName', {
-            is: false,
-            then: Yup.string().required('Legal name is required'),
-            otherwise: Yup.mixed().nullable(),
-          }),
-          legalNameSameAsName: Yup.boolean(),
-          // govNumber: Yup.string()
-          //   .required(i18n._(`ABN`) + ' is required')
-          //   .test('validate-abn', 'Not Valid!', function (value = '') {
-          //     if (
-          //       this.parent &&
-          //       this.parent.country === AUSTRALIYA_COUNTRY_CODE
-          //     ) {
-          //       const weights = [10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
-          //       const govNumber = value.replace(/[^\d]/g, '');
-          //       if (govNumber.length === 11) {
-          //         const sum = weights.reduce((prev, weight, index) => {
-          //           let internalSum = 0;
-          //           if (index === 0) {
-          //             internalSum = weight * (Number(govNumber[index]) - 1);
-          //           } else {
-          //             internalSum = weight * Number(govNumber[index]);
-          //           }
-          //           return prev + internalSum;
-          //         }, 0);
-          //         return sum % 89 === 0;
-          //       }
-          //       return false;
-          //     }
-          //     return true;
-          //   }),
-          businessType: Yup.string(),
-          // .required('Please select business type'),
         })}
       >
         {renderForm.bind(this)}

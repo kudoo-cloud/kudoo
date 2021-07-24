@@ -1,6 +1,7 @@
 import get from 'lodash/get';
 import { useDispatch, useSelector } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { AppActions, ProfileActions } from 'src/store/actions';
 
 const useReducerData = (reducerName, attr, defaultValue) => {
   return useSelector(
@@ -13,4 +14,13 @@ const useStoreActions = (actions) => {
   return bindActionCreators(actions || {}, dispatch);
 };
 
-export { useStoreActions, useReducerData };
+type AllActionsType = typeof ProfileActions & typeof AppActions;
+
+const useAllActions = (): AllActionsType => {
+  return useStoreActions({
+    ...ProfileActions,
+    ...AppActions,
+  });
+};
+
+export { useStoreActions, useReducerData, useAllActions };
