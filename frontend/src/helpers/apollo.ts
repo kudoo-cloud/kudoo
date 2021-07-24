@@ -73,11 +73,11 @@ const persistor = new CachePersistor({
 
 const defaultOptions = {
   watchQuery: {
-    fetchPolicy: 'network-only' as FetchPolicy,
+    fetchPolicy: 'cache-first' as FetchPolicy,
     errorPolicy: 'all' as ErrorPolicy,
   },
   query: {
-    fetchPolicy: 'network-only' as FetchPolicy,
+    fetchPolicy: 'cache-first' as FetchPolicy,
     errorPolicy: 'all' as ErrorPolicy,
   },
   mutate: {

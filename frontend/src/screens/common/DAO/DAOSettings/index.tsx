@@ -92,9 +92,11 @@ class DAOSettings extends Component<Props, State> {
     return (
       <div className={classes.page}>
         <SelectedDAO
-          onChange={({ id }) => {
-            if (id) {
-              this.props.history.push(URL.DAO_SETTINGS({ daoId: id }));
+          onChange={(changedDao) => {
+            if (changedDao?.id) {
+              this.props.history.push(
+                URL.DAO_SETTINGS({ daoId: changedDao?.id }),
+              );
             }
           }}
         >

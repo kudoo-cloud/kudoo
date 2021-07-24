@@ -94,4 +94,5 @@ fragment Dao on Dao {
   }
   createdAt
   updatedAt
+  deletedAt
 }

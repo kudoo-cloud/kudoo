@@ -21,9 +21,9 @@ import * as Yup from 'yup';
 import {
   Currency,
   DaoFragment,
+  useArchiveDaoMutation,
   useCreateDaoMutation,
   useDaoQuery,
-  useDeleteDaoMutation,
   useUpdateDaoMutation,
 } from 'src/generated/graphql';
 import { showToast } from 'src/helpers/toast';
@@ -46,7 +46,7 @@ const DAOGeneralBasics: React.FC<IProps> = (props) => {
   const history = useHistory();
   const [createDao] = useCreateDaoMutation();
   const [updateDao] = useUpdateDaoMutation();
-  const [deleteDao] = useDeleteDaoMutation();
+  const [archiveDao] = useArchiveDaoMutation();
   const { data } = useDaoQuery({
     variables: {
       id: match?.params?.daoId,
@@ -132,12 +132,12 @@ const DAOGeneralBasics: React.FC<IProps> = (props) => {
 
   const deleteDAO = async () => {
     try {
-      const res = await deleteDao({
+      const res = await archiveDao({
         variables: {
-          id: initialData.id,
+          id: initialData?.id,
         },
       });
-      if (res?.data?.deleteDao?.id) {
+      if (res?.data?.archiveDao?.id) {
         showToast(null, 'DAO archived successfully');
         actions.setUserData({
           selectedDAO: {},

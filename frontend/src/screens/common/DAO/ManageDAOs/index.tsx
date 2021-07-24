@@ -1,12 +1,17 @@
-import { DAOCard, DottedCreateButton, withStyles } from '@kudoo/components';
+import {
+  Button,
+  DAOCard,
+  DottedCreateButton,
+  withStyles,
+} from '@kudoo/components';
 import Collapse from '@material-ui/core/Collapse';
 import cx from 'classnames';
 import get from 'lodash/get';
 import React, { useEffect, useState } from 'react';
-
 import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
-import { useDaosQuery } from 'src/generated/graphql';
+import { useDaosQuery, useUnarchiveDaoMutation } from 'src/generated/graphql';
+import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import { useAllActions } from 'src/store/hooks';
 import JoinModal from './JoinModal';
@@ -23,8 +28,8 @@ const ManageDAOs: React.FC<Props> = (props) => {
   const [isCreatedDaoOpen, setIsCreatedDaoOpen] = useState(true);
   const [isJoinedDaoOpen, setIsJoinedDaoOpen] = useState(false);
   const [joinDaoModalVisible, setJoinDaoModalVisible] = useState(false);
-  // const [] = useUpdateDaoMutation();
-  const { data } = useDaosQuery();
+  const [unarchiveDao] = useUnarchiveDaoMutation();
+  const { data, refetch } = useDaosQuery({ fetchPolicy: 'network-only' });
   const daos = data?.daos;
 
   const { updateHeaderTitle, setTemporaryActiveLanguage, selectDAO } =
@@ -36,28 +41,22 @@ const ManageDAOs: React.FC<Props> = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // const _reactivateDAO = (dao) => async () => {
-  //   try {
-  //     selectDAO({ ...dao, owner: true });
-  //     const res = await this.props.updateDao({
-  //       data: {
-  //         isArchived: false,
-  //       },
-  //       where: {
-  //         id: dao.id,
-  //       },
-  //     });
-  //     if (res.success) {
-  //       showToast(null, 'DAO Re-activated');
-  //       // Reloading page , as re-activation of dao will affect sidebar also
-  //       window.location.reload();
-  //     } else {
-  //       res.error.map((err) => showToast(err));
-  //     }
-  //   } catch (e) {
-  //     showToast(e.toString());
-  //   }
-  // };
+  const reactivateDAO = (dao) => async () => {
+    try {
+      selectDAO({ ...dao, owner: true });
+      const res = await unarchiveDao({
+        variables: {
+          id: dao.id,
+        },
+      });
+      if (res?.data?.unarchiveDao?.id) {
+        showToast(null, 'DAO Re-activated');
+        refetch();
+      }
+    } catch (e) {
+      showToast(e.toString());
+    }
+  };
 
   // const _openJoinDAOModal = () => {
   //   setIsJoinedDaoOpen(true);
@@ -115,7 +114,7 @@ const ManageDAOs: React.FC<Props> = (props) => {
                   secondaryLabel='Owner'
                 />
               </Link>
-              {/* {dao.isArchived && (
+              {!!dao.deletedAt && (
                 <div className={classes.deletedDAOMsgWrapper}>
                   <div className={classes.deletedDAOMsg}>
                     This dao has been deleted and will disappear after 7 days.
@@ -124,10 +123,10 @@ const ManageDAOs: React.FC<Props> = (props) => {
                     title='Re-activate'
                     applyBorderRadius
                     buttonColor={theme.palette.primary.color2}
-                    onClick={this._reactivateDAO(dao)}
+                    onClick={reactivateDAO(dao)}
                   />
                 </div>
-              )} */}
+              )}
             </div>
           ))}
         </Collapse>
@@ -160,15 +159,7 @@ const ManageDAOs: React.FC<Props> = (props) => {
           }}
         >
           {[].map((dao) => (
-            <div
-              className={classes.daoCardWrapper}
-              key={dao.id}
-              data-test={
-                !dao.isArchived
-                  ? `joined-dao-${dao.name}`
-                  : `joined-archived-dao-${dao.name}`
-              }
-            >
+            <div className={classes.daoCardWrapper} key={dao.id}>
               <div className={classes.daoCard} style={{ cursor: 'initial' }}>
                 <DAOCard
                   imageUrl={
