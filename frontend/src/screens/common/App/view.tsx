@@ -46,6 +46,7 @@ const App: React.FC<IProps> = (props) => {
 
   React.useEffect(() => {
     const firstDao = daos[0];
+
     if (isEmpty(profile.selectedDAO) && daos.length > 0) {
       // if there is no dao selected then select first dao by default
       if (firstDao) {
@@ -95,7 +96,7 @@ const App: React.FC<IProps> = (props) => {
     const totalDAOs = daos.length;
     const menuConfig: ISecurityConfig =
       Configuration?.apps?.[
-        (app?.kudoo_product || Product.inventory || '').toLowerCase()
+        (app?.kudoo_product || Product.finance || '').toLowerCase()
       ];
 
     const products: {
@@ -131,6 +132,7 @@ const App: React.FC<IProps> = (props) => {
     // } else if (app.kudoo_product === Product.manufacturing) {
     //   initialSelectedProductIndex = 4;
     // }
+
     return (
       <div className={classes.loggedInWrapper}>
         {totalDAOs > 0 && (

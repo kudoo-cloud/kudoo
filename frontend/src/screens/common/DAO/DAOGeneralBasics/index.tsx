@@ -18,16 +18,19 @@ import Dropzone from 'react-dropzone';
 import { useHistory, useRouteMatch } from 'react-router';
 import { compose } from 'recompose';
 import * as Yup from 'yup';
+import { uploadFile } from 'src/api';
 import {
   Currency,
   DaoFragment,
   useArchiveDaoMutation,
   useCreateDaoMutation,
   useDaoQuery,
+  useGetUploadSignedUrlMutation,
   useUpdateDaoMutation,
 } from 'src/generated/graphql';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
+import { getDaoLogoKey } from 'src/helpers/utilities';
 import styles from './styles';
 import { useActions, useData } from './useData';
 
@@ -47,11 +50,14 @@ const DAOGeneralBasics: React.FC<IProps> = (props) => {
   const [createDao] = useCreateDaoMutation();
   const [updateDao] = useUpdateDaoMutation();
   const [archiveDao] = useArchiveDaoMutation();
+  const [getUploadSignedUrl] = useGetUploadSignedUrlMutation();
+
   const { data } = useDaoQuery({
     variables: {
       id: match?.params?.daoId,
     },
   });
+
   const { createdDAOs } = useData();
   const actions = useActions();
 
@@ -85,10 +91,41 @@ const DAOGeneralBasics: React.FC<IProps> = (props) => {
           formActions.setSubmitting(false);
           showToast(null, 'DAO created');
           actions.setTemporaryActiveLanguage(undefined);
+
+          if (selectedLogo) {
+            const logoKey = getDaoLogoKey(res?.data?.createDao?.id);
+            const mimeType = selectedLogo.type;
+
+            const uploadUrlRes = await getUploadSignedUrl({
+              variables: {
+                mimeType,
+                s3Key: logoKey,
+              },
+            });
+            const url = uploadUrlRes?.data?.getUploadSignedUrl?.url;
+            await uploadFile(url, selectedLogo);
+            // TODO: update company with logo
+          }
+
           history.push(URL.MANAGE_DAOS());
         }
       } else {
         // if update existing dao
+        if (selectedLogo) {
+          const logoKey = getDaoLogoKey(initialData.id);
+          const mimeType = selectedLogo.type;
+
+          const uploadUrlRes = await getUploadSignedUrl({
+            variables: {
+              mimeType,
+              s3Key: logoKey,
+            },
+          });
+          const url = uploadUrlRes?.data?.getUploadSignedUrl?.url;
+          await uploadFile(url, selectedLogo);
+          // TODO: update company with logo
+        }
+
         const res = await updateDao({
           variables: {
             updateDaoInput: {
@@ -347,7 +384,7 @@ const DAOGeneralBasics: React.FC<IProps> = (props) => {
             </ButtonBase>
           )}
           <Grid container spacing={0}>
-            <Grid item xs={12} md={dirty ? 6 : 12}>
+            <Grid item xs={12} md={dirty || selectedLogo ? 6 : 12}>
               <Button
                 title={isCreateNewDAO ? 'Cancel' : 'Go Back'}
                 href={URL.MANAGE_DAOS()}
@@ -356,7 +393,7 @@ const DAOGeneralBasics: React.FC<IProps> = (props) => {
                 target='_self'
               />
             </Grid>
-            {dirty && (
+            {(dirty || selectedLogo) && (
               <Grid item xs={12} md={6}>
                 <Button
                   id='submit-button'

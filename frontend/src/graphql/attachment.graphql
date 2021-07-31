@@ -1,0 +1,8 @@
+mutation getUploadSignedUrl($mimeType: String!, $s3Key: String!) {
+  getUploadSignedUrl(mimeType: $mimeType, s3Key: $s3Key) {
+    url
+    s3Bucket
+    s3Key
+    s3Region
+  }
+}

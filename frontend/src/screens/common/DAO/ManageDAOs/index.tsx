@@ -6,7 +6,6 @@ import {
 } from '@kudoo/components';
 import Collapse from '@material-ui/core/Collapse';
 import cx from 'classnames';
-import get from 'lodash/get';
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { compose } from 'recompose';
@@ -107,9 +106,7 @@ const ManageDAOs: React.FC<Props> = (props) => {
                 }}
               >
                 <DAOCard
-                  imageUrl={
-                    get(dao, 'logo.url') ? get(dao, 'logo.url') : undefined
-                  }
+                  imageUrl={dao?.logo?.url ? dao?.logo?.url : undefined}
                   primaryLabel={dao.name}
                   secondaryLabel='Owner'
                 />
@@ -162,9 +159,7 @@ const ManageDAOs: React.FC<Props> = (props) => {
             <div className={classes.daoCardWrapper} key={dao.id}>
               <div className={classes.daoCard} style={{ cursor: 'initial' }}>
                 <DAOCard
-                  imageUrl={
-                    get(dao, 'logo.url') ? get(dao, 'logo.url') : undefined
-                  }
+                  imageUrl={dao?.logo?.url ? dao?.logo?.url : undefined}
                   primaryLabel={dao.name}
                   secondaryLabel='Employee'
                   borderColor={theme.palette.primary.color3}

@@ -26,10 +26,10 @@ export const isPreviewRoute = (history) => {
   );
 };
 
-export const shouldRedirectToManageDAO = (history, daos, daosLoading) => {
+export const shouldRedirectToManageDAO = (history, data, daosLoading) => {
   return (
     !daosLoading &&
-    daos?.data?.length === 0 &&
+    data?.daos?.length === 0 &&
     !matchPath(history?.location?.pathname, {
       path: urls.ACCOUNT_SETTINGS({ path: true }),
     }) &&
