@@ -6,57 +6,70 @@ import {
   Tooltip,
   withStyles,
 } from '@kudoo/components';
-import idx from 'idx';
 import find from 'lodash/find';
 import findIndex from 'lodash/findIndex';
-import get from 'lodash/get';
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'recompose';
+import {
+  DaomemberFragment,
+  useArchiveDaoMemberMutation,
+  useDaomembersByDaoQuery,
+} from 'src/generated/graphql';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import useDeepCompareEffect from 'src/helpers/useDeepCompareEffect';
-import { IReduxState } from 'src/store/reducers';
-import { IProfileState } from 'src/store/reducers/profile';
-import { IDAOEntity } from 'src/store/types';
+import { useAllActions } from 'src/store/hooks';
 import styles, { StyleKeys } from './styles';
 
 type Props = IRouteProps<StyleKeys> & {
-  dao?: {
-    refetch: Function;
-    data: IDAOEntity;
-  };
-  profile?: IProfileState;
   deleteDaoMember?: Function;
-  resendInvite?: Function;
 };
 
 const DAOUsers: React.FC<Props> = (props) => {
-  const {
-    classes,
-    theme,
-    dao,
-    match,
-    profile,
-    resendInvite,
-    deleteDaoMember,
-    actions,
-  } = props;
-  const daoId = get(match, 'params.daoId', '');
+  const { classes, theme, match } = props;
 
-  const [displayedUser, setDisplayedUsers] = useState([]);
+  const actions = useAllActions();
+
+  const daoId = (match?.params as any)?.daoId;
+  const { data, refetch } = useDaomembersByDaoQuery({
+    variables: {
+      daoId,
+    },
+  });
+  const [archiveDaoMemeber] = useArchiveDaoMemberMutation();
+  const members = data?.daomembersByDao || [];
+
+  const [displayedUser, setDisplayedUsers] = useState(
+    [] as DaomemberFragment[],
+  );
   const [columnData, setColumnsData] = useState([
-    { id: 'firstName', label: 'Name', sorted: true, order: 'asc' },
-    { id: 'lastName', label: 'Surname' },
-    { id: 'email', label: 'Email' },
-    { id: 'access_level', label: 'Access Level' },
-    { id: 'status', label: 'Status' },
-    { id: 'sendEmail', label: 'Resend Email', notSortable: true },
+    {
+      id: 'firstName',
+      label: 'Firstname',
+      notSortable: true,
+      sorted: true,
+      order: 'asc',
+    },
+    { id: 'lastName', label: 'Lastname', notSortable: true },
+    { id: 'email', label: 'Email', notSortable: true },
+    { id: 'role', label: 'Role', notSortable: true },
+    { id: 'status', label: 'Status', notSortable: true },
+    // { id: 'sendEmail', label: 'Resend Email', notSortable: true },
   ]);
 
   useDeepCompareEffect(() => {
-    updateDisplayedUsers(idx(dao, (x) => x.data.daoMembers) || []);
-  }, [dao.data]);
+    updateDisplayedUsers(members);
+  }, [members]);
+
+  const getTableData = () => {
+    return displayedUser.map((item) => ({
+      id: item?.id,
+      firstName: item?.user?.firstName || '-',
+      lastName: item?.user?.lastName || '-',
+      email: item?.user?.email,
+      role: item?.role,
+      status: item?.status,
+    }));
+  };
 
   const renderCell = (row, column, ele) => {
     if (column.id === 'sendEmail' && row.status !== 'ACTIVE') {
@@ -72,16 +85,8 @@ const DAOUsers: React.FC<Props> = (props) => {
   };
 
   const showRemoveAlert = (row) => {
-    if (row.role === 'OWNER') {
-      showToast(
-        "You can't remove owner of the dao without transfering ownership",
-      );
-      return;
-    }
     const title = 'Delete member';
-    const description = `Are you sure you want to remove ${
-      row.firstName || ''
-    } ${row.lastName || ''}?`;
+    const description = `Are you sure you want to remove member ?`;
     const buttons = [
       {
         title: 'Cancel',
@@ -106,14 +111,12 @@ const DAOUsers: React.FC<Props> = (props) => {
 
   const removeMember = async (row) => {
     try {
-      const res = await deleteDaoMember({
-        id: row.daoMemberId,
+      const res = await archiveDaoMemeber({
+        variables: { id: row.id },
       });
-      if (res.success) {
+      if (res?.data?.archiveDaomember?.id) {
         showToast(null, 'Member removed successfully');
-        dao.refetch();
-      } else {
-        res.error.map((err) => showToast(err));
+        refetch();
       }
     } catch (e) {
       showToast(e.toString());
@@ -123,13 +126,13 @@ const DAOUsers: React.FC<Props> = (props) => {
   };
 
   const onRequestSort = (column) => {
-    const users = idx(dao, (_) => _.data.daoMembers) || [];
+    // const users = members || [];
     const sortedColumn = find(columnData, { sorted: true });
     const columnGoingToBeSorted = find(columnData, {
       id: column.id,
     });
     let order = 'asc';
-    const orderBy = column.id;
+    // const orderBy = column.id;
 
     if (sortedColumn.id === columnGoingToBeSorted.id) {
       if (sortedColumn.order === 'asc') {
@@ -149,62 +152,57 @@ const DAOUsers: React.FC<Props> = (props) => {
     const pos2 = findIndex(columnData, { id: sortedColumn.id });
     columnData[pos2] = sortedColumn;
 
-    const sortedUsers =
-      order === 'desc'
-        ? users.sort((a, b) => (b[orderBy] < a[orderBy] ? -1 : 1))
-        : users.sort((a, b) => (a[orderBy] < b[orderBy] ? -1 : 1));
+    // const sortedUsers =
+    //   order === 'desc'
+    //     ? users.sort((a, b) => (b[orderBy] < a[orderBy] ? -1 : 1))
+    //     : users.sort((a, b) => (a[orderBy] < b[orderBy] ? -1 : 1));
 
-    updateDisplayedUsers(sortedUsers);
+    // updateDisplayedUsers(sortedUsers);
     setColumnsData(columnData);
   };
 
-  const updateDisplayedUsers = (users = []) => {
+  const updateDisplayedUsers = (users: DaomemberFragment[] = []) => {
     const newUsers = users.map((member) => ({
       ...member,
-      ...member.user,
-      access_level: member.role,
+      role: member.role,
       daoMemberId: member.id,
     }));
     setDisplayedUsers(newUsers);
   };
 
-  const resendInviteEmail = async (data) => {
+  const resendInviteEmail = async () => {
     try {
-      const res = await resendInvite({
-        email: data.email,
-        role: data.role,
-        daoMemberId: data.daoMemberId,
-        baseURL: `${window.location.origin}/#/`,
-      });
-      if (res.success) {
-        showToast(null, 'User Invited successfully');
-      } else {
-        showToast('User is already in the dao');
-      }
+      // const res = await resendInvite({
+      //   email: data.email,
+      //   role: data.role,
+      //   daoMemberId: data.daoMemberId,
+      //   baseURL: `${window.location.origin}/#/`,
+      // });
+      // if (res.success) {
+      //   showToast(null, 'User Invited successfully');
+      // } else {
+      //   showToast('User is already in the dao');
+      // }
     } catch (e) {
       showToast(e.toString());
     }
   };
 
   const renderUserTable = () => {
-    const loggedInUserId = idx(profile, (_) => _.id);
-    const user = find(displayedUser, { id: loggedInUserId }) || {};
     return (
       <Table
         columnData={columnData}
-        data={displayedUser}
+        data={getTableData()}
         sortable
         onRequestSort={onRequestSort}
         cellRenderer={renderCell}
         onRemoveClicked={showRemoveAlert}
         onCellClick={(e, { row, column }) => {
           if (column.id === 'sendEmail' && row.status !== 'ACTIVE') {
-            resendInviteEmail(row);
+            resendInviteEmail();
           }
         }}
-        showRemoveIcon={
-          get(user, 'role') === 'OWNER' || get(user, 'role') === 'ADMIN'
-        }
+        showRemoveIcon
       />
     );
   };
@@ -234,20 +232,4 @@ const DAOUsers: React.FC<Props> = (props) => {
   );
 };
 
-DAOUsers.defaultProps = {
-  dao: { data: {} as IDAOEntity, refetch: () => {} },
-  deleteDaoMember: () => ({}),
-  resendInvite: () => ({}),
-};
-
-export default compose<Props, Props>(
-  withStyles(styles),
-  connect((state: IReduxState) => ({
-    profile: state.profile,
-  })),
-  // withDAO((props) => ({
-  //   id: get(props, 'match.params.daoId'),
-  // })),
-  // withDeleteDaoMember(),
-  // withResendInvite(),
-)(DAOUsers);
+export default withStyles(styles)(DAOUsers);

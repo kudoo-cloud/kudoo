@@ -45,9 +45,6 @@ fragment User on User {
 
 fragment Daomember on Daomember {
   id
-  dao {
-    id
-  }
   user {
     ...User
   }

@@ -8,37 +8,36 @@ import {
 } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
 import { Formik } from 'formik';
-import idx from 'idx';
 import isEqual from 'lodash/isEqual';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { Router } from 'react-router';
-import { Link } from 'react-router-dom';
+import React from 'react';
 import { Tooltip, Trigger } from 'react-tippy';
-import { compose } from 'recompose';
 import * as Yup from 'yup';
+import {
+  DaoMemberRole,
+  DaoMemberStatus,
+  DaomembersByDaoDocument,
+  DaomembersByDaoQuery,
+  DaomembersByDaoQueryVariables,
+  useCreateDaoMemberMutation,
+} from 'src/generated/graphql';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import styles from 'src/screens/common/styles/styles';
-import { IReduxState } from 'src/store/reducers';
 
 interface IProps {
-  actions: any;
-  invite: (data: any) => any;
-  app: any;
   classes: any;
   theme: any;
   match: any;
   history: any;
 }
 
-class InviteUser extends Component<IProps> {
-  static defaultProps = {
-    invite: () => ({}),
-  };
+const InviteUser: React.FC<IProps> = (props) => {
+  const { classes, theme, match, history } = props;
 
-  _renderSectionHeader() {
-    const { classes } = this.props;
+  const daoId = (match?.params as any)?.daoId;
+  const [createDaoMember] = useCreateDaoMemberMutation();
+
+  const renderSectionHeader = () => {
     return (
       <SectionHeader
         title='Invite a new user'
@@ -54,9 +53,9 @@ class InviteUser extends Component<IProps> {
         classes={{ component: classes.sectionHeader }}
       />
     );
-  }
+  };
 
-  _renderInviteForm(formProps) {
+  const renderInviteForm = (formProps) => {
     const {
       initialValues,
       values,
@@ -68,8 +67,6 @@ class InviteUser extends Component<IProps> {
       handleSubmit,
       isSubmitting,
     } = formProps;
-    const { classes, theme, match } = this.props;
-    const daoId = idx(match, (_) => _.params.daoId);
     const isFormDirty = !isEqual(initialValues, values);
     return (
       <form
@@ -139,9 +136,11 @@ class InviteUser extends Component<IProps> {
                     id='user-role'
                     label='Role'
                     items={[
-                      { label: 'Admin', value: 'ADMIN' },
-                      { label: 'Owner', value: 'OWNER' },
-                      { label: 'User', value: 'USER' },
+                      { label: 'MultiSig', value: DaoMemberRole.MultiSig },
+                      {
+                        label: 'Community Contributor',
+                        value: DaoMemberRole.CommunityContributor,
+                      },
                     ]}
                     onChange={({ value }) => {
                       setFieldValue('role', value);
@@ -156,11 +155,11 @@ class InviteUser extends Component<IProps> {
                         <div className={classes.tooltipText}>
                           User roles define the level of access to the User.
                         </div>
-                        <Router {...this.props}>
+                        {/* <Router {...this.props}>
                           <Link className={classes.tooltipLink} to={'#'}>
                             See User Roles
                           </Link>
-                        </Router>
+                        </Router> */}
                       </div>
                     }
                     animation='fade'
@@ -213,11 +212,61 @@ class InviteUser extends Component<IProps> {
         </Grid>
       </form>
     );
-  }
+  };
 
-  _renderFormik() {
-    const { history, match } = this.props;
-    const daoId = idx(match, (_) => _.params.daoId);
+  const onSubmit = async (values, actions) => {
+    try {
+      const res = await createDaoMember({
+        variables: {
+          data: {
+            daoId,
+            role: values?.role as DaoMemberRole,
+            status: DaoMemberStatus.Active,
+            user: {
+              email: values.email,
+              jobTitle: '',
+            },
+          },
+        },
+        update: (cache, result) => {
+          const oldMembers: DaomembersByDaoQuery = cache.readQuery({
+            query: DaomembersByDaoDocument,
+            variables: {
+              daoId,
+            },
+          });
+          const newMembers = [
+            ...oldMembers?.daomembersByDao,
+            result?.data?.createDaomember,
+          ];
+
+          cache.writeQuery<DaomembersByDaoQuery, DaomembersByDaoQueryVariables>(
+            {
+              query: DaomembersByDaoDocument,
+              variables: {
+                daoId,
+              },
+              data: {
+                daomembersByDao: newMembers,
+              },
+            },
+          );
+        },
+      });
+      actions.setSubmitting(false);
+      if (res?.data?.createDaomember?.id) {
+        showToast(null, 'User Invited successfully');
+        history.push(URL.DAO_USERS({ daoId }));
+      } else {
+        showToast(res?.errors.map((item) => item.message).join(','));
+      }
+    } catch (e) {
+      actions.setSubmitting(false);
+      showToast(e.toString());
+    }
+  };
+
+  const renderFormik = () => {
     return (
       <Formik
         initialValues={{
@@ -236,48 +285,21 @@ class InviteUser extends Component<IProps> {
             .email(`Invalid email address`)
             .required(`Email is required!`),
         })}
-        onSubmit={async (values, actions) => {
-          try {
-            const res = await this.props.invite({
-              email: values.email,
-              role: values.role,
-              baseURL: `${window.location.origin}/#/`,
-            });
-            actions.setSubmitting(false);
-            if (res.success) {
-              showToast(null, 'User Invited successfully');
-              history.push(URL.DAO_USERS({ daoId }));
-            } else {
-              showToast('User is already in the DAO');
-            }
-          } catch (e) {
-            actions.setSubmitting(false);
-            showToast(e.toString());
-          }
-        }}
+        onSubmit={onSubmit}
       >
-        {this._renderInviteForm.bind(this)}
+        {renderInviteForm}
       </Formik>
     );
-  }
+  };
 
-  render() {
-    const { classes } = this.props;
-    return (
-      <ErrorBoundary>
-        <div className={classes.page}>
-          {this._renderSectionHeader()}
-          {this._renderFormik()}
-        </div>
-      </ErrorBoundary>
-    );
-  }
-}
+  return (
+    <ErrorBoundary>
+      <div className={classes.page}>
+        {renderSectionHeader()}
+        {renderFormik()}
+      </div>
+    </ErrorBoundary>
+  );
+};
 
-export default compose<any, any>(
-  withStyles(styles),
-  connect((state: IReduxState) => ({
-    app: state.app,
-  })),
-  // withInviteMember(),
-)(InviteUser);
+export default withStyles(styles)(InviteUser);
