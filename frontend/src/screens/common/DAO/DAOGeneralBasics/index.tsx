@@ -30,7 +30,7 @@ import {
 } from 'src/generated/graphql';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
-import { getDaoLogoKey } from 'src/helpers/utilities';
+import { getDaoLogoKey, getFileExtension } from 'src/helpers/utilities';
 import styles from './styles';
 import { useActions, useData } from './useData';
 
@@ -43,7 +43,7 @@ interface IProps {
 const DAOGeneralBasics: React.FC<IProps> = (props) => {
   const { theme, classes } = props;
 
-  const [selectedLogo, setSelectedLogo] = useState(null);
+  const [selectedLogo, setSelectedLogo] = useState(null as File);
 
   const match = useRouteMatch<any>();
   const history = useHistory();
@@ -64,14 +64,41 @@ const DAOGeneralBasics: React.FC<IProps> = (props) => {
   const initialData = data?.dao || ({} as DaoFragment);
   const isCreateNewDAO = !initialData?.id;
 
+  const uploadLogo = async (daoId: string) => {
+    const logoKey = getDaoLogoKey(daoId, getFileExtension(selectedLogo.name));
+    const mimeType = selectedLogo.type;
+
+    const uploadUrlRes = await getUploadSignedUrl({
+      variables: {
+        mimeType,
+        s3Key: logoKey,
+      },
+    });
+    const signedUrlObj = uploadUrlRes?.data?.getUploadSignedUrl;
+    const url = signedUrlObj?.url;
+    await uploadFile(url, selectedLogo);
+    let logoData = {
+      id: initialData?.logo?.id || undefined,
+      description: 'Dao Logo',
+      fileName: selectedLogo.name,
+      label: selectedLogo.name,
+      s3Bucket: signedUrlObj?.s3Bucket,
+      s3Key: signedUrlObj?.s3Key,
+      s3Region: signedUrlObj?.s3Region,
+    };
+    return logoData;
+  };
+
   const _submitForm = async (values, formActions) => {
     const { name, url, currency, cChainAddress } = values;
 
-    const data = {
+    let data = {
+      id: undefined,
       name,
       currency,
       websiteUrl: url,
       cChainAddress,
+      logo: undefined,
     };
 
     try {
@@ -88,42 +115,36 @@ const DAOGeneralBasics: React.FC<IProps> = (props) => {
             selectedDAO: daoRes,
             createdDAOs: [...(createdDAOs || []), daoRes], // this is useful for updating dao list when we go back to manage DAOs
           });
+          if (selectedLogo) {
+            let logoData = await uploadLogo(res?.data?.createDao?.id);
+            data = {
+              ...data,
+              logo: logoData,
+            };
+
+            // update logo in dao
+            await updateDao({
+              variables: {
+                updateDaoInput: {
+                  ...data,
+                  id: res?.data?.createDao?.id,
+                },
+              },
+            });
+          }
           formActions.setSubmitting(false);
           showToast(null, 'DAO created');
           actions.setTemporaryActiveLanguage(undefined);
-
-          if (selectedLogo) {
-            const logoKey = getDaoLogoKey(res?.data?.createDao?.id);
-            const mimeType = selectedLogo.type;
-
-            const uploadUrlRes = await getUploadSignedUrl({
-              variables: {
-                mimeType,
-                s3Key: logoKey,
-              },
-            });
-            const url = uploadUrlRes?.data?.getUploadSignedUrl?.url;
-            await uploadFile(url, selectedLogo);
-            // TODO: update company with logo
-          }
-
           history.push(URL.MANAGE_DAOS());
         }
       } else {
         // if update existing dao
         if (selectedLogo) {
-          const logoKey = getDaoLogoKey(initialData.id);
-          const mimeType = selectedLogo.type;
-
-          const uploadUrlRes = await getUploadSignedUrl({
-            variables: {
-              mimeType,
-              s3Key: logoKey,
-            },
-          });
-          const url = uploadUrlRes?.data?.getUploadSignedUrl?.url;
-          await uploadFile(url, selectedLogo);
-          // TODO: update company with logo
+          let logoData = await uploadLogo(initialData?.id);
+          data = {
+            ...data,
+            logo: logoData,
+          };
         }
 
         const res = await updateDao({
