@@ -93,3 +93,13 @@ fragment Dao on Dao {
   updatedAt
   deletedAt
 }
+
+fragment Supplier on Supplier {
+  id
+  name
+  termsOfPayment
+  cChainAddress
+  emailAddressForRemittance
+  createdAt
+  updatedAt
+}

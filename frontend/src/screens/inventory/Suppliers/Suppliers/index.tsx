@@ -4,32 +4,89 @@ import {
   Loading,
   SectionHeader,
   Table,
-  composeStyles,
   withStyles,
 } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
-import isEmpty from 'lodash/isEmpty';
-import React, { Component } from 'react';
+import React, { useEffect, useState } from 'react';
+
+import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
+import { useSuppliersByDaoQuery } from 'src/generated/graphql';
 import URL from 'src/helpers/urls';
-import TabContainer from './container';
-import styles, { SupplierStyles } from './styles';
+import { useProfile } from 'src/store/hooks';
+import styles from './styles';
 
 interface IProps {
-  actions: any;
-  suppliers: any[];
-  onSortRequested: () => {};
+  children: ({}) => {};
+  suppliers: any;
   suppliersLoading: boolean;
-  onLoadMore: () => {};
-  history: any;
   classes: any;
   theme: any;
-  columns: any;
 }
 
-class Suppliers extends Component<IProps> {
-  public _renderSectionHeading() {
-    const { history, theme } = this.props;
+const Suppliers: React.FC<IProps> = (props) => {
+  const { theme, classes } = props;
+  const [columns] = useState([
+    {
+      id: 'name',
+      label: 'Name',
+      sorted: true,
+      order: 'asc',
+      notSortable: true,
+    },
+    {
+      id: 'termsOfPayment',
+      label: 'Terms Of Payment',
+      notSortable: true,
+    },
+    {
+      id: 'emailAddressForRemittance',
+      label: 'Email For Remittance',
+      notSortable: true,
+    },
+  ]);
+
+  const history = useHistory();
+  const profile = useProfile();
+  const daoId = profile?.selectedDAO?.id;
+
+  const { data, loading, refetch } = useSuppliersByDaoQuery({
+    variables: {
+      daoId,
+    },
+    skip: !daoId,
+  });
+
+  useEffect(() => {
+    if (refetch && daoId) {
+      refetch({
+        daoId,
+      });
+    }
+  }, [daoId, refetch]);
+
+  const suppliers = data?.suppliersByDao || [];
+
+  const _onRequestSort = async () => {
+    // const sortedColumn = find(columns, { sorted: true });
+    // const columnGoingToBeSorted = find(columns, { id: column.id });
+    // let sortDirection = 'asc';
+    // if (sortedColumn.id === columnGoingToBeSorted.id) {
+    //   if (sortedColumn.order === 'asc') {
+    //     sortDirection = 'desc';
+    //   }
+    // }
+    // const variables = {
+    //   orderBy: `${columnGoingToBeSorted.id}_${sortDirection.toUpperCase()}`,
+    // };
+    // await refetch(variables);
+    // sortedColumn.sorted = false;
+    // columnGoingToBeSorted.sorted = true;
+    // columnGoingToBeSorted.order = sortDirection;
+    // setColumns(column);
+  };
+
+  const _renderSectionHeading = () => {
     return (
       <SectionHeader
         title='Suppliers'
@@ -47,10 +104,9 @@ class Suppliers extends Component<IProps> {
         )}
       />
     );
-  }
+  };
 
-  public _renderNoSupplier() {
-    const { classes } = this.props;
+  const _renderNoSupplier = () => {
     return (
       <div className={classes.noSupplierWrapper}>
         <div className={classes.noActiveMessageWrapper}>
@@ -61,10 +117,9 @@ class Suppliers extends Component<IProps> {
         </div>
       </div>
     );
-  }
+  };
 
-  public _renderCell = (row, cell, ele) => {
-    const { classes } = this.props;
+  const _renderCell = (row, cell, ele) => {
     if (cell.id === 'name') {
       return (
         <Link
@@ -78,14 +133,7 @@ class Suppliers extends Component<IProps> {
     return ele;
   };
 
-  public _renderSupplier() {
-    const {
-      suppliers,
-      suppliersLoading,
-      onLoadMore,
-      columns,
-      onSortRequested,
-    } = this.props;
+  const _renderSupplier = () => {
     return (
       <Grid container>
         <Grid item xs={12}>
@@ -95,48 +143,33 @@ class Suppliers extends Component<IProps> {
             stripe={false}
             showRemoveIcon={false}
             sortable
-            onRequestSort={onSortRequested}
-            loading={suppliersLoading}
-            cellRenderer={this._renderCell}
+            onRequestSort={_onRequestSort}
+            loading={loading}
+            cellRenderer={_renderCell}
             onBottomReachedThreshold={500}
             onBottomReached={() => {
-              if (!suppliersLoading) {
-                onLoadMore();
+              if (!loading) {
+                // onLoadMore();
               }
             }}
           />
         </Grid>
       </Grid>
     );
-  }
+  };
 
-  public render() {
-    const { classes, suppliers, suppliersLoading } = this.props;
-    return (
-      <ErrorBoundary>
-        <div className={classes.page}>
-          <div className={classes.content}>
-            {this._renderSectionHeading()}
-            {suppliersLoading && <Loading />}
-            {!suppliersLoading &&
-              isEmpty(suppliers) &&
-              this._renderNoSupplier()}
-            {!isEmpty(suppliers) && this._renderSupplier()}
-          </div>
+  return (
+    <ErrorBoundary>
+      <div className={classes.page}>
+        <div className={classes.content}>
+          {_renderSectionHeading()}
+          {loading && <Loading />}
+          {!loading && suppliers.length === 0 && _renderNoSupplier()}
+          {suppliers.length > 0 && _renderSupplier()}
         </div>
-      </ErrorBoundary>
-    );
-  }
-}
+      </div>
+    </ErrorBoundary>
+  );
+};
 
-const StyledSuppliers = withStyles(composeStyles(styles, SupplierStyles))(
-  Suppliers,
-);
-
-const EnhancedComponent = (props: any) => (
-  <TabContainer {...props} type='active-suppliers'>
-    {(childProps) => <StyledSuppliers {...childProps} />}
-  </TabContainer>
-);
-
-export default EnhancedComponent;
+export default withStyles(styles)(Suppliers);

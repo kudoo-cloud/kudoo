@@ -1,12 +1,4 @@
-export default () => ({
-  page: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-  },
-});
-
-export const SupplierStyles = (theme) => ({
+export default (theme) => ({
   page: {
     padding: '40px 20px',
     flex: 1,
@@ -40,5 +32,9 @@ export const SupplierStyles = (theme) => ({
     fontWeight: '500',
     color: theme.palette.blueGrey[50],
     textAlign: 'center',
+  },
+  supplierNameCell: {
+    color: theme.palette.primary.color2,
+    fontWeight: '500',
   },
 });
