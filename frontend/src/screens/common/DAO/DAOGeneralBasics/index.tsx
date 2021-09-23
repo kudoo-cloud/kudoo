@@ -1,229 +1,220 @@
 import {
   Button,
-  Checkbox,
   Dropdown,
   ErrorBoundary,
-  RadioButton,
   SectionHeader,
   TextField,
   withStyles,
 } from '@kudoo/components';
-import { Trans, withI18n } from '@lingui/react';
+import { withI18n } from '@lingui/react';
 import ButtonBase from '@material-ui/core/ButtonBase';
 import Grid from '@material-ui/core/Grid';
-import cx from 'classnames';
 import { Formik } from 'formik';
-import find from 'lodash/find';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
-import isEqual from 'lodash/isEqual';
-
 import * as React from 'react';
+import { useState } from 'react';
 import Dropzone from 'react-dropzone';
-import { connect } from 'react-redux';
+import { useHistory, useRouteMatch } from 'react-router';
 import { compose } from 'recompose';
 import * as Yup from 'yup';
-import { DEFAULT_LOCALE, SUPPORTED_COUNTRIES_DAO } from 'src/helpers/locale';
+import { uploadFile } from 'src/api';
+import {
+  Currency,
+  DaoFragment,
+  useArchiveDaoMutation,
+  useCreateDaoMutation,
+  useDaoQuery,
+  useGetUploadSignedUrlMutation,
+  useUpdateDaoMutation,
+} from 'src/generated/graphql';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
-import { IReduxState } from 'src/store/reducers';
+import { getDaoLogoKey, getFileExtension } from 'src/helpers/utilities';
 import styles from './styles';
+import { useActions, useData } from './useData';
 
 interface IProps {
-  actions: any;
-  isCreateNewDAO: boolean;
-  createDao: (data: any) => any;
-  updateDao: (data: any) => any;
-  initialData: any;
-  profile: any;
-  refetch: () => any;
-  removeLogo: (data: any) => any;
   i18n: any;
-  history: any;
   theme: any;
   classes: any;
 }
 
-interface IState {
-  isGSTRegistered: string;
-  selectedLogo: File | null;
-}
+const DAOGeneralBasics: React.FC<IProps> = (props) => {
+  const { theme, classes } = props;
 
-const AUSTRALIYA_COUNTRY_CODE = 'AU';
+  const [selectedLogo, setSelectedLogo] = useState(null as File);
 
-class DAOGeneralBasics extends React.Component<IProps, IState> {
-  static defaultProps = {
-    isCreateNewDAO: false,
-    initialData: {},
-    createDao: () => ({}),
-    updateDao: () => ({}),
-    refetch: () => ({}),
-    removeLogo: () => ({}),
-  };
+  const match = useRouteMatch<any>();
+  const history = useHistory();
+  const [createDao] = useCreateDaoMutation();
+  const [updateDao] = useUpdateDaoMutation();
+  const [archiveDao] = useArchiveDaoMutation();
+  const [getUploadSignedUrl] = useGetUploadSignedUrlMutation();
 
-  state = {
-    isGSTRegistered: 'yes',
-    selectedLogo: null,
-  };
+  const { data } = useDaoQuery({
+    variables: {
+      id: match?.params?.daoId,
+    },
+  });
 
-  componentDidMount() {
-    this._setTempLocale(this.props);
-  }
+  const { createdDAOs } = useData();
+  const actions = useActions();
 
-  componentDidUpdate(prevProps) {
-    if (!isEqual(this.props.initialData, prevProps.initialData)) {
-      this._setTempLocale(this.props);
-    }
-  }
+  const initialData = data?.dao || ({} as DaoFragment);
+  const isCreateNewDAO = !initialData?.id;
 
-  _setTempLocale = (props) => {
-    const { initialData, actions } = props;
-    if (!isEmpty(initialData)) {
-      const daoCountry: any =
-        find(SUPPORTED_COUNTRIES_DAO, {
-          value: initialData.country || 'other',
-        }) || {};
-      actions.setTemporaryActiveLanguage(daoCountry.locale);
-    } else {
-      actions.setTemporaryActiveLanguage(DEFAULT_LOCALE);
-    }
-  };
+  const uploadLogo = async (daoId: string) => {
+    const logoKey = getDaoLogoKey(daoId, getFileExtension(selectedLogo.name));
+    const mimeType = selectedLogo.type;
 
-  _submitForm = async (values, actions) => {
-    const { isCreateNewDAO, initialData, profile } = this.props;
-    const {
-      name,
-      legalNameSameAsName,
-      legalName,
-      govNumber,
-      businessType,
-      url,
-      isGSTRegistered,
-      country,
-      currency,
-      hpio,
-    } = values;
-    let data: any = {
-      businessType,
-      legalName: legalNameSameAsName ? name : legalName,
-      name: name,
-      salesTax: isGSTRegistered,
-      websiteURL: url,
-      country: country === 'other' ? null : country,
-      currency: currency === '' ? 'AUD' : currency,
-      logo: this.state.selectedLogo,
-      HPIO: hpio,
+    const uploadUrlRes = await getUploadSignedUrl({
+      variables: {
+        mimeType,
+        s3Key: logoKey,
+      },
+    });
+    const signedUrlObj = uploadUrlRes?.data?.getUploadSignedUrl;
+    const url = signedUrlObj?.url;
+    await uploadFile(url, selectedLogo);
+    let logoData = {
+      id: initialData?.logo?.id || undefined,
+      description: 'Dao Logo',
+      fileName: selectedLogo.name,
+      label: selectedLogo.name,
+      s3Bucket: signedUrlObj?.s3Bucket,
+      s3Key: signedUrlObj?.s3Key,
+      s3Region: signedUrlObj?.s3Region,
     };
-    if (govNumber && country === AUSTRALIYA_COUNTRY_CODE) {
-      data = {
-        ...data,
-        govNumber: govNumber.replace('/[^d]/', ''),
-      };
-    } else if (govNumber) {
-      data = {
-        ...data,
-        govNumber: govNumber.replace(/ /g, ''),
-      };
-    }
+    return logoData;
+  };
+
+  const _submitForm = async (values, formActions) => {
+    const { name, url, currency, cChainAddress } = values;
+
+    let data = {
+      id: undefined,
+      name,
+      currency,
+      websiteUrl: url,
+      cChainAddress,
+      logo: undefined,
+    };
 
     try {
       if (isCreateNewDAO) {
         // if create new dao
-        const res = await this.props.createDao({ data });
-        if (res.success) {
-          const daoRes = { ...res.result, owner: true };
-          await this.props.actions.setUserData({
+        const res = await createDao({
+          variables: {
+            createDaoInput: data,
+          },
+        });
+        if (res?.data?.createDao?.id) {
+          const daoRes = { ...res?.data?.createDao, owner: true };
+          await actions.setUserData({
             selectedDAO: daoRes,
-            createdDAOs: [...(profile.createdDAOs || []), daoRes], // this is useful for updating dao list when we go back to manage DAOs
+            createdDAOs: [...(createdDAOs || []), daoRes], // this is useful for updating dao list when we go back to manage DAOs
           });
-          // await this.props.refetch();
-          actions.setSubmitting(false);
+          if (selectedLogo) {
+            let logoData = await uploadLogo(res?.data?.createDao?.id);
+            data = {
+              ...data,
+              logo: logoData,
+            };
+
+            // update logo in dao
+            await updateDao({
+              variables: {
+                updateDaoInput: {
+                  ...data,
+                  id: res?.data?.createDao?.id,
+                },
+              },
+            });
+          }
+          formActions.setSubmitting(false);
           showToast(null, 'DAO created');
-          this.props.actions.setTemporaryActiveLanguage(undefined);
-          this.props.history.push(URL.MANAGE_DAOS());
-        } else {
-          res.error.map((err) => showToast(err));
+          actions.setTemporaryActiveLanguage(undefined);
+          history.push(URL.MANAGE_DAOS());
         }
       } else {
         // if update existing dao
-        data = {
-          data,
-          where: {
-            id: initialData.id,
+        if (selectedLogo) {
+          let logoData = await uploadLogo(initialData?.id);
+          data = {
+            ...data,
+            logo: logoData,
+          };
+        }
+
+        const res = await updateDao({
+          variables: {
+            updateDaoInput: {
+              ...data,
+              id: initialData.id,
+            },
           },
-        };
-        const res = await this.props.updateDao(data);
-        if (res.success) {
-          await this.props.refetch();
-          actions.setSubmitting(false);
+        });
+        if (res?.data?.updateDao?.id) {
+          // await refetch();
+          formActions.setSubmitting(false);
           showToast(null, 'DAO Updated');
-          this.props.actions.setTemporaryActiveLanguage(undefined);
-          this.props.history.push(URL.MANAGE_DAOS());
-        } else {
-          res.error.map((err) => showToast(err));
+          actions.setTemporaryActiveLanguage(undefined);
+          history.push(URL.MANAGE_DAOS());
         }
       }
     } catch (e) {
-      actions.setSubmitting(false);
+      formActions.setSubmitting(false);
       showToast(e.toString());
       console.log('e===', e);
     }
   };
 
-  _removeLogo = async () => {
+  // const removeLogo = async () => {
+  //   try {
+  //     const res = await this.props.removeLogo({
+  //       where: {
+  //         id: get(initialData, 'logo.id'),
+  //       },
+  //     });
+  //     if (res.success) {
+  //       await this.props.refetch();
+  //       showToast(null, 'Logo removed successfully');
+  //     } else {
+  //       res.error.map((err) => showToast(err));
+  //     }
+  //   } catch (e) {
+  //     showToast(e.toString());
+  //   }
+  // };
+
+  const deleteDAO = async () => {
     try {
-      const { initialData } = this.props;
-      const res = await this.props.removeLogo({
-        where: {
-          id: get(initialData, 'logo.id'),
+      const res = await archiveDao({
+        variables: {
+          id: initialData?.id,
         },
       });
-      if (res.success) {
-        await this.props.refetch();
-        showToast(null, 'Logo removed successfully');
-      } else {
-        res.error.map((err) => showToast(err));
-      }
-    } catch (e) {
-      showToast(e.toString());
-    }
-  };
-
-  _deleteDAO = async () => {
-    try {
-      const { initialData, history } = this.props;
-      const data = {
-        data: {
-          isArchived: true,
-        },
-        where: {
-          id: initialData.id,
-        },
-      };
-      const res = await this.props.updateDao(data);
-      if (res.success) {
+      if (res?.data?.archiveDao?.id) {
         showToast(null, 'DAO archived successfully');
-        this.props.actions.setUserData({
+        actions.setUserData({
           selectedDAO: {},
         });
         history.replace(URL.MANAGE_DAOS());
-      } else {
-        res.error.map((err) => showToast(err));
       }
     } catch (e) {
       showToast(e.toString());
     }
   };
 
-  _showDeleteDAOModal = async () => {
-    const { theme, initialData, classes } = this.props;
+  const showDeleteDAOModal = async () => {
     const title = 'Delete this DAO account?';
     const description = (
       <div>
         <div>
-          {`You are trying to delete the comDAOpany `}
+          {`You are trying to delete the DAO `}
           <span className={classes.deleteDaoName}>
-            {"'" + initialData.name + "'"}
+            {" '" + initialData.name + "' "}
           </span>
         </div>
         <br />
@@ -240,7 +231,7 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
         title: 'Cancel',
         type: 'cancel',
         onClick: () => {
-          this.props.actions.closeAlertDialog();
+          actions.closeAlertDialog();
         },
       },
       {
@@ -248,13 +239,13 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
         id: 'modal-delete-dao',
         buttonColor: theme.palette.secondary.color2,
         onClick: () => {
-          this._deleteDAO();
-          this.props.actions.closeAlertDialog();
+          deleteDAO();
+          actions.closeAlertDialog();
         },
       },
     ];
     const titleColor = theme.palette.secondary.color2;
-    this.props.actions.showAlertDialog({
+    actions.showAlertDialog({
       title,
       description,
       buttons,
@@ -262,9 +253,7 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
     });
   };
 
-  _renderDAOLogoSection() {
-    const { classes, initialData } = this.props;
-    const { selectedLogo } = this.state;
+  const renderDAOLogoSection = () => {
     const dropzoneStyle = {
       width: 360,
       height: 130,
@@ -300,7 +289,7 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
                     multiple={false}
                     accept='image/*'
                     onDropAccepted={(file) => {
-                      this.setState({ selectedLogo: file[0] });
+                      setSelectedLogo(file[0]);
                     }}
                   >
                     Select new image
@@ -312,7 +301,7 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
                   multiple={false}
                   accept='image/*'
                   onDropAccepted={(file) => {
-                    this.setState({ selectedLogo: file[0] });
+                    setSelectedLogo(file[0]);
                   }}
                 >
                   <div className={classes.dropzoneText}>
@@ -321,14 +310,14 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
                 </Dropzone>
               )}
             </div>
-            {Boolean(daoLogo) && (
+            {/* {Boolean(daoLogo) && (
               <ButtonBase
                 classes={{ root: classes.deleteIcon }}
-                onClick={this._removeLogo}
+                onClick={removeLogo}
               >
                 <i className='icon icon-trash' />
               </ButtonBase>
-            )}
+            )} */}
           </div>
           <div className={classes.imageNote}>
             {`This logo appears on your DAO invoice.`}
@@ -338,10 +327,9 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
         </div>
       </React.Fragment>
     );
-  }
+  };
 
-  _renderForm(formProps) {
-    const { classes, theme, isCreateNewDAO, i18n, actions } = this.props;
+  const renderForm = (formProps) => {
     const {
       values,
       errors,
@@ -378,48 +366,12 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
                 </div>
 
                 <div className={classes.fieldRow}>
-                  <TextField
-                    name='legalName'
-                    id='legalName'
-                    label='DAO Legal Name'
-                    placeholder={'DAO Legal Name'}
-                    value={
-                      values.legalNameSameAsName
-                        ? values.name
-                        : values.legalName
-                    }
-                    isReadOnly={values.legalNameSameAsName}
-                    showClearIcon={false}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    error={touched.legalName && errors.legalName}
-                  />
-                  <Checkbox
-                    label={'Same as above'}
-                    classes={{ component: classes.sameAsAboveCheckbox }}
-                    value={values.legalNameSameAsName}
-                    onChange={(checked) => {
-                      setFieldValue('legalNameSameAsName', checked);
-                    }}
-                  />
-                </div>
-                <div className={classes.fieldRow}>
-                  <Dropdown
-                    label='Country'
-                    items={SUPPORTED_COUNTRIES_DAO}
-                    value={values.country}
-                    onChange={(item) => {
-                      setFieldValue('country', item.value);
-                      actions.setTemporaryActiveLanguage(item.locale);
-                      setFieldValue('currency', item.currency);
-                    }}
-                    error={touched.country && errors.country}
-                  />
-                </div>
-                <div className={classes.fieldRow}>
                   <Dropdown
                     label='Currency'
-                    items={[{ label: 'AUD', value: 'AUD' }]}
+                    items={[
+                      { label: Currency.Avax, value: Currency.Avax },
+                      { label: Currency.Png, value: Currency.Png },
+                    ]}
                     value={values.currency}
                     onChange={(item) => {
                       setFieldValue('currency', item.value);
@@ -427,51 +379,7 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
                     error={touched.currency && errors.currency}
                   />
                 </div>
-                <div className={cx(classes.fieldRow, classes.halfFieldWrapper)}>
-                  <TextField
-                    name='govNumber'
-                    id='govNumber'
-                    label={i18n._(`ABN`)}
-                    placeholder={i18n._(`ABN`)}
-                    showClearIcon={false}
-                    value={(values.govNumber || '').replace(/ /g, '')}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    classes={{
-                      component: classes.abnInput,
-                    }}
-                    error={touched.govNumber && errors.govNumber}
-                  />
-                  <Dropdown
-                    label='Business Type'
-                    id='business-type'
-                    items={[
-                      { label: 'Health', value: 'HEALTH' },
-                      { label: 'Other', value: 'OTHER' },
-                    ]}
-                    value={values.businessType}
-                    onChange={(item) => {
-                      setFieldValue('businessType', item.value);
-                    }}
-                    error={touched.businessType && errors.businessType}
-                  />
-                </div>
-                {values.country === AUSTRALIYA_COUNTRY_CODE &&
-                  values.businessType === 'HEALTH' && (
-                    <div className={classes.fieldRow}>
-                      <TextField
-                        name='hpio'
-                        id='hpio'
-                        label='HPIO'
-                        placeholder={'HPIO'}
-                        value={values.hpio}
-                        showClearIcon={false}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        error={touched.hpio && errors.hpio}
-                      />
-                    </div>
-                  )}
+
                 <div className={classes.fieldRow}>
                   <TextField
                     name='url'
@@ -484,33 +392,6 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
                     onBlur={handleBlur}
                   />
                 </div>
-                <SectionHeader
-                  title={i18n._(`GST`) + ' Settings'}
-                  classes={{
-                    component: cx(classes.sectionHeading, classes.gstHeading),
-                  }}
-                />
-                <div className={classes.gstLabel}>
-                  Are you registered for <Trans id='GST'>GST</Trans>?
-                </div>
-                <div className={classes.halfFieldWrapper}>
-                  <RadioButton
-                    id='gst-yes'
-                    label='Yes I am registered'
-                    value={values.isGSTRegistered === true}
-                    onChange={() => {
-                      setFieldValue('isGSTRegistered', true);
-                    }}
-                  />
-                  <RadioButton
-                    id='gst-no'
-                    label='No I am not registered'
-                    value={values.isGSTRegistered === false}
-                    onChange={() => {
-                      setFieldValue('isGSTRegistered', false);
-                    }}
-                  />
-                </div>
               </div>
             </Grid>
           </Grid>
@@ -518,13 +399,13 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
             <ButtonBase
               id='delete-dao'
               classes={{ root: classes.deleteDAOText }}
-              onClick={this._showDeleteDAOModal}
+              onClick={showDeleteDAOModal}
             >
               Delete this DAO account
             </ButtonBase>
           )}
           <Grid container spacing={0}>
-            <Grid item xs={12} md={dirty ? 6 : 12}>
+            <Grid item xs={12} md={dirty || selectedLogo ? 6 : 12}>
               <Button
                 title={isCreateNewDAO ? 'Cancel' : 'Go Back'}
                 href={URL.MANAGE_DAOS()}
@@ -533,7 +414,7 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
                 target='_self'
               />
             </Grid>
-            {dirty && (
+            {(dirty || selectedLogo) && (
               <Grid item xs={12} md={6}>
                 <Button
                   id='submit-button'
@@ -548,102 +429,43 @@ class DAOGeneralBasics extends React.Component<IProps, IState> {
         </form>
       </React.Fragment>
     );
-  }
+  };
 
-  _renderFormSection() {
-    const { initialData, i18n } = this.props;
-
+  const renderFormSection = () => {
     return (
       <Formik
         enableReinitialize
         initialValues={{
           name: initialData.name || '',
-          legalNameSameAsName: initialData.name === initialData.legalName,
-          legalName: initialData.legalName || '',
-          country: !isEmpty(initialData)
-            ? initialData.country || 'other'
-            : AUSTRALIYA_COUNTRY_CODE,
           currency: !isEmpty(initialData.currency)
             ? initialData.currency
-            : 'AUD',
-          govNumber: `${initialData.govNumber ? initialData.govNumber : ''}`,
-          businessType: initialData.businessType || '',
-          url: initialData.websiteURL || '',
-          isGSTRegistered: initialData.salesTax || false,
-          hpio: initialData.HPIO || '',
+            : Currency.Png,
+          url: initialData.websiteUrl || '',
+          cChainAddress: initialData?.cChainAddress || '',
         }}
-        onSubmit={this._submitForm}
+        onSubmit={_submitForm}
         validationSchema={Yup.object().shape({
           name: Yup.string().required('Name is required'),
-          country: Yup.mixed().nullable(),
-          legalName: Yup.mixed().when('legalNameSameAsName', {
-            is: false,
-            then: Yup.string().required('Legal name is required'),
-            otherwise: Yup.mixed().nullable(),
-          }),
-          legalNameSameAsName: Yup.boolean(),
-          govNumber: Yup.string()
-            .required(i18n._(`ABN`) + ' is required')
-            .test('validate-abn', 'Not Valid!', function (value) {
-              if (
-                this.parent &&
-                this.parent.country === AUSTRALIYA_COUNTRY_CODE
-              ) {
-                const weights = [10, 1, 3, 5, 7, 9, 11, 13, 15, 17, 19];
-                const govNumber = value.replace(/[^\d]/g, '');
-                if (govNumber.length === 11) {
-                  const sum = weights.reduce((prev, weight, index) => {
-                    let internalSum = 0;
-                    if (index === 0) {
-                      internalSum = weight * (Number(govNumber[index]) - 1);
-                    } else {
-                      internalSum = weight * Number(govNumber[index]);
-                    }
-                    return prev + internalSum;
-                  }, 0);
-                  return sum % 89 === 0;
-                }
-                return false;
-              }
-              return true;
-            }),
-          businessType: Yup.string().required('Please select business type'),
         })}
       >
-        {this._renderForm.bind(this)}
+        {renderForm.bind(this)}
       </Formik>
     );
-  }
+  };
 
-  render() {
-    const { classes } = this.props;
-    return (
-      <ErrorBoundary>
-        <div className={classes.page}>
-          <div className={classes.content}>
-            {this._renderDAOLogoSection()}
-            {this._renderFormSection()}
-          </div>
+  return (
+    <ErrorBoundary>
+      <div className={classes.page}>
+        <div className={classes.content}>
+          {renderDAOLogoSection()}
+          {renderFormSection()}
         </div>
-      </ErrorBoundary>
-    );
-  }
-}
+      </div>
+    </ErrorBoundary>
+  );
+};
 
 export default compose<any, any>(
   withI18n(),
-  // withCreateDao(),
-  // withUpdateDao(),
-  // withDeleteAttachment(() => ({ name: 'removeLogo' })),
-  // withDao(
-  //   (props) => ({ id: get(props, 'match.params.daoId', '') }),
-  //   ({ data }) => ({
-  //     initialData: get(data, 'dao', {}),
-  //     refetch: data.refetch,
-  //   }),
-  // ),
   withStyles(styles),
-  connect((state: IReduxState) => ({
-    profile: state.profile,
-  })),
 )(DAOGeneralBasics);

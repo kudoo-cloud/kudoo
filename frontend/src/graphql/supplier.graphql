@@ -1,0 +1,25 @@
+#import './fragments.graphql'
+
+mutation createSupplier($createSupplierInput: CreateSupplierInput!) {
+  createSupplier(createSupplierInput: $createSupplierInput) {
+    ...Supplier
+  }
+}
+
+mutation updateSupplier($updateSupplierInput: UpdateSupplierInput!) {
+  updateSupplier(updateSupplierInput: $updateSupplierInput) {
+    ...Supplier
+  }
+}
+
+query suppliersByDao($daoId: String!) {
+  suppliersByDao(daoId: $daoId) {
+    ...Supplier
+  }
+}
+
+query supplier($id: String!) {
+  supplier(id: $id) {
+    ...Supplier
+  }
+}

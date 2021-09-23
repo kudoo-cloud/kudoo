@@ -7,16 +7,17 @@ import {
 } from '@kudoo/components';
 import cx from 'classnames';
 import idx from 'idx';
-import { get } from 'lodash';
+import find from 'lodash/find';
 import isEmpty from 'lodash/isEmpty';
 import * as React from 'react';
-// import { Redirect, Switch } from 'react-router';
-import { Link } from 'react-router-dom';
+import { Link, Redirect, Switch, useHistory } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { useDaosQuery } from 'src/generated/graphql';
 import { isFeatureAvailable } from 'src/helpers/security';
 import URL from 'src/helpers/urls';
 import Configuration from 'src/kudoo.json';
 import Screen from 'src/screens';
+import { useAllActions } from 'src/store/hooks';
 import {
   IMenuItem,
   ISecurityConfig,
@@ -24,35 +25,48 @@ import {
   ProductType,
 } from 'src/store/types/security';
 import { toastStyle } from './styles';
+import { isPreviewRoute, shouldRedirectToManageDAO, useData } from './useData';
 
 export interface IProps {
-  DAOs: any;
-  profile: any;
-  app: any;
   classes: any;
-  actions: any;
-  history: any;
   location: any;
-  checkActiveLanguage: (props) => void;
-  isPreviewRoute: () => boolean;
-  shouldRedirectToManageDAO: () => boolean;
 }
 
-interface IState {
-  isDrawerClosed: boolean;
-}
+const App: React.FC<IProps> = (props) => {
+  const { classes } = props;
 
-class App extends React.Component<IProps, IState> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      isDrawerClosed: false,
-    };
-  }
+  const [isDrawerClosed, setIsDrawerClosed] = React.useState(false);
+  const history = useHistory();
+  const actions = useAllActions();
+  const { data, loading } = useDaosQuery();
+  const { app, profile } = useData();
+  const alertDialog = app.alertDialog;
+  const selectedDAO = profile.selectedDAO;
+  const daos = (data?.daos || []).filter((dao) => !dao.deletedAt);
 
-  public _renderDrawerMenuItem = (menuItem: IMenuItem = {} as IMenuItem) => {
-    const { classes, history } = this.props;
-    const pathname = get(history, 'location.pathname');
+  React.useEffect(() => {
+    const firstDao = daos[0];
+
+    if (isEmpty(profile.selectedDAO) && daos.length > 0) {
+      // if there is no dao selected then select first dao by default
+      if (firstDao) {
+        actions.selectDAO(firstDao);
+      }
+    } else if (
+      !isEmpty(profile.selectedDAO) &&
+      !find(daos, { id: profile?.selectedDAO?.id || '' })
+    ) {
+      // if dao is selected , but not able to find that dao in DAOs array
+      // then select first dao by default
+      if (firstDao) {
+        actions.selectDAO(firstDao);
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [daos]);
+
+  const renderDrawerMenuItem = (menuItem: IMenuItem = {} as IMenuItem) => {
+    const pathname = history?.location?.pathname;
     return (
       <Link
         className={cx(classes.drawerMenuItem, {
@@ -67,7 +81,7 @@ class App extends React.Component<IProps, IState> {
     );
   };
 
-  public _renderIfGuestUser() {
+  const renderIfGuestUser = () => {
     return (
       <React.Fragment>
         <div className='kudoo-app-main'>
@@ -76,21 +90,13 @@ class App extends React.Component<IProps, IState> {
         <Footer />
       </React.Fragment>
     );
-  }
+  };
 
-  public _renderIfUserLoggedIn() {
-    const {
-      classes,
-      app,
-      actions,
-      profile,
-      DAOs,
-      profile: { selectedDAO = {} },
-    } = this.props;
-    const totalDAOs = get(DAOs, 'data', []).length;
+  const renderIfUserLoggedIn = () => {
+    const totalDAOs = daos.length;
     const menuConfig: ISecurityConfig =
       Configuration?.apps?.[
-        (app?.kudoo_product || Product.inventory || '').toLowerCase()
+        (app?.kudoo_product || Product.finance || '').toLowerCase()
       ];
 
     const products: {
@@ -105,7 +111,7 @@ class App extends React.Component<IProps, IState> {
     let filteredItems: any = menuItems.filter(
       (menuItem) =>
         // TODO: for now make all items available
-        true || isFeatureAvailable(profile.selectedDAO, menuItem.availability),
+        true || isFeatureAvailable(selectedDAO, menuItem.availability),
     );
     filteredItems = filteredItems.map((item) => {
       return {
@@ -126,35 +132,36 @@ class App extends React.Component<IProps, IState> {
     // } else if (app.kudoo_product === Product.manufacturing) {
     //   initialSelectedProductIndex = 4;
     // }
+
     return (
       <div className={classes.loggedInWrapper}>
         {totalDAOs > 0 && (
           <div className={classes.drawerWrapper}>
             <Drawer
-              daos={get(DAOs, 'data', []).filter((dao) => !dao.isArchived)}
+              daos={daos.filter((dao) => !dao?.deletedAt)}
               selectedDAO={
                 !isEmpty(selectedDAO)
                   ? selectedDAO || { name: '' }
-                  : DAOs?.data?.[0] || { name: '' }
+                  : daos?.[0] || { name: '' }
               }
               manageDAOUrl={URL.MANAGE_DAOS()}
               onClose={() => {
-                this.setState({ isDrawerClosed: true });
+                setIsDrawerClosed(false);
               }}
               onOpen={() => {
-                this.setState({ isDrawerClosed: false });
+                setIsDrawerClosed(false);
               }}
               onDAOClick={(dao) => {
-                this.props.actions.selectDAO(dao);
+                actions.selectDAO(dao);
               }}
               menuItems={filteredItems}
-              renderMenuItem={this._renderDrawerMenuItem}
+              renderMenuItem={renderDrawerMenuItem}
             />
           </div>
         )}
         <div
           className={cx(classes.loggedInRightContent, {
-            'is-drawer-closed': this.state.isDrawerClosed,
+            'is-drawer-closed': isDrawerClosed,
             'is-drawer-hidden': totalDAOs === 0,
           })}
         >
@@ -168,8 +175,8 @@ class App extends React.Component<IProps, IState> {
             profile={profile}
             noOfDAOs={totalDAOs}
             onSelectProduct={(_, data: ProductType) => {
-              this.props.history.push(URL.DASHBOARD());
-              this.props.actions.setKudooProduct(data.value || '');
+              history.push(URL.DASHBOARD());
+              actions.setKudooProduct(data.value || '');
             }}
             products={filteredProducts}
             initialSelectedProductIndex={initialSelectedProductIndex}
@@ -181,53 +188,49 @@ class App extends React.Component<IProps, IState> {
         </div>
       </div>
     );
-  }
+  };
 
-  public _renderScene() {
-    const { profile } = this.props;
+  const renderScene = () => {
     const user = profile.isLoggedIn ? profile : null;
-    if (this.props.isPreviewRoute()) {
+    if (isPreviewRoute(history)) {
       return (
         <React.Fragment>
           <Screen />
         </React.Fragment>
       );
     } else if (user) {
-      // if (this.props.shouldRedirectToManageDAO()) {
-      //   return (
-      //     <Switch>
-      //       <Redirect to={URL.MANAGE_DAOS({ path: true })} />
-      //     </Switch>
-      //   );
-      // }
-      return this._renderIfUserLoggedIn();
+      if (shouldRedirectToManageDAO(history, data, loading)) {
+        return (
+          <Switch>
+            <Redirect to={URL.MANAGE_DAOS({ path: true })} />
+          </Switch>
+        );
+      }
+      return renderIfUserLoggedIn();
     }
-    return this._renderIfGuestUser();
-  }
+    return renderIfGuestUser();
+  };
 
-  public render() {
-    const { alertDialog } = this.props.app;
-    return (
-      <ErrorBoundary>
-        <div className='kudoo-app'>
-          {this._renderScene()}
-          <Modal
-            visible={alertDialog.visible}
-            title={alertDialog.title}
-            description={alertDialog.description}
-            buttons={alertDialog.buttons}
-            titleColor={alertDialog.titleColor}
-            classes={alertDialog.classes}
-          />
-          <ToastContainer
-            closeButton={false}
-            hideProgressBar={true}
-            toastStyle={toastStyle as any}
-          />
-        </div>
-      </ErrorBoundary>
-    );
-  }
-}
+  return (
+    <ErrorBoundary>
+      <div className='kudoo-app'>
+        {renderScene()}
+        <Modal
+          visible={alertDialog.visible}
+          title={alertDialog.title}
+          description={alertDialog.description}
+          buttons={alertDialog.buttons}
+          titleColor={alertDialog.titleColor}
+          classes={alertDialog.classes}
+        />
+        <ToastContainer
+          closeButton={false}
+          hideProgressBar={true}
+          toastStyle={toastStyle as any}
+        />
+      </div>
+    </ErrorBoundary>
+  );
+};
 
 export default App;

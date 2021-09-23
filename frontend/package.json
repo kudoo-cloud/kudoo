@@ -17,7 +17,8 @@
     "lint": "eslint ./src --ext .js,.jsx,.ts,.tsx",
     "lint:fix": "eslint ./src --ext .js,.jsx,.ts,.tsx --fix",
     "lint:staged": "lint-staged",
-    "postinstall": "npx patch-package"
+    "postinstall": "npx patch-package && npm run codegen",
+    "codegen": "graphql-codegen -r dotenv/config --config codegen.yml"
   },
   "lint-staged": {
     "*.{tsx,ts}": [
@@ -44,6 +45,10 @@
   },
   "dependencies": {
     "@apollo/client": "^3.3.20",
+    "@graphql-codegen/cli": "^1.21.7",
+    "@graphql-codegen/typescript": "^1.23.0",
+    "@graphql-codegen/typescript-operations": "^1.18.4",
+    "@graphql-codegen/typescript-react-apollo": "^2.3.1",
     "@kudoo/components": "2.4.2",
     "@lingui/babel-plugin-transform-js": "2.7.0",
     "@lingui/babel-plugin-transform-react": "2.7.0",
@@ -63,6 +68,7 @@
     "@web3-react/injected-connector": "^6.0.7",
     "apollo-cache-persist": "^0.1.1",
     "apollo-upload-client": "^16.0.0",
+    "axios": "^0.21.1",
     "classnames": "^2.2.5",
     "concurrently": "^6.2.0",
     "formik": "2.0.3",

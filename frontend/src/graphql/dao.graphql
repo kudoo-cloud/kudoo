@@ -1,0 +1,43 @@
+#import './fragments.graphql'
+
+mutation createDao($createDaoInput: CreateDaoInput!) {
+  createDao(createDaoInput: $createDaoInput) {
+    ...Dao
+  }
+}
+
+mutation updateDao($updateDaoInput: UpdateDaoInput!) {
+  updateDao(updateDaoInput: $updateDaoInput) {
+    ...Dao
+  }
+}
+
+mutation deleteDao($id: ID!) {
+  deleteDao(id: $id) {
+    ...Dao
+  }
+}
+
+mutation archiveDao($id: ID!) {
+  archiveDao(id: $id) {
+    ...Dao
+  }
+}
+
+mutation unarchiveDao($id: ID!) {
+  unarchiveDao(id: $id) {
+    ...Dao
+  }
+}
+
+query daos {
+  daos {
+    ...Dao
+  }
+}
+
+query dao($id: String!) {
+  dao(id: $id) {
+    ...Dao
+  }
+}

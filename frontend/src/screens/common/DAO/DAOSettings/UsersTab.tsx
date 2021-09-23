@@ -55,7 +55,7 @@ class UsersTab extends Component<Props, State> {
   }
 
   render() {
-    const { classes, actions, match } = this.props;
+    const { classes, match } = this.props;
     const daoId = idx(match, (_) => _.params.daoId);
     return (
       <div className={classes.page}>
@@ -64,11 +64,11 @@ class UsersTab extends Component<Props, State> {
         <Switch>
           <Route
             path={URL.DAO_USERS_LIST({ path: true })}
-            render={(props) => <DAOUsers {...props} actions={actions} />}
+            render={(props) => <DAOUsers {...props} />}
           />
           <Route
             path={URL.INVITE_USER({ path: true })}
-            render={(props) => <InviteUser {...props} actions={actions} />}
+            render={(props) => <InviteUser {...props} />}
           />
           <Redirect
             from={URL.DAO_USERS({ daoId })}

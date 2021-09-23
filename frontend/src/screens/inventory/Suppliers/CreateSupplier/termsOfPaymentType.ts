@@ -1,18 +1,20 @@
+import { SupplierTermsOfPayment } from 'src/generated/graphql';
+
 export const TERMS_OF_PAYMENT = [
   {
-    value: 'COD',
+    value: SupplierTermsOfPayment.Cod,
     label: 'COD',
   },
   {
-    value: 'DAYS_14',
+    value: SupplierTermsOfPayment.Days_14,
     label: '14 Days',
   },
   {
-    value: 'DAYS_30',
+    value: SupplierTermsOfPayment.Days_30,
     label: '30 Days',
   },
   {
-    value: 'DAYS_60',
+    value: SupplierTermsOfPayment.Days_60,
     label: '60 Days',
   },
 ];

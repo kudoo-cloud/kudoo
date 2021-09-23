@@ -1,0 +1,25 @@
+#import './fragments.graphql'
+
+mutation createDaoMember($data: CreateDaomemberInput!) {
+  createDaomember(createDaomemberInput: $data) {
+    ...Daomember
+  }
+}
+
+mutation updateDaoMember($data: UpdateDaomemberInput!) {
+  updateDaomember(updateDaomemberInput: $data) {
+    ...Daomember
+  }
+}
+
+mutation archiveDaoMember($id: ID!) {
+  archiveDaomember(id: $id) {
+    ...Daomember
+  }
+}
+
+query daomembersByDao($daoId: ID!) {
+  daomembersByDao(daoId: $daoId) {
+    ...Daomember
+  }
+}
