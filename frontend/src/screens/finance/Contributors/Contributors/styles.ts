@@ -5,7 +5,7 @@ export default (theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
-  noSupplierWrapper: {
+  noContributorWrapper: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',

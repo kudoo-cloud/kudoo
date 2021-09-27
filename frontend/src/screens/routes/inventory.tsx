@@ -30,6 +30,26 @@ export default [
     component: Components.SecondaryTabs,
     tabs: supplierTabs,
   },
+
+  // Reoccuring Expense
+  {
+    name: 'Create Reoccuring Expense',
+    path: URL.CREATE_REOCCURING_EXPENSE(paramsOptions),
+    component: Components.CreateReoccuringExpense,
+  },
+  {
+    name: 'Edit Reoccuring Expense',
+    path: URL.EDIT_REOCCURING_EXPENSE(paramsOptions),
+    component: Components.CreateReoccuringExpense,
+  },
+
+  {
+    name: 'Reoccuring Expenses',
+    path: URL.REOCCURING_EXPENSES(paramsOptions),
+    component: Components.SecondaryTabs,
+    tabs: supplierTabs,
+  },
+
   // Inventory
   {
     name: 'Create Inventory',

@@ -280,4 +280,8 @@ export default {
   POLICIES: abstractURL('/policies'),
   CREATE_POLICIES: abstractURL('/policies/create'),
   EDIT_POLICIES: abstractURL('/policies/:id/edit'),
+
+  REOCCURING_EXPENSES: abstractURL('/reoccuring-expense'),
+  CREATE_REOCCURING_EXPENSE: abstractURL('/reoccuring-expense/create'),
+  EDIT_REOCCURING_EXPENSE: abstractURL('/reoccuring-expense/:id/edit'),
 };

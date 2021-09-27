@@ -100,6 +100,12 @@ fragment Supplier on Supplier {
   termsOfPayment
   cChainAddress
   emailAddressForRemittance
+  telegramId
+  discordId
+  currency
+  amount
+  type
+  paymentFrequency
   createdAt
   updatedAt
 }
@@ -125,4 +131,13 @@ fragment Contributor on Contributor {
   policies {
     ...Policy
   }
+}
+
+fragment ReoccuringExpense on ReoccuringExpense {
+  id
+  supplier {
+    ...Supplier
+  }
+  amount
+  reoccuringFrequency
 }

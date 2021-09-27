@@ -1,12 +1,12 @@
-import { SupplierTermsOfPayment } from 'src/generated/graphql';
+import { PaymentFrequency } from 'src/generated/graphql';
 
 export const PAYMENT_FREQUENCY = [
   {
-    value: 'Monthly',
+    value: PaymentFrequency.Monthly,
     label: 'Monthly',
   },
   {
-    value: 'Fortnightly',
+    value: PaymentFrequency.Fortnightly,
     label: 'Fortnightly',
   },
 ];

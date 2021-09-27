@@ -15,13 +15,18 @@ import {
   useCreateSupplierMutation,
   useSupplierQuery,
   useUpdateSupplierMutation,
+  Currency,
 } from 'src/generated/graphql';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import { useAllActions, useProfile } from 'src/store/hooks';
 import styles from './styles';
-import { TERMS_OF_PAYMENT } from './termsOfPaymentType';
+import {
+  TERMS_OF_PAYMENT,
+  SUPPLIER_TYPE,
+  PAYMENT_FREQUENCY,
+} from './constants';
 
 interface IProps {
   classes: any;
@@ -33,12 +38,24 @@ const keys = {
   termsOfPayment: 'termsOfPayment',
   emailAddressForRemittance: 'emailAddressForRemittance',
   cChainAddress: 'cChainAddress',
+  telegramId: 'telegramId',
+  discordId: 'discordId',
+  currency: 'currency',
+  type: 'type',
+  amount: 'amount',
+  paymentFrequency: 'paymentFrequency',
 };
 const labels = {
   name: 'Supplier Name',
   termsOfPayment: 'Terms Of Payment',
   emailAddressForRemittance: 'Email address for remittance',
   cChainAddress: 'C-Chain Address',
+  telegramId: 'Telegram Id',
+  discordId: 'Discord Id',
+  currency: 'Currency',
+  type: 'Type',
+  paymentFrequency: 'Payment Frequency',
+  amount: 'Amount per hour',
 };
 
 const CreateNewSupplier: React.FC<IProps> = (props) => {
@@ -78,6 +95,12 @@ const CreateNewSupplier: React.FC<IProps> = (props) => {
         termsOfPayment: values?.termsOfPayment,
         cChainAddress: values?.cChainAddress,
         emailAddressForRemittance: values?.emailAddressForRemittance,
+        telegramId: values?.telegramId,
+        discordId: values?.discordId,
+        currency: values?.currency,
+        amount: parseFloat(values?.amount),
+        paymentFrequency: values?.paymentFrequency,
+        type: values?.type,
       };
 
       if (!isEditMode) {
@@ -140,6 +163,12 @@ const CreateNewSupplier: React.FC<IProps> = (props) => {
           emailAddressForRemittance:
             supplierData?.emailAddressForRemittance || '',
           cChainAddress: supplierData?.cChainAddress || '',
+          telegramId: supplierData?.telegramId || '',
+          discordId: supplierData?.discordId || '',
+          currency: supplierData?.currency || '',
+          amount: supplierData?.amount || 0,
+          type: supplierData?.type || '',
+          paymentFrequency: supplierData?.paymentFrequency || '',
         }}
         enableReinitialize
         validationSchema={Yup.object().shape({
@@ -148,6 +177,14 @@ const CreateNewSupplier: React.FC<IProps> = (props) => {
           emailAddressForRemittance: Yup.string()
             .email('Invalid Email')
             .required('Email address is required'),
+          telegramId: Yup.string().required('Telegram Id is required'),
+          discordId: Yup.string().required('Discord Id is required'),
+          paymentFrequency: Yup.string().required(
+            'Payment Frequency is required',
+          ),
+          currency: Yup.string().required('Currency is required'),
+          amount: Yup.string().required('Amount is required'),
+          type: Yup.string().required('Supplier Type is required'),
         })}
         onSubmit={_submitForm}
       >
@@ -235,6 +272,105 @@ const CreateNewSupplier: React.FC<IProps> = (props) => {
                               errors[keys.cChainAddress]
                             }
                             showClearIcon={false}
+                          />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                          <TextField
+                            label={labels.telegramId}
+                            placeholder={'E.g: Telegram Id'}
+                            name={keys.telegramId}
+                            id={keys.telegramId}
+                            value={values[keys.telegramId]}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={
+                              touched[keys.telegramId] &&
+                              errors[keys.telegramId]
+                            }
+                            showClearIcon={false}
+                          />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                          <TextField
+                            label={labels.discordId}
+                            placeholder={'E.g: Discord Id'}
+                            name={keys.discordId}
+                            id={keys.discordId}
+                            value={values[keys.discordId]}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={
+                              touched[keys.discordId] && errors[keys.discordId]
+                            }
+                            showClearIcon={false}
+                          />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                          <Dropdown
+                            label={labels.currency}
+                            items={[
+                              { label: Currency.Avax, value: Currency.Avax },
+                              { label: Currency.Png, value: Currency.Png },
+                            ]}
+                            id={keys.currency}
+                            value={values[keys.currency]}
+                            onChange={(item) => {
+                              setFieldValue(keys.currency, item.value);
+                            }}
+                            error={
+                              touched[keys.currency] && errors[keys.currency]
+                            }
+                          />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                          <TextField
+                            label={labels.amount}
+                            id={keys.amount}
+                            placeholder={`0`}
+                            value={values[keys.amount]}
+                            onChange={handleChange}
+                            onBlur={handleBlur}
+                            error={touched[keys.amount] && errors[keys.amount]}
+                            showClearIcon={false}
+                          />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                          <Dropdown
+                            label={labels.paymentFrequency}
+                            placeholder={'Select Payment Frquency'}
+                            name={keys.paymentFrequency}
+                            id={keys.paymentFrequency}
+                            items={PAYMENT_FREQUENCY}
+                            value={values[keys.paymentFrequency]}
+                            onChange={(e) =>
+                              setFieldValue(keys.paymentFrequency, e.value)
+                            }
+                            onClose={() =>
+                              setFieldTouched(keys.paymentFrequency)
+                            }
+                            error={
+                              touched[keys.paymentFrequency] &&
+                              errors[keys.paymentFrequency]
+                            }
+                          />
+                        </Grid>
+
+                        <Grid item xs={12}>
+                          <Dropdown
+                            label={labels.type}
+                            placeholder={'Select Type'}
+                            name={keys.type}
+                            id={keys.type}
+                            items={SUPPLIER_TYPE}
+                            value={values[keys.type]}
+                            onChange={(e) => setFieldValue(keys.type, e.value)}
+                            onClose={() => setFieldTouched(keys.type)}
+                            error={touched[keys.type] && errors[keys.type]}
                           />
                         </Grid>
                       </Grid>

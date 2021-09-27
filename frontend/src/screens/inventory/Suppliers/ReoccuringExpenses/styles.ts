@@ -5,7 +5,7 @@ export default (theme) => ({
     display: 'flex',
     flexDirection: 'column',
   },
-  noPolicyWrapper: {
+  noReoccuringExpenseWrapper: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
@@ -33,8 +33,16 @@ export default (theme) => ({
     color: theme.palette.blueGrey[50],
     textAlign: 'center',
   },
-  policyAmountCell: {
+ supplierCell: {
     color: theme.palette.primary.color2,
     fontWeight: '500',
+  },
+  borderCell: {
+    paddingLeft: 24,
+    paddingRight: 24,
+    borderLeft: `1px solid ${theme.palette.grey['200']}`,
+    minHeight: 50,
+    display: 'flex',
+    alignItems: 'center',
   },
 });

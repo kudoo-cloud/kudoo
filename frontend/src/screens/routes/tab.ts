@@ -34,7 +34,8 @@ import {
   UnpaidInvoicesTab,
   Warehouse,
   Contributors,
-  Policies
+  Policies,
+  ReoccuringExpenses,
 } from '../LoadableComponents';
 
 /**
@@ -106,6 +107,13 @@ export const supplierTabs: Array<ITab> = [
       LicensePlan.ENTERPRISE,
     ],
     url: URL.SUPPLIERS,
+  },
+  {
+    name: 'Reoccuring Expenses',
+    reactComponent: ReoccuringExpenses,
+    availability: [{ security: [SecurityRole.admin, SecurityRole.owner] }],
+    licenseRequired: [LicensePlan.PRO, LicensePlan.ENTERPRISE],
+    url: URL.REOCCURING_EXPENSES,
   },
 ];
 
@@ -491,7 +499,6 @@ export const timesheetTabs: Array<ITab> = [
   },
 ];
 
-
 export const contributorsTabs: Array<ITab> = [
   {
     name: 'All Contributors',
@@ -512,5 +519,3 @@ export const contributorsTabs: Array<ITab> = [
     url: URL.POLICIES,
   },
 ];
-
-

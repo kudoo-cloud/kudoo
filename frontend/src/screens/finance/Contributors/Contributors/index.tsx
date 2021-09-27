@@ -22,8 +22,8 @@ import styles from './styles';
 
 interface IProps {
   children: ({}) => {};
-  suppliers: any;
-  suppliersLoading: boolean;
+  contributors: any;
+  contributorsLoading: boolean;
   classes: any;
   theme: any;
 }
@@ -124,7 +124,7 @@ const Contributors: React.FC<IProps> = (props) => {
 
   const _renderNoContributor = () => {
     return (
-      <div className={classes.noSupplierWrapper}>
+      <div className={classes.noContributorWrapper}>
         <div className={classes.noActiveMessageWrapper}>
           <div className={classes.noActiveMessage}>
             There are no contributor. <br />
@@ -150,8 +150,8 @@ const Contributors: React.FC<IProps> = (props) => {
   };
 
   const showRemoveAlert = (row) => {
-    const title = 'Delete Policy';
-    const description = `Are you sure you want to remove policy ?`;
+    const title = 'Delete Contributor';
+    const description = `Are you sure you want to remove contributor ?`;
     const buttons = [
       {
         title: 'Cancel',

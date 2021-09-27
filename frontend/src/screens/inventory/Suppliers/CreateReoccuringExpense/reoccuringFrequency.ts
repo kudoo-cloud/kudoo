@@ -1,10 +1,6 @@
 import { PolicyPaymentFrequency } from 'src/generated/graphql';
 
-export const PAYMENT_FREQUENCY = [
-  {
-    value: PolicyPaymentFrequency.Esd,
-    label: 'Employment Start Date',
-  },
+export const REOCCURING_FREQUENCY = [
   {
     value: PolicyPaymentFrequency.Monthly,
     label: 'Monthly',

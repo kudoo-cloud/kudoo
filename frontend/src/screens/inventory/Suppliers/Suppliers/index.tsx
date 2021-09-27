@@ -8,7 +8,6 @@ import {
 } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
 import React, { useEffect, useState } from 'react';
-
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import { useSuppliersByDaoQuery } from 'src/generated/graphql';
@@ -32,6 +31,22 @@ const Suppliers: React.FC<IProps> = (props) => {
       label: 'Name',
       sorted: true,
       order: 'asc',
+      notSortable: true,
+    },
+    {
+      id: 'type',
+      label: 'Type',
+      notSortable: true,
+    },
+    {
+      id: 'currency',
+      label: 'Currency',
+      notSortable: true,
+    },
+
+    {
+      id: 'amount',
+      label: 'Amount',
       notSortable: true,
     },
     {

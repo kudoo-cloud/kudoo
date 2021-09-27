@@ -11,8 +11,8 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import {
-  usePoliciesQuery,
-  useDeletePolicyMutation,
+  useReoccuringExpensesQuery,
+  useDeleteReoccuringExpenseMutation,
 } from 'src/generated/graphql';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
@@ -21,18 +21,23 @@ import styles from './styles';
 
 interface IProps {
   children: ({}) => {};
-  policies: any;
-  policiesLoading: boolean;
+  reoccuringExpensess: any;
+  reoccuringExpensessLoading: boolean;
   classes: any;
   theme: any;
 }
 
-const Policies: React.FC<IProps> = (props) => {
+const ReoccuringExpenses: React.FC<IProps> = (props) => {
   const { theme, classes } = props;
 
   const actions = useAllActions();
 
   const [columns] = useState([
+    {
+      id: 'supplier',
+      label: 'Supplier',
+      notSortable: true,
+    },
     {
       id: 'amount',
       label: 'Amount',
@@ -40,23 +45,19 @@ const Policies: React.FC<IProps> = (props) => {
       order: 'asc',
       notSortable: true,
     },
+
     {
-      id: 'token',
-      label: 'Token',
-      notSortable: true,
-    },
-    {
-      id: 'paymentFrequency',
-      label: 'Payment Frequency',
+      id: 'reoccuringFrequency',
+      label: 'Reoccuring Frequency',
       notSortable: true,
     },
   ]);
 
   const history = useHistory();
 
-  const [deletePolicy] = useDeletePolicyMutation();
+  const [deleteReoccuringExpense] = useDeleteReoccuringExpenseMutation();
 
-  const { data, loading, refetch } = usePoliciesQuery({
+  const { data, loading, refetch } = useReoccuringExpensesQuery({
     fetchPolicy: 'network-only',
   });
 
@@ -66,7 +67,7 @@ const Policies: React.FC<IProps> = (props) => {
     }
   }, [refetch]);
 
-  const policies = data?.policies || [];
+  const reoccuringExpensess = data?.reoccuringExpenses || [];
 
   const _onRequestSort = async () => {
     // const sortedColumn = find(columns, { sorted: true });
@@ -90,16 +91,16 @@ const Policies: React.FC<IProps> = (props) => {
   const _renderSectionHeading = () => {
     return (
       <SectionHeader
-        title='Policies'
-        subtitle='Below is a list of all your Policies.'
+        title='Reoccuring Expense'
+        subtitle='Below is a list of all your Reoccuring Expenses.'
         renderLeftPart={() => (
           <Button
-            title='Create New Policy'
+            title='Create New Reoccuring Expense'
             applyBorderRadius
             width={260}
             buttonColor={theme.palette.primary.color2}
             onClick={() => {
-              history.push(URL.CREATE_POLICIES());
+              history.push(URL.CREATE_REOCCURING_EXPENSE());
             }}
           />
         )}
@@ -107,13 +108,13 @@ const Policies: React.FC<IProps> = (props) => {
     );
   };
 
-  const _renderNoPolicy = () => {
+  const _renderNoReoccuringExpense = () => {
     return (
-      <div className={classes.noPolicyWrapper}>
+      <div className={classes.noReoccuringExpenseWrapper}>
         <div className={classes.noActiveMessageWrapper}>
           <div className={classes.noActiveMessage}>
-            There are no policy. <br />
-            Let’s start by creating a new Policy.
+            There are no Reoccuring Expense. <br />
+            Let’s start by creating a new Reoccuring Expense.
           </div>
         </div>
       </div>
@@ -121,13 +122,13 @@ const Policies: React.FC<IProps> = (props) => {
   };
 
   const _renderCell = (row, cell, ele) => {
-    if (cell.id === 'amount') {
+    if (cell.id === 'supplier') {
       return (
         <Link
-          to={URL.EDIT_POLICIES({ id: row.id })}
-          className={classes.policyAmountCell}
+          to={URL.EDIT_REOCCURING_EXPENSE({ id: row.id })}
+          className={classes.supplierCell}
         >
-          {ele}
+          <div className={classes.borderCell}>{row?.supplier.name}</div>
         </Link>
       );
     }
@@ -135,8 +136,8 @@ const Policies: React.FC<IProps> = (props) => {
   };
 
   const showRemoveAlert = (row) => {
-    const title = 'Delete Policy';
-    const description = `Are you sure you want to remove policy ?`;
+    const title = 'Delete Reoccuring Expense';
+    const description = `Are you sure you want to remove reoccuring expense ?`;
     const buttons = [
       {
         title: 'Cancel',
@@ -148,7 +149,7 @@ const Policies: React.FC<IProps> = (props) => {
       {
         title: 'Remove',
         buttonColor: theme.palette.secondary.color2,
-        onClick: () => removePolicy(row),
+        onClick: () => removeReoccuringExpense(row),
       },
     ];
     actions.showAlertDialog({
@@ -159,13 +160,13 @@ const Policies: React.FC<IProps> = (props) => {
     });
   };
 
-  const removePolicy = async (row) => {
+  const removeReoccuringExpense = async (row) => {
     try {
-      const res = await deletePolicy({
+      const res = await deleteReoccuringExpense({
         variables: { id: row.id },
       });
-      if (res?.data?.deletePolicy?.id) {
-        showToast(null, 'Policy removed successfully');
+      if (res?.data?.deleteReoccuringExpense?.id) {
+        showToast(null, 'Reoccuring Expense removed successfully');
         refetch();
       }
     } catch (e) {
@@ -175,13 +176,13 @@ const Policies: React.FC<IProps> = (props) => {
     }
   };
 
-  const _renderPolicy = () => {
+  const _renderReoccuringExpense = () => {
     return (
       <Grid container>
         <Grid item xs={12}>
           <Table
             columnData={columns}
-            data={policies}
+            data={reoccuringExpensess}
             stripe={false}
             showRemoveIcon={true}
             sortable
@@ -207,12 +208,14 @@ const Policies: React.FC<IProps> = (props) => {
         <div className={classes.content}>
           {_renderSectionHeading()}
           {loading && <Loading />}
-          {!loading && policies.length === 0 && _renderNoPolicy()}
-          {policies.length > 0 && _renderPolicy()}
+          {!loading &&
+            reoccuringExpensess.length === 0 &&
+            _renderNoReoccuringExpense()}
+          {reoccuringExpensess.length > 0 && _renderReoccuringExpense()}
         </div>
       </div>
     </ErrorBoundary>
   );
 };
 
-export default withStyles(styles)(Policies);
+export default withStyles(styles)(ReoccuringExpenses);
