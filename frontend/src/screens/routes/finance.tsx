@@ -95,4 +95,39 @@ export default [
     path: URL.DATAIMPORT(paramsOptions),
     component: Components.DataImportFile,
   },
+
+  {
+    name: 'Create Contributor',
+    path: URL.CREATE_CONTRIBUTORS(paramsOptions),
+    component: Components.CreateContributor,
+  },
+  {
+    name: 'Edit Contributor',
+    path: URL.EDIT_CONTRIBUTORS(paramsOptions),
+    component: Components.CreateContributor,
+  },
+  {
+    name: 'Contributors',
+    path: URL.CONTRIBUTORS(paramsOptions),
+    component: Components.SecondaryTabs,
+    tabs: Tabs.contributorsTabs,
+  },
+
+  {
+    name: 'Create Policy',
+    path: URL.CREATE_POLICIES(paramsOptions),
+    component: Components.CreatePolicy,
+  },
+  {
+    name: 'Edit Policy',
+    path: URL.EDIT_POLICIES(paramsOptions),
+    component: Components.CreatePolicy,
+  },
+
+  {
+    name: 'Policies',
+    path: URL.POLICIES(paramsOptions),
+    component: Components.SecondaryTabs,
+    tabs: Tabs.contributorsTabs,
+  }
 ] as IRoute[];

@@ -69,6 +69,7 @@ export const PreviewPO = React.lazy(() => import('src/screens/inventory/Purchase
 export const NonPbsPOList = React.lazy(() => import('src/screens/inventory/PurchaseOrder/NonPbsPurchaseOrder/NonPbsPOList'));
 export const PbsPOList = React.lazy(() => import('src/screens/inventory/PurchaseOrder/PbsPurchaseOrderTab/PbsPOList'));
 
+
 // Health Screens
 export const CreateNewHealthcareProvider = React.lazy(() => import('src/screens/health/HealthcareProviders/CreateNewHealthcareProvider'));
 export const HealthcareProvidersList = React.lazy(() => import('src/screens/health/HealthcareProviders/HealthcareProviders'));
@@ -102,3 +103,7 @@ export const AssetGroups = React.lazy(() => import('src/screens/finance/Assets/A
 export const CreateAssetGroup = React.lazy(() => import('src/screens/finance/Assets/CreateAssetGroup'));
 export const CreateAsset = React.lazy(() => import('src/screens/finance/Assets/CreateAsset'));
 export const DataImportFile = React.lazy(() => import('src/screens/finance/DataImport/FileUpload'));
+export const Contributors = React.lazy(() => import('src/screens/finance/Contributors/Contributors'));
+export const CreateContributor = React.lazy(() => import('src/screens/finance/Contributors/CreateContributor'));
+export const Policies = React.lazy(() => import('src/screens/finance/Contributors/Policies'));
+export const CreatePolicy = React.lazy(() => import('src/screens/finance/Contributors/CreatePolicy'));

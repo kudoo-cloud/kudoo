@@ -33,6 +33,8 @@ import {
   Suppliers,
   UnpaidInvoicesTab,
   Warehouse,
+  Contributors,
+  Policies
 } from '../LoadableComponents';
 
 /**
@@ -488,3 +490,27 @@ export const timesheetTabs: Array<ITab> = [
     url: URL.WORKERS_TIMESHEETS,
   },
 ];
+
+
+export const contributorsTabs: Array<ITab> = [
+  {
+    name: 'All Contributors',
+    reactComponent: Contributors,
+    availability: [{ security: [SecurityRole.admin, SecurityRole.owner] }],
+    licenseRequired: [
+      LicensePlan.FREE,
+      LicensePlan.PRO,
+      LicensePlan.ENTERPRISE,
+    ],
+    url: URL.CONTRIBUTORS,
+  },
+  {
+    name: 'Policies',
+    reactComponent: Policies,
+    availability: [{ security: [SecurityRole.admin, SecurityRole.owner] }],
+    licenseRequired: [LicensePlan.PRO, LicensePlan.ENTERPRISE],
+    url: URL.POLICIES,
+  },
+];
+
+

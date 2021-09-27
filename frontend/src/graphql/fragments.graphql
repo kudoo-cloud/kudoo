@@ -103,3 +103,26 @@ fragment Supplier on Supplier {
   createdAt
   updatedAt
 }
+
+fragment Policy on Policy {
+  id
+  description
+  amount
+  token
+  paymentFrequency
+}
+
+fragment Contributor on Contributor {
+  id
+  firstName
+  lastName
+  telegramHandle
+  discordHandle
+  amount
+  cChainAddress
+  startDate
+  paymentFrequency
+  policies {
+    ...Policy
+  }
+}
