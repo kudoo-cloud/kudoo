@@ -1,12 +1,12 @@
 import {
   Button,
+  Checkbox,
+  DatePicker,
   Dropdown,
   ErrorBoundary,
   SectionHeader,
   TextField,
   withStyles,
-  DatePicker,
-  Checkbox,
 } from '@kudoo/components';
 import { Trans } from '@lingui/react';
 import Grid from '@material-ui/core/Grid';
@@ -15,18 +15,17 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router';
 import * as Yup from 'yup';
 import {
-  useCreateContributorMutation,
   useContributorQuery,
-  useUpdateContributorMutation,
+  useCreateContributorMutation,
   usePoliciesQuery,
+  useUpdateContributorMutation,
 } from 'src/generated/graphql';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import { useAllActions } from 'src/store/hooks';
-import styles from './styles';
 import { PAYMENT_FREQUENCY } from './paymentFrequency';
-import { set } from 'lodash';
+import styles from './styles';
 
 interface IProps {
   classes: any;
