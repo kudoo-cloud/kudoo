@@ -96,7 +96,7 @@ const App: React.FC<IProps> = (props) => {
     const totalDAOs = daos.length;
     const menuConfig: ISecurityConfig =
       Configuration?.apps?.[
-        (app?.kudoo_product || Product.finance || '').toLowerCase()
+        (app?.kudoo_product || Product.inventory || '').toLowerCase()
       ];
 
     const products: {
@@ -120,7 +120,9 @@ const App: React.FC<IProps> = (props) => {
         icon: () => <i className={item.icon as any} />,
       };
     });
-    let initialSelectedProductIndex = 0;
+    console.log(filteredProducts);
+
+    let initialSelectedProductIndex = 1;
     // if (app.kudoo_product === Product.projects) {
     //   initialSelectedProductIndex = 0;
     // } else if (app.kudoo_product === Product.finance) {

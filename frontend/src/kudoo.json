@@ -86,6 +86,16 @@
               "security": ["ADMIN", "OWNER"]
             }
           ]
+        },
+        "coreContributors": {
+          "icon": "icon icon-projects",
+          "name": "Core contributer",
+          "url": "/contributors",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
         }
       }
     },

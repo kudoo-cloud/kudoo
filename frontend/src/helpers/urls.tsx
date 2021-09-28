@@ -270,4 +270,18 @@ export default {
 
   BILLING: abstractURL('/billing'),
   BILLING_PAYMENT_TERMS: abstractURL('/billing/payment-terms'),
+
+  //Contributors
+  CONTRIBUTORS: abstractURL('/contributors'),
+  CREATE_CONTRIBUTORS: abstractURL('/contributors/create'),
+  EDIT_CONTRIBUTORS: abstractURL('/contributors/:id/edit'),
+
+  //Policies
+  POLICIES: abstractURL('/policies'),
+  CREATE_POLICIES: abstractURL('/policies/create'),
+  EDIT_POLICIES: abstractURL('/policies/:id/edit'),
+
+  REOCCURING_EXPENSES: abstractURL('/reoccuring-expense'),
+  CREATE_REOCCURING_EXPENSE: abstractURL('/reoccuring-expense/create'),
+  EDIT_REOCCURING_EXPENSE: abstractURL('/reoccuring-expense/:id/edit'),
 };

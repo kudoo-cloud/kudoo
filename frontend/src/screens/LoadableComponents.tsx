@@ -102,3 +102,9 @@ export const AssetGroups = React.lazy(() => import('src/screens/finance/Assets/A
 export const CreateAssetGroup = React.lazy(() => import('src/screens/finance/Assets/CreateAssetGroup'));
 export const CreateAsset = React.lazy(() => import('src/screens/finance/Assets/CreateAsset'));
 export const DataImportFile = React.lazy(() => import('src/screens/finance/DataImport/FileUpload'));
+export const Contributors = React.lazy(() => import('src/screens/finance/Contributors/Contributors'));
+export const CreateContributor = React.lazy(() => import('src/screens/finance/Contributors/CreateContributor'));
+export const Policies = React.lazy(() => import('src/screens/finance/Contributors/Policies'));
+export const CreatePolicy = React.lazy(() => import('src/screens/finance/Contributors/CreatePolicy'));
+export const ReoccuringExpenses = React.lazy(() => import('src/screens/inventory/Suppliers/ReoccuringExpenses'));
+export const CreateReoccuringExpense = React.lazy(() => import('src/screens/inventory/Suppliers/CreateReoccuringExpense'));

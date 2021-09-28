@@ -10,77 +10,63 @@ import Grid from '@material-ui/core/Grid';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
-import { useSuppliersByDaoQuery } from 'src/generated/graphql';
+import {
+  useDeletePolicyMutation,
+  usePoliciesQuery,
+} from 'src/generated/graphql';
+import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
-import { useProfile } from 'src/store/hooks';
+import { useAllActions } from 'src/store/hooks';
 import styles from './styles';
 
 interface IProps {
   children: ({}) => {};
-  suppliers: any;
-  suppliersLoading: boolean;
+  policies: any;
+  policiesLoading: boolean;
   classes: any;
   theme: any;
 }
 
-const Suppliers: React.FC<IProps> = (props) => {
+const Policies: React.FC<IProps> = (props) => {
   const { theme, classes } = props;
+
+  const actions = useAllActions();
+
   const [columns] = useState([
     {
-      id: 'name',
-      label: 'Name',
+      id: 'amount',
+      label: 'Amount',
       sorted: true,
       order: 'asc',
       notSortable: true,
     },
     {
-      id: 'type',
-      label: 'Type',
+      id: 'token',
+      label: 'Token',
       notSortable: true,
     },
     {
-      id: 'currency',
-      label: 'Currency',
-      notSortable: true,
-    },
-
-    {
-      id: 'amount',
-      label: 'Amount',
-      notSortable: true,
-    },
-    {
-      id: 'termsOfPayment',
-      label: 'Terms Of Payment',
-      notSortable: true,
-    },
-    {
-      id: 'emailAddressForRemittance',
-      label: 'Email For Remittance',
+      id: 'paymentFrequency',
+      label: 'Payment Frequency',
       notSortable: true,
     },
   ]);
 
   const history = useHistory();
-  const profile = useProfile();
-  const daoId = profile?.selectedDAO?.id;
 
-  const { data, loading, refetch } = useSuppliersByDaoQuery({
-    variables: {
-      daoId,
-    },
-    skip: !daoId,
+  const [deletePolicy] = useDeletePolicyMutation();
+
+  const { data, loading, refetch } = usePoliciesQuery({
+    fetchPolicy: 'network-only',
   });
 
   useEffect(() => {
-    if (refetch && daoId) {
-      refetch({
-        daoId,
-      });
+    if (refetch) {
+      refetch();
     }
-  }, [daoId, refetch]);
+  }, [refetch]);
 
-  const suppliers = data?.suppliersByDao || [];
+  const policies = data?.policies || [];
 
   const _onRequestSort = async () => {
     // const sortedColumn = find(columns, { sorted: true });
@@ -104,16 +90,16 @@ const Suppliers: React.FC<IProps> = (props) => {
   const _renderSectionHeading = () => {
     return (
       <SectionHeader
-        title='Suppliers'
-        subtitle='Below is a list of all your Suppliers.'
+        title='Policies'
+        subtitle='Below is a list of all your Policies.'
         renderLeftPart={() => (
           <Button
-            title='Create New Supplier'
+            title='Create New Policy'
             applyBorderRadius
             width={260}
             buttonColor={theme.palette.primary.color2}
             onClick={() => {
-              history.push(URL.CREATE_SUPPLIERS());
+              history.push(URL.CREATE_POLICIES());
             }}
           />
         )}
@@ -121,13 +107,13 @@ const Suppliers: React.FC<IProps> = (props) => {
     );
   };
 
-  const _renderNoSupplier = () => {
+  const _renderNoPolicy = () => {
     return (
-      <div className={classes.noSupplierWrapper}>
+      <div className={classes.noPolicyWrapper}>
         <div className={classes.noActiveMessageWrapper}>
           <div className={classes.noActiveMessage}>
-            There are no suppliers. <br />
-            Let’s start by creating a new Supplier.
+            There are no policy. <br />
+            Let’s start by creating a new Policy.
           </div>
         </div>
       </div>
@@ -135,11 +121,11 @@ const Suppliers: React.FC<IProps> = (props) => {
   };
 
   const _renderCell = (row, cell, ele) => {
-    if (cell.id === 'name') {
+    if (cell.id === 'amount') {
       return (
         <Link
-          to={URL.EDIT_SUPPLIERS({ id: row.id })}
-          className={classes.supplierNameCell}
+          to={URL.EDIT_POLICIES({ id: row.id })}
+          className={classes.policyAmountCell}
         >
           {ele}
         </Link>
@@ -148,17 +134,59 @@ const Suppliers: React.FC<IProps> = (props) => {
     return ele;
   };
 
-  const _renderSupplier = () => {
+  const showRemoveAlert = (row) => {
+    const title = 'Delete Policy';
+    const description = `Are you sure you want to remove policy ?`;
+    const buttons = [
+      {
+        title: 'Cancel',
+        type: 'cancel',
+        onClick: () => {
+          actions.closeAlertDialog();
+        },
+      },
+      {
+        title: 'Remove',
+        buttonColor: theme.palette.secondary.color2,
+        onClick: () => removePolicy(row),
+      },
+    ];
+    actions.showAlertDialog({
+      title,
+      description,
+      titleColor: theme.palette.secondary.color2,
+      buttons,
+    });
+  };
+
+  const removePolicy = async (row) => {
+    try {
+      const res = await deletePolicy({
+        variables: { id: row.id },
+      });
+      if (res?.data?.deletePolicy?.id) {
+        showToast(null, 'Policy removed successfully');
+        refetch();
+      }
+    } catch (e) {
+      showToast(e.toString());
+    } finally {
+      actions.closeAlertDialog();
+    }
+  };
+
+  const _renderPolicy = () => {
     return (
       <Grid container>
         <Grid item xs={12}>
           <Table
             columnData={columns}
-            data={suppliers}
+            data={policies}
             stripe={false}
-            showRemoveIcon={false}
+            showRemoveIcon={true}
             sortable
             onRequestSort={_onRequestSort}
+            onRemoveClicked={showRemoveAlert}
             loading={loading}
             cellRenderer={_renderCell}
             onBottomReachedThreshold={500}
@@ -179,12 +207,12 @@ const Suppliers: React.FC<IProps> = (props) => {
         <div className={classes.content}>
           {_renderSectionHeading()}
           {loading && <Loading />}
-          {!loading && suppliers.length === 0 && _renderNoSupplier()}
-          {suppliers.length > 0 && _renderSupplier()}
+          {!loading && policies.length === 0 && _renderNoPolicy()}
+          {policies.length > 0 && _renderPolicy()}
         </div>
       </div>
     </ErrorBoundary>
   );
 };
 
-export default withStyles(styles)(Suppliers);
+export default withStyles(styles)(Policies);

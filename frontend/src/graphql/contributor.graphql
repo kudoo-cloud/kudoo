@@ -1,0 +1,31 @@
+#import './fragments.graphql'
+
+mutation createContributor($createContributorInput: CreateContributorInput!) {
+  createContributor(createContributorInput: $createContributorInput) {
+    ...Contributor
+  }
+}
+
+mutation updateContributor($updateContributorInput: UpdateContributorInput!) {
+  updateContributor(updateContributorInput: $updateContributorInput) {
+    ...Contributor
+  }
+}
+
+mutation deleteContributor($id: ID!) {
+  deleteContributor(id: $id) {
+    ...Contributor
+  }
+}
+
+query contributor($id: String!) {
+  contributor(id: $id) {
+    ...Contributor
+  }
+}
+
+query contributors {
+  contributors {
+    ...Contributor
+  }
+}
