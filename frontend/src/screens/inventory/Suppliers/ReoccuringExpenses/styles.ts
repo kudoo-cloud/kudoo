@@ -33,7 +33,7 @@ export default (theme) => ({
     color: theme.palette.blueGrey[50],
     textAlign: 'center',
   },
- supplierCell: {
+  supplierCell: {
     color: theme.palette.primary.color2,
     fontWeight: '500',
   },

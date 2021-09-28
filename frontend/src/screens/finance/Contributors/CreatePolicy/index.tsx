@@ -21,8 +21,8 @@ import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import { useAllActions } from 'src/store/hooks';
-import styles from './styles';
 import { PAYMENT_FREQUENCY } from './paymentFrequency';
+import styles from './styles';
 
 interface IProps {
   classes: any;

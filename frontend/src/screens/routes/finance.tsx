@@ -129,5 +129,5 @@ export default [
     path: URL.POLICIES(paramsOptions),
     component: Components.SecondaryTabs,
     tabs: Tabs.contributorsTabs,
-  }
+  },
 ] as IRoute[];

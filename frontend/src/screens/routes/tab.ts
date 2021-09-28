@@ -15,6 +15,7 @@ import {
   BalanceSheet,
   BankAccounts,
   BankTransactions,
+  Contributors,
   DraftProjectsTab,
   DraftTimesheetsTab,
   HealthcareProvidersList,
@@ -27,15 +28,14 @@ import {
   PBSManufacturers,
   PaidInvoicesTab,
   PatientsList,
+  Policies,
   ProfitAndLoss,
+  ReoccuringExpenses,
   SalesOrderTab,
   SecondaryTabs,
   Suppliers,
   UnpaidInvoicesTab,
   Warehouse,
-  Contributors,
-  Policies,
-  ReoccuringExpenses,
 } from '../LoadableComponents';
 
 /**

@@ -69,7 +69,6 @@ export const PreviewPO = React.lazy(() => import('src/screens/inventory/Purchase
 export const NonPbsPOList = React.lazy(() => import('src/screens/inventory/PurchaseOrder/NonPbsPurchaseOrder/NonPbsPOList'));
 export const PbsPOList = React.lazy(() => import('src/screens/inventory/PurchaseOrder/PbsPurchaseOrderTab/PbsPOList'));
 
-
 // Health Screens
 export const CreateNewHealthcareProvider = React.lazy(() => import('src/screens/health/HealthcareProviders/CreateNewHealthcareProvider'));
 export const HealthcareProvidersList = React.lazy(() => import('src/screens/health/HealthcareProviders/HealthcareProviders'));

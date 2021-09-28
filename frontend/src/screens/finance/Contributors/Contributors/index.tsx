@@ -15,8 +15,8 @@ import {
   useContributorsQuery,
   useDeleteContributorMutation,
 } from 'src/generated/graphql';
-import URL from 'src/helpers/urls';
 import { showToast } from 'src/helpers/toast';
+import URL from 'src/helpers/urls';
 import { useAllActions } from 'src/store/hooks';
 import styles from './styles';
 

@@ -1,6 +1,6 @@
 import {
-  SupplierTermsOfPayment,
   PaymentFrequency,
+  SupplierTermsOfPayment,
   SupplierType,
 } from 'src/generated/graphql';
 

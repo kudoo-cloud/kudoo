@@ -12,21 +12,21 @@ import React, { useEffect, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router';
 import * as Yup from 'yup';
 import {
+  Currency,
   useCreateSupplierMutation,
   useSupplierQuery,
   useUpdateSupplierMutation,
-  Currency,
 } from 'src/generated/graphql';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
 import { useAllActions, useProfile } from 'src/store/hooks';
-import styles from './styles';
 import {
-  TERMS_OF_PAYMENT,
-  SUPPLIER_TYPE,
   PAYMENT_FREQUENCY,
+  SUPPLIER_TYPE,
+  TERMS_OF_PAYMENT,
 } from './constants';
+import styles from './styles';
 
 interface IProps {
   classes: any;

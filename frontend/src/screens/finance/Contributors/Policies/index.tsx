@@ -11,8 +11,8 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import {
-  usePoliciesQuery,
   useDeletePolicyMutation,
+  usePoliciesQuery,
 } from 'src/generated/graphql';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
