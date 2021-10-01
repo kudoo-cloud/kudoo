@@ -91,6 +91,7 @@ const CreateReoccuringExpense: React.FC<IProps> = (props) => {
   const _submitForm = async (values, actions) => {
     try {
       const dataToSend = {
+        daoId: daoId,
         supplierId: values?.supplierId,
         reoccuringFrequency: values?.reoccuringFrequency,
         amount: parseFloat(values?.amount),

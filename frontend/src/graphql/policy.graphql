@@ -29,3 +29,9 @@ query policies {
     ...Policy
   }
 }
+
+query policiesByDao($daoId: String!) {
+  policiesByDao(daoId: $daoId) {
+    ...Policy
+  }
+}

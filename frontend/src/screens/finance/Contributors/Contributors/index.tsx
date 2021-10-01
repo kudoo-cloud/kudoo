@@ -12,12 +12,12 @@ import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import {
-  useContributorsQuery,
+  useContributorsByDaoQuery,
   useDeleteContributorMutation,
 } from 'src/generated/graphql';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
-import { useAllActions } from 'src/store/hooks';
+import { useAllActions, useProfile } from 'src/store/hooks';
 import styles from './styles';
 
 interface IProps {
@@ -32,6 +32,8 @@ const Contributors: React.FC<IProps> = (props) => {
   const { theme, classes } = props;
 
   const actions = useAllActions();
+  const profile = useProfile();
+  const daoId = profile?.selectedDAO?.id;
 
   const [columns] = useState([
     {
@@ -71,17 +73,22 @@ const Contributors: React.FC<IProps> = (props) => {
 
   const [deleteContributor] = useDeleteContributorMutation();
 
-  const { data, loading, refetch } = useContributorsQuery({
-    fetchPolicy: 'network-only',
+  const { data, loading, refetch } = useContributorsByDaoQuery({
+    variables: {
+      daoId,
+    },
+    skip: !daoId,
   });
 
   useEffect(() => {
     if (refetch) {
-      refetch();
+      refetch({
+        daoId,
+      });
     }
   }, [refetch]);
 
-  const contributors = data?.contributors || [];
+  const contributors = data?.contributorsByDao || [];
 
   const _onRequestSort = async () => {
     // const sortedColumn = find(columns, { sorted: true });

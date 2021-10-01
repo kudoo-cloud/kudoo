@@ -29,3 +29,9 @@ query contributors {
     ...Contributor
   }
 }
+
+query contributorsByDao($daoId: String!) {
+  contributorsByDao(daoId: $daoId) {
+    ...Contributor
+  }
+}

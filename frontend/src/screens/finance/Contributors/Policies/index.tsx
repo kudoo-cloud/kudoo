@@ -12,11 +12,11 @@ import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import {
   useDeletePolicyMutation,
-  usePoliciesQuery,
+  usePoliciesByDaoQuery,
 } from 'src/generated/graphql';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
-import { useAllActions } from 'src/store/hooks';
+import { useAllActions, useProfile } from 'src/store/hooks';
 import styles from './styles';
 
 interface IProps {
@@ -31,6 +31,8 @@ const Policies: React.FC<IProps> = (props) => {
   const { theme, classes } = props;
 
   const actions = useAllActions();
+  const profile = useProfile();
+  const daoId = profile?.selectedDAO?.id;
 
   const [columns] = useState([
     {
@@ -56,17 +58,22 @@ const Policies: React.FC<IProps> = (props) => {
 
   const [deletePolicy] = useDeletePolicyMutation();
 
-  const { data, loading, refetch } = usePoliciesQuery({
-    fetchPolicy: 'network-only',
+  const { data, loading, refetch } = usePoliciesByDaoQuery({
+    variables: {
+      daoId,
+    },
+    skip: !daoId,
   });
 
   useEffect(() => {
     if (refetch) {
-      refetch();
+      refetch({
+        daoId,
+      });
     }
   }, [refetch]);
 
-  const policies = data?.policies || [];
+  const policies = data?.policiesByDao || [];
 
   const _onRequestSort = async () => {
     // const sortedColumn = find(columns, { sorted: true });

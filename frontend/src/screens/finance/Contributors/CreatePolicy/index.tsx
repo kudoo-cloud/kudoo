@@ -20,7 +20,7 @@ import {
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
-import { useAllActions } from 'src/store/hooks';
+import { useAllActions, useProfile } from 'src/store/hooks';
 import { PAYMENT_FREQUENCY } from './paymentFrequency';
 import styles from './styles';
 
@@ -51,6 +51,9 @@ const CreateNewPolicy: React.FC<IProps> = (props) => {
   const match = useRouteMatch<{ id: string }>();
   const policyId = match?.params?.id;
 
+  const profile = useProfile();
+  const daoId = profile?.selectedDAO?.id;
+
   const [createPolicy] = useCreatePolicyMutation();
   const [updatePolicy] = useUpdatePolicyMutation();
   const { data } = usePolicyQuery({
@@ -73,6 +76,7 @@ const CreateNewPolicy: React.FC<IProps> = (props) => {
   const _submitForm = async (values, actions) => {
     try {
       const dataToSend = {
+        daoId: daoId,
         description: values?.description,
         paymentFrequency: values?.paymentFrequency,
         token: values?.token,

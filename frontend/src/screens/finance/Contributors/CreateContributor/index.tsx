@@ -17,13 +17,13 @@ import * as Yup from 'yup';
 import {
   useContributorQuery,
   useCreateContributorMutation,
-  usePoliciesQuery,
+  usePoliciesByDaoQuery,
   useUpdateContributorMutation,
 } from 'src/generated/graphql';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
-import { useAllActions } from 'src/store/hooks';
+import { useAllActions, useProfile } from 'src/store/hooks';
 import { PAYMENT_FREQUENCY } from './paymentFrequency';
 import styles from './styles';
 
@@ -61,6 +61,8 @@ const CreateNewContributor: React.FC<IProps> = (props) => {
 
   const actions = useAllActions();
   const history = useHistory();
+  const profile = useProfile();
+  const daoId = profile?.selectedDAO?.id;
 
   const match = useRouteMatch<{ id: string }>();
   const contributorId = match?.params?.id;
@@ -75,11 +77,14 @@ const CreateNewContributor: React.FC<IProps> = (props) => {
   });
   const contributorData = data?.contributor;
 
-  const policy = usePoliciesQuery({
-    fetchPolicy: 'network-only',
+  const policy = usePoliciesByDaoQuery({
+    variables: {
+      daoId,
+    },
+    skip: !daoId,
   });
 
-  const policies = policy?.data?.policies || [];
+  const policies = policy?.data?.policiesByDao || [];
 
   useEffect(() => {
     actions.updateHeaderTitle('Contributor');
@@ -93,6 +98,7 @@ const CreateNewContributor: React.FC<IProps> = (props) => {
   const _submitForm = async (values, actions) => {
     try {
       const dataToSend = {
+        daoId: daoId,
         firstName: values?.firstName,
         lastName: values?.lastName,
         telegramHandle: values?.telegramHandle,

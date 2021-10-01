@@ -12,11 +12,11 @@ import { useHistory } from 'react-router';
 import { Link } from 'react-router-dom';
 import {
   useDeleteReoccuringExpenseMutation,
-  useReoccuringExpensesQuery,
+  useReoccuringExpensesByDaoQuery,
 } from 'src/generated/graphql';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
-import { useAllActions } from 'src/store/hooks';
+import { useAllActions, useProfile } from 'src/store/hooks';
 import styles from './styles';
 
 interface IProps {
@@ -31,6 +31,8 @@ const ReoccuringExpenses: React.FC<IProps> = (props) => {
   const { theme, classes } = props;
 
   const actions = useAllActions();
+  const profile = useProfile();
+  const daoId = profile?.selectedDAO?.id;
 
   const [columns] = useState([
     {
@@ -57,17 +59,22 @@ const ReoccuringExpenses: React.FC<IProps> = (props) => {
 
   const [deleteReoccuringExpense] = useDeleteReoccuringExpenseMutation();
 
-  const { data, loading, refetch } = useReoccuringExpensesQuery({
-    fetchPolicy: 'network-only',
+  const { data, loading, refetch } = useReoccuringExpensesByDaoQuery({
+    variables: {
+      daoId,
+    },
+    skip: !daoId,
   });
 
   useEffect(() => {
     if (refetch) {
-      refetch();
+      refetch({
+        daoId,
+      });
     }
   }, [refetch]);
 
-  const reoccuringExpensess = data?.reoccuringExpenses || [];
+  const reoccuringExpensess = data?.reoccuringExpensesByDao || [];
 
   const _onRequestSort = async () => {
     // const sortedColumn = find(columns, { sorted: true });

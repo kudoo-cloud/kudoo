@@ -37,3 +37,9 @@ query reoccuringExpenses {
     ...ReoccuringExpense
   }
 }
+
+query reoccuringExpensesByDao($daoId: String!) {
+  reoccuringExpensesByDao(daoId: $daoId) {
+    ...ReoccuringExpense
+  }
+}
