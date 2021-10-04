@@ -71,6 +71,7 @@ const Policies: React.FC<IProps> = (props) => {
         daoId,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refetch]);
 
   const policies = data?.policiesByDao || [];
@@ -173,7 +174,9 @@ const Policies: React.FC<IProps> = (props) => {
       });
       if (res?.data?.deletePolicy?.id) {
         showToast(null, 'Policy removed successfully');
-        refetch();
+        refetch({
+          daoId,
+        });
       }
     } catch (e) {
       showToast(e.toString());

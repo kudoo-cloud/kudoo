@@ -61,6 +61,7 @@ export default {
   DAO_BANKING: abstractURL('/dao/settings/:daoId/banking'),
   DAO_INTEGRATIONS: abstractURL('/dao/settings/:daoId/integrations'),
   DAO_SUBSCRIPTION: abstractURL('/dao/settings/:daoId/subscription'),
+  DAO_Multisig: abstractURL('/dao/settings/:daoId/multisig'),
 
   // Projects
   PROJECTS: abstractURL('/projects'),

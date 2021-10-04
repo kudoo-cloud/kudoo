@@ -86,6 +86,7 @@ const Contributors: React.FC<IProps> = (props) => {
         daoId,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refetch]);
 
   const contributors = data?.contributorsByDao || [];
@@ -188,7 +189,9 @@ const Contributors: React.FC<IProps> = (props) => {
       });
       if (res?.data?.deleteContributor?.id) {
         showToast(null, 'Contributor removed successfully');
-        refetch();
+        refetch({
+          daoId,
+        });
       }
     } catch (e) {
       showToast(e.toString());

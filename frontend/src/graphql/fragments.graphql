@@ -141,3 +141,10 @@ fragment ReoccuringExpense on ReoccuringExpense {
   amount
   reoccuringFrequency
 }
+
+fragment DaoMultisig on DaoMultisig {
+  id
+  name
+  cChainAddress
+  daoId
+}

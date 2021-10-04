@@ -72,6 +72,7 @@ const ReoccuringExpenses: React.FC<IProps> = (props) => {
         daoId,
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refetch]);
 
   const reoccuringExpensess = data?.reoccuringExpensesByDao || [];
@@ -174,7 +175,9 @@ const ReoccuringExpenses: React.FC<IProps> = (props) => {
       });
       if (res?.data?.deleteReoccuringExpense?.id) {
         showToast(null, 'Reoccuring Expense removed successfully');
-        refetch();
+        refetch({
+          daoId,
+        });
       }
     } catch (e) {
       showToast(e.toString());

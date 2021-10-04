@@ -83,6 +83,7 @@
     "normalize.css": "^8.0.1",
     "np": "^5.2.1",
     "numeral": "^2.0.6",
+    "omit-deep-lodash": "^1.1.5",
     "path-to-regexp": "^6.2.0",
     "pluralize": "^8.0.0",
     "query-string": "^6.0.0",

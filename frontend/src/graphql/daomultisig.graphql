@@ -1,0 +1,25 @@
+#import './fragments.graphql'
+
+mutation updateDaoMultisig($data: UpdateDaoMultisigInput!) {
+  updateDaoMultisig(data: $data) {
+    ...DaoMultisig
+  }
+}
+
+mutation updateManyDaoMultisigs($data: [UpdateManyDaoMultisigInput!]!) {
+  updateManyDaoMultisigs(data: $data) {
+    ...DaoMultisig
+  }
+}
+
+query daoMultisigsByDao($daoId: String!) {
+  daoMultisigsByDao(daoId: $daoId) {
+    ...DaoMultisig
+  }
+}
+
+mutation deleteDaoMultisig($id: ID!) {
+  deleteDaoMultisig(id: $id) {
+    ...DaoMultisig
+  }
+}

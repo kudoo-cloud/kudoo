@@ -6,6 +6,7 @@ import SelectedDAO from 'src/helpers/SelectedDAO';
 import URL from 'src/helpers/urls';
 import Banking from '../Banking';
 import Integrations from '../Integrations';
+import Multisig from '../Multisig';
 import Subscription from '../Subscription';
 import GeneralTab from './GeneralTab';
 import styles from './styles';
@@ -30,14 +31,16 @@ class DAOSettings extends Component<Props, State> {
     let activeTab = 0;
     if (utils.isURLMatching(URL.DAO_GENERAL({ path: true }))) {
       activeTab = 0;
-    } else if (utils.isURLMatching(URL.DAO_USERS({ path: true }))) {
+    } else if (utils.isURLMatching(URL.DAO_Multisig({ path: true }))) {
       activeTab = 1;
-    } else if (utils.isURLMatching(URL.DAO_BANKING({ path: true }))) {
+    } else if (utils.isURLMatching(URL.DAO_USERS({ path: true }))) {
       activeTab = 2;
-    } else if (utils.isURLMatching(URL.DAO_INTEGRATIONS({ path: true }))) {
+    } else if (utils.isURLMatching(URL.DAO_BANKING({ path: true }))) {
       activeTab = 3;
-    } else if (utils.isURLMatching(URL.DAO_SUBSCRIPTION({ path: true }))) {
+    } else if (utils.isURLMatching(URL.DAO_INTEGRATIONS({ path: true }))) {
       activeTab = 4;
+    } else if (utils.isURLMatching(URL.DAO_SUBSCRIPTION({ path: true }))) {
+      activeTab = 5;
     }
     return activeTab;
   };
@@ -54,6 +57,14 @@ class DAOSettings extends Component<Props, State> {
               this.props.history.push(URL.DAO_GENERAL_BASICS({ daoId }));
             },
           },
+
+          {
+            label: 'Multisig',
+            onClick: () => {
+              this.props.history.push(URL.DAO_Multisig({ daoId }));
+            },
+          },
+
           {
             label: 'Users',
             onClick: () => {
@@ -102,12 +113,13 @@ class DAOSettings extends Component<Props, State> {
         >
           {this._renderSecondaryTabs()}
           {activeTab === 0 && <GeneralTab {...this.props} actions={actions} />}
-          {activeTab === 1 && <UsersTab {...this.props} />}
-          {activeTab === 2 && <Banking {...this.props} />}
-          {activeTab === 3 && (
+          {activeTab === 1 && <Multisig {...this.props} />}
+          {activeTab === 2 && <UsersTab {...this.props} />}
+          {activeTab === 3 && <Banking {...this.props} />}
+          {activeTab === 4 && (
             <Integrations {...this.props} actions={actions} />
           )}
-          {activeTab === 4 && (
+          {activeTab === 5 && (
             <Subscription {...this.props} actions={actions} />
           )}
           {activeTab === 0 && (
