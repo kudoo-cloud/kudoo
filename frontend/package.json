@@ -71,7 +71,7 @@
     "axios": "^0.21.1",
     "classnames": "^2.2.5",
     "concurrently": "^6.2.0",
-    "formik": "2.0.3",
+    "formik": "2.1.5",
     "graphql": "^15.5.0",
     "graphql-tag": "^2.8.0",
     "html2canvas": "^1.0.0-rc.7",
