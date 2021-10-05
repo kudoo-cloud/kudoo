@@ -61,13 +61,10 @@ fragment RegisteredService on RegisteredService {
     id
   }
   includeConsTax
-  IsArchived
   IsTemplate
   name
   timeBasedType
   totalAmount
-  createdAt
-  updatedAt
 }
 
 fragment Dao on Dao {

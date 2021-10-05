@@ -1,0 +1,49 @@
+#import './fragments.graphql'
+
+mutation createRegisteredService($data: CreateRegisteredServiceInput!) {
+  createRegisteredService(data: $data) {
+    ...RegisteredService
+  }
+}
+
+mutation updateRegisteredService($data: UpdateRegisteredServiceInput!) {
+  updateRegisteredService(data: $data) {
+    ...RegisteredService
+  }
+}
+
+query registeredService($id: String!) {
+  registeredService(id: $id) {
+    ...RegisteredService
+  }
+}
+
+query registeredServices {
+  registeredServices {
+    ...RegisteredService
+  }
+}
+
+mutation deleteRegisteredService($id: ID!) {
+  deleteRegisteredService(id: $id) {
+    ...RegisteredService
+  }
+}
+
+mutation archiveRegisteredService($id: ID!) {
+  archiveRegisteredService(id: $id) {
+    ...RegisteredService
+  }
+}
+
+mutation unarchiveRegisteredService($id: ID!) {
+  unarchiveRegisteredService(id: $id) {
+    ...RegisteredService
+  }
+}
+
+query registeredServiceByDao($daoId: String!, $archived: Boolean) {
+  registeredServiceByDao(daoId: $daoId, archived: $archived) {
+    ...RegisteredService
+  }
+}

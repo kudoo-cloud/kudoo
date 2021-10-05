@@ -1,26 +1,18 @@
-export default () => ({
+export default (theme) => ({
   page: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-  },
-});
-
-export const ActiveServicesStyles = (theme) => ({
-  tabContent: {
     padding: '40px 20px',
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
   },
-  noActiveServicesWrapper: {
+  noServiceWrapper: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     display: 'flex',
     margin: '50px 0px',
   },
-  noServiceMessageWrapper: {
+  noActiveMessageWrapper: {
     width: '60%',
     maxWidth: 660,
     margin: '0px auto',
@@ -33,7 +25,7 @@ export const ActiveServicesStyles = (theme) => ({
     justifyContent: 'center',
     display: 'flex',
   },
-  noServiceMessage: {
+  noActiveMessage: {
     fontFamily: theme.typography.font.family1,
     fontSize: 26,
     lineHeight: '35px',
@@ -41,16 +33,11 @@ export const ActiveServicesStyles = (theme) => ({
     color: theme.palette.blueGrey[50],
     textAlign: 'center',
   },
+  nameValueCell: {
+    color: theme.palette.primary.color2,
+    fontWeight: '500',
+  },
   servicesContainer: {
     marginTop: '20px !important',
-  },
-  nameValueCell: {
-    cursor: 'pointer',
-    color: theme.palette.primary.color2,
-    fontWeight: 500,
-  },
-  amountCell: {
-    paddingLeft: 24,
-    paddingRight: 24,
   },
 });

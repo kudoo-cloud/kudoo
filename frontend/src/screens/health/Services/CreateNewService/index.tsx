@@ -1,271 +1,308 @@
 import {
+  Button,
   ErrorBoundary,
   FormikCheckbox,
   FormikDropdown,
   FormikTextField,
+  SectionHeader,
   withStyles,
 } from '@kudoo/components';
-import { withI18n } from '@lingui/react';
 import { FormControl, FormGroup, Grid } from '@material-ui/core';
-import idx from 'idx';
-import get from 'lodash/get';
-import isEqual from 'lodash/isEqual';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'recompose';
+import { Formik } from 'formik';
+import React, { useEffect, useState } from 'react';
+import { useHistory, useRouteMatch } from 'react-router';
 import * as Yup from 'yup';
+import {
+  useCreateRegisteredServiceMutation,
+  useRegisteredServiceQuery,
+  useUpdateRegisteredServiceMutation,
+} from 'src/generated/graphql';
 import { SERVICE_BILLING_TYPE } from 'src/helpers/constants';
+import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
-import SimpleCreatePage, {
-  SimpleCreatePageRenderPropFormTypes,
-} from 'src/screens/common/SimpleCreatePage';
-import { IReduxState } from 'src/store/reducers';
+import { useAllActions, useProfile } from 'src/store/hooks';
 import styles from './styles';
-import { Props } from './types';
 
-type State = {
-  isEditMode: boolean;
-};
+interface IProps {
+  classes: any;
+  theme: any;
+}
 
-class CreateNewService extends Component<Props, State> {
-  public static defaultProps = {
-    createService: () => ({}),
-    updateService: () => ({}),
-    initialData: {
-      refetch: () => {},
-      loadNextPage: () => {},
-      data: {},
+const CreateNewService: React.FC<IProps> = (props) => {
+  const { classes, theme } = props;
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  const actions = useAllActions();
+  const history = useHistory();
+  const match = useRouteMatch<{ id: string }>();
+  const serviceId = match?.params?.id;
+
+  const profile = useProfile();
+  const daoId = profile?.selectedDAO?.id;
+
+  const [createRegisteredService] = useCreateRegisteredServiceMutation();
+  const [updateRegisteredService] = useUpdateRegisteredServiceMutation();
+  const { data } = useRegisteredServiceQuery({
+    variables: {
+      id: serviceId,
     },
-  };
+    skip: !serviceId,
+  });
+  const registeredServiceData = data?.registeredService;
 
-  state = {
-    isEditMode: false,
-  };
+  useEffect(() => {
+    actions.updateHeaderTitle('Service');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  componentDidMount() {
-    this.props.actions.updateHeaderTitle('Services');
-    this.setState({
-      isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
-    });
-  }
+  useEffect(() => {
+    setIsEditMode(!!registeredServiceData);
+  }, [registeredServiceData]);
 
-  componentDidUpdate(prevProps: Props) {
-    if (!isEqual(this.props.initialData, prevProps.initialData)) {
-      this.setState({
-        isEditMode: Boolean(idx(this.props, (_) => _.initialData)),
-      });
-    }
-  }
-
-  _submitForm = async (values, actions) => {
+  const _submitForm = async (values, actions) => {
     try {
-      const { initialData } = this.props;
-      const { isEditMode } = this.state;
-
       const dataToSend = {
+        daoId: daoId,
         name: values.name,
-        billingType: values.billingType,
-        includeConsTax: values.chargeGST,
-        isTemplate:
-          typeof idx(initialData, (_) => _.isTemplate) !== 'undefined'
-            ? idx(initialData, (_) => _.isTemplate)
-            : true,
-        timeBasedType: values.perUnit,
-        totalAmount: Number(values.paymentTotal),
+        billingType: values?.billingType,
+        includeConsTax: values?.chargeGST,
+        IsTemplate: values?.IsTemplate,
+        timeBasedType: values?.perUnit || null,
+        totalAmount: Number(values?.paymentTotal),
       };
 
       if (!isEditMode) {
-        // If user is creating new dao
-        const res = await this.props.createService({ data: dataToSend });
-        if (res.success) {
-          showToast(null, 'Service created');
-          actions.setSubmitting(false);
-          this.props.history.push(URL.SERVICES());
-        } else {
-          res.error.map((err) => showToast(err));
-          actions.setSubmitting(false);
-        }
-      } else {
-        // If user is updating dao
-        const res = await this.props.updateService({
-          data: dataToSend,
-          where: { id: initialData.id },
+        const res = await createRegisteredService({
+          variables: {
+            data: dataToSend,
+          },
         });
-        if (res.success) {
-          showToast(null, 'Service updated');
-          actions.setSubmitting(false);
-          this.props.history.push(URL.SERVICES());
+        if (res?.data?.createRegisteredService?.id) {
+          showToast(null, 'Service created successfully');
+          history.push(URL.SERVICES());
         } else {
-          res.error.map((err) => showToast(err));
-          actions.setSubmitting(false);
+          res?.errors?.map((err) => showToast(err.message));
         }
+        actions.setSubmitting(false);
+      } else {
+        const res = await updateRegisteredService({
+          variables: {
+            data: {
+              id: serviceId,
+              ...dataToSend,
+            },
+          },
+        });
+        if (res?.data?.updateRegisteredService?.id) {
+          showToast(null, 'Service updated successfully');
+          history.push(URL.SERVICES());
+        } else {
+          res?.errors?.map((err) => showToast(err.message));
+        }
+        actions.setSubmitting(false);
       }
-    } catch (err) {
+    } catch (e) {
       actions.setSubmitting(false);
-      throw new Error(err);
     }
   };
 
-  _renderForm(formProps: SimpleCreatePageRenderPropFormTypes) {
-    const { classes, profile, i18n } = this.props;
-    const showGST = get(profile, 'selectedDAO.salesTax');
-    const values = formProps.values;
-
+  const _renderSectionHeading = () => {
     return (
-      <Grid
-        container
-        xs={12}
-        sm={5}
-        classes={{ container: classes.formFields }}
-      >
-        <Grid item xs={12}>
-          <FormControl fullWidth margin='dense'>
-            <FormikTextField
-              label={'Service name'}
-              placeholder={'E.g: Website development'}
-              showClearIcon={false}
-              name='name'
-              id='name'
-            />
-          </FormControl>
-          <FormControl fullWidth margin='dense'>
-            <FormikDropdown
-              label='Billing Type'
-              id='service-type'
-              name='billingType'
-              placeholder={'Select type'}
-              items={[
-                { label: 'Fixed', value: SERVICE_BILLING_TYPE.FIXED },
-                {
-                  label: 'Time Based',
-                  value: SERVICE_BILLING_TYPE.TIME_BASED,
-                },
-              ]}
-            />
-          </FormControl>
-          {values.billingType === SERVICE_BILLING_TYPE.FIXED && (
-            <FormGroup row>
-              <FormControl>
-                <FormikTextField
-                  label={'Payment Total'}
-                  placeholder={'E.g: 200'}
-                  isNumber
-                  showClearIcon={false}
-                  name='paymentTotal'
-                  id='paymentTotal'
-                />
-              </FormControl>
-              {showGST && (
-                <FormControl>
-                  <FormikCheckbox
-                    label={'Charge ' + i18n._(`GST`)}
-                    id='charge-gst'
-                    name='chargeGST'
-                    classes={{ component: classes.gstCheckbox }}
-                  />
-                </FormControl>
-              )}
-            </FormGroup>
-          )}
-          {values.billingType === SERVICE_BILLING_TYPE.TIME_BASED && (
-            <>
-              <FormGroup row>
-                <FormControl>
-                  <FormikTextField
-                    label={'Payment Amount'}
-                    isNumber
-                    placeholder={'E.g: 200'}
-                    showClearIcon={false}
-                    name='paymentTotal'
-                    id='paymentTotal'
-                  />
-                </FormControl>
-                {showGST && (
-                  <FormControl>
-                    <FormikCheckbox
-                      label={'Charge ' + i18n._(`GST`)}
-                      id='charge-gst'
-                      name='chargeGST'
-                      classes={{ component: classes.gstCheckbox }}
-                    />
-                  </FormControl>
-                )}
-              </FormGroup>
-              <FormControl fullWidth margin='dense'>
-                <FormikDropdown
-                  id='per-unit'
-                  label='Per Unit'
-                  name='perUnit'
-                  placeholder={'Select Unit'}
-                  items={[
-                    { label: 'Hour', value: 'HOUR' },
-                    { label: 'Half Hour', value: 'HALFHOUR' },
-                    { label: 'Quater Hour', value: 'QUARTERHOUR' },
-                  ]}
-                />
-              </FormControl>
-            </>
-          )}
-        </Grid>
+      <Grid container item xs={12} sm={6}>
+        <SectionHeader
+          title={`${isEditMode ? 'Update' : 'Create new'} Service`}
+          subtitle={`${isEditMode ? 'Update' : 'Create a new'} Service ${
+            isEditMode
+              ? 'to update information in your account. '
+              : 'template. This service will be a quick template to use for defining projects, invoices and timesheets.'
+          }`}
+          classes={{ component: classes.sectionHeader }}
+        />
       </Grid>
     );
-  }
+  };
 
-  render() {
-    const { initialData, history } = this.props;
-    const { isEditMode } = this.state;
+  const _renderForm = () => {
     return (
-      <ErrorBoundary>
-        <SimpleCreatePage
-          editMode={isEditMode}
-          header={{
-            createTitle: 'Create new service',
-            createSubtitle:
-              'Create a new service template. This service will be a quick template to use for defining projects, invoices and timesheets.',
-            updateTitle: 'Update Service',
-            updateSubtitle: '',
-          }}
-          initialValues={{
-            name: idx(initialData, (_) => _.name) || '',
-            billingType: idx(initialData, (_) => _.billingType) || '',
-            paymentTotal: String(idx(initialData, (_) => _.totalAmount) || ''),
-            chargeGST: idx(initialData, (_) => _.includeConsTax) || false,
-            perUnit: idx(initialData, (_) => _.timeBasedType),
-          }}
-          validationSchema={Yup.object().shape({
-            name: Yup.string().required('Service Name is required'),
-            billingType: Yup.string().required('Billing Type is required'),
-            paymentTotal: Yup.string().required('Payment Total is required'),
-            perUnit: Yup.mixed().when('billingType', {
-              is: SERVICE_BILLING_TYPE.TIME_BASED,
-              then: Yup.string().required('Please select unit'),
-              otherwise: Yup.mixed(),
-            }),
-          })}
-          onSubmit={this._submitForm}
-          onCancel={() => {
-            history.push(URL.SERVICES());
-          }}
-        >
-          {(formProps) => this._renderForm(formProps)}
-        </SimpleCreatePage>
-      </ErrorBoundary>
-    );
-  }
-}
+      <Formik
+        initialValues={{
+          name: registeredServiceData?.name || '',
+          billingType: registeredServiceData?.billingType || '',
+          paymentTotal: registeredServiceData?.totalAmount || '',
+          chargeGST: registeredServiceData?.includeConsTax || false,
+          perUnit: registeredServiceData?.timeBasedType || null,
+          IsTemplate: registeredServiceData?.IsTemplate || true,
+        }}
+        enableReinitialize
+        validationSchema={Yup.object().shape({
+          name: Yup.string().required('Service Name is required'),
+          billingType: Yup.string().required('Billing Type is required'),
+          paymentTotal: Yup.string().required('Payment Total is required'),
+          perUnit: Yup.mixed().when('billingType', {
+            is: SERVICE_BILLING_TYPE.TIME_BASED,
+            then: Yup.string().required('Please select unit'),
+            otherwise: Yup.mixed(),
+          }),
+        })}
+        onSubmit={_submitForm}
+      >
+        {(formProps) => {
+          const { values, handleSubmit, isSubmitting, dirty } = formProps;
+          const isFormDirty = dirty;
+          return (
+            <form className={classes.form} onSubmit={handleSubmit}>
+              <Grid container classes={{ container: classes.formFields }}>
+                <Grid item xs={12} sm={6}>
+                  <ErrorBoundary>
+                    <div className={classes.component}>
+                      <Grid container spacing={16}>
+                        <Grid item xs={12}>
+                          <FormControl fullWidth margin='dense'>
+                            <FormikTextField
+                              label={'Service name'}
+                              placeholder={'E.g: Website development'}
+                              showClearIcon={false}
+                              name='name'
+                              id='name'
+                            />
+                          </FormControl>
+                          <FormControl fullWidth margin='dense'>
+                            <FormikDropdown
+                              label='Billing Type'
+                              id='service-type'
+                              name='billingType'
+                              placeholder={'Select type'}
+                              items={[
+                                {
+                                  label: 'Fixed',
+                                  value: SERVICE_BILLING_TYPE.FIXED,
+                                },
+                                {
+                                  label: 'Time Based',
+                                  value: SERVICE_BILLING_TYPE.TIME_BASED,
+                                },
+                              ]}
+                            />
+                          </FormControl>
+                          {values.billingType ===
+                            SERVICE_BILLING_TYPE.FIXED && (
+                            <FormGroup row>
+                              <FormControl>
+                                <FormikTextField
+                                  label={'Payment Total'}
+                                  placeholder={'E.g: 200'}
+                                  isNumber
+                                  showClearIcon={false}
+                                  name='paymentTotal'
+                                  id='paymentTotal'
+                                />
+                              </FormControl>
 
-export default compose(
-  withI18n(),
-  // withCreateService(),
-  // withUpdateService(),
-  // withService(
-  //   (props) => {
-  //     const serviceId = idx(props, (_) => _.match.params.id);
-  //     return { id: serviceId };
-  //   },
-  //   ({ data }) => ({ initialData: idx(data, (_) => _.service) || {} }),
-  // ),
-  connect((state: IReduxState) => ({ profile: state.profile })),
-  withStyles(styles),
-)(CreateNewService);
+                              <FormControl>
+                                <FormikCheckbox
+                                  label={'Charge GST'}
+                                  id='charge-gst'
+                                  name='chargeGST'
+                                  classes={{ component: classes.gstCheckbox }}
+                                />
+                              </FormControl>
+                            </FormGroup>
+                          )}
+                          {values.billingType ===
+                            SERVICE_BILLING_TYPE.TIME_BASED && (
+                            <>
+                              <FormGroup row>
+                                <FormControl>
+                                  <FormikTextField
+                                    label={'Payment Amount'}
+                                    isNumber
+                                    placeholder={'E.g: 200'}
+                                    showClearIcon={false}
+                                    name='paymentTotal'
+                                    id='paymentTotal'
+                                  />
+                                </FormControl>
+
+                                <FormControl>
+                                  <FormikCheckbox
+                                    label={'Charge GST'}
+                                    id='charge-gst'
+                                    name='chargeGST'
+                                    classes={{
+                                      component: classes.gstCheckbox,
+                                    }}
+                                  />
+                                </FormControl>
+                              </FormGroup>
+                              <FormControl fullWidth margin='dense'>
+                                <FormikDropdown
+                                  id='per-unit'
+                                  label='Per Unit'
+                                  name='perUnit'
+                                  placeholder={'Select Unit'}
+                                  items={[
+                                    { label: 'Hour', value: 'HOUR' },
+                                    { label: 'Half Hour', value: 'HALFHOUR' },
+                                    {
+                                      label: 'Quater Hour',
+                                      value: 'QUARTERHOUR',
+                                    },
+                                  ]}
+                                />
+                              </FormControl>
+                            </>
+                          )}
+                        </Grid>
+                      </Grid>
+                    </div>
+                  </ErrorBoundary>
+                </Grid>
+              </Grid>
+              <Grid container>
+                <Grid item xs={12} sm={isFormDirty ? 6 : 12}>
+                  <Button
+                    title={isEditMode ? 'Back to Service list' : 'Cancel'}
+                    onClick={() => {
+                      history.replace(URL.SERVICES());
+                    }}
+                    buttonColor={theme.palette.grey['200']}
+                    classes={{ text: classes.cancelButtonText }}
+                  />
+                </Grid>
+                {isFormDirty && (
+                  <Grid item xs={12} sm={6}>
+                    <Button
+                      loading={isSubmitting}
+                      title={`${isEditMode ? 'Update' : 'Create new'} Service`}
+                      id='submit-service'
+                      buttonColor={theme.palette.primary.color2}
+                      type='submit'
+                    />
+                  </Grid>
+                )}
+              </Grid>
+            </form>
+          );
+        }}
+      </Formik>
+    );
+  };
+
+  return (
+    <ErrorBoundary>
+      <SelectedDAO
+        onChange={() => {
+          history.push(URL.SERVICES());
+        }}
+      >
+        <div className={classes.page}>
+          {_renderSectionHeading()}
+          {_renderForm()}
+        </div>
+      </SelectedDAO>
+    </ErrorBoundary>
+  );
+};
+
+export default withStyles(styles)(CreateNewService);

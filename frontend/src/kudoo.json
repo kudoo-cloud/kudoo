@@ -87,6 +87,16 @@
             }
           ]
         },
+        "services": {
+          "icon": "icon icon-projects",
+          "name": "Services",
+          "url": "/services",
+          "availability": [
+            {
+              "security": ["ADMIN", "OWNER"]
+            }
+          ]
+        },
         "coreContributors": {
           "icon": "icon icon-projects",
           "name": "Core contributer",
