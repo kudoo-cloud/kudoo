@@ -77,9 +77,11 @@ export const CreateNewPatient = React.lazy(() => import('src/screens/health/Pati
 export const ActiveServiceTab = React.lazy(() => import('src/screens/health/Services/Services/ActiveServiceTab'));
 export const ArchivedServiceTab = React.lazy(() => import('src/screens/health/Services/Services/ArchivedServiceTab'));
 export const CreateNewService = React.lazy(() => import('src/screens/health/Services/CreateNewService'));
-export const ActiveTimesheetsTab = React.lazy(() => import('src/screens/health/Timesheets/Timesheets/ActiveTimesheetsTab'));
-export const ArchivedTimesheetsTab = React.lazy(() => import('src/screens/health/Timesheets/Timesheets/ArchivedTimesheetsTab'));
-export const DraftTimesheetsTab = React.lazy(() => import('src/screens/health/Timesheets/Timesheets/DraftTimesheetsTab'));
+// export const ActiveTimesheetsTab = React.lazy(() => import('src/screens/health/Timesheets/Timesheets/ActiveTimesheetsTab'));
+// export const ArchivedTimesheetsTab = React.lazy(() => import('src/screens/health/Timesheets/Timesheets/ArchivedTimesheetsTab'));
+// export const DraftTimesheetsTab = React.lazy(() => import('src/screens/health/Timesheets/Timesheets/DraftTimesheetsTab'));
+export const TimesheetTabContainer = React.lazy(() => import('src/screens/health/Timesheets/Timesheets/TabContainer'));
+
 export const CreateTimesheets = React.lazy(() => import('src/screens/health/Timesheets/CreateTimesheets'));
 export const ReviewTimesheet = React.lazy(() => import('src/screens/health/Timesheets/ReviewTimesheet'));
 export const PreviewTimesheet = React.lazy(() => import('src/screens/health/Timesheets/PreviewTimesheet'));

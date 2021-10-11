@@ -145,3 +145,32 @@ fragment DaoMultisig on DaoMultisig {
   cChainAddress
   daoId
 }
+
+fragment TimesheetEntry on TimesheetEntry {
+  id
+  service {
+    ...RegisteredService
+  }
+  duration
+  isInvoiced
+  date
+}
+
+fragment Timesheet on Timesheet {
+  id
+  daoId
+  number
+  status
+  supplierId
+  supplier {
+    ...Supplier
+  }
+  preview {
+    ...Attachment
+  }
+  startsAt
+  endsAt
+  timeSheetEntries {
+    ...TimesheetEntry
+  }
+}

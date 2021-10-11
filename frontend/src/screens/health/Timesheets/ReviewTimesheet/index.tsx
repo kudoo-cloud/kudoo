@@ -1,9 +1,10 @@
 import {
   Button,
+  ErrorBoundary,
   FieldLabel,
   FileBlock,
+  Loading,
   SectionHeader,
-  TimesheetRowDisplay,
   withStyles,
 } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
@@ -11,121 +12,95 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import merge from 'lodash/merge';
 import moment from 'moment';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'recompose';
+import React, { useEffect } from 'react';
+import { useHistory, useRouteMatch } from 'react-router';
+import {
+  useTimesheetQuery,
+  useUpdateTimesheetMutation,
+} from 'src/generated/graphql';
 import { TIMESHEET_STATUS } from 'src/helpers/constants';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
+import { useAllActions, useProfile } from 'src/store/hooks';
+import TimesheetRowDisplay from '../TimesheetRowDisplay';
 import styles from './styles';
 
-type Props = {
-  actions: any;
+interface IProps {
+  children: ({}) => {};
   timeSheet: any;
-  updateTimeSheet: Function;
-  theme: any;
-  profile: any;
+  loading: boolean;
   classes: any;
-  history: any;
-};
-type State = {};
+  theme: any;
+}
 
-class ReviewTimesheet extends Component<Props, State> {
-  static defaultProps = {
-    updateTimeSheet: () => ({}),
-    timeSheet: {
-      refetch: () => {},
-      loadNextPage: () => {},
-      data: {},
+const ReviewTimesheet: React.FC<IProps> = (props) => {
+  const { theme, classes } = props;
+  const actions = useAllActions();
+  const profile = useProfile();
+  const history = useHistory();
+  const match = useRouteMatch<{ id: string }>();
+  const timesheetId = match?.params?.id;
+
+  const [updateTimesheet] = useUpdateTimesheetMutation();
+  const { data, loading } = useTimesheetQuery({
+    variables: {
+      id: timesheetId,
     },
-  };
+    skip: !timesheetId,
+  });
+  const timeSheet = data?.timesheet || ({} as any);
 
-  componentDidMount() {
-    this.props.actions.updateHeaderTitle('Timesheets');
-  }
+  useEffect(() => {
+    actions.updateHeaderTitle('Timesheet');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  _getTimesheetRows = () => {
-    const { timeSheet } = this.props;
-    const entries = get(timeSheet, 'data.timeSheetEntries') || [];
-    const timesheetRows = {};
-    entries.forEach((entry) => {
-      const projectCustomerId =
-        get(entry, 'project.id') || get(entry, 'customer.id');
-      const serviceId = get(entry, 'service.id');
-      const project = entry.project;
-      const customer = entry.customer;
-      const service = entry.service;
-      const rowType = get(entry, 'project.id') ? 'project' : 'customer';
-      const rowId = `${projectCustomerId}:${serviceId}`;
-      timesheetRows[rowId] = timesheetRows[rowId] || {};
-      merge(timesheetRows[rowId], {
-        id: rowId,
-        rowType,
-        project: {
-          data: project,
-        },
-        customer: {
-          data: customer,
-        },
-        service: {
-          data: service,
-        },
-        entries: {
-          data: [].concat(get(timesheetRows[rowId], 'entries.data', []), entry),
-        },
-      });
-    });
-    return timesheetRows;
-  };
-
-  _approveTimesheet = async () => {
+  const _approveTimesheet = async () => {
     try {
-      const id = get(this.props, 'match.params.id');
-      const res = await this.props.updateTimeSheet({
-        where: {
-          id,
-        },
-        data: {
-          status: TIMESHEET_STATUS.APPROVED,
+      const res = await updateTimesheet({
+        variables: {
+          data: {
+            id: timeSheet?.id,
+            status: TIMESHEET_STATUS.APPROVED as any,
+          },
         },
       });
-      if (res.success) {
+      if (res?.data?.updateTimesheet?.id) {
         showToast(null, 'Timesheet Approved');
-      } else {
-        res.error.map((err) => showToast(err));
       }
-    } catch (error) {
-      showToast(error.toString());
+    } catch (e) {
+      showToast(e.toString());
+    } finally {
+      actions.closeAlertDialog();
     }
   };
 
-  _unApproveTimesheet = async () => {
+  const _unApproveTimesheet = async () => {
     try {
-      const id = get(this.props, 'match.params.id');
-      const res = await this.props.updateTimeSheet({
-        where: {
-          id,
-        },
-        data: {
-          status: TIMESHEET_STATUS.FINALISED,
+      const res = await updateTimesheet({
+        variables: {
+          data: {
+            id: timeSheet?.id,
+            status: TIMESHEET_STATUS.FINALISED as any,
+          },
         },
       });
-      if (res.success) {
+      if (res?.data?.updateTimesheet?.id) {
         showToast(null, 'Timesheet UnApproved');
-      } else {
-        res.error.map((err) => showToast(err));
       }
-    } catch (error) {
-      showToast(error.toString());
+    } catch (e) {
+      showToast(e.toString());
+    } finally {
+      actions.closeAlertDialog();
     }
   };
 
-  _renderSectionHeading() {
-    const { theme, profile, timeSheet } = this.props;
+  const _renderSectionHeading = () => {
     const isOwner = get(profile, 'selectedDAO.owner');
+
     const isTimesheetApproved =
-      get(timeSheet, 'data.status') === TIMESHEET_STATUS.APPROVED;
+      get(timeSheet, 'status') === TIMESHEET_STATUS.APPROVED;
     let button = null;
     if (isOwner) {
       if (isTimesheetApproved) {
@@ -135,7 +110,7 @@ class ReviewTimesheet extends Component<Props, State> {
             applyBorderRadius
             width={260}
             buttonColor={theme.palette.primary.color2}
-            onClick={this._unApproveTimesheet}
+            onClick={_unApproveTimesheet}
           />
         );
       } else {
@@ -145,12 +120,11 @@ class ReviewTimesheet extends Component<Props, State> {
             applyBorderRadius
             width={260}
             buttonColor={theme.palette.primary.color2}
-            onClick={this._approveTimesheet}
+            onClick={_approveTimesheet}
           />
         );
       }
     }
-
     return (
       <SectionHeader
         title='Review timesheet'
@@ -158,11 +132,9 @@ class ReviewTimesheet extends Component<Props, State> {
         renderLeftPart={() => button}
       />
     );
-  }
+  };
 
-  _renderPeriodSelection() {
-    const { classes, timeSheet } = this.props;
-    const timesheetData = timeSheet.data || {};
+  const _renderPeriodSelection = () => {
     return (
       <div className={classes.periodSelectionWrapper}>
         <Grid container justify='space-between' spacing={0}>
@@ -172,7 +144,7 @@ class ReviewTimesheet extends Component<Props, State> {
                 <div>
                   <FieldLabel label='Month' />
                   <div className={classes.textValueBox}>
-                    {moment(timesheetData.startsAt).format('MMMM')}
+                    {moment(timeSheet?.startsAt).format('MMMM')}
                   </div>
                 </div>
               </Grid>
@@ -180,7 +152,7 @@ class ReviewTimesheet extends Component<Props, State> {
                 <div>
                   <FieldLabel label='Year' />
                   <div className={classes.textValueBox}>
-                    {moment(timesheetData.startsAt).format('YYYY')}
+                    {moment(timeSheet?.startsAt).format('YYYY')}
                   </div>
                 </div>
               </Grid>
@@ -192,8 +164,8 @@ class ReviewTimesheet extends Component<Props, State> {
                 <div>
                   <FieldLabel label='Week Period' />
                   <div className={classes.textValueBox}>
-                    {moment(timesheetData.startsAt).format('DD MMM')} -{' '}
-                    {moment(timesheetData.endsAt).format('DD MMM')}
+                    {moment(timeSheet.startsAt).format('DD MMM')} -{' '}
+                    {moment(timeSheet.endsAt).format('DD MMM')}
                   </div>
                 </div>
               </Grid>
@@ -202,23 +174,41 @@ class ReviewTimesheet extends Component<Props, State> {
         </Grid>
       </div>
     );
-  }
+  };
 
-  _renderInputs() {
-    const { classes, timeSheet } = this.props;
-    const timesheetData = timeSheet.data || {};
-    const timesheetRows = this._getTimesheetRows();
+  const _getTimesheetRows = () => {
+    const entries = get(timeSheet, 'timeSheetEntries') || [];
+    const timesheetRows = {};
+    entries.forEach((entry) => {
+      const serviceId = get(entry, 'service.id');
+      const service = entry.service;
+      const rowId = `${serviceId}`;
+      timesheetRows[rowId] = timesheetRows[rowId] || {};
+      merge(timesheetRows[rowId], {
+        id: rowId,
+        service: {
+          data: service,
+        },
+        entries: {
+          data: [].concat(get(timesheetRows[rowId], 'entries.data', []), entry),
+        },
+      });
+    });
+    return timesheetRows;
+  };
+
+  const _renderInputs = () => {
+    const timesheetRows = _getTimesheetRows();
+
     if (!isEmpty(timesheetRows)) {
       return (
         <div className={classes.inputs}>
           {Object.values(timesheetRows).map((row: any, index) => (
             <TimesheetRowDisplay
-              key={row.id}
+              key={row?.id}
               hideDaysLabel={index > 0}
-              startWeekDay={moment(timesheetData.startsAt).format()}
-              endWeekDay={moment(timesheetData.endsAt).format()}
-              project={row.project}
-              customer={row.customer}
+              startWeekDay={moment(timeSheet?.startsAt).format()}
+              endWeekDay={moment(timeSheet?.endsAt).format()}
               service={row.service}
               timeSheetEntries={row.entries}
             />
@@ -227,47 +217,10 @@ class ReviewTimesheet extends Component<Props, State> {
       );
     }
     return null;
-  }
-
-  _showInvoiceAlert = () => {
-    const { theme } = this.props;
-    const title = 'Send Invoice to customer?';
-    const description = (
-      <div>
-        <div>
-          We will generate an invoice using the information defined in this
-          timesheet.
-        </div>
-        <br />
-        <div>Are you sure you want us to send an invoice to your customer?</div>
-      </div>
-    );
-    const buttons = [
-      {
-        title: 'No, don’t send',
-        onClick: () => {
-          this.props.actions.closeAlertDialog();
-        },
-      },
-      {
-        title: 'Send invoice',
-        onClick: () => {
-          this.props.actions.closeAlertDialog();
-        },
-      },
-    ];
-    const titleColor = theme.palette.primary.color2;
-    this.props.actions.showAlertDialog({
-      title,
-      description,
-      buttons,
-      titleColor,
-    });
   };
 
-  _renderAttachmentField() {
-    const { classes, timeSheet } = this.props;
-    const alreadyAttachedFiles = get(timeSheet, 'data.attachments', []);
+  const _renderAttachmentField = () => {
+    const alreadyAttachedFiles = get(timeSheet, 'attachments', []);
     if (alreadyAttachedFiles.length <= 0) {
       return null;
     }
@@ -289,10 +242,44 @@ class ReviewTimesheet extends Component<Props, State> {
         </div>
       </div>
     );
-  }
+  };
 
-  _renderBottomButtons = () => {
-    const { classes, theme, profile } = this.props;
+  const _showInvoiceAlert = () => {
+    const title = 'Send Invoice to customer?';
+    const description = (
+      <div>
+        <div>
+          We will generate an invoice using the information defined in this
+          timesheet.
+        </div>
+        <br />
+        <div>Are you sure you want us to send an invoice to your customer?</div>
+      </div>
+    );
+    const buttons = [
+      {
+        title: 'No, don’t send',
+        onClick: () => {
+          actions.closeAlertDialog();
+        },
+      },
+      {
+        title: 'Send invoice',
+        onClick: () => {
+          actions.closeAlertDialog();
+        },
+      },
+    ];
+    const titleColor = theme.palette.primary.color2;
+    actions.showAlertDialog({
+      title,
+      description,
+      buttons,
+      titleColor,
+    });
+  };
+
+  const _renderBottomButtons = () => {
     const isOwner = get(profile, 'selectedDAO.owner');
     return (
       <Grid container spacing={0}>
@@ -309,7 +296,7 @@ class ReviewTimesheet extends Component<Props, State> {
             <Button
               title='Invoice to customer'
               buttonColor={theme.palette.primary.color2}
-              onClick={this._showInvoiceAlert}
+              onClick={_showInvoiceAlert}
             />
           </Grid>
         )}
@@ -317,35 +304,42 @@ class ReviewTimesheet extends Component<Props, State> {
     );
   };
 
-  render() {
-    const { classes } = this.props;
+  const _renderNoTimesheet = () => {
     return (
+      <div className={classes.noTimesheetsWrapper}>
+        <div className={classes.noTimesheetsMessageWrapper}>
+          <div className={classes.noTimesheetsMessage}>
+            {`There are no Timesheet data.`} <br />
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <ErrorBoundary>
       <SelectedDAO
         onChange={() => {
-          this.props.history.push(URL.TIMESHEETS());
+          history.push(URL.TIMESHEETS());
         }}
       >
         <div className={classes.page}>
           <div className={classes.content}>
-            {this._renderSectionHeading()}
-            {this._renderPeriodSelection()}
-            {this._renderInputs()}
-            {this._renderAttachmentField()}
+            {_renderSectionHeading()}
+
+            {loading && <Loading />}
+
+            {!loading && isEmpty(timeSheet) && _renderNoTimesheet()}
+
+            {_renderPeriodSelection()}
+            {_renderInputs()}
+            {_renderAttachmentField()}
           </div>
-          {this._renderBottomButtons()}
+          {_renderBottomButtons()}
         </div>
       </SelectedDAO>
-    );
-  }
-}
+    </ErrorBoundary>
+  );
+};
 
-export default compose(
-  withStyles(styles),
-  connect((state: any) => ({
-    profile: state.profile,
-  })),
-  // withTimeSheet((props) => ({
-  //   id: get(props, 'match.params.id'),
-  // })),
-  // withUpdateTimeSheet(),
-)(ReviewTimesheet);
+export default withStyles(styles)(ReviewTimesheet);

@@ -1,198 +1,95 @@
-import {
-  Dropdown,
-  ErrorBoundary,
-  Loading,
-  ScrollObserver,
-  SectionHeader,
-  withStyles,
-} from '@kudoo/components';
+import { ScrollObserver, withStyles } from '@kudoo/components';
 import cx from 'classnames';
 import get from 'lodash/get';
-import isEmpty from 'lodash/isEmpty';
 import pluralize from 'pluralize';
-import React, { Component } from 'react';
+import React, { useState } from 'react';
+import { useHistory } from 'react-router';
+import URL from 'src/helpers/urls';
 import { ActiveTimesheetsStyles } from './styles';
-import TabContainer from './TabContainer';
 import TimesheetBlock from './TimesheetBlock';
-
-type Props = {
-  actions: Record<string, any>;
-  timeSheetData: any;
-  showUnarchiveDialog: Function;
-  users: Array<any>;
-  onlyMyTimesheet: boolean;
-  addFilteredUser: Function;
-  removeFilteredUser: Function;
-  timeSheetsLoading: boolean;
-  loadMore: Function;
+interface IProps {
   classes: any;
-};
-type State = {
-  allHide: boolean;
-};
-
-class ArchivedTimesheets extends Component<Props, State> {
-  state = {
-    allHide: false,
-  };
-
-  _renderSectionHeading() {
-    return (
-      <SectionHeader
-        title='Timesheets'
-        subtitle='Below is a list of all your archived timesheets.'
-      />
-    );
-  }
-
-  _renderFilterUserDropdown() {
-    const {
-      onlyMyTimesheet,
-      users,
-      addFilteredUser,
-      removeFilteredUser,
-      classes,
-    } = this.props;
-    if (onlyMyTimesheet) {
-      return null;
-    }
-    return (
-      <div className={classes.dropdownWrapper}>
-        <Dropdown
-          label='Filter Users'
-          items={users.map((user) => {
-            const name = user.firstName + ' ' + user.lastName;
-            return { label: name, value: user };
-          })}
-          multiple
-          onChange={(item, index, isSelected) => {
-            if (isSelected) {
-              addFilteredUser(item.value);
-            } else {
-              removeFilteredUser(item.value);
-            }
-          }}
-        />
-      </div>
-    );
-  }
-
-  _renderNoTimesheets() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.noTimesheetsWrapper}>
-        <div className={classes.noTimesheetsMessageWrapper}>
-          <div className={classes.noTimesheetsMessage}>
-            There are no archived Timesheets.
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  _renderTimesheets() {
-    const { classes, timeSheetData, loadMore } = this.props;
-    const { allHide } = this.state;
-    return (
-      <ScrollObserver
-        onBottomReached={() => loadMore()}
-        onBottomReachedThreshold={500}
-      >
-        <div className={classes.timesheetsContainer}>
-          <div className={classes.expandHideWrapper}>
-            <span
-              className={cx(classes.expandHideLabel, { active: allHide })}
-              onClick={() => {
-                this.setState({ allHide: false });
-              }}
-            >
-              Expand
-            </span>
-            <span className={classes.slash}>/</span>
-            <span
-              className={cx(classes.expandHideLabel, { active: !allHide })}
-              onClick={() => {
-                this.setState({ allHide: true });
-              }}
-            >
-              Hide
-            </span>
-          </div>
-          {Object.keys(timeSheetData).map((key) => {
-            const timesheet: any = timeSheetData[key];
-            const project = get(timesheet, 'project') || {};
-            const service = get(timesheet, 'service') || {};
-            const customer = get(timesheet, 'customer') || {};
-            let unit = 'hour';
-            if (service.timeBasedType === 'DAY') {
-              unit = 'day';
-            }
-
-            return (
-              <div className={classes.timesheet} key={timesheet.id}>
-                <TimesheetBlock
-                  type={!isEmpty(timesheet.project) ? 'project' : 'dao'}
-                  collapsed={allHide}
-                  serviceName={service.name}
-                  daoName={customer.name}
-                  project={project.name}
-                  showEmailIcon={false}
-                  showViewIcon={false}
-                  showAddIcon
-                  rows={Object.keys(timesheet.rows).map((rowKey) => {
-                    const row = timesheet.rows[rowKey];
-                    const user = get(row, 'user') || {};
-                    const firstName = user.firstName;
-                    const lastName = user.lastName;
-                    return {
-                      id: row.id,
-                      user: `${firstName} ${lastName}`,
-                      period: `${row.startsAt} - ${row.endsAt}`,
-                      status: row.status,
-                      hours: `${row.hours} ${pluralize(unit, row.hours)}`,
-                      totalHours: row.hours,
-                      startsAt: row.startsAtFormatted,
-                    };
-                  })}
-                  onAddClicked={this.props.showUnarchiveDialog}
-                />
-              </div>
-            );
-          })}
-        </div>
-      </ScrollObserver>
-    );
-  }
-
-  render() {
-    const { classes, timeSheetData, timeSheetsLoading } = this.props;
-    return (
-      <ErrorBoundary>
-        <div className={classes.page}>
-          {this._renderSectionHeading()}
-          {this._renderFilterUserDropdown()}
-          {timeSheetsLoading && <Loading />}
-          {!timeSheetsLoading &&
-            isEmpty(timeSheetData) &&
-            this._renderNoTimesheets()}
-          {!isEmpty(timeSheetData) && this._renderTimesheets()}
-        </div>
-      </ErrorBoundary>
-    );
-  }
 }
 
-const StyledComponent = withStyles(ActiveTimesheetsStyles)(ArchivedTimesheets);
+interface Props {
+  timeSheetData: any;
+  showUnarchiveDialog: Function;
+}
 
-type IProps = {
-  actions: Record<string, any>;
-  onlyMyTimesheet: boolean;
+const ArchivedTimesheetsTab: React.FC<Props & IProps> = ({
+  timeSheetData,
+  showUnarchiveDialog,
+  ...props
+}) => {
+  const { classes } = props;
+
+  const [allHide, setAllHide] = useState(false);
+
+  const history = useHistory();
+
+  return (
+    <ScrollObserver onBottomReached={() => {}} onBottomReachedThreshold={500}>
+      <div className={classes.timesheetsContainer}>
+        <div className={classes.expandHideWrapper}>
+          <span
+            className={cx(classes.expandHideLabel, { active: allHide })}
+            onClick={() => {
+              setAllHide(false);
+            }}
+          >
+            Expand
+          </span>
+          <span className={classes.slash}>/</span>
+          <span
+            className={cx(classes.expandHideLabel, { active: !allHide })}
+            onClick={() => {
+              setAllHide(true);
+            }}
+          >
+            Hide
+          </span>
+        </div>
+        {Object.keys(timeSheetData).map((key) => {
+          const timesheet: any = timeSheetData[key];
+          const service = get(timesheet, 'service') || {};
+          let unit = 'hour';
+          if (service.timeBasedType === 'DAY') {
+            unit = 'day';
+          }
+
+          return (
+            <div className={classes.timesheet} key={timesheet.id}>
+              <TimesheetBlock
+                collapsed={allHide}
+                serviceName={service.name}
+                showEmailIcon={false}
+                showViewIcon={false}
+                showAddIcon
+                rows={Object.keys(timesheet.rows).map((rowKey) => {
+                  const row = timesheet.rows[rowKey];
+                  const supplier = get(row, 'supplier', {});
+                  const name = supplier.name;
+                  return {
+                    id: row.id,
+                    supplier: `${name}`,
+                    period: `${row.startsAt} - ${row.endsAt}`,
+                    status: row.status,
+                    hours: `${row.hours} ${pluralize(unit, row.hours)}`,
+                    totalHours: row.hours,
+                    startsAt: row.startsAtFormatted,
+                  };
+                })}
+                onCellClick={(e, { row }) => {
+                  history.push(URL.EDIT_TIMESHEETS({ id: row.id }));
+                }}
+                onAddClicked={showUnarchiveDialog}
+              />
+            </div>
+          );
+        })}
+      </div>
+    </ScrollObserver>
+  );
 };
 
-const ArchivedTimesheetsTab = (props: IProps) => (
-  <TabContainer {...props} timesheet_type='archived'>
-    {(childProps) => <StyledComponent {...childProps} />}
-  </TabContainer>
-);
-
-export default ArchivedTimesheetsTab;
+export default withStyles<Props>(ActiveTimesheetsStyles)(ArchivedTimesheetsTab);

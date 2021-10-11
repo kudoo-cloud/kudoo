@@ -1,170 +1,162 @@
-import { Button, Modal, SectionHeader, withStyles } from '@kudoo/components';
-import Grid from '@material-ui/core/Grid';
+import {
+  Button,
+  Dropdown,
+  ErrorBoundary,
+  FieldLabel,
+  Modal,
+  SectionHeader,
+  withStyles,
+} from '@kudoo/components';
+import { Grid } from '@material-ui/core';
 import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import merge from 'lodash/merge';
-import range from 'lodash/range';
+// import range from 'lodash/range';
 import set from 'lodash/set';
 import moment from 'moment';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { compose, withProps } from 'recompose';
+import React, { useEffect, useState } from 'react';
+import { useHistory, useRouteMatch } from 'react-router';
 import uuid from 'uuid';
+// import { generatePDF } from 'src/helpers/jsPDF';
 import {
-  DATE_TIME_API_FORMAT,
-  // SERVICE_BILLING_TYPE,
-  TIMESHEET_STATUS,
-} from 'src/helpers/constants';
-import { generatePDF } from 'src/helpers/jsPDF';
+  useCreateTimesheetMutation,
+  useRegisteredServiceByDaoQuery,
+  useSuppliersByDaoQuery,
+  useTimesheetQuery,
+  useUpdateTimesheetMutation,
+} from 'src/generated/graphql';
+import { DATE_FORMAT, TIMESHEET_STATUS } from 'src/helpers/constants';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
 import URL from 'src/helpers/urls';
-import Attachments from './Attachments';
+import { useAllActions, useProfile } from 'src/store/hooks';
 import InputRows from './InputRows';
 import PeriodSelection from './PeriodSelection';
 import styles from './styles';
 import TimesheetApproveModal from './TimesheetApproveModal';
 
-type Props = {
-  actions: any;
-  isEditMode: any;
-  getTimeSheets: any;
-  updateTimeSheet: any;
-  createTimeSheet: any;
-  history: any;
+interface IProps {
   classes: any;
   theme: any;
-};
+}
 
-class CreateTimesheets extends Component<Props, any> {
-  static defaultProps = {
-    updateTimeSheet: () => ({}),
-    createTimeSheet: () => ({}),
-    projects: {
-      refetch: () => {},
-      loadNextPage: () => {},
-      data: [],
-    },
-    services: {
-      refetch: () => {},
-      loadNextPage: () => {},
-      data: [],
-    },
-    customers: {
-      refetch: () => {},
-      loadNextPage: () => {},
-      data: [],
-    },
-    timeSheets: {
-      refetch: () => {},
-      loadNextPage: () => {},
-      data: [],
-    },
-    timeSheet: {
-      refetch: () => {},
-      loadNextPage: () => {},
-      data: {},
-    },
-  };
+const CreateTimesheets: React.FC<IProps> = (props) => {
+  const currentYear = moment().year();
+  const currentMonth = moment().month();
 
-  yearList: any;
-  monthList: any;
+  const { classes, theme } = props;
 
-  constructor(props) {
-    super(props);
-    const currentYear = moment().year();
-    const currentMonth = moment().month();
-    this.yearList = range(currentYear - 2, currentYear + 10).map((yr) => ({
-      label: String(yr),
-      value: yr,
-    }));
-    this.monthList = range(0, 12).map((index) => ({
-      label: moment().month(index).format('MMMM'),
-      value: index,
-    }));
-    this.state = {
-      currentWeekPeriod: {
-        startWeekDay: '',
-        endWeekDay: '',
-        month: currentMonth,
-        year: currentYear,
-        week: moment().week(),
-      },
-      weekPeriodData: {},
-      showFinaliseModal: false,
-      showApprovalModal: false,
-      approvalTimesheets: [],
-      savingAsDraft: false,
-      finalisingTimesheet: false,
-    };
-  }
+  const actions = useAllActions();
+  const history = useHistory();
+  const match = useRouteMatch<{ id: string }>();
+  const timesheetId = match?.params?.id;
 
-  componentDidMount() {
-    this.props.actions.updateHeaderTitle('Timesheets');
-  }
+  const [isEditMode, setIsEditMode] = useState(!!timesheetId);
 
-  componentDidUpdate(prevProps) {
-    if (this.props.isEditMode) {
-      const projects = get(this.props, 'projects.data');
-      const services = get(this.props, 'services.data');
-      const customers = get(this.props, 'customers.data');
-      const timesheet = get(this.props, 'timeSheet.data');
-      if (
-        projects !== get(prevProps, 'projects.data') ||
-        services !== get(prevProps, 'services.data') ||
-        customers !== get(prevProps, 'customers.data') ||
-        timesheet !== get(prevProps, 'timeSheet.data')
-      ) {
-        this._updateStateForEditMode(this.props);
+  const [currentWeekPeriod, setCurrentWeekPeriod] = useState({
+    startWeekDay: '',
+    endWeekDay: '',
+    month: currentMonth,
+    year: currentYear,
+    week: moment().week(),
+  });
+
+  const [selectedSupplier, setSelectedSupplier] = useState('');
+
+  const [weekPeriodData, setWeekPeriodData] = useState({});
+
+  const [finalisingTimesheet, setFinalisingTimesheet] = useState(false);
+
+  const [showFinaliseModal, setShowFinaliseModal] = useState(false);
+
+  const [showApprovalModal, setShowApprovalModal] = useState(false);
+
+  const [approvalTimesheets, setApprovalTimesheets] = useState([]);
+
+  const { data } = useTimesheetQuery({
+    variables: {
+      id: timesheetId,
+    },
+    skip: !timesheetId,
+  });
+  const timesheetDetail = data?.timesheet || ({} as any);
+
+  const profile = useProfile();
+  const daoId = profile?.selectedDAO?.id;
+
+  const [createTimesheet] = useCreateTimesheetMutation();
+  const [updateTimesheet] = useUpdateTimesheetMutation();
+  const services = useRegisteredServiceByDaoQuery({
+    variables: {
+      daoId,
+    },
+    skip: !daoId,
+  });
+  const registeredServices = services?.data?.registeredServiceByDao || [];
+
+  const suppliers = useSuppliersByDaoQuery({
+    variables: {
+      daoId,
+    },
+    skip: !daoId,
+  });
+
+  const allSuppliers = (suppliers?.data?.suppliersByDao || []).map((item) => {
+    let container = {};
+
+    container['value'] = item?.id;
+    container['label'] = item?.name;
+
+    return container;
+  });
+
+  useEffect(() => {
+    actions.updateHeaderTitle('Timesheet');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (!isEmpty(timesheetDetail)) {
+      setIsEditMode(!!timesheetDetail);
+      if (timesheetDetail) {
+        _updateWeekPeriodDataState(timesheetDetail, timesheetId);
       }
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timesheetDetail]);
 
-  _updateStateForEditMode = (props) => {
-    const timesheet = get(props, 'timeSheet.data', {});
-    this._updateWeekPeriodDataState(
-      props,
-      timesheet,
-      get(props, 'match.params.id'),
-    );
-  };
-
-  _updateWeekPeriodDataState = (
-    props,
+  const _updateWeekPeriodDataState = (
     timesheet,
     alreadySavedTimesheetId = '',
   ) => {
-    let { weekPeriodData, currentWeekPeriod }: any = this.state;
-    weekPeriodData = weekPeriodData || {};
+    // let { weekPeriodData, currentWeekPeriod }: any = this.state;
+    // let newWeekPeriodData = weekPeriodData || {};
+    // let newCurrentWeekPeriod = currentWeekPeriod;
     const timeSheetEntries = get(timesheet, 'timeSheetEntries', []);
 
     if (timesheet) {
       const startsAt = timesheet.startsAt;
       const endsAt = timesheet.endsAt;
-      currentWeekPeriod = {
-        ...currentWeekPeriod,
+      let newCurrentWeekPeriod = {
         startWeekDay: moment(startsAt).format(),
         endWeekDay: moment(endsAt).format(),
         month: moment(startsAt).month(),
         year: moment(endsAt).year(),
+        week: moment(startsAt).week(),
       };
 
-      const { id, startDay, endDay } = this._getWeekPeriodId(currentWeekPeriod);
+      const { id, startDay, endDay } = _getWeekPeriodId(newCurrentWeekPeriod);
       let rows = {};
       for (let index = 0; index < timeSheetEntries.length; index++) {
         const entry = timeSheetEntries[index] || {};
+
         const serviceId = get(entry, 'service.id');
-        const projectId = get(entry, 'project.id');
+
         const date = moment(entry.date).format('YYYY-MM-DD');
-        const customerId = get(entry, 'customer.id');
-        const uniqueRowId = `${serviceId}:${projectId || customerId}`;
-        let selectedProjectCustomer;
+
+        const uniqueRowId = `${serviceId}`;
+
         const selectedService = entry.service;
-        if (entry.project) {
-          selectedProjectCustomer = entry.project;
-        } else {
-          selectedProjectCustomer = entry.customer;
-        }
 
         const dayHours = get(rows, `${uniqueRowId}.dayHours`, {});
         dayHours[date] = entry.duration;
@@ -176,19 +168,17 @@ class CreateTimesheets extends Component<Props, any> {
           ...rows[uniqueRowId],
           dayHours,
           selectedService,
-          selectedProjectCustomer,
-          selectedType: projectId ? 'project' : 'customer',
-          selectedBtn: projectId ? 0 : 1,
           entries,
         };
       }
 
-      if (timeSheetEntries.length === 0) {
-        rows = {
-          ...rows,
-          [uuid.v4()]: {},
-        };
-      }
+      // if (timeSheetEntries.length === 0) {
+      //   rows = {
+      //     ...rows,
+      //     [uuid.v4()]: {},
+      //   };
+      // }
+
       const nextWpData = merge(weekPeriodData, {
         [id]: {
           startWeekDay: startDay,
@@ -203,75 +193,79 @@ class CreateTimesheets extends Component<Props, any> {
           attachedFiles: timesheet.attachments,
         },
       });
-      const stateObj = {
-        currentWeekPeriod,
-        weekPeriodData: nextWpData,
-      };
-      this.setState(stateObj);
+
+      setSelectedSupplier(timesheet?.supplierId);
+
+      setCurrentWeekPeriod({ ...newCurrentWeekPeriod });
+      setWeekPeriodData({ ...nextWpData });
     }
   };
 
-  _getWeekPeriodId = (weekPeriod) => {
+  const _getWeekPeriodId = (weekPeriod) => {
     const startDay = moment(weekPeriod.startWeekDay).format('YYYY-MM-DD');
     const endDay = moment(weekPeriod.endWeekDay).format('YYYY-MM-DD');
     const id = `${startDay}__${endDay}`;
     return { id, startDay, endDay };
   };
 
-  _onWeekPeriodChange = async (currentWeekPeriod) => {
-    const { weekPeriodData }: any = this.state;
-    const { id, startDay, endDay } = this._getWeekPeriodId(currentWeekPeriod);
-    const { profile }: any = this.props;
-    const timesheets = await this.props.getTimeSheets({
-      variables: {
-        where: {
-          startsAt: moment(startDay).format(DATE_TIME_API_FORMAT),
-          endsAt: moment(endDay).format(DATE_TIME_API_FORMAT),
-          isArchived: false,
-          user: {
-            id: profile.id,
-          },
-        },
-      },
-    });
-    const timesheetData = get(timesheets, 'data.timeSheets.edges.0.node');
-    if (get(timesheetData, 'id')) {
-      this._updateWeekPeriodDataState(this.props, timesheetData);
-    } else {
-      this.setState({
-        currentWeekPeriod,
-        weekPeriodData: {
-          ...weekPeriodData,
-          [id]: weekPeriodData[id] || {
-            startWeekDay: startDay,
-            endWeekDay: endDay,
-            attachedFiles: [],
-            allowedToEdit: true,
-            timesheetRows: {
-              [uuid.v4()]: {},
-            },
+  const _onWeekPeriodChange = async (currentWeekPeriod) => {
+    const { id, startDay, endDay } = _getWeekPeriodId(currentWeekPeriod);
+
+    if (!isEditMode) {
+      setCurrentWeekPeriod(currentWeekPeriod);
+
+      setWeekPeriodData({
+        ...weekPeriodData,
+        [id]: weekPeriodData[id] || {
+          startWeekDay: startDay,
+          endWeekDay: endDay,
+          attachedFiles: [],
+          allowedToEdit: true,
+          timesheetRows: {
+            [uuid.v4()]: {},
           },
         },
       });
     }
   };
 
-  _doesUserEnteredData = () => {
-    const { weekPeriodData }: any = this.state;
+  const _updateWeekPeriod = (data) => {
+    const { id } = _getWeekPeriodId(currentWeekPeriod);
+
+    if (data.timesheetRows) {
+      // if we want to update timesheetRows then first clean current timesheetRows then update with coming timesheetRows
+      set(weekPeriodData, `${id}.timesheetRows`, {});
+    }
+
+    const mergeData = merge(weekPeriodData, {
+      [id]: {
+        ...data,
+      },
+    });
+
+    setWeekPeriodData({ ...mergeData });
+  };
+
+  const _doesUserEnteredData = () => {
     let hasData = false;
-    for (const key1 in weekPeriodData) {
-      if (weekPeriodData.hasOwnProperty(key1)) {
-        const weekPeriod = weekPeriodData[key1];
-        const isWeekPeriodEmpty = this._isWeekPeriodEmpty(weekPeriod);
-        if (!isWeekPeriodEmpty) {
-          const timesheetRows = get(weekPeriod, 'timesheetRows', {});
-          for (const key2 in timesheetRows) {
-            if (timesheetRows.hasOwnProperty(key2)) {
-              const timesheet = get(timesheetRows, key2, {});
-              const isTimesheetEmpty = this._isTimesheetEmpty(timesheet);
-              if (!isTimesheetEmpty) {
-                hasData = true;
-                break;
+    if (selectedSupplier) {
+      for (const key1 in weekPeriodData) {
+        if (weekPeriodData.hasOwnProperty(key1)) {
+          const weekPeriod = weekPeriodData[key1];
+          const isWeekPeriodEmpty = _isWeekPeriodEmpty(weekPeriod);
+
+          if (!isWeekPeriodEmpty) {
+            const timesheetRows = get(weekPeriod, 'timesheetRows', {});
+
+            for (const key2 in timesheetRows) {
+              if (timesheetRows.hasOwnProperty(key2)) {
+                const timesheet = get(timesheetRows, key2, {});
+                const isTimesheetEmpty = _isTimesheetEmpty(timesheet);
+
+                if (!isTimesheetEmpty) {
+                  hasData = true;
+                  break;
+                }
               }
             }
           }
@@ -281,7 +275,7 @@ class CreateTimesheets extends Component<Props, any> {
     return hasData;
   };
 
-  _isWeekPeriodEmpty = (weekPeriod) => {
+  const _isWeekPeriodEmpty = (weekPeriod) => {
     const timesheetRows = get(weekPeriod, 'timesheetRows', {});
     const values = Object.values(timesheetRows);
     let hasData = false;
@@ -295,252 +289,15 @@ class CreateTimesheets extends Component<Props, any> {
     return !hasData;
   };
 
-  _isTimesheetEmpty = (timesheet: any = {}) => {
-    return (
-      isEmpty(timesheet.dayHours) ||
-      isEmpty(timesheet.selectedProjectCustomer) ||
-      isEmpty(timesheet.selectedService)
-    );
+  const _isTimesheetEmpty = (timesheet: any = {}) => {
+    return isEmpty(timesheet.dayHours) || isEmpty(timesheet.selectedService);
   };
 
-  _generatePDF = async () => {
-    return await generatePDF('pdf-content');
-  };
+  const _renderSectionHeading = () => {
+    const hasData = _doesUserEnteredData();
 
-  _finaliseTimeSheet = async (isDraft = false) => {
-    try {
-      const { profile, isEditMode }: any = this.props;
-      const { selectedDAO } = profile;
-      const { weekPeriodData }: any = this.state;
-      const timeSheetsId: any = [];
-      this.setState({ finalisingTimesheet: true });
-      // iterate through all week periods
-      for (const key1 in weekPeriodData) {
-        if (weekPeriodData.hasOwnProperty(key1)) {
-          const weekPeriod = weekPeriodData[key1];
-          const isWeekPeriodEmpty = this._isWeekPeriodEmpty(weekPeriod);
-          if (!isWeekPeriodEmpty && weekPeriod.allowedToEdit) {
-            let parsedTimeSheetRes;
-            // we only need to upload file which is object of File i.e. which user uploaded in this session
-            const attachments = get(weekPeriod, 'attachedFiles', [])
-              .filter((file) => file instanceof File)
-              .map((file) => file);
-            // Prepare timesheet data to save
-            let dataToSave: any = {
-              endsAt: moment(weekPeriod.endWeekDay).format(
-                DATE_TIME_API_FORMAT,
-              ),
-              startsAt: moment(weekPeriod.startWeekDay).format(
-                DATE_TIME_API_FORMAT,
-              ),
-              status: isDraft
-                ? TIMESHEET_STATUS.DRAFT
-                : TIMESHEET_STATUS.FINALISED,
-              attachments: attachments.length > 0 ? attachments : undefined,
-            };
-
-            if (!isDraft) {
-              // if user is finalizing timesheet then create pdf
-              const pdfBlob = await this._generatePDF();
-              const pdfFile = new File([pdfBlob], 'timesheet.pdf');
-              dataToSave.preview = pdfFile;
-            }
-
-            // prepare timesheet entry for every rows under this week period
-            const createEntryArr: any = [];
-            const updateEntryArr: any = [];
-            // if there are timesheet rows in weekperiod
-            if (!isEmpty(weekPeriod.timesheetRows)) {
-              const timesheetRows: any = Object.values(
-                weekPeriod.timesheetRows,
-              );
-              // iterate through all timesheet row
-              for (let i = 0; i < timesheetRows.length; i++) {
-                const timeSheetRow = timesheetRows[i];
-                // if timesheet row is not empty
-                if (!this._isTimesheetEmpty(timeSheetRow)) {
-                  const dayHours = timeSheetRow.dayHours;
-                  const selectedType = timeSheetRow.selectedType;
-                  const selectedProjectCustomer =
-                    timeSheetRow.selectedProjectCustomer;
-                  const selectedService = timeSheetRow.selectedService;
-                  const alreadySavedEntries = get(timeSheetRow, `entries`, {});
-                  if (
-                    !isEmpty(dayHours) &&
-                    !isEmpty(selectedProjectCustomer) &&
-                    !isEmpty(selectedService)
-                  ) {
-                    // iterate through all hours
-                    for (const date in dayHours) {
-                      if (dayHours.hasOwnProperty(date)) {
-                        const entryId = get(alreadySavedEntries, `${date}.id`);
-                        const duration = dayHours[date];
-                        if (
-                          typeof duration === 'undefined' ||
-                          duration === null
-                        ) {
-                          continue;
-                        }
-
-                        const entryData = {
-                          date: moment(date).format(DATE_TIME_API_FORMAT),
-                          duration: Number(dayHours[date]),
-                          service: {
-                            connect: {
-                              id: selectedService.id,
-                            },
-                          },
-                          [selectedType]: {
-                            connect: {
-                              id: selectedProjectCustomer.id,
-                            },
-                          },
-                        };
-
-                        if (entryId) {
-                          // if we already have saved entry id , then update that entry
-                          updateEntryArr.push({
-                            data: entryData,
-                            where: {
-                              id: entryId,
-                            },
-                          });
-                        } else {
-                          // if we dont have saved entry id , then create that entry
-                          createEntryArr.push({
-                            ...entryData,
-                          });
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-
-            dataToSave = {
-              ...dataToSave,
-              timeSheetEntries: {
-                create: createEntryArr.length > 0 ? createEntryArr : undefined,
-                update: updateEntryArr.length > 0 ? updateEntryArr : undefined,
-              },
-            };
-            if (weekPeriod.alreadySavedTimesheetId) {
-              // if already saved then update it
-              parsedTimeSheetRes = await this.props.updateTimeSheet({
-                where: {
-                  id: weekPeriod.alreadySavedTimesheetId,
-                },
-                data: dataToSave,
-              });
-            } else {
-              // if user has added new weekperiod then create new
-              parsedTimeSheetRes = await this.props.createTimeSheet({
-                data: dataToSave,
-              });
-            }
-
-            if (parsedTimeSheetRes.success) {
-              const timesheetData = parsedTimeSheetRes.result || {};
-              timeSheetsId.push(timesheetData.id);
-              this.setState({
-                finalisingTimesheet: false,
-                showFinaliseModal: false,
-              });
-            } else {
-              this.setState({
-                finalisingTimesheet: false,
-                showFinaliseModal: false,
-              });
-              parsedTimeSheetRes.error.map((err) => showToast(err));
-              return;
-            }
-          }
-        }
-      }
-      if (!isDraft) {
-        showToast(
-          null,
-          `Timesheets ${isEditMode ? 'updated' : 'saved'} successfully`,
-        );
-        if (get(selectedDAO, 'timeSheetSettings.approvalsEnabled')) {
-          this._showApprovalModal(timeSheetsId);
-        } else {
-          this.props.history.push(URL.TIMESHEETS());
-        }
-      } else {
-        showToast(
-          null,
-          !isEditMode
-            ? 'Timesheet saved as a draft'
-            : `Timesheet draft updated`,
-        );
-        this.props.history.push(URL.MY_DRAFT_TIMESHEETS());
-      }
-    } catch (e) {
-      this.setState({ finalisingTimesheet: false, showFinaliseModal: false });
-      console.error(e);
-    }
-  };
-
-  _showFinaliseAlert = () => {
-    this.setState({
-      showFinaliseModal: true,
-    });
-  };
-
-  _closeFinaliseAlert = () => {
-    this.setState({
-      showFinaliseModal: false,
-    });
-  };
-
-  _showApprovalModal = (timeSheetsId) => {
-    this.setState({
-      showApprovalModal: true,
-      approvalTimesheets: timeSheetsId,
-    });
-  };
-
-  _closeApprovalModal = () => {
-    this.setState({
-      showApprovalModal: false,
-    });
-    this.props.history.push(URL.TIMESHEETS());
-  };
-
-  _getWeekNumberFromMonth = (month, year) => {
-    return moment().month(month).year(year).date(1).week();
-  };
-
-  _updateWeekPeriod = (data) => {
-    const { currentWeekPeriod, weekPeriodData }: any = this.state;
-    const { id } = this._getWeekPeriodId(currentWeekPeriod);
-    if (data.timesheetRows) {
-      // if we want to update timesheetRows then first clean current timesheetRows then update with coming timesheetRows
-      set(weekPeriodData, `${id}.timesheetRows`, {});
-    }
-    this.setState({
-      weekPeriodData: merge(weekPeriodData, {
-        [id]: {
-          ...data,
-        },
-      }),
-    });
-  };
-
-  _getWeekPeriod = () => {
-    const { weekPeriodData, currentWeekPeriod }: any = this.state;
-    const { id } = this._getWeekPeriodId(currentWeekPeriod);
-    return get(weekPeriodData, `${id}`, {});
-  };
-
-  _renderSectionHeading() {
-    const { theme, isEditMode, classes }: any = this.props;
-    const hasData = this._doesUserEnteredData();
     return (
       <SectionHeader
-        classes={{ component: classes.sectionHeader }}
         title={`Bulk ${!isEditMode ? 'create' : 'update'} timesheets`}
         subtitle={
           !isEditMode
@@ -556,32 +313,202 @@ class CreateTimesheets extends Component<Props, any> {
             isDisabled={!hasData}
             buttonColor={theme.palette.primary.color2}
             onClick={() => {
-              this._finaliseTimeSheet(true);
+              _finaliseTimeSheet(true);
             }}
           />
         )}
       />
     );
-  }
+  };
 
-  _renderTimesheetApprovalModal() {
-    const { approvalTimesheets, showApprovalModal }: any = this.state;
+  const _showApprovalModal = (timeSheetsId) => {
+    setShowApprovalModal(true);
+    setApprovalTimesheets(timeSheetsId);
+  };
+
+  const _closeApprovalModal = () => {
+    setShowApprovalModal(false);
+
+    history.push(URL.TIMESHEETS());
+  };
+
+  // const _generatePDF = async () => {
+  //   return await generatePDF('pdf-content');
+  // };
+
+  const _finaliseTimeSheet = async (isDraft = false) => {
+    try {
+      const timeSheetsId: any = [];
+      setFinalisingTimesheet(true);
+
+      // iterate through all week periods
+      for (const key1 in weekPeriodData) {
+        if (weekPeriodData.hasOwnProperty(key1)) {
+          const weekPeriod = weekPeriodData[key1];
+          const isWeekPeriodEmpty = _isWeekPeriodEmpty(weekPeriod);
+          if (!isWeekPeriodEmpty && weekPeriod.allowedToEdit) {
+            // let parsedTimeSheetRes;
+            // we only need to upload file which is object of File i.e. which user uploaded in this session
+            // const attachments = get(weekPeriod, 'attachedFiles', [])
+            //   .filter((file) => file instanceof File)
+            //   .map((file) => file);
+            // Prepare timesheet data to save
+            let dataToSave: any = {
+              endsAt: moment(weekPeriod.endWeekDay).format(DATE_FORMAT),
+              startsAt: moment(weekPeriod.startWeekDay).format(DATE_FORMAT),
+              status: isDraft
+                ? TIMESHEET_STATUS.DRAFT
+                : TIMESHEET_STATUS.FINALISED,
+              //attachments: attachments.length > 0 ? attachments : undefined,
+              daoId: daoId,
+              supplierId: selectedSupplier,
+            };
+
+            // if (!isDraft) {
+            //   // if user is finalizing timesheet then create pdf
+            //   const pdfBlob = await _generatePDF();
+            //   const pdfFile = new File([pdfBlob], 'timesheet.pdf');
+            //   dataToSave.preview = pdfFile;
+            // }
+
+            // prepare timesheet entry for every rows under this week period
+            const createEntryArr: any = [];
+            // const updateEntryArr: any = [];
+            // if there are timesheet rows in weekperiod
+            if (!isEmpty(weekPeriod.timesheetRows)) {
+              const timesheetRows: any = Object.values(
+                weekPeriod.timesheetRows,
+              );
+              // iterate through all timesheet row
+              for (let i = 0; i < timesheetRows.length; i++) {
+                const timeSheetRow = timesheetRows[i];
+
+                // if timesheet row is not empty
+                if (!_isTimesheetEmpty(timeSheetRow)) {
+                  const dayHours = timeSheetRow.dayHours;
+
+                  const selectedService = timeSheetRow.selectedService;
+                  const alreadySavedEntries = get(timeSheetRow, `entries`, {});
+
+                  if (!isEmpty(dayHours) && !isEmpty(selectedService)) {
+                    // iterate through all hours
+                    for (const date in dayHours) {
+                      if (dayHours.hasOwnProperty(date)) {
+                        const entryId = get(alreadySavedEntries, `${date}.id`);
+
+                        const duration = dayHours[date];
+                        if (
+                          typeof duration === 'undefined' ||
+                          duration === null
+                        ) {
+                          continue;
+                        }
+
+                        let entryData = {
+                          date: moment(date).format(DATE_FORMAT),
+                          duration: Number(dayHours[date]),
+                          serviceId: selectedService.id,
+                        } as any;
+
+                        if (entryId) {
+                          entryData = { ...entryData, id: entryId };
+                        }
+
+                        createEntryArr.push({
+                          ...entryData,
+                        });
+                      }
+                    }
+                  }
+                }
+              }
+            }
+
+            dataToSave = {
+              ...dataToSave,
+              timeSheetEntries:
+                createEntryArr.length > 0 ? createEntryArr : undefined,
+            };
+
+            if (!isEditMode) {
+              const res = await createTimesheet({
+                variables: {
+                  data: dataToSave,
+                },
+              });
+              if (res?.data?.createTimesheet?.id) {
+                setFinalisingTimesheet(false);
+                setShowFinaliseModal(false);
+              } else {
+                res?.errors?.map((err) => showToast(err.message));
+                setFinalisingTimesheet(false);
+                setShowFinaliseModal(false);
+                return;
+              }
+            } else {
+              const res = await updateTimesheet({
+                variables: {
+                  data: {
+                    id: timesheetId,
+                    ...dataToSave,
+                  },
+                },
+              });
+              if (res?.data?.updateTimesheet?.id) {
+                setFinalisingTimesheet(false);
+                setShowFinaliseModal(false);
+              } else {
+                res?.errors?.map((err) => showToast(err.message));
+                setFinalisingTimesheet(false);
+                setShowFinaliseModal(false);
+                return;
+              }
+            }
+          }
+        }
+      }
+      if (!isDraft) {
+        showToast(
+          null,
+          `Timesheets ${isEditMode ? 'updated' : 'saved'} successfully`,
+        );
+        if (get(SelectedDAO, 'timeSheetSettings.approvalsEnabled')) {
+          _showApprovalModal(timeSheetsId);
+        } else {
+          history.push(URL.TIMESHEETS());
+        }
+      } else {
+        showToast(
+          null,
+          !isEditMode
+            ? 'Timesheet saved as a draft'
+            : `Timesheet draft updated`,
+        );
+        history.push(URL.MY_DRAFT_TIMESHEETS());
+      }
+    } catch (e) {
+      setFinalisingTimesheet(false);
+      setShowFinaliseModal(false);
+      console.error(e);
+    }
+  };
+
+  const _renderTimesheetApprovalModal = () => {
     return (
       <TimesheetApproveModal
         visible={showApprovalModal}
         timesheets={approvalTimesheets}
-        onClose={this._closeApprovalModal}
+        onClose={_closeApprovalModal}
       />
     );
-  }
+  };
 
-  _renderFinaliseAlert() {
-    const { theme, classes, isEditMode }: any = this.props;
-    const hasData = this._doesUserEnteredData();
+  const _renderFinaliseAlert = () => {
+    const hasData = _doesUserEnteredData();
     return (
       <Modal
         classes={{ description: classes.finaliseDesc }}
-        visible={this.state.showFinaliseModal}
+        visible={showFinaliseModal}
         title='Finalise Timesheet?'
         description={
           <div>
@@ -598,7 +525,7 @@ class CreateTimesheets extends Component<Props, any> {
             title: 'Cancel',
             type: 'cancel',
             onClick: () => {
-              this._closeFinaliseAlert();
+              setShowFinaliseModal(false);
             },
           },
           {
@@ -606,8 +533,8 @@ class CreateTimesheets extends Component<Props, any> {
             isDisabled: !hasData,
             id: 'modal-save-draft',
             onClick: () => {
-              this._closeFinaliseAlert();
-              this._finaliseTimeSheet(true);
+              setShowFinaliseModal(false);
+              _finaliseTimeSheet(true);
             },
             buttonColor: theme.palette.primary.color3,
           },
@@ -616,18 +543,17 @@ class CreateTimesheets extends Component<Props, any> {
             isDisabled: !hasData,
             id: 'modal-finalise-timesheet',
             onClick: () => {
-              this._closeFinaliseAlert();
-              this._finaliseTimeSheet(false);
+              setShowFinaliseModal(false);
+              _finaliseTimeSheet(false);
             },
           },
         ]}
       />
     );
-  }
+  };
 
-  _renderBottomButtons = () => {
-    const { classes, theme } = this.props;
-    const hasData = this._doesUserEnteredData();
+  const _renderBottomButtons = () => {
+    const hasData = _doesUserEnteredData();
 
     return (
       <Grid container spacing={0}>
@@ -643,10 +569,12 @@ class CreateTimesheets extends Component<Props, any> {
           <Grid item xs={12} sm={6}>
             <Button
               id='finalise-timesheet-bottom-button'
-              loading={this.state.finalisingTimesheet}
+              loading={finalisingTimesheet}
               title='Finalise timesheet'
               buttonColor={theme.palette.primary.color2}
-              onClick={this._showFinaliseAlert}
+              onClick={() => {
+                setShowFinaliseModal(true);
+              }}
             />
           </Grid>
         )}
@@ -654,95 +582,120 @@ class CreateTimesheets extends Component<Props, any> {
     );
   };
 
-  render() {
-    const { classes, projects, customers, services, actions }: any = this.props;
-    const { currentWeekPeriod }: any = this.state;
-    const weekPeriod = this._getWeekPeriod();
+  const _getWeekPeriod = () => {
+    const { id } = _getWeekPeriodId(currentWeekPeriod);
+    return get(weekPeriodData, `${id}`, {});
+  };
+  const weekPeriod = _getWeekPeriod();
+
+  const _renderPeriodSelection = () => {
     return (
+      <div className={classes.periodSelectionWrapper}>
+        <Grid container justify='space-between' spacing={0}>
+          <Grid item xs={12} sm={6}>
+            <Grid container spacing={16}>
+              <Grid item xs={12} sm={6}>
+                <div>
+                  <FieldLabel label='Month' />
+                  <div className={classes.textValueBox}>
+                    {moment(timesheetDetail?.startsAt).format('MMMM')}
+                  </div>
+                </div>
+              </Grid>
+              <Grid item xs={12} sm={6}>
+                <div>
+                  <FieldLabel label='Year' />
+                  <div className={classes.textValueBox}>
+                    {moment(timesheetDetail?.startsAt).format('YYYY')}
+                  </div>
+                </div>
+              </Grid>
+            </Grid>
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            <Grid container justify='flex-end'>
+              <Grid item xs={12} sm={8}>
+                <div>
+                  <FieldLabel label='Week Period' />
+                  <div className={classes.textValueBox}>
+                    {moment(timesheetDetail?.startsAt).format('DD MMM')} -{' '}
+                    {moment(timesheetDetail?.endsAt).format('DD MMM')}
+                  </div>
+                </div>
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+      </div>
+    );
+  };
+
+  return (
+    <ErrorBoundary>
       <SelectedDAO
         onChange={() => {
-          this.props.history.push(URL.TIMESHEETS());
+          history.push(URL.TIMESHEETS());
         }}
       >
         <div className={classes.page}>
           <div className={classes.content}>
-            {this._renderSectionHeading()}
+            {_renderSectionHeading()}
             <div className={classes.pdfContent} id='pdf-content'>
-              <PeriodSelection
-                currentWeekPeriod={currentWeekPeriod}
-                onWeekPeriodChange={this._onWeekPeriodChange}
-                onUpdateCurrentWeekPeriod={(currentWeekPeriod) => {
-                  this.setState({
-                    currentWeekPeriod,
-                  });
-                }}
-              />
+              <Grid container spacing={16}>
+                <Grid item xs={12} sm={6}>
+                  <Dropdown
+                    label='Supplier'
+                    id='timesheet-supplier'
+                    classes={{
+                      component: classes.sDropdown,
+                      select: classes.sDropdownSelect,
+                      menuItemText: classes.dropdownItemText,
+                    }}
+                    onChange={(item) => {
+                      setSelectedSupplier(item?.value);
+                    }}
+                    placeholder='Select a supplier'
+                    items={allSuppliers}
+                    value={selectedSupplier}
+                  />
+                </Grid>
+              </Grid>
+              {!isEditMode ? (
+                <PeriodSelection
+                  currentWeekPeriod={currentWeekPeriod}
+                  onWeekPeriodChange={_onWeekPeriodChange}
+                  onUpdateCurrentWeekPeriod={(currentWeekPeriod) => {
+                    setCurrentWeekPeriod(currentWeekPeriod);
+                  }}
+                />
+              ) : (
+                _renderPeriodSelection()
+              )}
+
               <InputRows
-                projects={projects}
-                customers={customers}
-                services={services}
+                services={registeredServices}
                 allowedToEdit={weekPeriod.allowedToEdit}
                 timesheetRows={weekPeriod.timesheetRows}
                 currentWeekPeriod={currentWeekPeriod}
-                onUpdateRows={this._updateWeekPeriod}
-                actions={actions}
-                timeSheetId={weekPeriod.alreadySavedTimesheetId}
+                onUpdateRows={_updateWeekPeriod}
+                // timeSheetId={weekPeriod.alreadySavedTimesheetId}
               />
-              <Attachments
+
+              {/* <Attachments
                 allowedToEdit={weekPeriod.allowedToEdit}
                 attachedFiles={weekPeriod.attachedFiles || []}
-                onUpdateAttachments={this._updateWeekPeriod}
-              />
+                onUpdateAttachments={_updateWeekPeriod}
+              /> */}
             </div>
           </div>
-          {this._renderBottomButtons()}
-          {this._renderFinaliseAlert()}
-          {this._renderTimesheetApprovalModal()}
+
+          {_renderBottomButtons()}
+          {_renderFinaliseAlert()}
+          {_renderTimesheetApprovalModal()}
         </div>
       </SelectedDAO>
-    );
-  }
-}
+    </ErrorBoundary>
+  );
+};
 
-export default compose(
-  withStyles(styles),
-  connect((state: any) => ({
-    profile: state.profile,
-  })),
-  withProps((props) => ({
-    isEditMode: Boolean(get(props, 'match.params.id')),
-  })),
-  // withUpdateTimeSheet(),
-  // withCreateTimeSheet(),
-  // withCustomers(() => ({
-  //   variables: {
-  //     where: {
-  //       isArchived: false,
-  //     },
-  //     orderBy: 'name_ASC',
-  //   },
-  // })),
-  // withServices(() => ({
-  //   variables: {
-  //     where: {
-  //       isArchived: false,
-  //       isTemplate: true,
-  //       billingType: SERVICE_BILLING_TYPE.TIME_BASED,
-  //     },
-  //     orderBy: 'name_ASC',
-  //   },
-  // })),
-  // withProjects(() => ({
-  //   variables: {
-  //     where: {
-  //       isArchived: false,
-  //     },
-  //   },
-  // })),
-  // withTimeSheet((props) => ({
-  //   id: get(props, 'match.params.id'),
-  // })),
-  // withTimeSheets(() => ({
-  //   skip: true,
-  // })),
-)(CreateTimesheets);
+export default withStyles(styles)(CreateTimesheets);

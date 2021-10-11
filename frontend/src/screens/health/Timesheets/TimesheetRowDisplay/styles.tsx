@@ -1,54 +1,4 @@
-export default (theme) => ({
-  page: {
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  content: {
-    padding: '40px 20px',
-    flex: 1,
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  periodSelectionWrapper: {
-    margin: '20px 0px',
-  },
-  inputs: {
-    marginTop: 30,
-  },
-  textValueBox: {
-    height: 52,
-    borderRadius: 5,
-    border: `1px solid ${theme.palette.grey['300']}`,
-    display: 'flex',
-    alignItems: 'center',
-    padding: '0px 15px',
-    fontFamily: theme.typography.font.family2,
-    fontSize: 16,
-    color: theme.palette.blueGrey['50'],
-  },
-  newRowButton: {
-    marginTop: 20,
-  },
-  cancelButtonText: {
-    color: theme.palette.grey['500'],
-  },
-
-  attachementWrapper: {
-    marginTop: 15,
-  },
-  attachedFilesBlock: {
-    display: 'flex',
-    alignItems: 'center',
-    flexWrap: 'wrap',
-  },
-  attachementBlock: {
-    border: `2px dashed ${theme.palette.primary.color2}`,
-    borderRadius: 5,
-  },
-});
-
-export const timesheetRowStyles = (theme) => ({
+export default (theme: Theme) => ({
   wrapper: {
     flexDirection: 'row',
     display: 'flex',
@@ -179,34 +129,5 @@ export const timesheetRowStyles = (theme) => ({
     fontFamily: theme.typography.font.family2,
     fontSize: 16,
     fontWeight: 'bold',
-  },
-  noTimesheetsWrapper: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    display: 'flex',
-    margin: '50px 0px',
-    cursor: 'pointer',
-  },
-  noTimesheetsMessageWrapper: {
-    width: '60%',
-    maxWidth: 660,
-    margin: '0px auto',
-    border: `4px dashed ${theme.palette.grey[300]}`,
-    padding: 10,
-    borderRadius: 20,
-    minHeight: 200,
-    backgroundColor: theme.palette.grey[100],
-    alignItems: 'center',
-    justifyContent: 'center',
-    display: 'flex',
-  },
-  noTimesheetsMessage: {
-    fontFamily: theme.typography.font.family1,
-    fontSize: 26,
-    lineHeight: '35px',
-    fontWeight: '500',
-    color: theme.palette.blueGrey[50],
-    textAlign: 'center',
   },
 });

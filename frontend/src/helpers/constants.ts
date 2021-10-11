@@ -1,4 +1,5 @@
 export const DATE_TIME_API_FORMAT = 'YYYY-MM-DD[T]HH:mm:ss.SSS[Z]';
+export const DATE_FORMAT = 'YYYY-MM-DD';
 
 export const SERVICE_BILLING_TYPE = {
   FIXED: 'FIXED',

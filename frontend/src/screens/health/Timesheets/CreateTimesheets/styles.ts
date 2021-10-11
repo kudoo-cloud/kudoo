@@ -62,6 +62,18 @@ export default (theme) => ({
   finaliseDesc: {
     textAlign: 'center',
   },
+
+  textValueBox: {
+    height: 52,
+    borderRadius: 5,
+    border: `1px solid ${theme.palette.grey['300']}`,
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0px 15px',
+    fontFamily: theme.typography.font.family2,
+    fontSize: 16,
+    color: theme.palette.blueGrey['50'],
+  },
 });
 
 export const timesheetRowStyles = (theme) => ({

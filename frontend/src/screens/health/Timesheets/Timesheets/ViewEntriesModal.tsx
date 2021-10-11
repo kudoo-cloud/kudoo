@@ -1,7 +1,6 @@
 import { Modal, Table, withStyles } from '@kudoo/components';
 import moment from 'moment';
 import pluralize from 'pluralize';
-
 import React, { Component } from 'react';
 import { compose } from 'recompose';
 import { ViewEntriesModalStyles } from './styles';

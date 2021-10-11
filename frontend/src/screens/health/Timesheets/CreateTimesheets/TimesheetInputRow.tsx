@@ -4,7 +4,6 @@ import {
   helpers as utils,
   withStyles,
 } from '@kudoo/components';
-import cx from 'classnames';
 import ceil from 'lodash/ceil';
 import findIndex from 'lodash/findIndex';
 import forEach from 'lodash/forEach';
@@ -13,7 +12,6 @@ import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import moment from 'moment';
 import React, { Component } from 'react';
-import { SERVICE_BILLING_TYPE } from 'src/helpers/constants';
 import { showToast } from 'src/helpers/toast';
 import { timesheetRowStyles } from './styles';
 
@@ -24,9 +22,6 @@ type Props = {
   onChange: any;
   hideRemoveIcon?: boolean;
   hideDaysLabel?: boolean;
-  projects?: any[];
-
-  customers?: any[];
   services?: any[];
   onRemoveClick: () => void;
   allowedToEdit: boolean;
@@ -47,9 +42,7 @@ class TimehsheetInputRow extends Component<Props, State> {
   constructor(props) {
     super(props);
     this.initialInputState = {
-      selectedBtn: 0,
       selectedService: {},
-      selectedProjectCustomer: {},
       dayHours: {},
     };
     this.state = {
@@ -85,9 +78,7 @@ class TimehsheetInputRow extends Component<Props, State> {
   _updateUsingInitialData = (initialData) => {
     if (!isEmpty(initialData)) {
       this.setState({
-        selectedBtn: initialData.selectedBtn,
         selectedService: initialData.selectedService,
-        selectedProjectCustomer: initialData.selectedProjectCustomer,
         dayHours: initialData.dayHours,
       });
     }
@@ -98,49 +89,32 @@ class TimehsheetInputRow extends Component<Props, State> {
     this.setState({ dates });
   };
 
-  _changeSelectedButton = (index) => () => {
-    this.setState(
-      {
-        selectedBtn: index,
-        selectedProjectCustomer: null,
-        selectedService: null,
-        dayHours: {},
-      },
-      () => {
-        this._onChange();
-      },
-    );
-  };
+  // _changeSelectedButton = (index) => () => {
+  //   this.setState(
+  //     {
+  //       selectedService: null,
+  //       dayHours: {},
+  //     },
+  //     () => {
+  //       this._onChange();
+  //     },
+  //   );
+  // };
 
   _checkDirty = () => {
-    const {
-      selectedBtn,
-      selectedService,
-      selectedProjectCustomer,
-      dayHours,
-    }: any = this.state;
+    const { selectedService, dayHours }: any = this.state;
     const isDirty = !isEqual(this.initialInputState, {
-      selectedBtn,
       selectedService,
-      selectedProjectCustomer,
       dayHours,
     });
     return isDirty;
   };
 
   _onChange = () => {
-    const {
-      dayHours,
-      selectedProjectCustomer,
-      selectedService,
-      selectedBtn,
-    }: any = this.state;
+    const { dayHours, selectedService }: any = this.state;
     this.props.onChange({
       dayHours,
-      selectedProjectCustomer,
       selectedService,
-      selectedType: selectedBtn === 0 ? 'project' : 'customer',
-      selectedBtn,
     });
   };
 
@@ -192,12 +166,7 @@ class TimehsheetInputRow extends Component<Props, State> {
       [key]: item.value,
       dayHours: {},
     };
-    if (key === 'selectedProjectCustomer') {
-      newState = {
-        ...newState,
-        selectedService: null,
-      };
-    }
+
     this.setState(newState, () => {
       this._checkDirty();
       this._onChange();
@@ -285,96 +254,20 @@ class TimehsheetInputRow extends Component<Props, State> {
   }
 
   render() {
-    const { classes, projects, customers, services, allowedToEdit }: any =
-      this.props;
-    const { selectedBtn, selectedProjectCustomer, selectedService }: any =
-      this.state;
-    let firstDropdownData = [];
+    const { classes, services, allowedToEdit }: any = this.props;
+    const { selectedService }: any = this.state;
+
     let secondDropdownData = [];
-    let firstDropdownPlaceholder = '';
-    if (selectedBtn === 0) {
-      // If user has selected project
-      firstDropdownPlaceholder = 'Select a project';
-      // prepare project items to show in first dropdown
-      firstDropdownData = projects.data.map((project) => ({
-        label: project.name,
-        value: project,
-      }));
-      if (!isEmpty(selectedProjectCustomer)) {
-        // if user has selected project then find all timebased project services
-        const projectServices = get(
-          selectedProjectCustomer,
-          'projectService',
-          [],
-        );
-        const filteredServices = projectServices.filter(
-          (pService) =>
-            get(pService, 'service.billingType') ===
-            SERVICE_BILLING_TYPE.TIME_BASED,
-        );
-        // prepare service items to show in 2nd dropdown
-        secondDropdownData = filteredServices.map((pService) => ({
-          label: pService.service.name,
-          value: pService.service,
-        }));
-      }
-    } else if (selectedBtn === 1) {
-      // If user has selected customer option
-      firstDropdownPlaceholder = 'Select a customer';
-      // prepare customer items to show in first dropdown
-      firstDropdownData = customers.data.map((customer) => ({
-        label: customer.name,
-        value: customer,
-      }));
-      // prepare service items to show in 2nd dropdown
-      secondDropdownData = services.data.map((service) => ({
-        label: service.name,
-        value: service,
-      }));
-    }
+
+    // prepare service items to show in 2nd dropdown
+    secondDropdownData = (services || []).map((service) => ({
+      label: service.name,
+      value: service,
+    }));
 
     return (
       <div className={classes.wrapper}>
         <div className={classes.selectionWrapper}>
-          <div
-            onClick={this._changeSelectedButton(0)}
-            className={cx(classes.selectBtn, classes.projectBtn, {
-              active: selectedBtn === 0,
-              disabled: !allowedToEdit,
-            })}
-          >
-            <i className='icon icon-projects' />
-          </div>
-          <div
-            onClick={this._changeSelectedButton(1)}
-            className={cx(classes.selectBtn, classes.userBtn, {
-              active: selectedBtn === 1,
-              disabled: !allowedToEdit,
-            })}
-          >
-            <i className='icon icon-user-account' />
-          </div>
-          <Dropdown
-            id='timesheet-project-customer'
-            classes={{
-              component: classes.pDropdown,
-              select: classes.pDropdownSelect,
-              menuItemText: classes.dropdownItemText,
-            }}
-            onChange={this._onSelectionChange('selectedProjectCustomer')}
-            placeholder={firstDropdownPlaceholder}
-            items={firstDropdownData}
-            value={selectedProjectCustomer}
-            comparator={(items, value) => {
-              if (value && value.id) {
-                const index = findIndex(items, { id: value.id });
-                const item = items[index];
-                return { index, item };
-              }
-              return { index: undefined };
-            }}
-            disabled={!allowedToEdit}
-          />
           <Dropdown
             id='timesheet-service'
             classes={{

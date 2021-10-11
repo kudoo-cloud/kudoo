@@ -1,7 +1,8 @@
 import {
+  ErrorBoundary,
   FieldLabel,
   FileBlock,
-  TimesheetRowDisplay,
+  Loading,
   withStyles,
 } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
@@ -9,89 +10,45 @@ import get from 'lodash/get';
 import isEmpty from 'lodash/isEmpty';
 import merge from 'lodash/merge';
 import moment from 'moment';
-import queryString from 'query-string';
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import { compose } from 'recompose';
+import React, { useEffect } from 'react';
+import { useHistory, useRouteMatch } from 'react-router';
+import { useTimesheetQuery } from 'src/generated/graphql';
+import SelectedDAO from 'src/helpers/SelectedDAO';
+import URL from 'src/helpers/urls';
+import { useAllActions } from 'src/store/hooks';
+import TimesheetRowDisplay from '../TimesheetRowDisplay';
 import styles from './styles';
 
-type Props = {
-  actions: any;
+interface IProps {
+  children: ({}) => {};
   timeSheet: any;
+  loading: boolean;
   classes: any;
-};
-type State = {};
+  theme: any;
+}
 
-class PreviewTimesheet extends Component<Props, State> {
-  static defaultProps = {
-    timeSheet: {
-      refetch: () => {},
-      loadNextPage: () => {},
-      data: {},
+const PreviewTimesheet: React.FC<IProps> = (props) => {
+  const { classes } = props;
+  const actions = useAllActions();
+
+  const history = useHistory();
+  const match = useRouteMatch<{ id: string }>();
+  const timesheetId = match?.params?.id;
+
+  const { data, loading } = useTimesheetQuery({
+    variables: {
+      id: timesheetId,
     },
-  };
+    skip: !timesheetId,
+  });
+  const timeSheet = data?.timesheet || ({} as any);
 
-  constructor(props) {
-    super(props);
-    this.setDaoAndUserData(props);
-  }
+  useEffect(() => {
+    actions.updateHeaderTitle('Timesheet');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  componentDidMount() {
-    const props = this.props;
-    this.setDaoAndUserData(props);
-  }
-
-  setDaoAndUserData = (props) => {
-    const query = queryString.parse(get(props, 'location.search', ''));
-    if (query['dao-token'] && query['user-token']) {
-      this.props.actions.setUserData({
-        token: query['user-token'],
-        isLoggedIn: true,
-        selectedDAO: {
-          ...get(props, 'profile.selectedDAO', {}),
-          id: query['dao-token'],
-        },
-      });
-    }
-  };
-
-  _getTimesheetRows = () => {
-    const { timeSheet } = this.props;
-    const entries = get(timeSheet, 'data.timeSheetEntries') || [];
-    const timesheetRows = {};
-    entries.map((entry) => {
-      const projectCustomerId =
-        get(entry, 'project.id') || get(entry, 'customer.id');
-      const serviceId = get(entry, 'service.id');
-      const project = entry.project;
-      const customer = entry.customer;
-      const service = entry.service;
-      const rowType = get(entry, 'project.id') ? 'project' : 'customer';
-      const rowId = `${projectCustomerId}:${serviceId}`;
-      timesheetRows[rowId] = timesheetRows[rowId] || {};
-      merge(timesheetRows[rowId], {
-        id: rowId,
-        rowType,
-        project: {
-          data: project,
-        },
-        customer: {
-          data: customer,
-        },
-        service: {
-          data: service,
-        },
-        entries: {
-          data: [].concat(get(timesheetRows[rowId], 'entries.data', []), entry),
-        },
-      });
-    });
-    return timesheetRows;
-  };
-
-  _renderPeriodSelection() {
-    const { classes, timeSheet } = this.props;
-    const timesheetData = timeSheet.data || {};
+  const _renderPeriodSelection = () => {
     return (
       <div className={classes.periodSelectionWrapper}>
         <Grid container justify='space-between' spacing={0}>
@@ -101,7 +58,7 @@ class PreviewTimesheet extends Component<Props, State> {
                 <div>
                   <FieldLabel label='Month' />
                   <div className={classes.textValueBox}>
-                    {moment(timesheetData.startsAt).format('MMMM')}
+                    {moment(timeSheet?.startsAt).format('MMMM')}
                   </div>
                 </div>
               </Grid>
@@ -109,7 +66,7 @@ class PreviewTimesheet extends Component<Props, State> {
                 <div>
                   <FieldLabel label='Year' />
                   <div className={classes.textValueBox}>
-                    {moment(timesheetData.startsAt).format('YYYY')}
+                    {moment(timeSheet?.startsAt).format('YYYY')}
                   </div>
                 </div>
               </Grid>
@@ -121,8 +78,8 @@ class PreviewTimesheet extends Component<Props, State> {
                 <div>
                   <FieldLabel label='Week Period' />
                   <div className={classes.textValueBox}>
-                    {moment(timesheetData.startsAt).format('DD MMM')} -{' '}
-                    {moment(timesheetData.endsAt).format('DD MMM')}
+                    {moment(timeSheet.startsAt).format('DD MMM')} -{' '}
+                    {moment(timeSheet.endsAt).format('DD MMM')}
                   </div>
                 </div>
               </Grid>
@@ -131,23 +88,41 @@ class PreviewTimesheet extends Component<Props, State> {
         </Grid>
       </div>
     );
-  }
+  };
 
-  _renderInputs() {
-    const { classes, timeSheet } = this.props;
-    const timesheetData = timeSheet.data || {};
-    const timesheetRows = this._getTimesheetRows();
+  const _getTimesheetRows = () => {
+    const entries = get(timeSheet, 'timeSheetEntries') || [];
+    const timesheetRows = {};
+    entries.forEach((entry) => {
+      const serviceId = get(entry, 'service.id');
+      const service = entry.service;
+      const rowId = `${serviceId}`;
+      timesheetRows[rowId] = timesheetRows[rowId] || {};
+      merge(timesheetRows[rowId], {
+        id: rowId,
+        service: {
+          data: service,
+        },
+        entries: {
+          data: [].concat(get(timesheetRows[rowId], 'entries.data', []), entry),
+        },
+      });
+    });
+    return timesheetRows;
+  };
+
+  const _renderInputs = () => {
+    const timesheetRows = _getTimesheetRows();
+
     if (!isEmpty(timesheetRows)) {
       return (
-        <div className={classes.inputs} id='timesheet-details'>
+        <div className={classes.inputs}>
           {Object.values(timesheetRows).map((row: any, index) => (
             <TimesheetRowDisplay
-              key={row.id}
+              key={row?.id}
               hideDaysLabel={index > 0}
-              startWeekDay={moment(timesheetData.startsAt).format()}
-              endWeekDay={moment(timesheetData.endsAt).format()}
-              project={row.project}
-              customer={row.customer}
+              startWeekDay={moment(timeSheet?.startsAt).format()}
+              endWeekDay={moment(timeSheet?.endsAt).format()}
               service={row.service}
               timeSheetEntries={row.entries}
             />
@@ -156,11 +131,10 @@ class PreviewTimesheet extends Component<Props, State> {
       );
     }
     return null;
-  }
+  };
 
-  _renderAttachmentField() {
-    const { classes, timeSheet } = this.props;
-    const alreadyAttachedFiles = get(timeSheet, 'data.attachments', []);
+  const _renderAttachmentField = () => {
+    const alreadyAttachedFiles = get(timeSheet, 'attachments', []);
     if (alreadyAttachedFiles.length <= 0) {
       return null;
     }
@@ -174,7 +148,7 @@ class PreviewTimesheet extends Component<Props, State> {
                 key={index}
                 file={{ ...file, name: file.fileName }}
                 showRemoveButton={false}
-                variant='link'
+                variant='interactive'
                 onRemoveClick={() => {}}
               />
             ))}
@@ -182,30 +156,26 @@ class PreviewTimesheet extends Component<Props, State> {
         </div>
       </div>
     );
-  }
+  };
 
-  render() {
-    const { classes } = this.props;
-    return (
-      <div className={classes.page}>
-        <div className={classes.content}>
-          {this._renderPeriodSelection()}
-          {this._renderInputs()}
-          {this._renderAttachmentField()}
+  return (
+    <ErrorBoundary>
+      <SelectedDAO
+        onChange={() => {
+          history.push(URL.TIMESHEETS());
+        }}
+      >
+        <div className={classes.page}>
+          <div className={classes.content}>
+            {loading && <Loading />}
+            {_renderPeriodSelection()}
+            {_renderInputs()}
+            {_renderAttachmentField()}
+          </div>
         </div>
-      </div>
-    );
-  }
-}
+      </SelectedDAO>
+    </ErrorBoundary>
+  );
+};
 
-export default compose(
-  withStyles(styles),
-  connect((state: any) => ({
-    profile: state.profile,
-  })),
-  // withTimeSheet((props) => {
-  //   return {
-  //     id: get(props, 'match.params.id', ''),
-  //   };
-  // }),
-)(PreviewTimesheet);
+export default withStyles(styles)(PreviewTimesheet);

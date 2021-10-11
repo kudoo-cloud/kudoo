@@ -2,7 +2,6 @@ import { Dropdown, WeekPeriod, withStyles } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
 import range from 'lodash/range';
 import moment from 'moment';
-
 import * as React from 'react';
 import { compose } from 'recompose';
 import styles from './styles';

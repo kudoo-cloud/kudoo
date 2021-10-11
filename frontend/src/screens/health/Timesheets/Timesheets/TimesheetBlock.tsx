@@ -8,10 +8,7 @@ import React, { Component } from 'react';
 import { timesheetBlockStyles } from './styles';
 
 type Props = {
-  type: 'project' | 'dao';
   serviceName: string;
-  daoName: string;
-  project?: string;
   rows: Array<Record<string, any>>;
   collapsed?: boolean;
   onCellClick?: Function;
@@ -33,7 +30,7 @@ class TimesheetBlock extends Component<Props, State> {
   static defaultProps = {
     collapsed: false,
     type: 'project',
-    showEmailIcon: true,
+    showEmailIcon: false,
     showViewIcon: true,
     showRemoveIcon: false,
     onRemoveClicked: () => {},
@@ -45,7 +42,7 @@ class TimesheetBlock extends Component<Props, State> {
     super(props);
 
     let columns: any = [
-      { id: 'user', label: 'User' },
+      { id: 'supplier', label: 'supplier' },
       { id: 'period', label: 'Period' },
       { id: 'status', label: 'Status' },
       { id: 'hours', label: 'Unit' },
@@ -186,10 +183,8 @@ class TimesheetBlock extends Component<Props, State> {
   render() {
     const {
       classes,
-      type,
+
       serviceName,
-      daoName,
-      project,
       showRemoveIcon,
       showAddIcon,
     } = this.props;
@@ -198,17 +193,14 @@ class TimesheetBlock extends Component<Props, State> {
       <div className={classes.wrapper} data-test='timesheet-block'>
         <div
           className={cx(classes.titleWrapper, {
-            'is-dao': type === 'dao',
             'is-collapsed': collapsed,
           })}
           onClick={() => {
             this.setState({ collapsed: !collapsed });
           }}
         >
-          <div className={classes.title}>
-            {type === 'project' ? project : 'Linked to DAO'}
-          </div>
-          {type === 'project' && <div className={classes.type}>Project</div>}
+          <div className={classes.title}>{'Linked to DAO'}</div>
+
           <i
             className={cx(classes.arrowIcon, 'ion-chevron-right', {
               'is-open': !collapsed,
@@ -218,7 +210,6 @@ class TimesheetBlock extends Component<Props, State> {
         <Collapse in={!this.state.collapsed} timeout='auto' unmountOnExit>
           <div className={classes.serviceInfoWrapper}>
             <div className={classes.serviceName}>{serviceName}</div>
-            <div className={classes.daoName}>{daoName}</div>
           </div>
           <Table
             columnData={this.state.tableColumns}

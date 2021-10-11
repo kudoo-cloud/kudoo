@@ -4,12 +4,12 @@ import {
   ActiveCustomersTab,
   ActiveProjectsTab,
   ActiveServiceTab,
-  ActiveTimesheetsTab,
+  // ActiveTimesheetsTab,
   ArchivedCustomersTab,
   ArchivedInvoicesTab,
   ArchivedProjectsTab,
   ArchivedServiceTab,
-  ArchivedTimesheetsTab,
+  // ArchivedTimesheetsTab,
   AssetGroups,
   AssetList,
   BalanceSheet,
@@ -17,7 +17,7 @@ import {
   BankTransactions,
   Contributors,
   DraftProjectsTab,
-  DraftTimesheetsTab,
+  // DraftTimesheetsTab,
   HealthcareProvidersList,
   Inventory,
   LedgerJournalsTab,
@@ -34,6 +34,7 @@ import {
   SalesOrderTab,
   SecondaryTabs,
   Suppliers,
+  TimesheetTabContainer,
   UnpaidInvoicesTab,
   Warehouse,
 } from '../LoadableComponents';
@@ -426,64 +427,64 @@ export const serviceTabs: Array<ITab> = [
   },
 ];
 
-export const myTimesheetSubTabs: Array<ITab> = [
-  {
-    name: 'Active',
-    reactComponent: ActiveTimesheetsTab,
-    url: URL.MY_ACTIVE_TIMESHEETS,
-    // component props
-    onlyMyTimesheet: true,
-  },
-  {
-    name: 'Draft',
-    reactComponent: DraftTimesheetsTab,
-    url: URL.MY_DRAFT_TIMESHEETS,
-    // component props
-    onlyMyTimesheet: true,
-  },
-  {
-    name: 'Archived',
-    reactComponent: ArchivedTimesheetsTab,
-    url: URL.MY_ARCHIVED_TIMESHEETS,
-    // component props
-    onlyMyTimesheet: true,
-  },
-];
+// export const myTimesheetSubTabs: Array<ITab> = [
+//   {
+//     name: 'Active',
+//     reactComponent: TimesheetTabContainer,
+//     url: URL.MY_ACTIVE_TIMESHEETS,
+//     // component props
+//     onlyMyTimesheet: true,
+//   },
+//   {
+//     name: 'Draft',
+//     reactComponent: TimesheetTabContainer,
+//     url: URL.MY_DRAFT_TIMESHEETS,
+//     // component props
+//     onlyMyTimesheet: true,
+//   },
+//   {
+//     name: 'Archived',
+//     reactComponent: ArchivedTimesheetsTab,
+//     url: URL.MY_ARCHIVED_TIMESHEETS,
+//     // component props
+//     onlyMyTimesheet: true,
+//   },
+// ];
 
 export const workerTimesheetSubTabs: Array<ITab> = [
   {
     name: 'Active',
-    reactComponent: ActiveTimesheetsTab,
+    reactComponent: TimesheetTabContainer,
     url: URL.WORKERS_ACTIVE_TIMESHEETS,
   },
   {
     name: 'Draft',
-    reactComponent: DraftTimesheetsTab,
+    reactComponent: TimesheetTabContainer,
     url: URL.WORKERS_DRAFT_TIMESHEETS,
   },
   {
     name: 'Archived',
-    reactComponent: ArchivedTimesheetsTab,
+    reactComponent: TimesheetTabContainer,
     url: URL.WORKERS_ARCHIVED_TIMESHEETS,
   },
 ];
 
 export const timesheetTabs: Array<ITab> = [
-  {
-    name: 'My Timesheets',
-    reactComponent: SecondaryTabs,
-    isTertiaryTab: true,
-    tabs: myTimesheetSubTabs,
-    availability: [
-      { security: [SecurityRole.admin, SecurityRole.owner, SecurityRole.user] },
-    ],
-    licenseRequired: [
-      LicensePlan.FREE,
-      LicensePlan.PRO,
-      LicensePlan.ENTERPRISE,
-    ],
-    url: URL.MY_TIMESHEETS,
-  },
+  // {
+  //   name: 'My Timesheets',
+  //   reactComponent: SecondaryTabs,
+  //   isTertiaryTab: true,
+  //   tabs: myTimesheetSubTabs,
+  //   availability: [
+  //     { security: [SecurityRole.admin, SecurityRole.owner, SecurityRole.user] },
+  //   ],
+  //   licenseRequired: [
+  //     LicensePlan.FREE,
+  //     LicensePlan.PRO,
+  //     LicensePlan.ENTERPRISE,
+  //   ],
+  //   url: URL.MY_TIMESHEETS,
+  // },
   {
     name: 'Supplier Timesheets',
     reactComponent: SecondaryTabs,
