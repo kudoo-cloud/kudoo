@@ -19,6 +19,7 @@ import { useHistory, useRouteMatch } from 'react-router';
 import uuid from 'uuid';
 // import { generatePDF } from 'src/helpers/jsPDF';
 import {
+  ServiceBillingType,
   useCreateTimesheetMutation,
   useRegisteredServiceByDaoQuery,
   useSuppliersByDaoQuery,
@@ -89,6 +90,7 @@ const CreateTimesheets: React.FC<IProps> = (props) => {
   const services = useRegisteredServiceByDaoQuery({
     variables: {
       daoId,
+      billingType: ServiceBillingType.TimeBased,
     },
     skip: !daoId,
   });

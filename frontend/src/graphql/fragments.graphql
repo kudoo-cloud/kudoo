@@ -60,10 +60,9 @@ fragment RegisteredService on RegisteredService {
   dao {
     id
   }
-  includeConsTax
+  currency
   IsTemplate
   name
-  timeBasedType
   totalAmount
 }
 

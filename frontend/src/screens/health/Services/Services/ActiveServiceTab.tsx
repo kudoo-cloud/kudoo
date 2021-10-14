@@ -7,7 +7,6 @@ import {
   ToggleButton,
   withStyles,
 } from '@kudoo/components';
-import { Trans } from '@lingui/react';
 import Grid from '@material-ui/core/Grid';
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router';
@@ -46,7 +45,6 @@ const ActiveServices: React.FC<IProps> = (props) => {
       notSortable: true,
     },
     { id: 'billingType', label: 'Type', notSortable: true },
-    { id: 'timeBasedType', label: 'Unit Type', notSortable: true },
   ]);
 
   const [filterServices, setFilterServices] = useState([]);
@@ -172,12 +170,6 @@ const ActiveServices: React.FC<IProps> = (props) => {
         >
           {ele}
         </Link>
-      );
-    } else if (cell.id === 'totalAmount') {
-      return (
-        <div className={classes.amountCell}>
-          <Trans id='currency-symbol' /> {row[cell.id]}
-        </div>
       );
     }
     return ele;

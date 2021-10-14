@@ -1,18 +1,19 @@
 import {
   Button,
   ErrorBoundary,
-  FormikCheckbox,
   FormikDropdown,
   FormikTextField,
   SectionHeader,
   withStyles,
 } from '@kudoo/components';
-import { FormControl, FormGroup, Grid } from '@material-ui/core';
+import { FormControl, Grid } from '@material-ui/core';
 import { Formik } from 'formik';
 import React, { useEffect, useState } from 'react';
 import { useHistory, useRouteMatch } from 'react-router';
 import * as Yup from 'yup';
 import {
+  CreateRegisteredServiceInput,
+  Currency,
   useCreateRegisteredServiceMutation,
   useRegisteredServiceQuery,
   useUpdateRegisteredServiceMutation,
@@ -62,15 +63,20 @@ const CreateNewService: React.FC<IProps> = (props) => {
 
   const _submitForm = async (values, actions) => {
     try {
-      const dataToSend = {
+      let dataToSend = {
         daoId: daoId,
         name: values.name,
         billingType: values?.billingType,
-        includeConsTax: values?.chargeGST,
         IsTemplate: values?.IsTemplate,
-        timeBasedType: values?.perUnit || null,
-        totalAmount: Number(values?.paymentTotal),
-      };
+      } as CreateRegisteredServiceInput;
+
+      if (values?.billingType === SERVICE_BILLING_TYPE.FIXED) {
+        dataToSend = {
+          ...dataToSend,
+          currency: values?.currency,
+          totalAmount: Number(values?.paymentTotal),
+        };
+      }
 
       if (!isEditMode) {
         const res = await createRegisteredService({
@@ -130,18 +136,23 @@ const CreateNewService: React.FC<IProps> = (props) => {
           name: registeredServiceData?.name || '',
           billingType: registeredServiceData?.billingType || '',
           paymentTotal: registeredServiceData?.totalAmount || '',
-          chargeGST: registeredServiceData?.includeConsTax || false,
-          perUnit: registeredServiceData?.timeBasedType || null,
+          currency: registeredServiceData?.currency || '',
           IsTemplate: registeredServiceData?.IsTemplate || true,
         }}
         enableReinitialize
         validationSchema={Yup.object().shape({
           name: Yup.string().required('Service Name is required'),
           billingType: Yup.string().required('Billing Type is required'),
-          paymentTotal: Yup.string().required('Payment Total is required'),
-          perUnit: Yup.mixed().when('billingType', {
-            is: SERVICE_BILLING_TYPE.TIME_BASED,
-            then: Yup.string().required('Please select unit'),
+
+          paymentTotal: Yup.mixed().when('billingType', {
+            is: SERVICE_BILLING_TYPE.FIXED,
+            then: Yup.string().required('Payment Total is required'),
+            otherwise: Yup.mixed(),
+          }),
+
+          currency: Yup.mixed().when('billingType', {
+            is: SERVICE_BILLING_TYPE.FIXED,
+            then: Yup.string().required('Please select currency'),
             otherwise: Yup.mixed(),
           }),
         })}
@@ -187,8 +198,8 @@ const CreateNewService: React.FC<IProps> = (props) => {
                           </FormControl>
                           {values.billingType ===
                             SERVICE_BILLING_TYPE.FIXED && (
-                            <FormGroup row>
-                              <FormControl>
+                            <>
+                              <FormControl fullWidth margin='dense'>
                                 <FormikTextField
                                   label={'Payment Total'}
                                   placeholder={'E.g: 200'}
@@ -199,56 +210,21 @@ const CreateNewService: React.FC<IProps> = (props) => {
                                 />
                               </FormControl>
 
-                              <FormControl>
-                                <FormikCheckbox
-                                  label={'Charge GST'}
-                                  id='charge-gst'
-                                  name='chargeGST'
-                                  classes={{ component: classes.gstCheckbox }}
-                                />
-                              </FormControl>
-                            </FormGroup>
-                          )}
-                          {values.billingType ===
-                            SERVICE_BILLING_TYPE.TIME_BASED && (
-                            <>
-                              <FormGroup row>
-                                <FormControl>
-                                  <FormikTextField
-                                    label={'Payment Amount'}
-                                    isNumber
-                                    placeholder={'E.g: 200'}
-                                    showClearIcon={false}
-                                    name='paymentTotal'
-                                    id='paymentTotal'
-                                  />
-                                </FormControl>
-
-                                <FormControl>
-                                  <FormikCheckbox
-                                    label={'Charge GST'}
-                                    id='charge-gst'
-                                    name='chargeGST'
-                                    classes={{
-                                      component: classes.gstCheckbox,
-                                    }}
-                                  />
-                                </FormControl>
-                              </FormGroup>
                               <FormControl fullWidth margin='dense'>
                                 <FormikDropdown
-                                  id='per-unit'
-                                  label='Per Unit'
-                                  name='perUnit'
-                                  placeholder={'Select Unit'}
+                                  label='Select Currency'
                                   items={[
-                                    { label: 'Hour', value: 'HOUR' },
-                                    { label: 'Half Hour', value: 'HALFHOUR' },
                                     {
-                                      label: 'Quater Hour',
-                                      value: 'QUARTERHOUR',
+                                      label: Currency.Avax,
+                                      value: Currency.Avax,
+                                    },
+                                    {
+                                      label: Currency.Png,
+                                      value: Currency.Png,
                                     },
                                   ]}
+                                  id='currency'
+                                  name='currency'
                                 />
                               </FormControl>
                             </>

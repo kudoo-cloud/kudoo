@@ -294,14 +294,14 @@ const CreateNewPayrun: React.FC<IProps> = (props) => {
           <div className={classes.allSteps}>
             <WizardSteps steps={initalSteps} />
           </div>
-          <div className={classes.draftButtonWrapper}>
-            <Button
-              title='Cancel'
-              classes={{ text: classes.cancelButtonText }}
-              buttonColor='#EAEAEA'
-              onClick={_cancelPayrun}
-            />
-          </div>
+        </div>
+        <div className={classes.draftButtonWrapper}>
+          <Button
+            title='Cancel'
+            classes={{ text: classes.cancelButtonText }}
+            buttonColor='#EAEAEA'
+            onClick={_cancelPayrun}
+          />
         </div>
       </SelectedDAO>
     </ErrorBoundary>

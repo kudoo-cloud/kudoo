@@ -1,7 +1,7 @@
-import ABI from 'src/config/abi';
-import Util from 'src/helpers/payrun/Util';
 import Web3 from 'web3';
+import ABI from 'src/config/abi';
 import { PNG } from 'src/config/config';
+import Util from 'src/helpers/payrun/Util';
 
 const SPLITTER = process.env.REACT_APP_PAYRUN_SPLITTER;
 const RPC = process.env.REACT_APP_PAYRUN_RPC;

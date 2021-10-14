@@ -42,8 +42,16 @@ mutation unarchiveRegisteredService($id: ID!) {
   }
 }
 
-query registeredServiceByDao($daoId: String!, $archived: Boolean) {
-  registeredServiceByDao(daoId: $daoId, archived: $archived) {
+query registeredServiceByDao(
+  $daoId: String!
+  $archived: Boolean
+  $billingType: ServiceBillingType
+) {
+  registeredServiceByDao(
+    daoId: $daoId
+    archived: $archived
+    billingType: $billingType
+  ) {
     ...RegisteredService
   }
 }

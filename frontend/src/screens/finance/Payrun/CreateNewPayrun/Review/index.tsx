@@ -5,7 +5,6 @@ import {
   Table,
   withStyles,
 } from '@kudoo/components';
-import { Trans } from '@lingui/react';
 import Grid from '@material-ui/core/Grid';
 import React, { useState } from 'react';
 import { useAllActions } from 'src/store/hooks';
@@ -134,12 +133,8 @@ const Review: React.FC<IProps & Props> = ({
   };
 
   const _renderCell = (row, cell, ele) => {
-    if (cell.id === 'totalAmount') {
-      return (
-        <div className={classes.amountCell}>
-          <Trans id='currency-symbol' /> {row[cell.id]}
-        </div>
-      );
+    if (cell.id === 'amount') {
+      return <div className={classes.amountCell}>{row[cell.id]} PNG</div>;
     }
     return ele;
   };
