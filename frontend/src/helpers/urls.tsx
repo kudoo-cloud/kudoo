@@ -285,4 +285,9 @@ export default {
   REOCCURING_EXPENSES: abstractURL('/reoccuring-expense'),
   CREATE_REOCCURING_EXPENSE: abstractURL('/reoccuring-expense/create'),
   EDIT_REOCCURING_EXPENSE: abstractURL('/reoccuring-expense/:id/edit'),
+
+  // Payrun
+  PAYRUNS: abstractURL('/payruns'),
+  CREATE_PAYRUN: abstractURL('/payrun/create'),
+  EDIT_PAYRUN: abstractURL('/payrun/:id/edit'),
 };

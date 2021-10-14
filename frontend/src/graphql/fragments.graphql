@@ -174,3 +174,35 @@ fragment Timesheet on Timesheet {
     ...TimesheetEntry
   }
 }
+
+fragment PayrunDetail on PayrunDetail {
+  id
+  name
+  supplierId
+  contributorId
+  reoccuringExpenseId
+  cChainAddress
+  amount
+  payeeType
+}
+
+fragment Payrun on Payrun {
+  id
+  daoId
+  totalAmount
+  startsAt
+  endsAt
+  payrunDetails {
+    ...PayrunDetail
+  }
+}
+
+fragment PayrunDetailResponse on PayrunDetailResponse {
+  name
+  supplierId
+  contributorId
+  reoccuringExpenseId
+  payeeType
+  amount
+  cChainAddress
+}

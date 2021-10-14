@@ -57,10 +57,10 @@
             }
           ]
         },
-        "banking": {
+        "payrun": {
           "icon": "icon icon-projects",
-          "name": "Banking",
-          "url": "/banking",
+          "name": "Payrun",
+          "url": "/payruns",
           "availability": [
             {
               "security": ["ADMIN", "OWNER"]

@@ -28,6 +28,7 @@ import {
   PBSManufacturers,
   PaidInvoicesTab,
   PatientsList,
+  Payruns,
   Policies,
   ProfitAndLoss,
   ReoccuringExpenses,
@@ -518,5 +519,15 @@ export const contributorsTabs: Array<ITab> = [
     availability: [{ security: [SecurityRole.admin, SecurityRole.owner] }],
     licenseRequired: [LicensePlan.PRO, LicensePlan.ENTERPRISE],
     url: URL.POLICIES,
+  },
+];
+
+export const payrunTabs: Array<ITab> = [
+  {
+    name: 'Payrun',
+    reactComponent: Payruns,
+    availability: [{ security: [SecurityRole.admin, SecurityRole.owner] }],
+    licenseRequired: [LicensePlan.PRO, LicensePlan.ENTERPRISE],
+    url: URL.PAYRUNS,
   },
 ];

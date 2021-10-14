@@ -110,3 +110,5 @@ export const Policies = React.lazy(() => import('src/screens/finance/Contributor
 export const CreatePolicy = React.lazy(() => import('src/screens/finance/Contributors/CreatePolicy'));
 export const ReoccuringExpenses = React.lazy(() => import('src/screens/inventory/Suppliers/ReoccuringExpenses'));
 export const CreateReoccuringExpense = React.lazy(() => import('src/screens/inventory/Suppliers/CreateReoccuringExpense'));
+export const Payruns = React.lazy(() => import('src/screens/finance/Payrun/Payruns'));
+export const CreateNewPayrun = React.lazy(() => import('src/screens/finance/Payrun/CreateNewPayrun'));

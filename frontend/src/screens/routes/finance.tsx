@@ -130,4 +130,22 @@ export default [
     component: Components.SecondaryTabs,
     tabs: Tabs.contributorsTabs,
   },
+
+  {
+    name: 'Create Payrun',
+    path: URL.CREATE_PAYRUN(paramsOptions),
+    component: Components.CreateNewPayrun,
+  },
+  {
+    name: 'Edit Payrun',
+    path: URL.EDIT_PAYRUN(paramsOptions),
+    component: Components.CreateNewPayrun,
+  },
+
+  {
+    name: 'Payruns',
+    path: URL.PAYRUNS(paramsOptions),
+    component: Components.SecondaryTabs,
+    tabs: Tabs.payrunTabs,
+  },
 ] as IRoute[];
