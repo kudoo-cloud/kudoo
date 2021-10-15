@@ -18,8 +18,8 @@ import {
   useGetPayrunDetailsByDaoLazyQuery,
 } from 'src/generated/graphql';
 import { PAYRUN_TYPE } from 'src/helpers/constants';
-import { approve } from 'src/helpers/payrun/Approve';
-import { pay } from 'src/helpers/payrun/Pay';
+// import { approve } from 'src/helpers/payrun/Approve';
+// import { pay } from 'src/helpers/payrun/Pay';
 import Util from 'src/helpers/payrun/Util';
 import SelectedDAO from 'src/helpers/SelectedDAO';
 import { showToast } from 'src/helpers/toast';
@@ -91,7 +91,7 @@ const CreateNewPayrun: React.FC<IProps> = (props) => {
 
   useEffect(() => {
     if (!isEmpty(selectedIncludeData)) {
-      const { multisig, ...rest } = selectedIncludeData; // eslint-disable-line 
+      const { multisig, ...rest } = selectedIncludeData; // eslint-disable-line
       refetchData({ variables: { data: rest } });
     }
 
@@ -182,74 +182,87 @@ const CreateNewPayrun: React.FC<IProps> = (props) => {
           recipients.push(container2);
         });
 
-        await approve(web3React?.chainId, selectedIncludeData?.multisig);
+        // await approve(web3React?.chainId, selectedIncludeData?.multisig);
 
-        const checkPayrun = await pay(
-          recipients,
-          suppliers,
-          web3React?.chainId,
-          selectedIncludeData?.multisig,
-        );
+        // const checkPayrun = await pay(
+        //   recipients,
+        //   suppliers,
+        //   web3React?.chainId,
+        //   selectedIncludeData?.multisig,
+        // );
 
-        if (checkPayrun) {
-          let totalAmount = sumBy(reviewData, function (item: any) {
-            return item?.amount;
-          });
+        // if (checkPayrun) {
+        let totalAmount = sumBy(reviewData, function (item: any) {
+          return item?.amount;
+        });
 
-          let startsDate = '';
-          let endsDate = '';
+        let startsDate = '';
+        let endsDate = '';
 
-          if (
-            selectedIncludeData?.payrunType === PAYRUN_TYPE.FIFTEEN_OF_MONTH
-          ) {
-            startsDate = moment().startOf('month').format('YYYY-MM-DD');
-            endsDate = moment().date(15).format('YYYY-MM-DD');
-          } else if (
-            selectedIncludeData?.payrunType === PAYRUN_TYPE.FIRST_OF_MONTH
-          ) {
-            startsDate = moment()
-              .subtract(1, 'months')
-              .date(15)
-              .format('YYYY-MM-DD');
-            endsDate = moment()
-              .subtract(1, 'months')
-              .endOf('month')
-              .format('YYYY-MM-DD');
-          }
+        if (selectedIncludeData?.payrunType === PAYRUN_TYPE.FIFTEEN_OF_MONTH) {
+          startsDate = moment().startOf('month').format('YYYY-MM-DD');
+          endsDate = moment().date(15).format('YYYY-MM-DD');
+        } else if (
+          selectedIncludeData?.payrunType === PAYRUN_TYPE.FIRST_OF_MONTH
+        ) {
+          startsDate = moment()
+            .subtract(1, 'months')
+            .date(15)
+            .format('YYYY-MM-DD');
+          endsDate = moment()
+            .subtract(1, 'months')
+            .endOf('month')
+            .format('YYYY-MM-DD');
+        }
 
-          const dataToSend = {
-            daoId: daoId,
-            totalAmount: Number(totalAmount),
-            startsAt: startsDate,
-            endsAt: endsDate,
-            payrunDetails: omitDeep(reviewData, '__typename'),
-          };
+        const dataToSend = {
+          daoId: daoId,
+          totalAmount: Number(totalAmount),
+          startsAt: startsDate,
+          endsAt: endsDate,
+          payrunDetails: omitDeep(reviewData, '__typename'),
+        };
 
-          const res = await createPayrun({
-            variables: {
-              data: dataToSend,
-            },
-          });
-          if (res?.data?.createPayrun?.id) {
-            setPayrunLoading(false);
-            history.push(URL.PAYRUNS());
-            showToast(null, 'Payrun created successfully');
-          } else {
-            setPayrunLoading(false);
-            res?.errors?.map((err) => showToast(err.message));
-          }
+        const res = await createPayrun({
+          variables: {
+            data: dataToSend,
+          },
+        });
+        if (res?.data?.createPayrun?.id) {
+          setPayrunLoading(false);
+          downloadFile(recipients);
+          history.push(URL.PAYRUNS());
+          showToast(null, 'Payrun created successfully');
         } else {
           setPayrunLoading(false);
-          showToast('In review should have some payee');
+          res?.errors?.map((err) => showToast(err.message));
         }
       } else {
         setPayrunLoading(false);
-        showToast('Something went wrong');
+        showToast('In review should have some payee');
       }
+
+      // else {
+      //   setPayrunLoading(false);
+      //   showToast('Something went wrong');
+      // }
     } catch (e) {
       setPayrunLoading(false);
       showToast(e.message);
       // throw new Error(e.message);
+    }
+  };
+
+  const downloadFile = (recipients) => {
+    if ((recipients || []).length > 0) {
+      const blob = new Blob([JSON.stringify(recipients, null, 2)], {
+        type: 'application/json',
+      });
+
+      const link = document.createElement('a');
+      link.href = window.URL.createObjectURL(blob);
+      link.download = 'payment.json';
+      link.click();
     }
   };
 
@@ -278,6 +291,7 @@ const CreateNewPayrun: React.FC<IProps> = (props) => {
           removePayee={_onRemoveRow}
           data={reviewData}
           createPayrun={_onCreatePayrun}
+          onChangeReviewData={(data) => setReviewData([...data])}
         />
       ),
     },

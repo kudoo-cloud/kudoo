@@ -40,8 +40,26 @@ export default (theme) => ({
   servicesContainer: {
     marginTop: '20px !important',
   },
+  prevNextButton: {
+    width: 180,
+    margin: '0px 10px',
+  },
   prevNextWrapper: {
     display: 'flex',
     alignItems: 'center',
+  },
+
+  serviceCell: {
+    display: 'flex',
+    alignItems: 'center',
+    padding: '0px 10px',
+  },
+  tableInputWrapper: {
+    borderRadius: 0,
+    backgroundColor: 'white',
+  },
+  gstTextInput: {
+    paddingLeft: 5,
+    paddingRight: 5,
   },
 });

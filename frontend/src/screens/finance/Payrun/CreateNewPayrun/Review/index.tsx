@@ -3,9 +3,11 @@ import {
   ErrorBoundary,
   SectionHeader,
   Table,
+  TextField,
   withStyles,
 } from '@kudoo/components';
 import Grid from '@material-ui/core/Grid';
+import findIndex from 'lodash/findIndex';
 import React, { useState } from 'react';
 import { useAllActions } from 'src/store/hooks';
 import styles from './styles';
@@ -25,6 +27,7 @@ interface Props {
   updateSteps: Function;
   unmarkedVisited: Function;
   createPayrun: Function;
+  onChangeReviewData: (data: Array<any>) => void;
 }
 
 const Review: React.FC<IProps & Props> = ({
@@ -34,6 +37,7 @@ const Review: React.FC<IProps & Props> = ({
   updateSteps,
   unmarkedVisited,
   createPayrun,
+  onChangeReviewData,
   ...props
 }) => {
   const { theme, classes } = props;
@@ -102,7 +106,7 @@ const Review: React.FC<IProps & Props> = ({
               }}
             />
             <Button
-              title='Submit'
+              title='Submit & Export'
               id='next-button'
               classes={{ component: classes.prevNextButton }}
               applyBorderRadius
@@ -132,10 +136,46 @@ const Review: React.FC<IProps & Props> = ({
     );
   };
 
+  const _onUpdateAmount = (row, amount) => {
+    const index = findIndex(data, row);
+    const updatedData = [...data];
+
+    if (index > -1) {
+      const newRow = { ...updatedData[index] } as any;
+
+      newRow.amount = Number(amount) as any;
+
+      updatedData[index] = newRow;
+
+      onChangeReviewData(updatedData);
+    }
+  };
+
   const _renderCell = (row, cell, ele) => {
     if (cell.id === 'amount') {
-      return <div className={classes.amountCell}>{row[cell.id]} PNG</div>;
+      // return <div className={classes.amountCell}>{row[cell.id]} PNG</div>;
+
+      return (
+        <div className={classes.serviceCell}>
+          <TextField
+            id={`amount-input-`}
+            placeholder={`0`}
+            showClearIcon={false}
+            isNumber
+            value={String(row.amount)}
+            classes={{
+              textInputWrapper: classes.tableInputWrapper,
+              leftIcon: classes.inputLeftIcon,
+              textInput: classes.gstTextInput,
+            }}
+            onChangeText={(value) => {
+              _onUpdateAmount(row, value);
+            }}
+          />
+        </div>
+      );
     }
+
     return ele;
   };
 
