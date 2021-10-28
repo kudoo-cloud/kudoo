@@ -1,0 +1,43 @@
+#import './fragments.graphql'
+
+mutation createTimesheet($data: CreateTimesheetInput!) {
+  createTimesheet(data: $data) {
+    ...Timesheet
+  }
+}
+
+mutation updateTimesheet($data: UpdateTimesheetInput!) {
+  updateTimesheet(data: $data) {
+    ...Timesheet
+  }
+}
+
+query timesheetsByDao($data: TimesheetQueryInput!) {
+  timesheetsByDao(data: $data) {
+    ...Timesheet
+  }
+}
+
+query timesheet($id: String!) {
+  timesheet(id: $id) {
+    ...Timesheet
+  }
+}
+
+mutation deleteTimesheet($id: ID!) {
+  deleteTimesheet(id: $id) {
+    ...Timesheet
+  }
+}
+
+mutation archiveTimesheet($id: ID!) {
+  archiveTimesheet(id: $id) {
+    ...Timesheet
+  }
+}
+
+mutation unarchiveTimesheet($id: ID!) {
+  unarchiveTimesheet(id: $id) {
+    ...Timesheet
+  }
+}

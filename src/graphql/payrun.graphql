@@ -1,0 +1,19 @@
+#import './fragments.graphql'
+
+mutation createPayrun($data: CreatePayrunInput!) {
+  createPayrun(data: $data) {
+    ...Payrun
+  }
+}
+
+query payrunsByDao($daoId: String!) {
+  payrunsByDao(daoId: $daoId) {
+    ...Payrun
+  }
+}
+
+query getPayrunDetailsByDao($data: PayrunQueryInput!) {
+  getPayrunDetailsByDao(data: $data) {
+    ...PayrunDetailResponse
+  }
+}

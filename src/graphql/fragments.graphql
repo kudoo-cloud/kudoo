@@ -1,0 +1,207 @@
+fragment Attachment on Attachment {
+  id
+  fileName
+  label
+  description
+  url
+  s3Bucket
+  s3Key
+  createdAt
+  updatedAt
+}
+
+fragment Contact on Contact {
+  id
+  telegram
+  discord
+  email
+  isActive
+  IsDeleted
+  jobTitle
+  firstName
+  lastName
+  dao {
+    id
+  }
+  createdAt
+  updatedAt
+}
+
+fragment User on User {
+  id
+  telegram
+  discord
+  cChainAddress
+  email
+  isActive
+  IsArchived
+  isRoot
+  jobTitle
+  firstName
+  lastName
+  createdAt
+  updatedAt
+}
+
+fragment Daomember on Daomember {
+  id
+  user {
+    ...User
+  }
+  role
+  status
+  createdAt
+  updatedAt
+}
+
+fragment RegisteredService on RegisteredService {
+  id
+  billingType
+  dao {
+    id
+  }
+  currency
+  IsTemplate
+  name
+  totalAmount
+}
+
+fragment Dao on Dao {
+  id
+  cChainAddress
+  currency
+  IsArchived
+  logo {
+    ...Attachment
+  }
+  name
+  websiteUrl
+  contacts {
+    ...Contact
+  }
+  daomembers {
+    ...Daomember
+  }
+  registeredServices {
+    ...RegisteredService
+  }
+  createdAt
+  updatedAt
+  deletedAt
+}
+
+fragment Supplier on Supplier {
+  id
+  name
+  termsOfPayment
+  cChainAddress
+  emailAddressForRemittance
+  telegramId
+  discordId
+  currency
+  amount
+  type
+  paymentFrequency
+  createdAt
+  updatedAt
+}
+
+fragment Policy on Policy {
+  id
+  description
+  amount
+  token
+  paymentFrequency
+}
+
+fragment Contributor on Contributor {
+  id
+  firstName
+  lastName
+  telegramHandle
+  discordHandle
+  amount
+  cChainAddress
+  startDate
+  paymentFrequency
+  policies {
+    ...Policy
+  }
+}
+
+fragment ReoccuringExpense on ReoccuringExpense {
+  id
+  supplier {
+    ...Supplier
+  }
+  amount
+  reoccuringFrequency
+}
+
+fragment DaoMultisig on DaoMultisig {
+  id
+  name
+  cChainAddress
+  daoId
+}
+
+fragment TimesheetEntry on TimesheetEntry {
+  id
+  service {
+    ...RegisteredService
+  }
+  duration
+  isInvoiced
+  date
+}
+
+fragment Timesheet on Timesheet {
+  id
+  daoId
+  number
+  status
+  supplierId
+  supplier {
+    ...Supplier
+  }
+  preview {
+    ...Attachment
+  }
+  startsAt
+  endsAt
+  timeSheetEntries {
+    ...TimesheetEntry
+  }
+}
+
+fragment PayrunDetail on PayrunDetail {
+  id
+  name
+  supplierId
+  contributorId
+  reoccuringExpenseId
+  cChainAddress
+  amount
+  payeeType
+}
+
+fragment Payrun on Payrun {
+  id
+  daoId
+  totalAmount
+  startsAt
+  endsAt
+  payrunDetails {
+    ...PayrunDetail
+  }
+}
+
+fragment PayrunDetailResponse on PayrunDetailResponse {
+  name
+  supplierId
+  contributorId
+  reoccuringExpenseId
+  payeeType
+  amount
+  cChainAddress
+}
