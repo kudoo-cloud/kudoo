@@ -314,6 +314,7 @@ const CreateNewSupplier: React.FC<IProps> = (props) => {
                             items={[
                               { label: Currency.Avax, value: Currency.Avax },
                               { label: Currency.Png, value: Currency.Png },
+                              { label: Currency.Sherpa, value: Currency.Sherpa },
                             ]}
                             id={keys.currency}
                             value={values[keys.currency]}

@@ -222,6 +222,10 @@ const CreateNewService: React.FC<IProps> = (props) => {
                                       label: Currency.Png,
                                       value: Currency.Png,
                                     },
+                                    {
+                                      label: Currency.Sherpa,
+                                      value: Currency.Sherpa,
+                                    },
                                   ]}
                                   id='currency'
                                   name='currency'
