@@ -11,6 +11,7 @@ import findIndex from 'lodash/findIndex';
 import React, { useState } from 'react';
 import { useAllActions } from 'src/store/hooks';
 import styles from './styles';
+import { useProfile } from 'src/store/hooks';
 
 interface IProps {
   children: ({}) => {};
@@ -42,6 +43,7 @@ const Review: React.FC<IProps & Props> = ({
 }) => {
   const { theme, classes } = props;
 
+  const profile = useProfile();
   const actions = useAllActions();
 
   const [columns] = useState([
@@ -171,7 +173,8 @@ const Review: React.FC<IProps & Props> = ({
             onChangeText={(value) => {
               _onUpdateAmount(row, value);
             }}
-          />
+          />{' '}
+          {profile?.selectedDAO?.currency}
         </div>
       );
     }

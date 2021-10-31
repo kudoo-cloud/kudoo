@@ -147,6 +147,7 @@ const Payruns: React.FC<IProps> = (props) => {
           _toggleViewEntriesModal(false);
         }}
         entries={showingEntriesInModal}
+        currency={profile?.selectedDAO?.currency}
       />
     );
   };
@@ -171,7 +172,11 @@ const Payruns: React.FC<IProps> = (props) => {
         </div>
       );
     } else if (cell.id === 'totalAmount') {
-      return <div className={classes.commonCell}>{row?.totalAmount} PNG</div>;
+      return (
+        <div className={classes.commonCell}>
+          {row?.totalAmount} {profile?.selectedDAO?.currency}
+        </div>
+      );
     } else if (cell.id === 'view') {
       return (
         <div

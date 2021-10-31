@@ -2,12 +2,14 @@ import { Modal, Table, withStyles } from '@kudoo/components';
 import React, { Component } from 'react';
 import { compose } from 'recompose';
 import { ViewEntriesModalStyles } from './styles';
+import { Currency } from 'src/generated/graphql';
 
 type Props = {
   onClose?: any;
   visible: boolean;
   entries: Array<any>;
   classes: any;
+  currency: Currency;
 };
 type State = {};
 
@@ -17,11 +19,15 @@ class ViewEntriesModal extends Component<Props, State> {
   };
 
   _renderCell = (row, column, ele) => {
-    const { classes } = this.props;
+    const { classes, currency } = this.props;
 
     if (column.id === 'amount') {
       const amount = row.amount || 0;
-      return <div className={classes.commonCell}>{amount} PNG</div>;
+      return (
+        <div className={classes.commonCell}>
+          {amount} {currency}
+        </div>
+      );
     }
     return ele;
   };

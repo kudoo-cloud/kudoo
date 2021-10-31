@@ -255,7 +255,8 @@ export type CreateUserInput = {
 /** List of supported currencies for payment */
 export enum Currency {
   Avax = 'AVAX',
-  Png = 'PNG'
+  Png = 'PNG',
+  Sherpa = 'SHERPA'
 }
 
 export type Customer = {
